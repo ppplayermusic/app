@@ -322,6 +322,23 @@ class SpotifyClient {
     final items = (response.data['playlists']?['items'] as List?) ?? [];
     return items.whereType<Map<String, dynamic>>().toList();
   }
+
+  Future<List<String>> getAvailableGenreSeeds() async {
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/recommendations/available-genre-seeds',
+        options: Options(headers: await _authHeaders()),
+      );
+      return (response.data['genres'] as List).cast<String>();
+    } catch (e) {
+      // Fallback to a set of universally safe seeds
+      return const [
+        'pop', 'rock', 'hip-hop', 'edm', 'indie', 'alternative', 
+        'chill', 'dance', 'electronic', 'jazz', 'classical', 
+        'r-n-b', 'country', 'metal', 'funk', 'soul', 'reggae'
+      ];
+    }
+  }
 }
 
 final spotifyClientProvider = Provider<SpotifyClient>((ref) {

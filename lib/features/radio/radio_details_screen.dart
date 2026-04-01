@@ -11,12 +11,25 @@ import '../../shared/widgets/tactile_buttons.dart';
 
 final radioTracksProvider = FutureProvider.family<List<Track>, ({String type, String id})>((ref, arg) async {
   final client = ref.watch(spotifyClientProvider);
-  return client.getRecommendations(
-    seedArtistId: arg.type == 'artist' ? arg.id : null,
-    seedTrackId: arg.type == 'track' ? arg.id : null,
-    seedGenres: arg.type == 'genre' ? arg.id : null,
-    limit: 50,
-  );
+  try {
+    final tracks = await client.getRecommendations(
+      seedArtistId: arg.type == 'artist' ? arg.id : null,
+      seedTrackId: arg.type == 'track' ? arg.id : null,
+      seedGenres: arg.type == 'genre' ? arg.id : null,
+      limit: 50,
+    );
+    
+    if (tracks.isNotEmpty) return tracks;
+    
+    // Fallback: If empty, try a safe genre seed
+    return client.getRecommendations(
+      seedGenres: 'pop',
+      limit: 50,
+    );
+  } catch (e) {
+    // If targeted recommendation fails, return popular tracks as ultimate fallback
+    return client.getPopularTracks(limit: 50);
+  }
 });
 
 class RadioDetailsScreen extends ConsumerWidget {

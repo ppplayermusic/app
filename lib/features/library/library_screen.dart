@@ -124,7 +124,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: _isSearching ? kToolbarHeight : 154,
+            expandedHeight: _isSearching ? kToolbarHeight : 180,
             backgroundColor: Colors.transparent,
             elevation: 0,
             forceMaterialTransparency: true,
@@ -162,7 +162,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               titlePadding: EdgeInsets.zero,
               title: LayoutBuilder(
                 builder: (context, constraints) {
-                  final isCollapsed = constraints.maxHeight <= kToolbarHeight + 40;
+                  final isCollapsed = constraints.maxHeight <= kToolbarHeight + 64; // Account for 48px filter bar + buffer
                   return Stack(
                     children: [
                       if (isCollapsed)
@@ -180,7 +180,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         Container(
                           height: kToolbarHeight + 44,
                           alignment: Alignment.bottomLeft,
-                          padding: const EdgeInsets.only(left: 16, bottom: 12),
+                          padding: EdgeInsets.only(left: 16, bottom: isCollapsed ? (48 / 2 - 10) : 60), // Half of filter bar height - small offset for baseline
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.baseline,
                             textBaseline: TextBaseline.alphabetic,

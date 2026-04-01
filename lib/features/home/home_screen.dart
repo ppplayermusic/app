@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/banner_ad_widget.dart';
 import '../../shared/widgets/promotion_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/ad_service.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import '../../core/providers/genre_providers.dart';
+import '../../shared/widgets/section_wrapper.dart';
+import '../../shared/widgets/shimmer_placeholder.dart';
 
 final newReleasesProvider = FutureProvider((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -48,8 +50,12 @@ final popularArtistsProvider = FutureProvider((ref) async {
 });
 
 final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final client = ref.watch(spotifyClientProvider);
   final artists = await ref.watch(popularArtistsProvider.future);
   final genres = await ref.watch(browseCategoriesProvider.future);
+  
+  // Get valid recommendation seeds to ensure mixes aren't empty
+  final validSeeds = await client.getAvailableGenreSeeds();
   
   final mixes = <Map<String, dynamic>>[];
   
@@ -81,26 +87,36 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     });
   }
 
-  // Discover Weekly
-  if (genres.isNotEmpty) {
-    mixes.add({
-      'type': 'genre',
-      'id': genres.first['id'] as String,
-      'name': 'Discover Weekly',
-      'subtitle': 'New music based on your listening history.',
-      'imageUrl': (genres.first['icons'] as List?)?.firstOrNull?['url'] ?? '',
-      'title': 'Discover Weekly',
-      'color1': const Color(0xFF4CAF50),
-      'color2': const Color(0xFF8BC34A),
-    });
+  // Discover Weekly: Find a valid genre seed that exists in browse categories
+  String discoverSeed = 'pop';
+  String discoverImageUrl = 'https://t.scdn.co/images/37i9dQZF1DXcBWIGoYBM3M.jpeg';
+  
+  for (final genre in genres) {
+    final id = genre['id'] as String;
+    if (validSeeds.contains(id)) {
+      discoverSeed = id;
+      discoverImageUrl = (genre['icons'] as List?)?.firstOrNull?['url'] ?? discoverImageUrl;
+      break;
+    }
   }
+
+  mixes.add({
+    'type': 'genre',
+    'id': discoverSeed,
+    'name': 'Discover Weekly',
+    'subtitle': 'New music based on your favorite genres.',
+    'imageUrl': discoverImageUrl,
+    'title': 'Discover Weekly',
+    'color1': const Color(0xFF4CAF50),
+    'color2': const Color(0xFF8BC34A),
+  });
 
   // Release Radar
   mixes.add({
     'type': 'genre',
-    'id': 'pop', // fallback
+    'id': 'new-release',
     'name': 'Release Radar',
-    'subtitle': 'Catch up on the latest releases from artists you follow.',
+    'subtitle': 'Catch up on the latest releases.',
     'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DXcBWIGoYBM3M.jpeg', // Pop icon
     'title': 'Release Radar',
     'color1': const Color(0xFFFF9800),
@@ -244,12 +260,31 @@ class HomeScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionHeader('Jump Back In').animate().fadeIn(delay: 400.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  recentlyPlayed.when(
-                    data: (tracks) {
-                      if (tracks.isEmpty) return const SizedBox.shrink();
-                      return GridView.builder(
+                  SectionWrapper<Track>(
+                    title: 'Jump Back In',
+                    asyncValue: recentlyPlayed,
+                    topPadding: 24,
+                    builder: (tracks) => GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 3,
+                      ),
+                      itemCount: tracks.length.clamp(0, 6),
+                      itemBuilder: (context, index) {
+                        final track = tracks[index];
+                        return _HistoryCard(
+                          track: track,
+                          onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
+                        ).animate().fadeIn(delay: (400 + (index * 50)).ms).scale(begin: const Offset(0.9, 0.9));
+                      },
+                    ),
+                    loadingWidget: SizedBox(
+                      height: 180,
+                      child: GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -258,135 +293,114 @@ class HomeScreen extends ConsumerWidget {
                           mainAxisSpacing: 12,
                           childAspectRatio: 3,
                         ),
-                        itemCount: tracks.length.clamp(0, 6),
+                        itemCount: 6,
+                        itemBuilder: (_, _) => const ShimmerPlaceholder(borderRadius: 16),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SectionWrapper<Map<String, dynamic>>(
+                    title: 'Popular Artists',
+                    asyncValue: popularArtists,
+                    builder: (artists) => SizedBox(
+                      height: 170,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: artists.length,
                         itemBuilder: (context, index) {
-                          final track = tracks[index];
-                          return _HistoryCard(
-                            track: track,
-                            onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
-                          ).animate().fadeIn(delay: (400 + (index * 50)).ms).scale(begin: const Offset(0.9, 0.9));
+                          final artist = artists[index];
+                          final imageUrl = (artist['images'] as List?)?.firstOrNull?['url'] ?? '';
+                          return _ArtistCircle(
+                            name: artist['name'],
+                            imageUrl: imageUrl,
+                            onTap: () => context.push('/artist/${artist['id']}'),
+                          ).animate().fadeIn(delay: (650 + (index * 100)).ms).scale(begin: const Offset(0.8, 0.8));
                         },
-                      );
-                    },
-                    loading: () => const _LoadingPlaceholder(height: 100),
-                    error: (e, _) => Text('Error: $e'),
+                      ),
+                    ),
+                    loadingWidget: const SectionShimmer(height: 170),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Artists').animate().fadeIn(delay: 550.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  popularArtists.when(
-                    data: (artists) {
-                      if (artists.isEmpty) return const SizedBox.shrink();
-                      return SizedBox(
-                        height: 170,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: artists.length,
-                          itemBuilder: (context, index) {
-                            final artist = artists[index];
-                            final imageUrl = (artist['images'] as List?)?.firstOrNull?['url'] ?? '';
-                            return _ArtistCircle(
-                              name: artist['name'],
-                              imageUrl: imageUrl,
-                              onTap: () => context.push('/artist/${artist['id']}'),
-                            ).animate().fadeIn(delay: (650 + (index * 100)).ms).scale(begin: const Offset(0.8, 0.8));
-                          },
-                        ),
-                      );
-                    },
-                    loading: () => const _LoadingPlaceholder(height: 170),
-                    error: (e, _) => Text('Error: $e'),
+                  SectionWrapper<Map<String, dynamic>>(
+                    title: 'Made For You',
+                    asyncValue: madeForYouMixes,
+                    builder: (mixes) => SizedBox(
+                      height: 230,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: mixes.length,
+                        itemBuilder: (context, index) {
+                          final mix = mixes[index];
+                          return _SpotifyMixCard(
+                            title: mix['title'],
+                            subtitle: mix['subtitle'],
+                            imageUrl: mix['imageUrl'],
+                            color1: mix['color1'] as Color,
+                            color2: mix['color2'] as Color,
+                            onTap: () => context.push(
+                              Uri(
+                                path: '/radio/${mix['type']}/${mix['id']}',
+                                queryParameters: {
+                                  'title': mix['title'],
+                                  'imageUrl': mix['imageUrl'],
+                                  'subtitle': mix['subtitle'] ?? '',
+                                },
+                              ).toString(),
+                              extra: <String, dynamic>{
+                                'color1': mix['color1'],
+                                'color2': mix['color2'],
+                              },
+                            ),
+                          ).animate(delay: (700 + index * 100).ms).fadeIn().scale(begin: const Offset(0.8, 0.8));
+                        },
+                      ),
+                    ),
+                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Made For You').animate().fadeIn(delay: 600.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  madeForYouMixes.when(
-                    data: (mixes) {
-                      if (mixes.isEmpty) return const SizedBox.shrink();
-                      return SizedBox(
-                        height: 230,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: mixes.length,
-                          itemBuilder: (context, index) {
-                            final mix = mixes[index];
-                            return _SpotifyMixCard(
-                              title: mix['title'],
-                              subtitle: mix['subtitle'],
-                              imageUrl: mix['imageUrl'],
-                              color1: mix['color1'] as Color,
-                              color2: mix['color2'] as Color,
-                                onTap: () => context.push(
-                                  Uri(
-                                    path: '/radio/${mix['type']}/${mix['id']}',
-                                    queryParameters: {
-                                      'title': mix['title'],
-                                      'imageUrl': mix['imageUrl'],
-                                      'subtitle': mix['subtitle'] ?? '',
-                                    },
-                                  ).toString(),
-                                  extra: <String, dynamic>{
-                                    'color1': mix['color1'],
-                                    'color2': mix['color2'],
-                                  },
-                                ),
-                            ).animate(delay: (700 + index * 100).ms).fadeIn().scale(begin: const Offset(0.8, 0.8));
-                          },
-                        ),
-                      );
-                    },
-                    loading: () => const _LoadingPlaceholder(height: 230),
-                    error: (e, _) => Text('Error: $e'),
+                  SectionWrapper<Map<String, dynamic>>(
+                    title: 'Suggested Stations',
+                    asyncValue: suggestedStations,
+                    builder: (radios) => SizedBox(
+                      height: 230,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: radios.length,
+                        itemBuilder: (context, index) {
+                          final radio = radios[index];
+                          return _RadioCard(
+                            title: radio['title'],
+                            imageUrl: radio['imageUrl'],
+                            onTap: () => context.push(
+                              Uri(
+                                path: '/radio/${radio['type']}/${radio['id']}',
+                                queryParameters: {
+                                  'title': radio['title'],
+                                  'imageUrl': radio['imageUrl'],
+                                },
+                              ).toString(),
+                            ),
+                          ).animate().fadeIn(delay: (900 + index * 100).ms).scale(begin: const Offset(0.9, 0.9));
+                        },
+                      ),
+                    ),
+                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Suggested Stations').animate().fadeIn(delay: 800.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  suggestedStations.when(
-                    data: (radios) {
-                      if (radios.isEmpty) return const SizedBox.shrink();
-                      return SizedBox(
-                        height: 230,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: radios.length,
-                          itemBuilder: (context, index) {
-                            final radio = radios[index];
-                            return _RadioCard(
-                              title: radio['title'],
-                              imageUrl: radio['imageUrl'],
-                              onTap: () => context.push(
-                                Uri(
-                                  path: '/radio/${radio['type']}/${radio['id']}',
-                                  queryParameters: {
-                                    'title': radio['title'],
-                                    'imageUrl': radio['imageUrl'],
-                                  },
-                                ).toString(),
-                              ),
-                            ).animate().fadeIn(delay: (900 + index * 100).ms).scale(begin: const Offset(0.9, 0.9));
-                          },
-                        ),
-                      );
-                    },
-                    loading: () => const _LoadingPlaceholder(height: 230),
-                    error: (e, _) => Text('Error: $e'),
-                  ),
-                  const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Albums').animate().fadeIn(delay: 1000.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  popularAlbums.when(
-                    data: (albums) => _HorizontalList(
+                  SectionWrapper<Map<String, dynamic>>(
+                    title: 'Popular Albums',
+                    asyncValue: popularAlbums,
+                    builder: (albums) => _HorizontalList(
                       items: albums,
                       onTap: (item) => context.push("/album/${item['id']}"),
                     ).animate().fadeIn(delay: 1100.ms).slideY(begin: 0.1),
-                    loading: () => const _LoadingPlaceholder(height: 230),
-                    error: (e, _) => Text('Error: $e'),
+                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Genres').animate().fadeIn(delay: 1200.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  genres.when(
-                    data: (items) => SizedBox(
+                  SectionWrapper<Map<String, dynamic>>(
+                    title: 'Popular Genres',
+                    asyncValue: genres,
+                    builder: (items) => SizedBox(
                       height: 140,
                       child: GridView.builder(
                         scrollDirection: Axis.horizontal,
@@ -415,27 +429,25 @@ class HomeScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    loading: () => const _LoadingPlaceholder(height: 140),
-                    error: (e, _) => Text('Error: $e'),
+                    loadingWidget: const SectionShimmer(height: 140),
                   ),
                   const SizedBox(height: 32),
                   const BannerAdWidget(),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('New Releases').animate().fadeIn(delay: 1400.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  newReleases.when(
-                    data: (items) => _HorizontalList(
+                  SectionWrapper<Map<String, dynamic>>(
+                    title: 'New Releases',
+                    asyncValue: newReleases,
+                    builder: (items) => _HorizontalList(
                       items: items,
                       onTap: (item) => context.push("/album/${item['id']}"),
                     ).animate().fadeIn(delay: 1500.ms).slideY(begin: 0.1),
-                    loading: () => const _LoadingPlaceholder(height: 230),
-                    error: (e, _) => Text('Error: $e'),
+                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Featured Playlists').animate().fadeIn(delay: 1600.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  featuredPlaylists.when(
-                    data: (items) => _HorizontalList(
+                  SectionWrapper<Map<String, dynamic>>(
+                    title: 'Featured Playlists',
+                    asyncValue: featuredPlaylists,
+                    builder: (items) => _HorizontalList(
                       items: items,
                       onTap: (item) => context.push(
                         Uri(
@@ -444,14 +456,13 @@ class HomeScreen extends ConsumerWidget {
                         ).toString(),
                       ),
                     ).animate().fadeIn(delay: 1700.ms).slideY(begin: 0.1),
-                    loading: () => const _LoadingPlaceholder(height: 230),
-                    error: (e, _) => Text('Error: $e'),
+                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Tracks').animate().fadeIn(delay: 1800.ms).slideX(begin: -0.1),
-                  const SizedBox(height: 16),
-                  popularTracks.when(
-                    data: (tracks) => SizedBox(
+                  SectionWrapper<Track>(
+                    title: 'Popular Tracks',
+                    asyncValue: popularTracks,
+                    builder: (tracks) => SizedBox(
                       height: 230,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -480,8 +491,7 @@ class HomeScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    loading: () => const _LoadingPlaceholder(height: 230),
-                    error: (e, _) => Text('Error: $e'),
+                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
                 ],
@@ -493,39 +503,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        children: [
-          Container(
-            width: 4,
-            height: 24,
-            decoration: BoxDecoration(
-              color: const Color(0xFF1DB954),
-              borderRadius: BorderRadius.circular(2),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF1DB954).withValues(alpha: 0.5),
-                  blurRadius: 8,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
-              letterSpacing: -0.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 }
 
 class _HorizontalList extends ConsumerWidget {
@@ -975,18 +953,7 @@ class _ArtistCircle extends StatelessWidget {
   }
 }
 
-class _LoadingPlaceholder extends StatelessWidget {
-  const _LoadingPlaceholder({required this.height});
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      child: const Center(child: CircularProgressIndicator()),
-    );
-  }
-}
+// _LoadingPlaceholder class removed as it is replaced by ShimmerPlaceholder
 
 class _RadioCard extends StatelessWidget {
   final String title;

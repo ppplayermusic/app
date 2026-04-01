@@ -6,10 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/player/player_provider.dart';
+import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
 import '../../core/providers/genre_providers.dart';
+import '../../shared/widgets/shimmer_placeholder.dart';
 
 final categoryColorProvider = Provider.family<Color, String>((ref, name) {
   final colors = [
@@ -278,129 +280,68 @@ class GenreDetailsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverToBoxAdapter(child: _buildSectionHeader('Featured Playlists')),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverToBoxAdapter(
-            child: playlistsAsync.when(
-              data: (playlists) => _PlaylistList(playlists: playlists)
+            child: SectionWrapper<Map<String, dynamic>>(
+              title: 'Featured Playlists',
+              asyncValue: playlistsAsync,
+              builder: (playlists) => _PlaylistList(playlists: playlists)
                   .animate()
                   .fadeIn(delay: 100.ms)
                   .slideY(begin: 0.1),
-              loading: () => const _LoadingPlaceholder(height: 220),
-              error: (e, _) => Center(
-                  child: Text('Error: $e',
-                      style: const TextStyle(color: Colors.white54))),
+              loadingWidget: const SectionShimmer(height: 220),
             ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverToBoxAdapter(child: _buildSectionHeader('Popular Songs')),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
-          tracksAsync.when(
-            data: (tracks) => SliverPadding(
-              padding: const EdgeInsets.only(top: 8, bottom: 120),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final track = tracks[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 2),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 32,
-                            child: Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.4),
-                                fontSize: 13,
-                                fontFamily: 'monospace',
-                                fontWeight: FontWeight.w400,
+          SliverToBoxAdapter(
+            child: SectionWrapper<Track>(
+              title: 'Popular Songs',
+              asyncValue: tracksAsync,
+              builder: (tracks) => Padding(
+                padding: const EdgeInsets.only(bottom: 120),
+                child: Column(
+                  children: [
+                    for (int index = 0; index < tracks.length; index++) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 32,
+                              child: Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.4),
+                                  fontSize: 13,
+                                  fontFamily: 'monospace',
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: TrackTile(
-                              track: track,
-                              onTap: () => ref
-                                  .read(playerProvider.notifier)
-                                  .playTrack(track, queue: tracks),
+                            Expanded(
+                              child: TrackTile(
+                                track: tracks[index],
+                                onTap: () => ref
+                                    .read(playerProvider.notifier)
+                                    .playTrack(tracks[index], queue: tracks),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ).animate().fadeIn(delay: (200 + index * 40).ms).slideX(
-                        begin: 0.05, end: 0, curve: Curves.easeOutCubic);
-                  },
-                  childCount: tracks.length,
+                          ],
+                        ),
+                      ).animate().fadeIn(delay: (200 + index * 40).ms).slideX(
+                          begin: 0.05, end: 0, curve: Curves.easeOutCubic),
+                    ],
+                  ],
                 ),
               ),
+              loadingWidget: const SectionShimmer(height: 200),
             ),
-            loading: () => const SliverToBoxAdapter(
-                child: _LoadingPlaceholder(height: 200)),
-            error: (e, _) => SliverToBoxAdapter(
-                child: Center(
-                    child: Text('Error: $e',
-                        style: const TextStyle(color: Colors.white54)))),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1), width: 0.5),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 3,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1DB954),
-                  borderRadius: BorderRadius.circular(1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF1DB954).withValues(alpha: 0.5),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                title.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 2.5,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
 }
 
 class _PlaylistList extends StatelessWidget {
@@ -497,15 +438,4 @@ class _PlaylistList extends StatelessWidget {
 
 // _AlbumList removed as it's not used in current GenreDetails redesign
 
-class _LoadingPlaceholder extends StatelessWidget {
-  final double height;
-  const _LoadingPlaceholder({required this.height});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      child: const Center(child: CircularProgressIndicator()),
-    );
-  }
-}
+// _LoadingPlaceholder class removed as it is replaced by ShimmerPlaceholder

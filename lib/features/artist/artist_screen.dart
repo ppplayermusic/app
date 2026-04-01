@@ -6,9 +6,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
+import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/db/app_database.dart' as db;
+import '../../shared/widgets/shimmer_placeholder.dart';
 
 final _artistProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -387,423 +389,392 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             ).animate().scale(delay: 200.ms, duration: 400.ms, curve: Curves.easeOutBack),
                           ],
                         ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, curve: Curves.easeOutCubic),
-                        const SizedBox(height: 48),
                       ],
-                      if (_isSearching)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 24),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
-                                ),
-                                child: TextField(
-                                  controller: _searchController,
-                                  style: const TextStyle(color: Colors.white, fontSize: 15),
-                                  cursorColor: const Color(0xFF1DB954),
-                                  decoration: InputDecoration(
-                                    hintText: 'Search popular songs...',
-                                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-                                    border: InputBorder.none,
-                                    icon: const Icon(Icons.search_rounded, color: Colors.white30, size: 22),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _searchQuery = value.toLowerCase();
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                          ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0),
-                        ),
-                      _buildSectionHeader('POPULAR'),
-                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
               ),
-              tracksAsync.when(
-                loading: () => const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(48.0),
-                      child: Center(child: CircularProgressIndicator(color: Color(0xFF1DB954), strokeWidth: 2)),
-                    )),
-                error: (e, _) => SliverToBoxAdapter(child: Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white30)))),
-                data: (items) {
-                  var tracks = items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
-                  
-                  if (_searchQuery.isNotEmpty) {
-                    tracks = tracks.where((t) => t.name.toLowerCase().contains(_searchQuery)).toList();
-                  }
+              SliverToBoxAdapter(
+                child: SectionWrapper<dynamic>(
+                  title: 'POPULAR',
+                  asyncValue: tracksAsync,
+                  builder: (items) {
+                    var tracks = items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
+                    
+                    if (_searchQuery.isNotEmpty) {
+                      tracks = tracks.where((t) => t.name.toLowerCase().contains(_searchQuery)).toList();
+                    }
 
-                  if (tracks.isEmpty && _searchQuery.isNotEmpty) {
-                    return SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.all(64.0),
-                        child: Column(
-                          children: [
-                            Icon(Icons.search_off_rounded, size: 48, color: Colors.white.withValues(alpha: 0.1)),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No tracks found for "$_searchQuery"',
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (_, i) {
-                          final track = tracks[i];
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.03),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Colors.white.withValues(alpha: 0.05),
-                                      Colors.white.withValues(alpha: 0.01),
-                                    ],
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_isSearching)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.05),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
                                   ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 28,
-                                        child: Text(
-                                          '${i + 1}',
-                                          style: TextStyle(
-                                            color: Colors.white.withValues(alpha: 0.2),
-                                            fontSize: 12,
-                                            fontFamily: 'monospace',
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: TrackTile(
-                                          track: track,
-                                          onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
-                                        ),
-                                      ),
-                                    ],
+                                  child: TextField(
+                                    controller: _searchController,
+                                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                                    cursorColor: const Color(0xFF1DB954),
+                                    decoration: InputDecoration(
+                                      hintText: 'Search popular songs...',
+                                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                                      border: InputBorder.none,
+                                      icon: const Icon(Icons.search_rounded, color: Colors.white30, size: 22),
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _searchQuery = value.toLowerCase();
+                                      });
+                                    },
                                   ),
                                 ),
                               ),
-                            ),
-                          ).animate(delay: (i * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0);
-                        },
-                        childCount: tracks.length,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              if (!_isSearching) ...[
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 20),
-                    child: _buildSectionHeader('ALBUMS'),
-                  ),
-                ),
-                albumsAsync.when(
-                  loading: () => const SliverToBoxAdapter(child: SizedBox()),
-                  error: (e, _) => const SliverToBoxAdapter(child: SizedBox()),
-                  data: (items) => SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: 250,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: items.length,
-                        itemBuilder: (context, i) {
-                          final album = items[i] as Map<String, dynamic>;
-                          final imgs = (album['images'] as List?) ?? [];
-                          final imageUrl = imgs.isNotEmpty ? imgs[0]['url'] as String : '';
-
-                          return TactileTap(
-                            onTap: () => context.push("/album/${album['id']}"),
-                            scaleDown: 0.98,
-                            child: Container(
-                              width: 160,
-                              margin: const EdgeInsets.only(right: 20),
+                            ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0),
+                          ),
+                        if (tracks.isEmpty && _searchQuery.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(64.0),
+                            child: Center(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.3),
-                                          blurRadius: 20,
-                                          offset: const Offset(0, 10),
-                                        ),
-                                      ],
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(16),
-                                      child: CachedNetworkImage(
-                                        imageUrl: imageUrl,
-                                        height: 160,
-                                        width: 160,
-                                        fit: BoxFit.cover,
-                                        placeholder: (_, _) => Container(color: const Color(0xFF1A1A1A)),
-                                      ),
-                                    ),
-                                  ),
+                                  Icon(Icons.search_off_rounded, size: 48, color: Colors.white.withValues(alpha: 0.1)),
                                   const SizedBox(height: 16),
                                   Text(
-                                    album['name'] as String,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      letterSpacing: -0.2,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    album['release_date']?.toString().substring(0, 4) ?? '',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white.withValues(alpha: 0.3),
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                    'No tracks found for "$_searchQuery"',
+                                    style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),
                             ),
-                          ).animate(delay: (i * 100).ms).fadeIn(duration: 500.ms).scale(begin: const Offset(0.9, 0.9));
-                        },
-                      ),
+                          )
+                        else
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Column(
+                              children: [
+                                for (int i = 0; i < tracks.length; i++) ...[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                      child: Container(
+                                        margin: const EdgeInsets.only(bottom: 8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(alpha: 0.03),
+                                          borderRadius: BorderRadius.circular(16),
+                                          border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Colors.white.withValues(alpha: 0.05),
+                                              Colors.white.withValues(alpha: 0.01),
+                                            ],
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 28,
+                                                child: Text(
+                                                  '${i + 1}',
+                                                  style: TextStyle(
+                                                    color: Colors.white.withValues(alpha: 0.2),
+                                                    fontSize: 12,
+                                                    fontFamily: 'monospace',
+                                                    fontWeight: FontWeight.w900,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: TrackTile(
+                                                  track: tracks[i],
+                                                  onTap: () => ref.read(playerProvider.notifier).playTrack(tracks[i], queue: tracks),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ).animate(delay: (i * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0),
+                                ],
+                              ],
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                  loadingWidget: const SectionShimmer(height: 200),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: SectionWrapper<dynamic>(
+                  title: 'ALBUMS',
+                  asyncValue: albumsAsync,
+                  builder: (items) => SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: items.length,
+                      itemBuilder: (context, i) {
+                        final album = items[i] as Map<String, dynamic>;
+                        final imgs = (album['images'] as List?) ?? [];
+                        final imageUrl = imgs.isNotEmpty ? imgs[0]['url'] as String : '';
+
+                        return TactileTap(
+                          onTap: () => context.push("/album/${album['id']}"),
+                          scaleDown: 0.98,
+                          child: Container(
+                            width: 160,
+                            margin: const EdgeInsets.only(right: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.3),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 10),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: CachedNetworkImage(
+                                      imageUrl: imageUrl,
+                                      height: 160,
+                                      width: 160,
+                                      fit: BoxFit.cover,
+                                      placeholder: (_, _) => Container(color: const Color(0xFF1A1A1A)),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  album['name'] as String,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    letterSpacing: -0.2,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  album['release_date']?.toString().substring(0, 4) ?? '',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white.withValues(alpha: 0.3),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ).animate(delay: (i * 100).ms).fadeIn(duration: 500.ms).scale(begin: const Offset(0.9, 0.9));
+                      },
                     ),
                   ),
+                  loadingWidget: const SectionShimmer(height: 250),
                 ),
-                relatedAsync.when(
-                  loading: () => const SliverToBoxAdapter(child: SizedBox()),
-                  error: (e, _) => const SliverToBoxAdapter(child: SizedBox()),
-                  data: (artists) {
-                    if (artists.isEmpty) return const SliverToBoxAdapter(child: SizedBox());
-                    return SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
-                            child: _buildSectionHeader('FANS ALSO LIKE'),
-                          ),
-                          SizedBox(
-                            height: 190,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              physics: const BouncingScrollPhysics(),
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              itemCount: artists.length,
-                              itemBuilder: (context, i) {
-                                final rArtist = artists[i];
-                                final rImgs = (rArtist['images'] as List?) ?? [];
-                                final rImgUrl = rImgs.isNotEmpty ? rImgs[0]['url'] as String : '';
+              ),
+              SliverToBoxAdapter(
+                child: SectionWrapper<Map<String, dynamic>>(
+                  title: 'FANS ALSO LIKE',
+                  asyncValue: relatedAsync,
+                  builder: (artists) => SizedBox(
+                    height: 190,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: artists.length,
+                      itemBuilder: (context, i) {
+                        final rArtist = artists[i];
+                        final rImgs = (rArtist['images'] as List?) ?? [];
+                        final rImgUrl = rImgs.isNotEmpty ? rImgs[0]['url'] as String : '';
 
-                                return TactileTap(
-                                  onTap: () => context.push("/artist/${rArtist['id']}"),
-                                  scaleDown: 0.92,
-                                  child: Container(
-                                    width: 140,
-                                    margin: const EdgeInsets.only(right: 16),
-                                    child: Column(
+                        return TactileTap(
+                          onTap: () => context.push("/artist/${rArtist['id']}"),
+                          scaleDown: 0.92,
+                          child: Container(
+                            width: 140,
+                            margin: const EdgeInsets.only(right: 16),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: 130,
+                                  height: 130,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.5),
+                                        blurRadius: 30,
+                                        spreadRadius: -10,
+                                        offset: const Offset(0, 15),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipOval(
+                                    child: CachedNetworkImage(
+                                      imageUrl: rImgUrl,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Container(
+                                        color: Colors.white.withValues(alpha: 0.05),
+                                        child: const Icon(Icons.person, color: Colors.white10),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  rArtist['name'] as String,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 13,
+                                    letterSpacing: -0.2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ).animate(delay: (i * 80).ms).fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutBack);
+                      },
+                    ),
+                  ),
+                  loadingWidget: const SectionShimmer(height: 190),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: SectionWrapper<Map<String, dynamic>>(
+                  title: 'FEATURING ${artistName.toUpperCase()}',
+                  asyncValue: playlistsAsync,
+                  builder: (playlists) => SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: playlists.length,
+                      itemBuilder: (context, i) {
+                        final playlist = playlists[i];
+                        final pImgs = (playlist['images'] as List?) ?? [];
+                        final pImgUrl = pImgs.isNotEmpty ? pImgs[0]['url'] as String : '';
+
+                        return TactileTap(
+                          onTap: () {
+                            final id = playlist['id'];
+                            final name = playlist['name'] as String;
+                            context.push('/spotify-playlist/$id?name=${Uri.encodeComponent(name)}');
+                          },
+                          scaleDown: 0.96,
+                          child: Container(
+                            width: 170,
+                            margin: const EdgeInsets.only(right: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.4),
+                                        blurRadius: 25,
+                                        spreadRadius: -5,
+                                        offset: const Offset(0, 15),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Stack(
                                       children: [
-                                        Container(
-                                          width: 130,
-                                          height: 130,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.5),
-                                                blurRadius: 30,
-                                                spreadRadius: -10,
-                                                offset: const Offset(0, 15),
-                                              ),
-                                            ],
-                                          ),
-                                          child: ClipOval(
-                                            child: CachedNetworkImage(
-                                              imageUrl: rImgUrl,
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) => Container(
-                                                color: Colors.white.withValues(alpha: 0.05),
-                                                child: const Icon(Icons.person, color: Colors.white10),
-                                              ),
-                                            ),
+                                        CachedNetworkImage(
+                                          imageUrl: pImgUrl,
+                                          width: 170,
+                                          height: 170,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => Container(
+                                            color: Colors.white.withValues(alpha: 0.05),
+                                            child: const Center(child: CircularProgressIndicator(strokeWidth: 1, color: Colors.white10)),
                                           ),
                                         ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          rArtist['name'] as String,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 13,
-                                            letterSpacing: -0.2,
+                                        Positioned(
+                                          bottom: 8,
+                                          right: 8,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black.withValues(alpha: 0.6),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(Icons.playlist_play_rounded, color: Colors.white, size: 14),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ).animate(delay: (i * 80).ms).fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutBack);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                playlistsAsync.when(
-                  loading: () => const SliverToBoxAdapter(child: SizedBox()),
-                  error: (e, _) => const SliverToBoxAdapter(child: SizedBox()),
-                  data: (playlists) {
-                    if (playlists.isEmpty) return const SliverToBoxAdapter(child: SizedBox());
-                    return SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
-                            child: _buildSectionHeader('FEATURING ${artistName.toUpperCase()}'),
-                          ),
-                          SizedBox(
-                            height: 250,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              physics: const BouncingScrollPhysics(),
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              itemCount: playlists.length,
-                              itemBuilder: (context, i) {
-                                final playlist = playlists[i];
-                                final pImgs = (playlist['images'] as List?) ?? [];
-                                final pImgUrl = pImgs.isNotEmpty ? pImgs[0]['url'] as String : '';
-
-                                return TactileTap(
-                                  onTap: () {
-                                    final id = playlist['id'];
-                                    final name = playlist['name'] as String;
-                                    context.push('/spotify-playlist/$id?name=${Uri.encodeComponent(name)}');
-                                  },
-                                  scaleDown: 0.96,
-                                  child: Container(
-                                    width: 170,
-                                    margin: const EdgeInsets.only(right: 20),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(20),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.4),
-                                                blurRadius: 25,
-                                                spreadRadius: -5,
-                                                offset: const Offset(0, 15),
-                                              ),
-                                            ],
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(20),
-                                            child: Stack(
-                                              children: [
-                                                CachedNetworkImage(
-                                                  imageUrl: pImgUrl,
-                                                  width: 170,
-                                                  height: 170,
-                                                  fit: BoxFit.cover,
-                                                  placeholder: (context, url) => Container(
-                                                    color: Colors.white.withValues(alpha: 0.05),
-                                                    child: const Center(child: CircularProgressIndicator(strokeWidth: 1, color: Colors.white10)),
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  bottom: 8,
-                                                  right: 8,
-                                                  child: Container(
-                                                    padding: const EdgeInsets.all(6),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.black.withValues(alpha: 0.6),
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: const Icon(Icons.playlist_play_rounded, color: Colors.white, size: 14),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          playlist['name'] as String,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 14,
-                                            letterSpacing: -0.2,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Spotify Playlist • ${playlist['tracks']?['total'] ?? 0} tracks',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.white.withValues(alpha: 0.3),
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 0.2,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  playlist['name'] as String,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 14,
+                                    letterSpacing: -0.2,
                                   ),
-                                ).animate(delay: (i * 100).ms).fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic);
-                              },
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Spotify Playlist • ${playlist['tracks']?['total'] ?? 0} tracks',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.white.withValues(alpha: 0.3),
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    );
-                  },
+                        ).animate(delay: (i * 100).ms).fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic);
+                      },
+                    ),
+                  ),
+                  loadingWidget: const SectionShimmer(height: 250),
                 ),
-              ],
+              ),
               const SliverToBoxAdapter(child: SizedBox(height: 120)),
             ],
           );
@@ -811,52 +782,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
       ),
     );
   }
-
-  Widget _buildSectionHeader(String title) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 3,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1DB954),
-                  borderRadius: BorderRadius.circular(1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF1DB954).withValues(alpha: 0.5),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                title.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 2.5,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
+
+
 
