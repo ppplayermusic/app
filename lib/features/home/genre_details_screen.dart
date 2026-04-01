@@ -139,58 +139,62 @@ class GenreDetailsScreen extends ConsumerWidget {
                         ),
                       ),
                       Positioned(
-                        left: 20,
-                        right: 20,
-                        bottom: 40,
+                        left: 0,
+                        right: 0,
+                        bottom: 32,
                         child: AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
                           opacity: isCollapsed ? 0.0 : 1.0,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.2)),
-                                ),
-                                child: const Text(
-                                  'GENRE',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 1.5,
+                          child: Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.1),
+                                      width: 0.5,
+                                    ),
                                   ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'GENRE',
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.5),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 3.0,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        categoryName,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: -2.5,
+                                          height: 1.0,
+                                          shadows: [
+                                            Shadow(
+                                              color: Colors.black45,
+                                              blurRadius: 30,
+                                              offset: Offset(0, 15),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                categoryName,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 72,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: -4.0,
-                                  height: 0.8,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black45,
-                                      blurRadius: 40,
-                                      offset: Offset(0, 20),
-                                    ),
-                                  ],
-                                ),
-                              ).animate().fadeIn(duration: 600.ms).slideY(
-                                  begin: 0.1,
-                                  end: 0,
-                                  curve: Curves.easeOutCubic),
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -231,7 +235,11 @@ class GenreDetailsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          _buildSliverSectionHeader('Featured Playlists'),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverToBoxAdapter(child: _buildSectionHeader('Featured Playlists')),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverToBoxAdapter(
             child: playlistsAsync.when(
               data: (playlists) => _PlaylistList(playlists: playlists)
@@ -245,7 +253,11 @@ class GenreDetailsScreen extends ConsumerWidget {
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
-          _buildSliverSectionHeader('Popular Songs'),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverToBoxAdapter(child: _buildSectionHeader('Popular Songs')),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
           tracksAsync.when(
             data: (tracks) => SliverPadding(
               padding: const EdgeInsets.only(top: 8, bottom: 120),
@@ -299,36 +311,50 @@ class GenreDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSliverSectionHeader(String title) {
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        child: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
-                border: Border.symmetric(
-                  horizontal: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    width: 0.5,
-                  ),
+  Widget _buildSectionHeader(String title) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+                color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 3,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1DB954),
+                  borderRadius: BorderRadius.circular(1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF1DB954).withValues(alpha: 0.5),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                  ],
                 ),
               ),
-              child: Text(
-                title,
+              const SizedBox(width: 12),
+              Text(
+                title.toUpperCase(),
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 12,
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
-                  letterSpacing: -0.5,
+                  letterSpacing: 2.5,
                 ),
               ),
-            ),
+            ],
           ),
-        ).animate().fadeIn(duration: 400.ms),
+        ),
       ),
     );
   }
