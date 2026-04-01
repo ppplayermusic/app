@@ -88,7 +88,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['artists'] as List?) ?? [];
-    return items.cast<Map<String, dynamic>>();
+    return items.whereType<Map<String, dynamic>>().toList();
   }
 
   Future<List<dynamic>> getArtistTopTracks(String artistId) async {
@@ -97,7 +97,8 @@ class SpotifyClient {
       queryParameters: {'market': market},
       options: Options(headers: await _authHeaders()),
     );
-    return response.data['tracks'] as List<dynamic>;
+    final items = (response.data['tracks'] as List?) ?? [];
+    return items;
   }
 
   Future<List<dynamic>> getArtistAlbums(String artistId,
@@ -111,7 +112,8 @@ class SpotifyClient {
       },
       options: Options(headers: await _authHeaders()),
     );
-    return response.data['items'] as List<dynamic>;
+    final items = (response.data['items'] as List?) ?? [];
+    return items;
   }
 
   // --- Album ---
@@ -135,7 +137,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['albums'] as List?) ?? [];
-    return items.cast<Map<String, dynamic>>();
+    return items.whereType<Map<String, dynamic>>().toList();
   }
 
   Future<List<Track>> getAlbumTracks(String albumId) async {
@@ -168,7 +170,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['albums']['items'] as List?) ?? [];
-    return items.cast<Map<String, dynamic>>();
+    return items.whereType<Map<String, dynamic>>().toList();
   }
 
   Future<List<Track>> getRecommendations({
@@ -204,7 +206,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']['items'] as List?) ?? [];
-    return items.cast<Map<String, dynamic>>();
+    return items.whereType<Map<String, dynamic>>().toList();
   }
 
   Future<List<Track>> getPlaylistTracks(String playlistId, {int limit = 20}) async {
@@ -233,7 +235,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['categories']['items'] as List?) ?? [];
-    return items.cast<Map<String, dynamic>>();
+    return items.whereType<Map<String, dynamic>>().toList();
   }
 
   Future<List<Map<String, dynamic>>> getCategoryPlaylists(String categoryId, {int limit = 20}) async {
@@ -246,7 +248,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']['items'] as List?) ?? [];
-    return items.cast<Map<String, dynamic>>();
+    return items.whereType<Map<String, dynamic>>().toList();
   }
 
   Future<List<Track>> getPopularTracks({int limit = 12}) async {
@@ -303,7 +305,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['artists'] as List?) ?? [];
-    return items.cast<Map<String, dynamic>>();
+    return items.whereType<Map<String, dynamic>>().toList();
   }
 
   Future<List<Map<String, dynamic>>> searchPlaylists(String query, {int limit = 20}) async {
@@ -318,7 +320,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']?['items'] as List?) ?? [];
-    return items.cast<Map<String, dynamic>>();
+    return items.whereType<Map<String, dynamic>>().toList();
   }
 }
 

@@ -278,7 +278,7 @@ class HomeScreen extends ConsumerWidget {
                     data: (artists) {
                       if (artists.isEmpty) return const SizedBox.shrink();
                       return SizedBox(
-                        height: 160,
+                        height: 170,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: artists.length,
@@ -294,7 +294,7 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       );
                     },
-                    loading: () => const _LoadingPlaceholder(height: 160),
+                    loading: () => const _LoadingPlaceholder(height: 170),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
@@ -304,7 +304,7 @@ class HomeScreen extends ConsumerWidget {
                     data: (mixes) {
                       if (mixes.isEmpty) return const SizedBox.shrink();
                       return SizedBox(
-                        height: 220,
+                        height: 230,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: mixes.length,
@@ -335,7 +335,7 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       );
                     },
-                    loading: () => const _LoadingPlaceholder(height: 220),
+                    loading: () => const _LoadingPlaceholder(height: 230),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
@@ -345,7 +345,7 @@ class HomeScreen extends ConsumerWidget {
                     data: (radios) {
                       if (radios.isEmpty) return const SizedBox.shrink();
                       return SizedBox(
-                        height: 200,
+                        height: 230,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: radios.length,
@@ -368,7 +368,7 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       );
                     },
-                    loading: () => const _LoadingPlaceholder(height: 180),
+                    loading: () => const _LoadingPlaceholder(height: 230),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
@@ -379,7 +379,7 @@ class HomeScreen extends ConsumerWidget {
                       items: albums,
                       onTap: (item) => context.push("/album/${item['id']}"),
                     ).animate().fadeIn(delay: 1100.ms).slideY(begin: 0.1),
-                    loading: () => const _LoadingPlaceholder(height: 200),
+                    loading: () => const _LoadingPlaceholder(height: 230),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
@@ -387,7 +387,7 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   genres.when(
                     data: (items) => SizedBox(
-                      height: 120,
+                      height: 140,
                       child: GridView.builder(
                         scrollDirection: Axis.horizontal,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -415,7 +415,7 @@ class HomeScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    loading: () => const _LoadingPlaceholder(height: 120),
+                    loading: () => const _LoadingPlaceholder(height: 140),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
@@ -428,7 +428,7 @@ class HomeScreen extends ConsumerWidget {
                       items: items,
                       onTap: (item) => context.push("/album/${item['id']}"),
                     ).animate().fadeIn(delay: 1500.ms).slideY(begin: 0.1),
-                    loading: () => const _LoadingPlaceholder(height: 200),
+                    loading: () => const _LoadingPlaceholder(height: 230),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
@@ -444,7 +444,7 @@ class HomeScreen extends ConsumerWidget {
                         ).toString(),
                       ),
                     ).animate().fadeIn(delay: 1700.ms).slideY(begin: 0.1),
-                    loading: () => const _LoadingPlaceholder(height: 200),
+                    loading: () => const _LoadingPlaceholder(height: 230),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
@@ -452,7 +452,7 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   popularTracks.when(
                     data: (tracks) => SizedBox(
-                      height: 200,
+                      height: 230,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: tracks.length + 1,
@@ -480,7 +480,7 @@ class HomeScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    loading: () => const _LoadingPlaceholder(height: 200),
+                    loading: () => const _LoadingPlaceholder(height: 230),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
@@ -536,7 +536,7 @@ class _HorizontalList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      height: 200,
+      height: 230,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: items.length + 1,
@@ -593,43 +593,83 @@ class _GenreCard extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.1),
             width: 0.5,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
+            // Background Glow
+            Positioned(
+              right: -20,
+              bottom: -20,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Colors.white.withValues(alpha: 0.05),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            
             if (imageUrl.isNotEmpty)
               Positioned(
-                right: -15,
-                bottom: -15,
+                right: -10,
+                bottom: -5,
                 child: Transform.rotate(
                   angle: 0.4,
                   child: Container(
                     decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 15,
+                          color: Colors.black.withValues(alpha: 0.5),
+                          blurRadius: 12,
+                          offset: const Offset(2, 2),
                         ),
                       ],
                     ),
-                    child: CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      width: 70,
-                      height: 70,
-                      fit: BoxFit.cover,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        width: 64,
+                        height: 64,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16,
-                  letterSpacing: -0.5,
-                ),
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                      letterSpacing: -0.5,
+                      color: Colors.white,
+                      height: 1.1,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

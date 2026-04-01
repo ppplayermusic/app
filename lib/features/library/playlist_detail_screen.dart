@@ -117,15 +117,16 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 340,
+            expandedHeight: 400,
             pinned: true,
             stretch: true,
-            backgroundColor: Colors.black.withValues(alpha: 0.8),
+            backgroundColor: Colors.transparent,
             elevation: 0,
             leading: TactileIconButton(
               icon: Icons.arrow_back_ios_new_rounded,
               onTap: () => context.pop(),
               color: Colors.white,
+              size: 20,
             ),
             actions: [
               TactileIconButton(
@@ -158,70 +159,160 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                 builder: (context, constraints) {
                   final isCollapsed =
                       constraints.maxHeight <= kToolbarHeight + 80;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: EdgeInsets.only(
-                      bottom: isCollapsed ? 12 : 20,
-                      left: 16,
-                      right: 16,
-                    ),
-                    child: isCollapsed
-                        ? ClipRRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: Text(
-                                _playlist!.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
+                  
+                  if (isCollapsed) {
+                    return ClipRRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                        child: Container(
+                          height: kToolbarHeight + 40,
+                          alignment: Alignment.bottomCenter,
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            _playlist!.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 18,
+                              letterSpacing: -0.5,
+                              color: Colors.white,
                             ),
-                          )
-                        : Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _playlist!.name,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 28,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(color: Colors.black45, blurRadius: 20),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                  );
+                          ).animate().fadeIn(duration: 200.ms),
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
                 },
               ),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  PlaylistCover(
-                    images: _allTracks
-                        .take(4)
-                        .map((t) => t.albumImage)
-                        .whereType<String>()
-                        .toList(),
-                    size: 380,
+                  // Base Background Color (Derived from first track art or default)
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFF509BF5).withValues(alpha: 0.8),
+                          const Color(0xFF509BF5).withValues(alpha: 0.4),
+                          Colors.black,
+                        ],
+                        stops: const [0.0, 0.4, 1.0],
+                      ),
+                    ),
                   ),
-                  const DecoratedBox(
+
+                  // Cinematic Ambient Mesh Pulsing Overlay
+                  Positioned.fill(
+                    child: Opacity(
+                      opacity: 0.6,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: RadialGradient(
+                            center: Alignment(-0.8, -0.6),
+                            radius: 1.5,
+                            colors: [
+                              Color(0xFF509BF5),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                      ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                        begin: const Offset(1, 1),
+                        end: const Offset(1.3, 1.3),
+                        duration: 10.seconds,
+                        curve: Curves.easeInOut,
+                      ).move(
+                        begin: const Offset(-20, -20),
+                        end: const Offset(20, 20),
+                        duration: 12.seconds,
+                        curve: Curves.easeInOut,
+                      ),
+                    ),
+                  ),
+
+                  // Dark Overlay for readability
+                  DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
+                          Colors.black.withValues(alpha: 0.2),
                           Colors.transparent,
-                          Colors.black54,
+                          Colors.black.withValues(alpha: 0.5),
                           Colors.black,
                         ],
-                        stops: [0.3, 0.7, 1.0],
+                        stops: const [0.0, 0.4, 0.7, 1.0],
                       ),
+                    ),
+                  ),
+
+                  // Hero Content
+                  Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 40,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Hero(
+                          tag: 'playlist_art_${_playlist!.id}',
+                          child: Container(
+                            width: 180,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black54,
+                                  blurRadius: 30,
+                                  offset: Offset(0, 10),
+                                ),
+                                BoxShadow(
+                                  color: Color(0x44509BF5),
+                                  blurRadius: 40,
+                                  spreadRadius: -5,
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: PlaylistCover(
+                                images: _allTracks
+                                    .take(4)
+                                    .map((t) => t.albumImage)
+                                    .whereType<String>()
+                                    .toList(),
+                                size: 180,
+                              ),
+                            ),
+                          ),
+                        ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9)),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'PLAYLIST',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                          ),
+                        ).animate().fadeIn(delay: 200.ms),
+                        const SizedBox(height: 8),
+                        Text(
+                          _playlist!.name,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 48,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -2,
+                            height: 1,
+                          ),
+                        ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0),
+                      ],
                     ),
                   ),
                 ],

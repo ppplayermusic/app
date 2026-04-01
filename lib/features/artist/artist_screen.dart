@@ -8,6 +8,7 @@ import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../core/db/app_database.dart' as db;
 
 final _artistProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -181,42 +182,73 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                           Positioned(
                             left: 0,
                             right: 0,
-                            bottom: 32,
+                            bottom: 48,
                             child: AnimatedOpacity(
                               duration: const Duration(milliseconds: 200),
                               opacity: isCollapsed ? 0.0 : 1.0,
                               child: Center(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: BackdropFilter(
-                                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withValues(alpha: 0.3),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: Colors.white.withValues(alpha: 0.1),
-                                          width: 0.5,
-                                        ),
+                                child: Container(
+                                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(24),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+                                        blurRadius: 40,
+                                        spreadRadius: 0,
                                       ),
-                                      child: Text(
-                                        artistName,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 48,
-                                          fontWeight: FontWeight.w900,
-                                          letterSpacing: -2.5,
-                                          height: 1.0,
-                                          shadows: [
-                                            Shadow(
-                                              color: Colors.black45,
-                                              blurRadius: 30,
-                                              offset: Offset(0, 15),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(24),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withValues(alpha: 0.3),
+                                          borderRadius: BorderRadius.circular(24),
+                                          border: Border.all(
+                                            color: Colors.white.withValues(alpha: 0.15),
+                                            width: 0.5,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'ARTIST',
+                                              style: TextStyle(
+                                                color: Colors.white.withValues(alpha: 0.5),
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w900,
+                                                letterSpacing: 4.0,
+                                              ),
                                             ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              artistName,
+                                              textAlign: TextAlign.center,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 48,
+                                                fontWeight: FontWeight.w900,
+                                                letterSpacing: -2.5,
+                                                height: 1.0,
+                                                shadows: [
+                                                  Shadow(
+                                                    color: Colors.black45,
+                                                    blurRadius: 30,
+                                                    offset: Offset(0, 15),
+                                                  ),
+                                                ],
+                                              ),
+                                            ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
                                           ],
                                         ),
-                                      ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -252,25 +284,48 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             Expanded(
                               child: Row(
                                 children: [
-                                  TactileTap(
-                                    onTap: () {},
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.05),
-                                        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.0),
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      child: const Text(
-                                        'FOLLOW', 
-                                        style: TextStyle(
-                                          color: Colors.white, 
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 11,
-                                          letterSpacing: 1.5,
-                                        )
-                                      ),
-                                    ),
+                                  StreamBuilder<db.Artist?>(
+                                    stream: ref.watch(db.appDatabaseProvider).watchArtist(widget.artistId),
+                                    builder: (context, snapshot) {
+                                      final isFollowed = snapshot.data?.isFollowed ?? false;
+                                      return TactileTap(
+                                        onTap: () {
+                                          final imgs = (artist['images'] as List?) ?? [];
+                                          final artistImageUrl = imgs.isNotEmpty ? imgs[0]['url'] as String : '';
+                                          ref.read(db.appDatabaseProvider).toggleArtistFollow(
+                                            widget.artistId,
+                                            !isFollowed,
+                                            name: artistName,
+                                            imageUrl: artistImageUrl,
+                                          );
+                                        },
+                                        child: AnimatedContainer(
+                                          duration: const Duration(milliseconds: 200),
+                                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                          decoration: BoxDecoration(
+                                            color: isFollowed 
+                                                ? const Color(0xFF1DB954).withValues(alpha: 0.2)
+                                                : Colors.white.withValues(alpha: 0.05),
+                                            border: Border.all(
+                                              color: isFollowed 
+                                                  ? const Color(0xFF1DB954).withValues(alpha: 0.4)
+                                                  : Colors.white.withValues(alpha: 0.1), 
+                                              width: 1.0
+                                            ),
+                                            borderRadius: BorderRadius.circular(30),
+                                          ),
+                                          child: Text(
+                                            isFollowed ? 'FOLLOWING' : 'FOLLOW', 
+                                            style: TextStyle(
+                                              color: isFollowed ? const Color(0xFF1DB954) : Colors.white, 
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 11,
+                                              letterSpacing: 1.5,
+                                            )
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   ),
                                   const SizedBox(width: 12),
                                   TactileTap(

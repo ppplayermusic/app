@@ -165,51 +165,82 @@ class RadioDetailsScreen extends ConsumerWidget {
                         ),
                       ),
 
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 32,
-                        child: AnimatedOpacity(
-                          duration: const Duration(milliseconds: 200),
-                          opacity: isCollapsed ? 0.0 : 1.0,
-                          child: Center(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 48,
+                            child: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 200),
+                              opacity: isCollapsed ? 0.0 : 1.0,
+                              child: Center(
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.3),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.1),
-                                      width: 0.5,
+                                    borderRadius: BorderRadius.circular(24),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+                                        blurRadius: 40,
+                                        spreadRadius: 0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(24),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withValues(alpha: 0.3),
+                                          borderRadius: BorderRadius.circular(24),
+                                          border: Border.all(
+                                            color: Colors.white.withValues(alpha: 0.15),
+                                            width: 0.5,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'RADIO',
+                                              style: TextStyle(
+                                                color: Colors.white.withValues(alpha: 0.5),
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w900,
+                                                letterSpacing: 4.0,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              title,
+                                              textAlign: TextAlign.center,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 48,
+                                                fontWeight: FontWeight.w900,
+                                                letterSpacing: -2.5,
+                                                height: 1.0,
+                                                shadows: [
+                                                  Shadow(
+                                                    color: Colors.black45,
+                                                    blurRadius: 30,
+                                                    offset: Offset(0, 15),
+                                                  ),
+                                                ],
+                                              ),
+                                            ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  child: Text(
-                                    title,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 48,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: -2.5,
-                                      height: 1.0,
-                                      shadows: [
-                                        Shadow(
-                                          color: Colors.black45,
-                                          blurRadius: 30,
-                                          offset: Offset(0, 15),
-                                        ),
-                                      ],
-                                    ),
-                                  ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
                     ],
                   ),
                 );

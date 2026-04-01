@@ -91,14 +91,14 @@ class GenreDetailsScreen extends ConsumerWidget {
                               width: double.infinity,
                               height: kToolbarHeight + topPadding,
                               padding: EdgeInsets.only(top: topPadding),
-                              color: Colors.black.withValues(alpha: 0.6),
+                              color: Colors.black.withValues(alpha: 0.7),
                               alignment: Alignment.center,
                               child: Text(
                                 categoryName.toUpperCase(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w900,
-                                  fontSize: 17,
-                                  letterSpacing: 2.0,
+                                  fontSize: 16,
+                                  letterSpacing: -0.5,
                                   color: Colors.white,
                                 ),
                               ).animate().fadeIn(duration: 200.ms),
@@ -109,6 +109,7 @@ class GenreDetailsScreen extends ConsumerWidget {
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
+                      // Base Background
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -123,6 +124,37 @@ class GenreDetailsScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
+                      
+                      // Cinematic Ambient Mesh Pulsing Overlay
+                      Positioned.fill(
+                        child: Opacity(
+                          opacity: 0.6,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: RadialGradient(
+                                center: const Alignment(-0.8, -0.6),
+                                radius: 1.5,
+                                colors: [
+                                  themeColor.withValues(alpha: 0.8),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                            begin: const Offset(1, 1),
+                            end: const Offset(1.3, 1.3),
+                            duration: 10.seconds,
+                            curve: Curves.easeInOut,
+                          ).move(
+                            begin: const Offset(-20, -20),
+                            end: const Offset(20, 20),
+                            duration: 12.seconds,
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
+                      ),
+
+                      // Dark Gradient Overlay for readability
                       DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -134,64 +166,75 @@ class GenreDetailsScreen extends ConsumerWidget {
                               Colors.black.withValues(alpha: 0.4),
                               Colors.black.withValues(alpha: 0.9),
                             ],
-                            stops: const [0.0, 0.3, 0.7, 1.0],
+                            stops: const [0.0, 0.4, 0.7, 1.0],
                           ),
                         ),
                       ),
+                      
+                      // Hero Title Container
                       Positioned(
                         left: 0,
                         right: 0,
-                        bottom: 32,
+                        bottom: 48,
                         child: AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
                           opacity: isCollapsed ? 0.0 : 1.0,
                           child: Center(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.3),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.1),
-                                      width: 0.5,
-                                    ),
+                            child: Container(
+                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: themeColor.withValues(alpha: 0.2),
+                                    blurRadius: 40,
+                                    spreadRadius: 0,
                                   ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'GENRE',
-                                        style: TextStyle(
-                                          color: Colors.white.withValues(alpha: 0.5),
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w900,
-                                          letterSpacing: 3.0,
-                                        ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(24),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withValues(alpha: 0.3),
+                                      borderRadius: BorderRadius.circular(24),
+                                      border: Border.all(
+                                        color: Colors.white.withValues(alpha: 0.15),
+                                        width: 0.5,
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        categoryName,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 48,
-                                          fontWeight: FontWeight.w900,
-                                          letterSpacing: -2.5,
-                                          height: 1.0,
-                                          shadows: [
-                                            Shadow(
-                                              color: Colors.black45,
-                                              blurRadius: 30,
-                                              offset: Offset(0, 15),
-                                            ),
-                                          ],
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'GENRE',
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(alpha: 0.5),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: 4.0,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          categoryName,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 48,
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: -2.5,
+                                            height: 1.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95)),
+                                  ),
                                 ),
                               ),
                             ),
@@ -380,7 +423,7 @@ class _PlaylistList extends StatelessWidget {
               ((playlist['images'] as List?)?.firstOrNull?['url'] as String?) ??
                   '';
           return TactileTap(
-            onTap: () => context.push('/playlist/${playlist['id']}'),
+            onTap: () => context.push('/spotify-playlist/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}'),
             scaleDown: 0.95,
             child: Container(
               width: 160,

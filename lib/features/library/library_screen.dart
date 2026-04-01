@@ -10,8 +10,81 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
 import '../../core/player/player_provider.dart';
 
+enum LibraryFilter { all, playlists, artists, albums }
+enum LibrarySort { recent, alphabetical }
+
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
+
+  static void showCreatePlaylistDialog(BuildContext context, db.AppDatabase database) {
+    final ctrl = TextEditingController();
+    showPremiumModal<void>(
+      context: context,
+      title: 'New Playlist',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: ctrl,
+            autofocus: true,
+            style: const TextStyle(color: Colors.white, fontSize: 18),
+            decoration: InputDecoration(
+              hintText: 'Name your masterpiece...',
+              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+              filled: true,
+              fillColor: Colors.white.withValues(alpha: 0.05),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: TactileTap(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    height: 54,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: const Text('Cancel', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TactileTap(
+                  onTap: () async {
+                    if (ctrl.text.isNotEmpty) {
+                      await database.createPlaylist(ctrl.text);
+                      if (context.mounted) Navigator.pop(context);
+                    }
+                  },
+                  child: Container(
+                    height: 54,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF450af5), Color(0xFF2d0087)],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Text('Create', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   ConsumerState<LibraryScreen> createState() => _LibraryScreenState();
@@ -21,6 +94,20 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  LibraryFilter _selectedFilter = LibraryFilter.all;
+  LibrarySort _selectedSort = LibrarySort.recent;
+
+  void _onFilterSelected(LibraryFilter filter) {
+    setState(() {
+      _selectedFilter = filter;
+    });
+  }
+
+  void _onSortSelected(LibrarySort sort) {
+    setState(() {
+      _selectedSort = sort;
+    });
+  }
 
   @override
   void dispose() {
@@ -37,15 +124,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: _isSearching ? kToolbarHeight : 120,
+            expandedHeight: _isSearching ? kToolbarHeight : 154,
             backgroundColor: Colors.transparent,
             elevation: 0,
+            forceMaterialTransparency: true,
             title: _isSearching
                 ? TextField(
                     controller: _searchController,
                     autofocus: true,
                     decoration: InputDecoration(
-                      hintText: 'Search playlists...',
+                      hintText: 'Search in library...',
                       border: InputBorder.none,
                       hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
                     ),
@@ -152,7 +240,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 : [
                     TactileIconButton(
                       icon: Icons.add_rounded,
-                      onTap: () => _showCreatePlaylistDialog(context, database),
+                      onTap: () => LibraryScreen.showCreatePlaylistDialog(context, database),
                     ),
                     TactileIconButton(
                       icon: Icons.search_rounded,
@@ -164,6 +252,26 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     ),
                     const SizedBox(width: 8),
                   ],
+            bottom: !_isSearching 
+              ? PreferredSize(
+                  preferredSize: const Size.fromHeight(48),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _FilterBar(
+                          selectedFilter: _selectedFilter,
+                          onSelected: _onFilterSelected,
+                        ),
+                      ),
+                      _SortToggle(
+                        selectedSort: _selectedSort,
+                        onSelected: _onSortSelected,
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                  ),
+                )
+              : null,
           ),
           if (!_isSearching || _searchQuery.isEmpty)
             SliverToBoxAdapter(
@@ -172,95 +280,45 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _LikedSongsCard(database: database)
-                        .animate()
-                        .fadeIn(duration: 400.ms)
-                        .slideY(begin: 0.1, end: 0),
-                    const SizedBox(height: 32),
-                    const Text(
-                      'Playlists',
-                      style: TextStyle(
-                        fontSize: 24, 
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.8,
-                      ),
-                    ).animate().fadeIn(delay: 200.ms).slideX(begin: -0.1, end: 0),
+                    if (_selectedFilter == LibraryFilter.all) ...[
+                      _LikedSongsCard(database: database)
+                          .animate()
+                          .fadeIn(duration: 400.ms)
+                          .slideY(begin: 0.1, end: 0),
+                      const SizedBox(height: 16),
+                    ],
                   ],
                 ),
               ),
             ),
-          _PlaylistsGrid(database: database, searchQuery: _searchQuery),
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
-        ],
-      ),
-    );
-  }
-
-  void _showCreatePlaylistDialog(BuildContext context, db.AppDatabase database) {
-    final ctrl = TextEditingController();
-    showPremiumModal<void>(
-      context: context,
-      title: 'New Playlist',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: ctrl,
-            autofocus: true,
-            style: const TextStyle(color: Colors.white, fontSize: 18),
-            decoration: InputDecoration(
-              hintText: 'Name your masterpiece...',
-              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-              filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.05),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          if (_selectedFilter == LibraryFilter.all || _selectedFilter == LibraryFilter.playlists) ...[
+            _PlaylistsGrid(
+              database: database, 
+              searchQuery: _searchQuery, 
+              sortByRecent: _selectedSort == LibrarySort.recent,
+              showHeader: _selectedFilter == LibraryFilter.all && _searchQuery.isEmpty,
             ),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: TactileTap(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white10),
-                    ),
-                    child: const Text('Cancel', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TactileTap(
-                  onTap: () async {
-                    if (ctrl.text.isNotEmpty) {
-                      await database.createPlaylist(ctrl.text);
-                      if (context.mounted) Navigator.pop(context);
-                    }
-                  },
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF450af5), Color(0xFF2d0087)],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Text('Create', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          ],
+          
+          if (_selectedFilter == LibraryFilter.all || _selectedFilter == LibraryFilter.artists) ...[
+            _ArtistsSliverList(
+              database: database, 
+              searchQuery: _searchQuery,
+              sortByRecent: _selectedSort == LibrarySort.recent,
+              showHeader: _selectedFilter == LibraryFilter.all && _searchQuery.isEmpty,
+            ),
+          ],
+            
+          if (_selectedFilter == LibraryFilter.all || _selectedFilter == LibraryFilter.albums) ...[
+            _AlbumsSliverGrid(
+              database: database, 
+              searchQuery: _searchQuery,
+              sortByRecent: _selectedSort == LibrarySort.recent,
+              showHeader: _selectedFilter == LibraryFilter.all && _searchQuery.isEmpty,
+            ),
+          ],
+            
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
       ),
     );
@@ -273,14 +331,14 @@ class _LikedSongsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<db.Track>>(
-      future: database.getFavorites(),
+    return StreamBuilder<List<db.Track>>(
+      stream: (database.select(database.tracks)..where((t) => t.isFavorite.equals(true))).watch(),
       builder: (context, snap) {
         final count = snap.data?.length ?? 0;
         return TactileTap(
           onTap: () => context.push('/liked-songs'),
           child: Container(
-            height: 140,
+            constraints: const BoxConstraints(minHeight: 140),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(32),
               gradient: LinearGradient(
@@ -501,51 +559,87 @@ class _LikedSongsCard extends StatelessWidget {
 }
 
 class _PlaylistsGrid extends StatelessWidget {
-  const _PlaylistsGrid({required this.database, this.searchQuery = ''});
+  const _PlaylistsGrid({
+    required this.database, 
+    this.searchQuery = '', 
+    this.sortByRecent = true,
+    this.showHeader = false,
+  });
   final db.AppDatabase database;
   final String searchQuery;
+  final bool sortByRecent;
+  final bool showHeader;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<db.Playlist>>(
-      stream: database.select(database.playlists).watch(),
+      stream: database.watchPlaylists(sortByRecent: sortByRecent),
       builder: (context, snap) {
+        final isLoading = snap.connectionState == ConnectionState.waiting;
         var playlists = snap.data ?? [];
         if (searchQuery.isNotEmpty) {
-          playlists = playlists.where((p) => p.name.toLowerCase().contains(searchQuery)).toList();
+          playlists = playlists.where((p) => p.name.toLowerCase().contains(searchQuery.toLowerCase())).toList();
         }
         
+        if (isLoading) {
+          return const _AlbumsShimmer(); // Reusing Albums shimmer for playlists
+        }
+
         if (playlists.isEmpty) {
-          return SliverToBoxAdapter(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40),
-                child: Text(searchQuery.isNotEmpty ? 'No playlists found.' : 'No playlists yet.',
-                    style: const TextStyle(color: Color(0xFFB3B3B3))),
+          if (searchQuery.isNotEmpty) {
+            return const SliverToBoxAdapter(
+              child: _EmptyState(
+                icon: Icons.search_off_rounded,
+                title: 'No results found',
+                subtitle: 'Try a different search term',
               ),
+            );
+          }
+          return SliverToBoxAdapter(
+            child: _EmptyState(
+              icon: Icons.playlist_add_rounded,
+              title: 'No playlists yet',
+              subtitle: 'Create a playlist to get started',
+              buttonText: 'Create Playlist',
+              onPressed: () => LibraryScreen.showCreatePlaylistDialog(context, database),
             ),
           );
         }
-        return SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.75,
+
+        return SliverMainAxisGroup(
+          slivers: [
+            if (showHeader)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  child: Text(
+                    'Playlists',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 0.75,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) {
+                    final playlist = playlists[i];
+                    return _PlaylistCard(database: database, playlist: playlist)
+                        .animate(delay: (i * 60).ms)
+                        .fadeIn(duration: 500.ms)
+                        .slideY(begin: 0.15, end: 0, curve: Curves.easeOutQuart);
+                  },
+                  childCount: playlists.length,
+                ),
+              ),
             ),
-            delegate: SliverChildBuilderDelegate(
-              (context, i) {
-                final playlist = playlists[i];
-                return _PlaylistCard(database: database, playlist: playlist)
-                    .animate(delay: (i * 60).ms)
-                    .fadeIn(duration: 500.ms)
-                    .slideY(begin: 0.15, end: 0, curve: Curves.easeOutQuart);
-              },
-              childCount: playlists.length,
-            ),
-          ),
+          ],
         );
       },
     );
@@ -590,7 +684,13 @@ class _PlaylistCard extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: PlaylistCover(images: images, size: double.infinity),
+                    child: playlist.imageUrl != null 
+                        ? Image.network(
+                            playlist.imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => PlaylistCover(images: images, size: double.infinity),
+                          )
+                        : PlaylistCover(images: images, size: double.infinity),
                   ),
                 ),
               ),
@@ -673,6 +773,556 @@ class _PlaylistCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _FilterBar extends StatelessWidget {
+  const _FilterBar({
+    required this.selectedFilter,
+    required this.onSelected,
+  });
+
+  final LibraryFilter selectedFilter;
+  final ValueChanged<LibraryFilter> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: LibraryFilter.values.map((filter) {
+          final isSelected = selectedFilter == filter;
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: TactileTap(
+              onTap: () => onSelected(filter),
+              child: AnimatedContainer(
+                duration: 250.ms,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xFF450af5) : Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                    color: isSelected ? Colors.white.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.05),
+                  ),
+                  boxShadow: isSelected ? [
+                    BoxShadow(
+                      color: const Color(0xFF450af5).withValues(alpha: 0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 4),
+                    ),
+                  ] : [],
+                ),
+                child: Text(
+                  filter.name[0].toUpperCase() + filter.name.substring(1),
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.white70,
+                    fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+                    fontSize: 14,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _ArtistsSliverList extends StatelessWidget {
+  const _ArtistsSliverList({
+    required this.database, 
+    this.searchQuery = '',
+    this.sortByRecent = true,
+    this.showHeader = false,
+  });
+  final db.AppDatabase database;
+  final String searchQuery;
+  final bool sortByRecent;
+  final bool showHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<db.Artist>>(
+      stream: database.watchFollowedArtists(sortByRecent: sortByRecent),
+      builder: (context, snap) {
+        final isLoading = snap.connectionState == ConnectionState.waiting;
+        var artists = snap.data ?? [];
+        
+        if (searchQuery.isNotEmpty) {
+          artists = artists.where((a) => a.name.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+        }
+
+        if (isLoading) {
+          return const _ArtistsShimmer();
+        }
+
+        if (artists.isEmpty) {
+          if (searchQuery.isNotEmpty) {
+            return const SliverToBoxAdapter(
+              child: _EmptyState(
+                icon: Icons.search_off_rounded,
+                title: 'No results found',
+                subtitle: 'Try a different search term',
+              ),
+            );
+          }
+          return SliverToBoxAdapter(
+            child: _EmptyState(
+              icon: Icons.person_add_rounded,
+              title: 'No artists followed',
+              subtitle: 'Follow artists to see them here',
+              buttonText: 'Discover Artists',
+              onPressed: () => context.push('/search'),
+            ),
+          );
+        }
+
+        return SliverMainAxisGroup(
+          slivers: [
+            if (showHeader)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  child: Text(
+                    'Artists',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) {
+                    final artist = artists[i];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: TactileTap(
+                        onTap: () => context.push('/artist/${artist.spotifyId}'),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: artist.imageUrl != null
+                                    ? DecorationImage(
+                                        image: NetworkImage(artist.imageUrl!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                                color: Colors.white.withValues(alpha: 0.05),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.3),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: artist.imageUrl == null
+                                  ? const Icon(Icons.person, color: Colors.white24, size: 40)
+                                  : null,
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    artist.name,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.white,
+                                      letterSpacing: -0.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Artist',
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(alpha: 0.5),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).animate(delay: (i * 60).ms).fadeIn(duration: 500.ms).slideX(begin: 0.1, end: 0, curve: Curves.easeOutQuart);
+                  },
+                  childCount: artists.length,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _AlbumsSliverGrid extends StatelessWidget {
+  const _AlbumsSliverGrid({
+    required this.database, 
+    this.searchQuery = '',
+    this.sortByRecent = true,
+    this.showHeader = false,
+  });
+  final db.AppDatabase database;
+  final String searchQuery;
+  final bool sortByRecent;
+  final bool showHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<db.Album>>(
+      stream: database.watchLikedAlbums(sortByRecent: sortByRecent),
+      builder: (context, snap) {
+        final isLoading = snap.connectionState == ConnectionState.waiting;
+        var albums = snap.data ?? [];
+        if (searchQuery.isNotEmpty) {
+          albums = albums.where((a) => a.name.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+        }
+
+        if (isLoading) {
+          return const _AlbumsShimmer();
+        }
+
+        if (albums.isEmpty) {
+          if (searchQuery.isNotEmpty) {
+            return const SliverToBoxAdapter(
+              child: _EmptyState(
+                icon: Icons.search_off_rounded,
+                title: 'No results found',
+                subtitle: 'Try a different search term',
+              ),
+            );
+          }
+          return SliverToBoxAdapter(
+            child: _EmptyState(
+              icon: Icons.album_rounded,
+              title: 'No liked albums',
+              subtitle: 'Like albums to see them here',
+              buttonText: 'Discover Albums',
+              onPressed: () => context.push('/search'),
+            ),
+          );
+        }
+
+        return SliverMainAxisGroup(
+          slivers: [
+            if (showHeader)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  child: Text(
+                    'Albums',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16, crossAxisSpacing: 16, childAspectRatio: 0.75,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) {
+                    final album = albums[i];
+                    return TactileTap(
+                      onTap: () => context.push('/album/${album.spotifyId}'),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.4),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 10),
+                                  ),
+                                ],
+                                image: album.imageUrl != null
+                                    ? DecorationImage(
+                                        image: NetworkImage(album.imageUrl!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                                color: Colors.white.withValues(alpha: 0.05),
+                              ),
+                              child: album.imageUrl == null
+                                  ? const Icon(Icons.album_rounded, color: Colors.white24, size: 40)
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            album.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            album.artistName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.4),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ).animate(delay: (i * 60).ms).fadeIn(duration: 500.ms).slideY(begin: 0.15, end: 0, curve: Curves.easeOutQuart);
+                  },
+                  childCount: albums.length,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _SortToggle extends StatelessWidget {
+  const _SortToggle({
+    required this.selectedSort,
+    required this.onSelected,
+  });
+
+  final LibrarySort selectedSort;
+  final ValueChanged<LibrarySort> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return TactileIconButton(
+      icon: selectedSort == LibrarySort.recent ? Icons.access_time_rounded : Icons.sort_by_alpha_rounded,
+      onTap: () {
+        if (selectedSort == LibrarySort.recent) {
+          onSelected(LibrarySort.alphabetical);
+        } else {
+          onSelected(LibrarySort.recent);
+        }
+      },
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    this.buttonText,
+    this.onPressed,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String? buttonText;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.05),
+            ),
+            child: Icon(icon, size: 48, color: Colors.white24),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white.withValues(alpha: 0.5),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          if (buttonText != null && onPressed != null) ...[
+            const SizedBox(height: 32),
+            TactileTap(
+              onTap: onPressed!,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF450af5),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF450af5).withValues(alpha: 0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  buttonText!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ArtistsShimmer extends StatelessWidget {
+  const _ArtistsShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, i) => Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Row(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.05),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 150,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: Colors.white.withValues(alpha: 0.05),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: 60,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: Colors.white.withValues(alpha: 0.05),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1.5.seconds, color: Colors.white.withValues(alpha: 0.05)),
+          childCount: 5,
+        ),
+      ),
+    );
+  }
+}
+
+class _AlbumsShimmer extends StatelessWidget {
+  const _AlbumsShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 0.75,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, i) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AspectRatio(
+                aspectRatio: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    color: Colors.white.withValues(alpha: 0.05),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                width: 120,
+                height: 16,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                width: 80,
+                height: 12,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+              ),
+            ],
+          ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1.5.seconds, color: Colors.white.withValues(alpha: 0.05)),
+          childCount: 4,
+        ),
       ),
     );
   }

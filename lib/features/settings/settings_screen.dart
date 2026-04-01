@@ -334,7 +334,7 @@ class _SettingsHero extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'ppplayer',
+                    'PPPLAYER',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,

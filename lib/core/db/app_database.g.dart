@@ -801,6 +801,32 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _isFollowedMeta = const VerificationMeta(
+    'isFollowed',
+  );
+  @override
+  late final GeneratedColumn<bool> isFollowed = GeneratedColumn<bool>(
+    'is_followed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_followed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     spotifyId,
@@ -808,6 +834,8 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
     imageUrl,
     imageSmall,
     followers,
+    isFollowed,
+    updatedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -855,6 +883,18 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
         followers.isAcceptableOrUnknown(data['followers']!, _followersMeta),
       );
     }
+    if (data.containsKey('is_followed')) {
+      context.handle(
+        _isFollowedMeta,
+        isFollowed.isAcceptableOrUnknown(data['is_followed']!, _isFollowedMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -886,6 +926,15 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
         DriftSqlType.int,
         data['${effectivePrefix}followers'],
       ),
+      isFollowed:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}is_followed'],
+          )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
     );
   }
 
@@ -901,12 +950,16 @@ class Artist extends DataClass implements Insertable<Artist> {
   final String? imageUrl;
   final String? imageSmall;
   final int? followers;
+  final bool isFollowed;
+  final DateTime? updatedAt;
   const Artist({
     required this.spotifyId,
     required this.name,
     this.imageUrl,
     this.imageSmall,
     this.followers,
+    required this.isFollowed,
+    this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -921,6 +974,10 @@ class Artist extends DataClass implements Insertable<Artist> {
     }
     if (!nullToAbsent || followers != null) {
       map['followers'] = Variable<int>(followers);
+    }
+    map['is_followed'] = Variable<bool>(isFollowed);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
     }
     return map;
   }
@@ -941,6 +998,11 @@ class Artist extends DataClass implements Insertable<Artist> {
           followers == null && nullToAbsent
               ? const Value.absent()
               : Value(followers),
+      isFollowed: Value(isFollowed),
+      updatedAt:
+          updatedAt == null && nullToAbsent
+              ? const Value.absent()
+              : Value(updatedAt),
     );
   }
 
@@ -955,6 +1017,8 @@ class Artist extends DataClass implements Insertable<Artist> {
       imageUrl: serializer.fromJson<String?>(json['imageUrl']),
       imageSmall: serializer.fromJson<String?>(json['imageSmall']),
       followers: serializer.fromJson<int?>(json['followers']),
+      isFollowed: serializer.fromJson<bool>(json['isFollowed']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -966,6 +1030,8 @@ class Artist extends DataClass implements Insertable<Artist> {
       'imageUrl': serializer.toJson<String?>(imageUrl),
       'imageSmall': serializer.toJson<String?>(imageSmall),
       'followers': serializer.toJson<int?>(followers),
+      'isFollowed': serializer.toJson<bool>(isFollowed),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -975,12 +1041,16 @@ class Artist extends DataClass implements Insertable<Artist> {
     Value<String?> imageUrl = const Value.absent(),
     Value<String?> imageSmall = const Value.absent(),
     Value<int?> followers = const Value.absent(),
+    bool? isFollowed,
+    Value<DateTime?> updatedAt = const Value.absent(),
   }) => Artist(
     spotifyId: spotifyId ?? this.spotifyId,
     name: name ?? this.name,
     imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
     imageSmall: imageSmall.present ? imageSmall.value : this.imageSmall,
     followers: followers.present ? followers.value : this.followers,
+    isFollowed: isFollowed ?? this.isFollowed,
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
   Artist copyWithCompanion(ArtistsCompanion data) {
     return Artist(
@@ -990,6 +1060,9 @@ class Artist extends DataClass implements Insertable<Artist> {
       imageSmall:
           data.imageSmall.present ? data.imageSmall.value : this.imageSmall,
       followers: data.followers.present ? data.followers.value : this.followers,
+      isFollowed:
+          data.isFollowed.present ? data.isFollowed.value : this.isFollowed,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -1000,14 +1073,23 @@ class Artist extends DataClass implements Insertable<Artist> {
           ..write('name: $name, ')
           ..write('imageUrl: $imageUrl, ')
           ..write('imageSmall: $imageSmall, ')
-          ..write('followers: $followers')
+          ..write('followers: $followers, ')
+          ..write('isFollowed: $isFollowed, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(spotifyId, name, imageUrl, imageSmall, followers);
+  int get hashCode => Object.hash(
+    spotifyId,
+    name,
+    imageUrl,
+    imageSmall,
+    followers,
+    isFollowed,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1016,7 +1098,9 @@ class Artist extends DataClass implements Insertable<Artist> {
           other.name == this.name &&
           other.imageUrl == this.imageUrl &&
           other.imageSmall == this.imageSmall &&
-          other.followers == this.followers);
+          other.followers == this.followers &&
+          other.isFollowed == this.isFollowed &&
+          other.updatedAt == this.updatedAt);
 }
 
 class ArtistsCompanion extends UpdateCompanion<Artist> {
@@ -1025,6 +1109,8 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
   final Value<String?> imageUrl;
   final Value<String?> imageSmall;
   final Value<int?> followers;
+  final Value<bool> isFollowed;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const ArtistsCompanion({
     this.spotifyId = const Value.absent(),
@@ -1032,6 +1118,8 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
     this.imageUrl = const Value.absent(),
     this.imageSmall = const Value.absent(),
     this.followers = const Value.absent(),
+    this.isFollowed = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ArtistsCompanion.insert({
@@ -1040,6 +1128,8 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
     this.imageUrl = const Value.absent(),
     this.imageSmall = const Value.absent(),
     this.followers = const Value.absent(),
+    this.isFollowed = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : spotifyId = Value(spotifyId),
        name = Value(name);
@@ -1049,6 +1139,8 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
     Expression<String>? imageUrl,
     Expression<String>? imageSmall,
     Expression<int>? followers,
+    Expression<bool>? isFollowed,
+    Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1057,6 +1149,8 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
       if (imageUrl != null) 'image_url': imageUrl,
       if (imageSmall != null) 'image_small': imageSmall,
       if (followers != null) 'followers': followers,
+      if (isFollowed != null) 'is_followed': isFollowed,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1067,6 +1161,8 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
     Value<String?>? imageUrl,
     Value<String?>? imageSmall,
     Value<int?>? followers,
+    Value<bool>? isFollowed,
+    Value<DateTime?>? updatedAt,
     Value<int>? rowid,
   }) {
     return ArtistsCompanion(
@@ -1075,6 +1171,8 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
       imageUrl: imageUrl ?? this.imageUrl,
       imageSmall: imageSmall ?? this.imageSmall,
       followers: followers ?? this.followers,
+      isFollowed: isFollowed ?? this.isFollowed,
+      updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1097,6 +1195,12 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
     if (followers.present) {
       map['followers'] = Variable<int>(followers.value);
     }
+    if (isFollowed.present) {
+      map['is_followed'] = Variable<bool>(isFollowed.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1111,6 +1215,8 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
           ..write('imageUrl: $imageUrl, ')
           ..write('imageSmall: $imageSmall, ')
           ..write('followers: $followers, ')
+          ..write('isFollowed: $isFollowed, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1197,6 +1303,32 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _isLikedMeta = const VerificationMeta(
+    'isLiked',
+  );
+  @override
+  late final GeneratedColumn<bool> isLiked = GeneratedColumn<bool>(
+    'is_liked',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_liked" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     spotifyId,
@@ -1206,6 +1338,8 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
     imageUrl,
     releaseDate,
     totalTracks,
+    isLiked,
+    updatedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1275,6 +1409,18 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
         ),
       );
     }
+    if (data.containsKey('is_liked')) {
+      context.handle(
+        _isLikedMeta,
+        isLiked.isAcceptableOrUnknown(data['is_liked']!, _isLikedMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -1316,6 +1462,15 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
         DriftSqlType.int,
         data['${effectivePrefix}total_tracks'],
       ),
+      isLiked:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}is_liked'],
+          )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
     );
   }
 
@@ -1333,6 +1488,8 @@ class Album extends DataClass implements Insertable<Album> {
   final String? imageUrl;
   final String? releaseDate;
   final int? totalTracks;
+  final bool isLiked;
+  final DateTime? updatedAt;
   const Album({
     required this.spotifyId,
     required this.name,
@@ -1341,6 +1498,8 @@ class Album extends DataClass implements Insertable<Album> {
     this.imageUrl,
     this.releaseDate,
     this.totalTracks,
+    required this.isLiked,
+    this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1357,6 +1516,10 @@ class Album extends DataClass implements Insertable<Album> {
     }
     if (!nullToAbsent || totalTracks != null) {
       map['total_tracks'] = Variable<int>(totalTracks);
+    }
+    map['is_liked'] = Variable<bool>(isLiked);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
     }
     return map;
   }
@@ -1379,6 +1542,11 @@ class Album extends DataClass implements Insertable<Album> {
           totalTracks == null && nullToAbsent
               ? const Value.absent()
               : Value(totalTracks),
+      isLiked: Value(isLiked),
+      updatedAt:
+          updatedAt == null && nullToAbsent
+              ? const Value.absent()
+              : Value(updatedAt),
     );
   }
 
@@ -1395,6 +1563,8 @@ class Album extends DataClass implements Insertable<Album> {
       imageUrl: serializer.fromJson<String?>(json['imageUrl']),
       releaseDate: serializer.fromJson<String?>(json['releaseDate']),
       totalTracks: serializer.fromJson<int?>(json['totalTracks']),
+      isLiked: serializer.fromJson<bool>(json['isLiked']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -1408,6 +1578,8 @@ class Album extends DataClass implements Insertable<Album> {
       'imageUrl': serializer.toJson<String?>(imageUrl),
       'releaseDate': serializer.toJson<String?>(releaseDate),
       'totalTracks': serializer.toJson<int?>(totalTracks),
+      'isLiked': serializer.toJson<bool>(isLiked),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -1419,6 +1591,8 @@ class Album extends DataClass implements Insertable<Album> {
     Value<String?> imageUrl = const Value.absent(),
     Value<String?> releaseDate = const Value.absent(),
     Value<int?> totalTracks = const Value.absent(),
+    bool? isLiked,
+    Value<DateTime?> updatedAt = const Value.absent(),
   }) => Album(
     spotifyId: spotifyId ?? this.spotifyId,
     name: name ?? this.name,
@@ -1427,6 +1601,8 @@ class Album extends DataClass implements Insertable<Album> {
     imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
     releaseDate: releaseDate.present ? releaseDate.value : this.releaseDate,
     totalTracks: totalTracks.present ? totalTracks.value : this.totalTracks,
+    isLiked: isLiked ?? this.isLiked,
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
   Album copyWithCompanion(AlbumsCompanion data) {
     return Album(
@@ -1440,6 +1616,8 @@ class Album extends DataClass implements Insertable<Album> {
           data.releaseDate.present ? data.releaseDate.value : this.releaseDate,
       totalTracks:
           data.totalTracks.present ? data.totalTracks.value : this.totalTracks,
+      isLiked: data.isLiked.present ? data.isLiked.value : this.isLiked,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -1452,7 +1630,9 @@ class Album extends DataClass implements Insertable<Album> {
           ..write('artistName: $artistName, ')
           ..write('imageUrl: $imageUrl, ')
           ..write('releaseDate: $releaseDate, ')
-          ..write('totalTracks: $totalTracks')
+          ..write('totalTracks: $totalTracks, ')
+          ..write('isLiked: $isLiked, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
@@ -1466,6 +1646,8 @@ class Album extends DataClass implements Insertable<Album> {
     imageUrl,
     releaseDate,
     totalTracks,
+    isLiked,
+    updatedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -1477,7 +1659,9 @@ class Album extends DataClass implements Insertable<Album> {
           other.artistName == this.artistName &&
           other.imageUrl == this.imageUrl &&
           other.releaseDate == this.releaseDate &&
-          other.totalTracks == this.totalTracks);
+          other.totalTracks == this.totalTracks &&
+          other.isLiked == this.isLiked &&
+          other.updatedAt == this.updatedAt);
 }
 
 class AlbumsCompanion extends UpdateCompanion<Album> {
@@ -1488,6 +1672,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
   final Value<String?> imageUrl;
   final Value<String?> releaseDate;
   final Value<int?> totalTracks;
+  final Value<bool> isLiked;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const AlbumsCompanion({
     this.spotifyId = const Value.absent(),
@@ -1497,6 +1683,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     this.imageUrl = const Value.absent(),
     this.releaseDate = const Value.absent(),
     this.totalTracks = const Value.absent(),
+    this.isLiked = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AlbumsCompanion.insert({
@@ -1507,6 +1695,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     this.imageUrl = const Value.absent(),
     this.releaseDate = const Value.absent(),
     this.totalTracks = const Value.absent(),
+    this.isLiked = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : spotifyId = Value(spotifyId),
        name = Value(name),
@@ -1520,6 +1710,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     Expression<String>? imageUrl,
     Expression<String>? releaseDate,
     Expression<int>? totalTracks,
+    Expression<bool>? isLiked,
+    Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1530,6 +1722,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
       if (imageUrl != null) 'image_url': imageUrl,
       if (releaseDate != null) 'release_date': releaseDate,
       if (totalTracks != null) 'total_tracks': totalTracks,
+      if (isLiked != null) 'is_liked': isLiked,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1542,6 +1736,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     Value<String?>? imageUrl,
     Value<String?>? releaseDate,
     Value<int?>? totalTracks,
+    Value<bool>? isLiked,
+    Value<DateTime?>? updatedAt,
     Value<int>? rowid,
   }) {
     return AlbumsCompanion(
@@ -1552,6 +1748,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
       imageUrl: imageUrl ?? this.imageUrl,
       releaseDate: releaseDate ?? this.releaseDate,
       totalTracks: totalTracks ?? this.totalTracks,
+      isLiked: isLiked ?? this.isLiked,
+      updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1580,6 +1778,12 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
     if (totalTracks.present) {
       map['total_tracks'] = Variable<int>(totalTracks.value);
     }
+    if (isLiked.present) {
+      map['is_liked'] = Variable<bool>(isLiked.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1596,6 +1800,8 @@ class AlbumsCompanion extends UpdateCompanion<Album> {
           ..write('imageUrl: $imageUrl, ')
           ..write('releaseDate: $releaseDate, ')
           ..write('totalTracks: $totalTracks, ')
+          ..write('isLiked: $isLiked, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1630,6 +1836,28 @@ class $PlaylistsTable extends Playlists
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _spotifyIdMeta = const VerificationMeta(
+    'spotifyId',
+  );
+  @override
+  late final GeneratedColumn<String> spotifyId = GeneratedColumn<String>(
+    'spotify_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _imageUrlMeta = const VerificationMeta(
+    'imageUrl',
+  );
+  @override
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+    'image_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -1643,7 +1871,13 @@ class $PlaylistsTable extends Playlists
     defaultValue: currentDateAndTime,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, name, createdAt];
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    spotifyId,
+    imageUrl,
+    createdAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1666,6 +1900,18 @@ class $PlaylistsTable extends Playlists
       );
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('spotify_id')) {
+      context.handle(
+        _spotifyIdMeta,
+        spotifyId.isAcceptableOrUnknown(data['spotify_id']!, _spotifyIdMeta),
+      );
+    }
+    if (data.containsKey('image_url')) {
+      context.handle(
+        _imageUrlMeta,
+        imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta),
+      );
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -1692,6 +1938,14 @@ class $PlaylistsTable extends Playlists
             DriftSqlType.string,
             data['${effectivePrefix}name'],
           )!,
+      spotifyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}spotify_id'],
+      ),
+      imageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}image_url'],
+      ),
       createdAt:
           attachedDatabase.typeMapping.read(
             DriftSqlType.dateTime,
@@ -1709,10 +1963,14 @@ class $PlaylistsTable extends Playlists
 class Playlist extends DataClass implements Insertable<Playlist> {
   final int id;
   final String name;
+  final String? spotifyId;
+  final String? imageUrl;
   final DateTime createdAt;
   const Playlist({
     required this.id,
     required this.name,
+    this.spotifyId,
+    this.imageUrl,
     required this.createdAt,
   });
   @override
@@ -1720,6 +1978,12 @@ class Playlist extends DataClass implements Insertable<Playlist> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || spotifyId != null) {
+      map['spotify_id'] = Variable<String>(spotifyId);
+    }
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -1728,6 +1992,14 @@ class Playlist extends DataClass implements Insertable<Playlist> {
     return PlaylistsCompanion(
       id: Value(id),
       name: Value(name),
+      spotifyId:
+          spotifyId == null && nullToAbsent
+              ? const Value.absent()
+              : Value(spotifyId),
+      imageUrl:
+          imageUrl == null && nullToAbsent
+              ? const Value.absent()
+              : Value(imageUrl),
       createdAt: Value(createdAt),
     );
   }
@@ -1740,6 +2012,8 @@ class Playlist extends DataClass implements Insertable<Playlist> {
     return Playlist(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      spotifyId: serializer.fromJson<String?>(json['spotifyId']),
+      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -1749,19 +2023,31 @@ class Playlist extends DataClass implements Insertable<Playlist> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
+      'spotifyId': serializer.toJson<String?>(spotifyId),
+      'imageUrl': serializer.toJson<String?>(imageUrl),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
-  Playlist copyWith({int? id, String? name, DateTime? createdAt}) => Playlist(
+  Playlist copyWith({
+    int? id,
+    String? name,
+    Value<String?> spotifyId = const Value.absent(),
+    Value<String?> imageUrl = const Value.absent(),
+    DateTime? createdAt,
+  }) => Playlist(
     id: id ?? this.id,
     name: name ?? this.name,
+    spotifyId: spotifyId.present ? spotifyId.value : this.spotifyId,
+    imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
     createdAt: createdAt ?? this.createdAt,
   );
   Playlist copyWithCompanion(PlaylistsCompanion data) {
     return Playlist(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
+      spotifyId: data.spotifyId.present ? data.spotifyId.value : this.spotifyId,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -1771,44 +2057,58 @@ class Playlist extends DataClass implements Insertable<Playlist> {
     return (StringBuffer('Playlist(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('spotifyId: $spotifyId, ')
+          ..write('imageUrl: $imageUrl, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, createdAt);
+  int get hashCode => Object.hash(id, name, spotifyId, imageUrl, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Playlist &&
           other.id == this.id &&
           other.name == this.name &&
+          other.spotifyId == this.spotifyId &&
+          other.imageUrl == this.imageUrl &&
           other.createdAt == this.createdAt);
 }
 
 class PlaylistsCompanion extends UpdateCompanion<Playlist> {
   final Value<int> id;
   final Value<String> name;
+  final Value<String?> spotifyId;
+  final Value<String?> imageUrl;
   final Value<DateTime> createdAt;
   const PlaylistsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.spotifyId = const Value.absent(),
+    this.imageUrl = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   PlaylistsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
+    this.spotifyId = const Value.absent(),
+    this.imageUrl = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Playlist> custom({
     Expression<int>? id,
     Expression<String>? name,
+    Expression<String>? spotifyId,
+    Expression<String>? imageUrl,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (spotifyId != null) 'spotify_id': spotifyId,
+      if (imageUrl != null) 'image_url': imageUrl,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -1816,11 +2116,15 @@ class PlaylistsCompanion extends UpdateCompanion<Playlist> {
   PlaylistsCompanion copyWith({
     Value<int>? id,
     Value<String>? name,
+    Value<String?>? spotifyId,
+    Value<String?>? imageUrl,
     Value<DateTime>? createdAt,
   }) {
     return PlaylistsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      spotifyId: spotifyId ?? this.spotifyId,
+      imageUrl: imageUrl ?? this.imageUrl,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -1834,6 +2138,12 @@ class PlaylistsCompanion extends UpdateCompanion<Playlist> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
+    if (spotifyId.present) {
+      map['spotify_id'] = Variable<String>(spotifyId.value);
+    }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1845,6 +2155,8 @@ class PlaylistsCompanion extends UpdateCompanion<Playlist> {
     return (StringBuffer('PlaylistsCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('spotifyId: $spotifyId, ')
+          ..write('imageUrl: $imageUrl, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -2504,6 +2816,8 @@ typedef $$ArtistsTableCreateCompanionBuilder =
       Value<String?> imageUrl,
       Value<String?> imageSmall,
       Value<int?> followers,
+      Value<bool> isFollowed,
+      Value<DateTime?> updatedAt,
       Value<int> rowid,
     });
 typedef $$ArtistsTableUpdateCompanionBuilder =
@@ -2513,6 +2827,8 @@ typedef $$ArtistsTableUpdateCompanionBuilder =
       Value<String?> imageUrl,
       Value<String?> imageSmall,
       Value<int?> followers,
+      Value<bool> isFollowed,
+      Value<DateTime?> updatedAt,
       Value<int> rowid,
     });
 
@@ -2547,6 +2863,16 @@ class $$ArtistsTableFilterComposer
 
   ColumnFilters<int> get followers => $composableBuilder(
     column: $table.followers,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isFollowed => $composableBuilder(
+    column: $table.isFollowed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2584,6 +2910,16 @@ class $$ArtistsTableOrderingComposer
     column: $table.followers,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isFollowed => $composableBuilder(
+    column: $table.isFollowed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ArtistsTableAnnotationComposer
@@ -2611,6 +2947,14 @@ class $$ArtistsTableAnnotationComposer
 
   GeneratedColumn<int> get followers =>
       $composableBuilder(column: $table.followers, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFollowed => $composableBuilder(
+    column: $table.isFollowed,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$ArtistsTableTableManager
@@ -2646,6 +2990,8 @@ class $$ArtistsTableTableManager
                 Value<String?> imageUrl = const Value.absent(),
                 Value<String?> imageSmall = const Value.absent(),
                 Value<int?> followers = const Value.absent(),
+                Value<bool> isFollowed = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ArtistsCompanion(
                 spotifyId: spotifyId,
@@ -2653,6 +2999,8 @@ class $$ArtistsTableTableManager
                 imageUrl: imageUrl,
                 imageSmall: imageSmall,
                 followers: followers,
+                isFollowed: isFollowed,
+                updatedAt: updatedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2662,6 +3010,8 @@ class $$ArtistsTableTableManager
                 Value<String?> imageUrl = const Value.absent(),
                 Value<String?> imageSmall = const Value.absent(),
                 Value<int?> followers = const Value.absent(),
+                Value<bool> isFollowed = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ArtistsCompanion.insert(
                 spotifyId: spotifyId,
@@ -2669,6 +3019,8 @@ class $$ArtistsTableTableManager
                 imageUrl: imageUrl,
                 imageSmall: imageSmall,
                 followers: followers,
+                isFollowed: isFollowed,
+                updatedAt: updatedAt,
                 rowid: rowid,
               ),
           withReferenceMapper:
@@ -2709,6 +3061,8 @@ typedef $$AlbumsTableCreateCompanionBuilder =
       Value<String?> imageUrl,
       Value<String?> releaseDate,
       Value<int?> totalTracks,
+      Value<bool> isLiked,
+      Value<DateTime?> updatedAt,
       Value<int> rowid,
     });
 typedef $$AlbumsTableUpdateCompanionBuilder =
@@ -2720,6 +3074,8 @@ typedef $$AlbumsTableUpdateCompanionBuilder =
       Value<String?> imageUrl,
       Value<String?> releaseDate,
       Value<int?> totalTracks,
+      Value<bool> isLiked,
+      Value<DateTime?> updatedAt,
       Value<int> rowid,
     });
 
@@ -2764,6 +3120,16 @@ class $$AlbumsTableFilterComposer
 
   ColumnFilters<int> get totalTracks => $composableBuilder(
     column: $table.totalTracks,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isLiked => $composableBuilder(
+    column: $table.isLiked,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2811,6 +3177,16 @@ class $$AlbumsTableOrderingComposer
     column: $table.totalTracks,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isLiked => $composableBuilder(
+    column: $table.isLiked,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AlbumsTableAnnotationComposer
@@ -2848,6 +3224,12 @@ class $$AlbumsTableAnnotationComposer
     column: $table.totalTracks,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get isLiked =>
+      $composableBuilder(column: $table.isLiked, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$AlbumsTableTableManager
@@ -2885,6 +3267,8 @@ class $$AlbumsTableTableManager
                 Value<String?> imageUrl = const Value.absent(),
                 Value<String?> releaseDate = const Value.absent(),
                 Value<int?> totalTracks = const Value.absent(),
+                Value<bool> isLiked = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AlbumsCompanion(
                 spotifyId: spotifyId,
@@ -2894,6 +3278,8 @@ class $$AlbumsTableTableManager
                 imageUrl: imageUrl,
                 releaseDate: releaseDate,
                 totalTracks: totalTracks,
+                isLiked: isLiked,
+                updatedAt: updatedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2905,6 +3291,8 @@ class $$AlbumsTableTableManager
                 Value<String?> imageUrl = const Value.absent(),
                 Value<String?> releaseDate = const Value.absent(),
                 Value<int?> totalTracks = const Value.absent(),
+                Value<bool> isLiked = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AlbumsCompanion.insert(
                 spotifyId: spotifyId,
@@ -2914,6 +3302,8 @@ class $$AlbumsTableTableManager
                 imageUrl: imageUrl,
                 releaseDate: releaseDate,
                 totalTracks: totalTracks,
+                isLiked: isLiked,
+                updatedAt: updatedAt,
                 rowid: rowid,
               ),
           withReferenceMapper:
@@ -2949,12 +3339,16 @@ typedef $$PlaylistsTableCreateCompanionBuilder =
     PlaylistsCompanion Function({
       Value<int> id,
       required String name,
+      Value<String?> spotifyId,
+      Value<String?> imageUrl,
       Value<DateTime> createdAt,
     });
 typedef $$PlaylistsTableUpdateCompanionBuilder =
     PlaylistsCompanion Function({
       Value<int> id,
       Value<String> name,
+      Value<String?> spotifyId,
+      Value<String?> imageUrl,
       Value<DateTime> createdAt,
     });
 
@@ -2974,6 +3368,16 @@ class $$PlaylistsTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get spotifyId => $composableBuilder(
+    column: $table.spotifyId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3002,6 +3406,16 @@ class $$PlaylistsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get spotifyId => $composableBuilder(
+    column: $table.spotifyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -3022,6 +3436,12 @@ class $$PlaylistsTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get spotifyId =>
+      $composableBuilder(column: $table.spotifyId, builder: (column) => column);
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -3057,17 +3477,28 @@ class $$PlaylistsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
+                Value<String?> spotifyId = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-              }) =>
-                  PlaylistsCompanion(id: id, name: name, createdAt: createdAt),
+              }) => PlaylistsCompanion(
+                id: id,
+                name: name,
+                spotifyId: spotifyId,
+                imageUrl: imageUrl,
+                createdAt: createdAt,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String name,
+                Value<String?> spotifyId = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => PlaylistsCompanion.insert(
                 id: id,
                 name: name,
+                spotifyId: spotifyId,
+                imageUrl: imageUrl,
                 createdAt: createdAt,
               ),
           withReferenceMapper:

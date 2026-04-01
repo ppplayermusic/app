@@ -74,7 +74,7 @@ class PpPlayerApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
     return MaterialApp.router(
-      title: 'ppplayer',
+      title: 'PPPLAYER',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark(),
       routerConfig: router,
