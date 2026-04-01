@@ -11,7 +11,6 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
 import '../../core/providers/genre_providers.dart';
-import '../../shared/widgets/shimmer_placeholder.dart';
 
 final categoryColorProvider = Provider.family<Color, String>((ref, name) {
   final colors = [
@@ -333,7 +332,11 @@ class GenreDetailsScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              loadingWidget: const SectionShimmer(height: 200),
+              loadingWidget: const SectionShimmer(
+                isHorizontal: false,
+                height: 72,
+                count: 5,
+              ),
             ),
           ),
         ],

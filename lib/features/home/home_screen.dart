@@ -9,10 +9,9 @@ import '../../shared/widgets/banner_ad_widget.dart';
 import '../../shared/widgets/promotion_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/ad_service.dart';
-import 'dart:ui';
+import 'dart:ui' show ImageFilter;
 import '../../core/providers/genre_providers.dart';
 import '../../shared/widgets/section_wrapper.dart';
-import '../../shared/widgets/shimmer_placeholder.dart';
 
 final newReleasesProvider = FutureProvider((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -282,20 +281,12 @@ class HomeScreen extends ConsumerWidget {
                         ).animate().fadeIn(delay: (400 + (index * 50)).ms).scale(begin: const Offset(0.9, 0.9));
                       },
                     ),
-                    loadingWidget: SizedBox(
+                    loadingWidget: const SectionShimmer(
+                      isGrid: true,
+                      count: 6,
                       height: 180,
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 3,
-                        ),
-                        itemCount: 6,
-                        itemBuilder: (_, _) => const ShimmerPlaceholder(borderRadius: 16),
-                      ),
+                      spacing: 12,
+                      childAspectRatio: 3,
                     ),
                   ),
                   const SizedBox(height: 32),

@@ -9,8 +9,8 @@ import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
-import '../../core/db/app_database.dart' as db;
 import '../../shared/widgets/shimmer_placeholder.dart';
+import '../../core/db/app_database.dart' as db;
 
 final _artistProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -68,7 +68,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: artistAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF1DB954))),
+        loading: () => const ArtistDetailsShimmer(),
         error: (e, _) => Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white54))),
         data: (artist) {
           final images = (artist['images'] as List?) ?? [];
@@ -717,16 +717,15 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                     child: Stack(
                                       children: [
-                                        CachedNetworkImage(
-                                          imageUrl: pImgUrl,
-                                          width: 170,
-                                          height: 170,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) => Container(
-                                            color: Colors.white.withValues(alpha: 0.05),
-                                            child: const Center(child: CircularProgressIndicator(strokeWidth: 1, color: Colors.white10)),
+                                          CachedNetworkImage(
+                                            imageUrl: pImgUrl,
+                                            width: 170,
+                                            height: 170,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) => const ShimmerPlaceholder(
+                                              borderRadius: 20,
+                                            ),
                                           ),
-                                        ),
                                         Positioned(
                                           bottom: 8,
                                           right: 8,
@@ -783,6 +782,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
     );
   }
 }
+
 
 
 

@@ -13,6 +13,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/ad_service.dart';
 import '../../core/providers/genre_providers.dart';
 import '../home/genre_details_screen.dart';
+import '../../shared/widgets/shimmer_placeholder.dart';
 
 final _searchQueryProvider = StateProvider<String>((ref) => '');
 
@@ -166,10 +167,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
       body: query.isEmpty
           ? _EmptySearch()
           : results.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
-              error: (e, _) =>
-                  Center(child: Text('Error: $e')),
+              loading: () => const SliverSectionShimmer(count: 12, isGrid: false),
+              error: (e, _) => Center(child: Text('Error: $e')),
               data: (data) => TabBarView(
                 controller: _tabCtrl,
                 children: [
@@ -233,13 +232,11 @@ class _EmptySearch extends ConsumerWidget {
               ),
             ),
           ),
-          loading: () => const SliverToBoxAdapter(
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.all(32.0),
-                child: CircularProgressIndicator(color: Colors.green),
-              ),
-            ),
+          loading: () => const SliverSectionShimmer(
+            count: 10,
+            isGrid: true,
+            crossAxisCount: 2,
+            childAspectRatio: 1.6,
           ),
           error: (e, _) => SliverToBoxAdapter(
             child: Center(

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
+import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/db/app_database.dart' as db;
@@ -41,7 +42,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: albumAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF1DB954))),
+        loading: () => const AlbumDetailsShimmer(),
         error: (e, _) => Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white54))),
         data: (album) {
           final images = (album['images'] as List?) ?? [];

@@ -187,7 +187,7 @@ class SpotifyClient {
         if (seedGenres != null) 'seed_genres': seedGenres,
         'limit': limit,
         'market': market,
-        'min_popularity': 20,
+        'min_popularity': 10,
       },
       options: Options(headers: await _authHeaders()),
     );

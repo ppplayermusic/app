@@ -21,11 +21,16 @@ final radioTracksProvider = FutureProvider.family<List<Track>, ({String type, St
     
     if (tracks.isNotEmpty) return tracks;
     
-    // Fallback: If empty, try a safe genre seed
-    return client.getRecommendations(
+    // Fallback 1: Try a safe genre seed
+    final fallbackTracks = await client.getRecommendations(
       seedGenres: 'pop',
       limit: 50,
     );
+    
+    if (fallbackTracks.isNotEmpty) return fallbackTracks;
+
+    // Fallback 2: Ultimate fallback to popular tracks
+    return client.getPopularTracks(limit: 50);
   } catch (e) {
     // If targeted recommendation fails, return popular tracks as ultimate fallback
     return client.getPopularTracks(limit: 50);
@@ -374,44 +379,73 @@ class RadioDetailsScreen extends ConsumerWidget {
             ),
           ),
           tracksAsync.when(
-            data: (tracks) => SliverPadding(
-              padding: const EdgeInsets.only(bottom: 120),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final track = tracks[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 32,
-                            child: Text(
-                              (index + 1).toString().padLeft(2, '0'),
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                fontSize: 13,
-                                fontFamily: 'monospace',
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -0.5,
+            data: (tracks) => tracks.isEmpty 
+              ? SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.music_off_rounded, size: 64, color: Colors.white10),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No tracks found for this radio.',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.5),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Try another station or check your connection.',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : SliverPadding(
+                  padding: const EdgeInsets.only(bottom: 120),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final track = tracks[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 32,
+                                child: Text(
+                                  (index + 1).toString().padLeft(2, '0'),
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.2),
+                                    fontSize: 13,
+                                    fontFamily: 'monospace',
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: TrackTile(
+                                  track: track,
+                                  onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: TrackTile(
-                              track: track,
-                              onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ).animate(delay: (200 + index * 40).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
-                  },
-                  childCount: tracks.length,
+                        ).animate(delay: (200 + index * 40).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
+                      },
+                      childCount: tracks.length,
+                    ),
+                  ),
                 ),
-              ),
-            ),
             loading: () => const _RadioShimmerSliver(),
             error: (e, _) => SliverFillRemaining(
               child: Padding(

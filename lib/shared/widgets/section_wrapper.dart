@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'shimmer_placeholder.dart';
+export 'shimmer_placeholder.dart' show SectionShimmer, ShimmerPlaceholder;
 
 class SectionWrapper<T> extends StatelessWidget {
   final String title;

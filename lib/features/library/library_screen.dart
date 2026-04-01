@@ -9,6 +9,8 @@ import '../../shared/widgets/playlist_cover.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
 import '../../core/player/player_provider.dart';
+import '../../shared/widgets/shimmer_placeholder.dart';
+
 
 enum LibraryFilter { all, playlists, artists, albums }
 enum LibrarySort { recent, alphabetical }
@@ -176,26 +178,28 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                             ),
                           ),
                         ),
-                      if (!_isSearching)
                         Container(
                           height: kToolbarHeight + 44,
                           alignment: Alignment.bottomLeft,
-                          padding: EdgeInsets.only(left: 16, bottom: isCollapsed ? (48 / 2 - 10) : 60), // Half of filter bar height - small offset for baseline
+                          padding: EdgeInsets.only(
+                            left: 16, 
+                            right: isCollapsed ? 96 : 16, // Reserve space for actions when collapsed
+                            bottom: isCollapsed ? 12 : 60,
+                          ),
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               if (!isCollapsed) ...[
                                 Container(
-                                  width: 34,
-                                  height: 34,
+                                  width: 38,
+                                  height: 38,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1),
+                                    border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1.5),
                                     boxShadow: [
                                       BoxShadow(
                                         color: const Color(0xFF450af5).withValues(alpha: 0.4),
-                                        blurRadius: 15,
+                                        blurRadius: 20,
                                         spreadRadius: -2,
                                       ),
                                     ],
@@ -205,15 +209,18 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                     ),
                                   ),
                                 ).animate().fadeIn().scale(duration: 400.ms, curve: Curves.easeOutBack),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: 14),
                               ],
-                              Text(
-                                isCollapsed ? 'Library' : 'Your Library',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: isCollapsed ? 20 : 36,
-                                  letterSpacing: -1.2,
+                              Expanded(
+                                child: Text(
+                                  isCollapsed ? 'Library' : 'Your Library',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: isCollapsed ? 22 : 36,
+                                    letterSpacing: isCollapsed ? -0.5 : -1.5,
+                                  ),
                                 ),
                               ),
                             ],
@@ -1223,53 +1230,11 @@ class _ArtistsShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, i) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Row(
-              children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.05),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 150,
-                        height: 18,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: Colors.white.withValues(alpha: 0.05),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: 60,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: Colors.white.withValues(alpha: 0.05),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1.5.seconds, color: Colors.white.withValues(alpha: 0.05)),
-          childCount: 5,
-        ),
-      ),
+    return const SliverSectionShimmer(
+      count: 6,
+      isCircular: true,
+      tileHeight: 80,
+      spacing: 16,
     );
   }
 }
@@ -1279,51 +1244,12 @@ class _AlbumsShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 0.75,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (context, i) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    color: Colors.white.withValues(alpha: 0.05),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                width: 120,
-                height: 16,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.white.withValues(alpha: 0.05),
-                ),
-              ),
-              const SizedBox(height: 6),
-              Container(
-                width: 80,
-                height: 12,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.white.withValues(alpha: 0.05),
-                ),
-              ),
-            ],
-          ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1.5.seconds, color: Colors.white.withValues(alpha: 0.05)),
-          childCount: 4,
-        ),
-      ),
+    return const SliverSectionShimmer(
+      count: 6,
+      isGrid: true,
+      crossAxisCount: 2,
+      childAspectRatio: 0.75,
+      spacing: 16,
     );
   }
 }
