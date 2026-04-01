@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  static const _primaryColor = Color(0xFF1DB954); // Spotify green accent
+  static const _primaryColor = Color(0xFFFF4B4B); // Original red branding
   static const _bgColor = Color(0xFF0A0A0A);
   static const _surfaceColor = Color(0xFF1A1A1A);
   static const _surface2Color = Color(0xFF242424);

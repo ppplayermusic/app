@@ -224,7 +224,7 @@ class SettingsScreen extends ConsumerWidget {
                                 width: 32,
                                 height: 32,
                                 decoration: BoxDecoration(
-                                  color: isSelected ? const Color(0xFF1DB954) : Colors.white10,
+                                  color: isSelected ? const Color(0xFFFF4B4B) : Colors.white10,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
@@ -243,7 +243,7 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                               ),
                               const Spacer(),
-                              if (isSelected) const Icon(Icons.check_rounded, color: Color(0xFF1DB954), size: 20),
+                              if (isSelected) const Icon(Icons.check_rounded, color: Color(0xFFFF4B4B), size: 20),
                             ],
                           ),
                         ),
@@ -252,7 +252,7 @@ class SettingsScreen extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF1DB954))),
+              loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF4B4B))),
               error: (err, _) => Center(child: Text('Error loding markets: $err')),
             );
           },
@@ -318,7 +318,7 @@ class _SettingsHero extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF1DB954).withValues(alpha: 0.3),
+                            color: const Color(0xFFFF4B4B).withValues(alpha: 0.3),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
@@ -348,7 +348,7 @@ class _SettingsHero extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2.0,
-                      color: const Color(0xFF1DB954).withValues(alpha: 0.9),
+                      color: const Color(0xFFFF4B4B).withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -371,7 +371,7 @@ class _MeshPainter extends CustomPainter {
     final paint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
 
     // Primary Brand Blob
-    paint.color = const Color(0xFF1DB954).withValues(alpha: 0.3);
+    paint.color = const Color(0xFFFF4B4B).withValues(alpha: 0.3);
     final center1 = Offset(
       size.width * (0.5 + 0.35 * math.cos(animationValue * 2 * math.pi)),
       size.height * (0.5 + 0.35 * math.sin(animationValue * 2 * math.pi)),
@@ -570,8 +570,8 @@ class TactileSwitchTile extends StatelessWidget {
                 scale: 0.8,
                 child: Switch.adaptive(
                   value: value,
-                  activeTrackColor: const Color(0xFF1DB954).withValues(alpha: 0.5),
-                  activeThumbColor: const Color(0xFF1DB954),
+                  activeTrackColor: const Color(0xFFFF4B4B).withValues(alpha: 0.5),
+                  activeThumbColor: const Color(0xFFFF4B4B),
                   onChanged: (v) {
                     HapticFeedback.mediumImpact();
                     onChanged(v);

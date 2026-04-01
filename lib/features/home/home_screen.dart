@@ -1340,7 +1340,7 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF1DB954).withValues(alpha: 0.2),
+                                color: const Color(0xFFFF4B4B).withValues(alpha: 0.2),
                                 blurRadius: 40,
                                 spreadRadius: 5,
                               ),
@@ -1379,11 +1379,11 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1DB954),
+                            color: const Color(0xFFFF4B4B),
                             borderRadius: BorderRadius.circular(2),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF1DB954).withValues(alpha: 0.4),
+                                color: const Color(0xFFFF4B4B).withValues(alpha: 0.4),
                                 blurRadius: 10,
                               ),
                             ],
@@ -1469,7 +1469,7 @@ class _MeshPainter extends CustomPainter {
     final paint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
 
     // Primary Brand Blob
-    paint.color = const Color(0xFF1DB954).withValues(alpha: 0.15);
+    paint.color = const Color(0xFFFF4B4B).withValues(alpha: 0.15);
     canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.2), 120, paint);
 
     // Secondary Accent Blob
