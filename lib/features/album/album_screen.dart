@@ -73,155 +73,169 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
-                expandedHeight: _isSearching ? kToolbarHeight : 380,
+                expandedHeight: _isSearching ? kToolbarHeight + MediaQuery.of(context).padding.top : 380,
                 pinned: true,
                 stretch: true,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                leading: _isSearching
-                    ? TactileIconButton(
-                        icon: Icons.arrow_back,
-                        onTap: () {
-                          setState(() {
-                            _isSearching = false;
-                            _searchQuery = '';
-                            _searchController.clear();
-                          });
-                        },
-                      )
-                    : TactileIconButton(
-                        icon: Icons.arrow_back_ios_new,
-                        size: 20,
-                        onTap: () => context.pop(),
-                      ),
+                leading: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _isSearching
+                      ? TactileIconButton(
+                          icon: Icons.arrow_back_rounded,
+                          onTap: () {
+                            setState(() {
+                              _isSearching = false;
+                              _searchQuery = '';
+                              _searchController.clear();
+                            });
+                          },
+                        )
+                      : TactileIconButton(
+                          icon: Icons.arrow_back_ios_new_rounded,
+                          size: 18,
+                          onTap: () => context.pop(),
+                        ),
+                ),
                 title: _isSearching
-                    ? TextField(
-                        controller: _searchController,
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          hintText: 'Search in album...',
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            fontSize: 16,
+                    ? Container(
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            width: 1,
                           ),
                         ),
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
-                        onChanged: (value) {
-                          setState(() {
-                            _searchQuery = value.toLowerCase();
-                          });
-                        },
-                      )
+                        child: TextField(
+                          controller: _searchController,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            hintText: 'Search in album...',
+                            prefixIcon: Icon(Icons.search_rounded, color: Colors.white.withValues(alpha: 0.5), size: 20),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                            hintStyle: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.4),
+                              fontSize: 14,
+                            ),
+                          ),
+                          style: const TextStyle(color: Colors.white, fontSize: 14),
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value.toLowerCase();
+                            });
+                          },
+                        ),
+                      ).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.95, 0.95))
                     : null,
                 actions: [
-                  if (!_isSearching)
-                    TactileIconButton(
-                      icon: Icons.search,
-                      onTap: () {
-                        setState(() {
-                          _isSearching = true;
-                        });
-                      },
-                    )
-                  else if (_searchQuery.isNotEmpty)
-                    TactileIconButton(
-                      icon: Icons.clear,
-                      onTap: () {
-                        _searchController.clear();
-                        setState(() {
-                          _searchQuery = '';
-                        });
-                      },
-                    ),
-                  const SizedBox(width: 8),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: !_isSearching
+                        ? TactileIconButton(
+                            icon: Icons.search_rounded,
+                            onTap: () {
+                              setState(() {
+                                _isSearching = true;
+                              });
+                            },
+                          )
+                        : _searchQuery.isNotEmpty
+                            ? TactileIconButton(
+                                icon: Icons.clear_rounded,
+                                onTap: () {
+                                  _searchController.clear();
+                                  setState(() {
+                                    _searchQuery = '';
+                                  });
+                                },
+                              )
+                            : const SizedBox(width: 40),
+                  ),
+                  const SizedBox(width: 4),
                 ],
-                flexibleSpace: _isSearching
-                    ? ClipRect(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                          child: Container(
-                            color: Colors.black.withValues(alpha: 0.7),
-                          ),
+                flexibleSpace: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isCollapsed =
+                        constraints.maxHeight <= kToolbarHeight + MediaQuery.of(context).padding.top + 10;
+                    return ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: (isCollapsed || _isSearching) ? 20 : 0,
+                          sigmaY: (isCollapsed || _isSearching) ? 20 : 0,
                         ),
-                      )
-                    : LayoutBuilder(
-                        builder: (context, constraints) {
-                          final isCollapsed =
-                              constraints.maxHeight <= kToolbarHeight + MediaQuery.of(context).padding.top + 10;
-                          return ClipRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(
-                                sigmaX: isCollapsed ? 15 : 0,
-                                sigmaY: isCollapsed ? 15 : 0,
-                              ),
-                              child: Container(
-                                color: isCollapsed
-                                    ? Colors.black.withValues(alpha: 0.7)
-                                    : Colors.transparent,
-                                child: FlexibleSpaceBar(
-                                  stretchModes: const [
-                                    StretchMode.zoomBackground,
-                                    StretchMode.blurBackground,
-                                  ],
-                                  titlePadding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
-                                  title: AnimatedOpacity(
+                        child: Container(
+                          color: (isCollapsed || _isSearching)
+                              ? Colors.black.withValues(alpha: 0.75)
+                              : Colors.transparent,
+                          child: FlexibleSpaceBar(
+                            stretchModes: const [
+                              StretchMode.zoomBackground,
+                              StretchMode.blurBackground,
+                            ],
+                            titlePadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            title: _isSearching
+                                ? null
+                                : AnimatedOpacity(
                                     duration: const Duration(milliseconds: 200),
                                     opacity: 1.0,
                                     child: Text(
                                       albumName,
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w900,
                                         fontSize: isCollapsed ? 18 : 32,
-                                        letterSpacing: -0.8,
+                                        letterSpacing: isCollapsed ? -0.2 : -1.5,
                                         shadows: [
                                           if (!isCollapsed)
-                                            const Shadow(
-                                                color: Colors.black,
-                                                blurRadius: 20,
-                                                offset: Offset(0, 4)),
+                                            Shadow(
+                                              color: Colors.black.withValues(alpha: 0.8),
+                                              blurRadius: 20,
+                                              offset: const Offset(0, 4),
+                                            ),
                                         ],
                                       ),
                                     ),
                                   ),
-                                  background: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      if (imageUrl != null)
-                                        CachedNetworkImage(
-                                          imageUrl: imageUrl,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          placeholder: (context, url) =>
-                                              Container(color: const Color(0xFF121212)),
-                                        )
-                                      else
+                            background: _isSearching ? null : Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                if (imageUrl != null)
+                                  CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    placeholder: (context, url) =>
                                         Container(color: const Color(0xFF121212)),
-                                      // Modern Premium Gradient Overlay
-                                      const DecoratedBox(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            colors: [
-                                              Colors.transparent,
-                                              Color(0x33000000),
-                                              Color(0x99000000),
-                                              Colors.black,
-                                            ],
-                                            stops: [0.0, 0.4, 0.7, 1.0],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  )
+                                else
+                                  Container(color: const Color(0xFF121212)),
+                                // Modern Premium Gradient Overlay
+                                const DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Color(0x33000000),
+                                        Color(0xBB000000),
+                                        Colors.black,
+                                      ],
+                                      stops: [0.0, 0.4, 0.8, 1.0],
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                          );
-                        },
+                          ),
+                        ),
                       ),
+                    );
+                  },
+                ),
               ),
               SliverToBoxAdapter(
                 child: Padding(
@@ -339,14 +353,14 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 32,
+                              width: 36,
                               child: Text(
                                 '${i + 1}',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
-                                  fontSize: 14,
+                                  color: Colors.white.withValues(alpha: 0.3),
+                                  fontSize: 13,
                                   fontFamily: 'monospace',
-                                  fontWeight: FontWeight.w400,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -362,9 +376,9 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                           ],
                         ),
                       )
-                          .animate(delay: (20 * i).ms)
-                          .fadeIn(duration: 400.ms)
-                          .slideX(begin: 0.1, end: 0);
+                          .animate(delay: (450 + 35 * i).ms)
+                          .fadeIn(duration: 500.ms)
+                          .slideX(begin: 0.04, end: 0, curve: Curves.easeOutQuad);
                     },
                     childCount: filteredTracks.length,
                   ),

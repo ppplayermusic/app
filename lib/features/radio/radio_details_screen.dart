@@ -48,15 +48,19 @@ class RadioDetailsScreen extends ConsumerWidget {
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 340,
+            expandedHeight: 320,
             pinned: true,
             stretch: true,
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: TactileIconButton(
-              icon: Icons.arrow_back_ios_new,
-              size: 20,
-              onTap: () => Navigator.of(context).pop(),
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TactileIconButton(
+                icon: Icons.arrow_back_ios_new_rounded,
+                size: 18,
+                onTap: () => Navigator.of(context).pop(),
+                color: Colors.white,
+              ),
             ),
             flexibleSpace: LayoutBuilder(
               builder: (context, constraints) {
@@ -64,8 +68,8 @@ class RadioDetailsScreen extends ConsumerWidget {
                 return ClipRect(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(
-                      sigmaX: isCollapsed ? 15 : 0,
-                      sigmaY: isCollapsed ? 15 : 0,
+                      sigmaX: isCollapsed ? 20 : 0,
+                      sigmaY: isCollapsed ? 20 : 0,
                     ),
                     child: FlexibleSpaceBar(
                       stretchModes: const [
@@ -79,15 +83,16 @@ class RadioDetailsScreen extends ConsumerWidget {
                         child: Text(
                           title,
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w900,
                             fontSize: isCollapsed ? 18 : 32,
-                            letterSpacing: -0.5,
+                            letterSpacing: isCollapsed ? -0.2 : -1.2,
                             shadows: [
                               if (!isCollapsed)
-                                const Shadow(
-                                    color: Colors.black,
-                                    blurRadius: 20,
-                                    offset: Offset(0, 4)),
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.8),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 4),
+                                ),
                             ],
                           ),
                         ),
@@ -111,12 +116,12 @@ class RadioDetailsScreen extends ConsumerWidget {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  color1?.withValues(alpha: 0.4) ?? Colors.transparent,
-                                  color2?.withValues(alpha: 0.6) ?? const Color(0x33000000),
-                                  const Color(0x99000000),
+                                  color1?.withValues(alpha: 0.3) ?? Colors.transparent,
+                                  color2?.withValues(alpha: 0.5) ?? const Color(0x33000000),
+                                  const Color(0xAA000000),
                                   Colors.black,
                                 ],
-                                stops: const [0.0, 0.4, 0.7, 1.0],
+                                stops: const [0.0, 0.4, 0.75, 1.0],
                               ),
                             ),
                           ),
@@ -128,9 +133,12 @@ class RadioDetailsScreen extends ConsumerWidget {
               },
             ),
             actions: [
-              TactileIconButton(
-                icon: Icons.more_vert,
-                onTap: () {},
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TactileIconButton(
+                  icon: Icons.more_vert_rounded,
+                  onTap: () {},
+                ),
               ),
             ],
           ),
@@ -145,10 +153,10 @@ class RadioDetailsScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1DB954).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
+                          color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                            color: const Color(0xFF1DB954).withValues(alpha: 0.4),
+                            color: const Color(0xFF1DB954).withValues(alpha: 0.3),
                             width: 1,
                           ),
                         ),
@@ -164,50 +172,54 @@ class RadioDetailsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Made for you',
+                        'Based on your taste',
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.4),
                           fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ],
-                  ).animate().fadeIn(delay: 100.ms),
+                  ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
                   const SizedBox(height: 16),
                   Text(
                     subtitle ?? 'A curated mix featuring $title and other artists you like.',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
-                      fontSize: 14,
+                      color: Colors.white.withValues(alpha: 0.65),
+                      fontSize: 15,
                       height: 1.5,
                       fontWeight: FontWeight.w400,
+                      letterSpacing: -0.1,
                     ),
-                  ).animate().fadeIn(delay: 200.ms),
-                  const SizedBox(height: 28),
+                  ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
+                  const SizedBox(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
                           TactileIconButton(
-                            icon: Icons.favorite_border,
+                            icon: Icons.favorite_border_rounded,
                             size: 28,
                             color: Colors.white70,
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(12),
                             onTap: () {},
                           ),
+                          const SizedBox(width: 4),
                           TactileIconButton(
                             icon: Icons.download_for_offline_outlined,
                             size: 28,
                             color: Colors.white70,
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(12),
                             onTap: () {},
                           ),
+                          const SizedBox(width: 4),
                           TactileIconButton(
-                            icon: Icons.shuffle,
+                            icon: Icons.shuffle_rounded,
                             size: 28,
                             color: Colors.white70,
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(12),
                             onTap: () => ref.read(playerProvider.notifier).toggleShuffle(),
                           ),
                         ],
@@ -221,7 +233,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                             ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
                           }
                         },
-                      ).animate().scale(curve: Curves.easeOutBack),
+                      ).animate().scale(delay: 300.ms, curve: Curves.easeOutBack, duration: 500.ms),
                     ],
                   ).animate(delay: 300.ms).fadeIn(),
                 ],
@@ -240,14 +252,14 @@ class RadioDetailsScreen extends ConsumerWidget {
                       child: Row(
                         children: [
                           SizedBox(
-                            width: 32,
+                            width: 36,
                             child: Text(
                               '${index + 1}',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.35),
+                                color: Colors.white.withValues(alpha: 0.3),
                                 fontSize: 13,
                                 fontFamily: 'monospace',
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -259,7 +271,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                    ).animate(delay: (index * 30).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
+                    ).animate(delay: (400 + index * 35).ms).fadeIn(duration: 500.ms).slideX(begin: 0.04, end: 0, curve: Curves.easeOutQuad);
                   },
                   childCount: tracks.length,
                 ),

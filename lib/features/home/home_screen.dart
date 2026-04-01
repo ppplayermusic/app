@@ -8,6 +8,8 @@ import '../../shared/widgets/banner_ad_widget.dart';
 import '../../shared/widgets/promotion_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/ad_service.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'dart:ui';
 
 final newReleasesProvider = FutureProvider((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -234,36 +236,9 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            floating: true,
-            title: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image.asset(
-                    'assets/logo.png',
-                    height: 32,
-                    width: 32,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  'Good morning',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                ),
-              ],
-            ),
-            actions: [
-              TactileIconButton(
-                icon: Icons.history,
-                onTap: () => context.push('/recently-played'),
-              ),
-              TactileIconButton(
-                icon: Icons.settings,
-                onTap: () => context.push('/settings'),
-              ),
-            ],
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _HomeHero(),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -271,7 +246,7 @@ class HomeScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionHeader('Jump Back In'),
+                  _buildSectionHeader('Jump Back In').animate().fadeIn(delay: 400.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   recentlyPlayed.when(
                     data: (tracks) {
@@ -291,7 +266,7 @@ class HomeScreen extends ConsumerWidget {
                           return _HistoryCard(
                             track: track,
                             onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
-                          );
+                          ).animate().fadeIn(delay: (400 + (index * 50)).ms).scale(begin: const Offset(0.9, 0.9));
                         },
                       );
                     },
@@ -299,7 +274,7 @@ class HomeScreen extends ConsumerWidget {
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Artists'),
+                  _buildSectionHeader('Popular Artists').animate().fadeIn(delay: 550.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   popularArtists.when(
                     data: (artists) {
@@ -316,7 +291,7 @@ class HomeScreen extends ConsumerWidget {
                               name: artist['name'],
                               imageUrl: imageUrl,
                               onTap: () => context.push('/artist/${artist['id']}'),
-                            );
+                            ).animate().fadeIn(delay: (650 + (index * 100)).ms).scale(begin: const Offset(0.8, 0.8));
                           },
                         ),
                       );
@@ -325,8 +300,7 @@ class HomeScreen extends ConsumerWidget {
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
-                  const SizedBox(height: 32),
-                  _buildSectionHeader('Made For You'),
+                  _buildSectionHeader('Made For You').animate().fadeIn(delay: 600.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   madeForYouMixes.when(
                     data: (mixes) {
@@ -358,7 +332,7 @@ class HomeScreen extends ConsumerWidget {
                                     'color2': mix['color2'],
                                   },
                                 ),
-                            );
+                            ).animate(delay: (700 + index * 100).ms).fadeIn().scale(begin: const Offset(0.8, 0.8));
                           },
                         ),
                       );
@@ -367,7 +341,7 @@ class HomeScreen extends ConsumerWidget {
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Suggested Stations'),
+                  _buildSectionHeader('Suggested Stations').animate().fadeIn(delay: 800.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   suggestedStations.when(
                     data: (radios) {
@@ -391,7 +365,7 @@ class HomeScreen extends ConsumerWidget {
                                   },
                                 ).toString(),
                               ),
-                            );
+                            ).animate().fadeIn(delay: (900 + index * 100).ms).scale(begin: const Offset(0.9, 0.9));
                           },
                         ),
                       );
@@ -469,7 +443,7 @@ class HomeScreen extends ConsumerWidget {
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Tracks'),
+                  _buildSectionHeader('Popular Tracks').animate().fadeIn(delay: 1100.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   popularTracks.when(
                     data: (tracks) => SizedBox(
@@ -486,7 +460,7 @@ class HomeScreen extends ConsumerWidget {
                               imageUrl: promo['image'],
                               ctaText: promo['cta']!,
                               type: PromotionType.horizontal,
-                            );
+                            ).animate().fadeIn(delay: (1200 + index * 100).ms).scale(begin: const Offset(0.9, 0.9));
                           }
                           
                           final trackIndex = index > 4 ? index - 1 : index;
@@ -497,7 +471,7 @@ class HomeScreen extends ConsumerWidget {
                             imageUrl: track.albumImage ?? '',
                             onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
                             artistId: track.artistId,
-                          );
+                          ).animate().fadeIn(delay: (1200 + index * 100).ms).slideY(begin: 0.1);
                         },
                       ),
                     ),
@@ -632,45 +606,53 @@ class _HistoryCard extends StatelessWidget {
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.98,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Row(
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: CachedNetworkImage(
-                imageUrl: track.albumImage ?? '',
-                fit: BoxFit.cover,
-                errorWidget: (context, url, error) => const Icon(Icons.music_note),
-              ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            height: 56,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    track.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            clipBehavior: Clip.antiAlias,
+            child: Row(
+              children: [
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: CachedNetworkImage(
+                    imageUrl: track.albumImage ?? '',
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => const Icon(Icons.music_note),
                   ),
-                    Text(
-                      track.artistName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white70, fontSize: 11),
-                    ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        track.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      Text(
+                        track.artistName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.white70, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ],
             ),
-            const SizedBox(width: 4),
-          ],
+          ),
         ),
       ),
     );
@@ -703,29 +685,67 @@ class _AlbumCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                width: 140,
-                height: 140,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(color: Colors.white10),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Stack(
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      width: 140,
+                      height: 140,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(color: Colors.white10),
+                    ),
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.4),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-              Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold, 
+                fontSize: 14,
+                letterSpacing: -0.2,
               ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.5), 
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
       ),
@@ -748,7 +768,7 @@ class _ArtistCircle extends StatelessWidget {
   Widget build(BuildContext context) {
     return TactileTap(
       onTap: onTap,
-      scaleDown: 0.95,
+      scaleDown: 0.92,
       child: Container(
         width: 120,
         margin: const EdgeInsets.only(right: 16),
@@ -761,44 +781,59 @@ class _ArtistCircle extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
+                    color: Colors.black.withValues(alpha: 0.4),
+                    blurRadius: 25,
+                    offset: const Offset(0, 10),
                   ),
                 ],
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  width: 2,
+                ),
               ),
               child: ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    color: Colors.grey[900],
+                    color: Colors.white.withValues(alpha: 0.05),
                     child: const Icon(Icons.person, color: Colors.white24, size: 40),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[900],
+                    color: Colors.white.withValues(alpha: 0.05),
                     child: const Icon(Icons.person, color: Colors.white24, size: 40),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Text(
               name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 fontSize: 13,
                 color: Colors.white,
+                letterSpacing: -0.1,
               ),
             ),
-            const Text(
-              'Artist',
-              style: TextStyle(
-                color: Colors.white54,
-                fontSize: 12,
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text(
+                'ARTIST',
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
           ],
@@ -841,12 +876,12 @@ class _RadioCard extends StatelessWidget {
         width: 150,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withValues(alpha: 0.5),
+              blurRadius: 25,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
@@ -857,23 +892,29 @@ class _RadioCard extends StatelessWidget {
             CachedNetworkImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(color: Colors.grey[900]),
+              placeholder: (context, url) => Container(color: Colors.white.withValues(alpha: 0.05)),
               errorWidget: (context, url, error) => Container(
                 color: Colors.blueGrey[900],
                 child: const Icon(Icons.radio, color: Colors.white24, size: 40),
               ),
             ),
-            // Gradient Overlay
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black,
-                  ],
-                  stops: [0.3, 1.0],
+            // Glassmorphic Layer
+            Positioned.fill(
+              child: ClipRRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.8),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -882,23 +923,28 @@ class _RadioCard extends StatelessWidget {
               top: 12,
               left: 12,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Colors.white24),
+                  color: const Color(0xFF1DB954).withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF1DB954).withValues(alpha: 0.4),
+                      blurRadius: 8,
+                    ),
+                  ],
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.radio, size: 10, color: Colors.white),
+                    Icon(Icons.sensors, size: 12, color: Colors.black),
                     SizedBox(width: 4),
                     Text(
-                      'RADIO',
+                      'LIVE',
                       style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black,
                         letterSpacing: 1.0,
                       ),
                     ),
@@ -908,9 +954,9 @@ class _RadioCard extends StatelessWidget {
             ),
             // Text info
             Positioned(
-              bottom: 12,
-              left: 12,
-              right: 12,
+              bottom: 16,
+              left: 16,
+              right: 16,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -920,16 +966,20 @@ class _RadioCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 16,
                       color: Colors.white,
+                      height: 1.2,
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  const Text(
-                    'Station',
+                  const SizedBox(height: 4),
+                  Text(
+                    'Radio Station',
                     style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 11,
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -937,15 +987,16 @@ class _RadioCard extends StatelessWidget {
             ),
             // Play indicator overlay
             Positioned(
-              bottom: 8,
-              right: 8,
+              bottom: 12,
+              right: 12,
               child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.green,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white24),
                 ),
-                child: const Icon(Icons.play_arrow, size: 16, color: Colors.black),
+                child: const Icon(Icons.play_arrow_rounded, size: 20, color: Colors.white),
               ),
             ),
           ],
@@ -987,17 +1038,20 @@ class _SpotifyMixCard extends StatelessWidget {
               width: 160,
               height: 160,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(24),
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [color1, color2],
+                  colors: [
+                    color1.withValues(alpha: 0.8),
+                    color2.withValues(alpha: 0.8),
+                  ],
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: color2.withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 8),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
@@ -1005,55 +1059,62 @@ class _SpotifyMixCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          color1,
-                          color2,
-                        ],
-                      ),
-                    ),
+                  // Glass Layer
+                  BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(color: Colors.transparent),
                   ),
                   if (imageUrl.isNotEmpty)
                     Positioned(
-                      bottom: -15,
-                      right: -15,
+                      bottom: -20,
+                      right: -20,
                       child: Transform.rotate(
-                        angle: 0.2, // slight rotation for visual interest
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
+                        angle: 0.2,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: 15,
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: CachedNetworkImage(
+                              imageUrl: imageUrl,
+                              width: 110,
+                              height: 110,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        title.replaceAll(' ', '\n'), // Stack words vertically 
+                        title.replaceAll(' ', '\n'),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.w900,
-                          height: 1.1,
+                          height: 1.0,
                           letterSpacing: -1,
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Icon(Icons.music_note, color: Colors.white.withValues(alpha: 0.3), size: 36),
+                    top: 16,
+                    right: 16,
+                    child: Icon(
+                      Icons.auto_awesome, 
+                      color: Colors.white.withValues(alpha: 0.5), 
+                      size: 24,
+                    ),
                   ),
                 ],
               ),
@@ -1064,8 +1125,9 @@ class _SpotifyMixCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: Colors.white.withValues(alpha: 0.5),
                 fontSize: 13,
+                fontWeight: FontWeight.w500,
                 height: 1.3,
               ),
             ),
@@ -1074,4 +1136,177 @@ class _SpotifyMixCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _HomeHero extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final progress = shrinkOffset / maxExtent;
+    final titleOpacity = progress.clamp(0.0, 1.0);
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Animated Mesh Background
+        Container(
+          color: Colors.black,
+          child: CustomPaint(
+            painter: _MeshPainter(),
+          ),
+        ),
+        
+        // Glassmorphic Overlay
+        ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 20 * (1 - progress),
+              sigmaY: 20 * (1 - progress),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.2 + (0.6 * progress)),
+                    Colors.black.withValues(alpha: 0.8 + (0.2 * progress)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        // Brand & Content
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (progress < 0.5)
+                  Opacity(
+                    opacity: (1 - progress * 2).clamp(0.0, 1.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF1DB954).withValues(alpha: 0.2),
+                                blurRadius: 40,
+                                spreadRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: Image.asset(
+                            'assets/logo.png',
+                            width: 64,
+                            height: 64,
+                          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                           .scale(begin: const Offset(1,1), end: const Offset(1.1, 1.1), duration: 2000.ms, curve: Curves.easeInOut),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Good morning',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -1.5,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+
+        // Collapsed Title (Floating effect)
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: SafeArea(
+            child: Container(
+              height: 60,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  if (progress > 0.5)
+                    Image.asset(
+                      'assets/logo.png',
+                      height: 32,
+                    ).animate().fadeIn().scale(),
+                  const SizedBox(width: 12),
+                  if (progress > 0.5)
+                    Opacity(
+                      opacity: titleOpacity,
+                      child: const Text(
+                        'PPPLAYER',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 4,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  const Spacer(),
+                  TactileIconButton(
+                    icon: Icons.history,
+                    backgroundColor: Colors.white.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => Navigator.of(context).pushNamed('/recently-played'),
+                  ),
+                  const SizedBox(width: 8),
+                  TactileIconButton(
+                    icon: Icons.settings,
+                    backgroundColor: Colors.white.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => Navigator.of(context).pushNamed('/settings'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  double get maxExtent => 280;
+
+  @override
+  double get minExtent => 100;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
+}
+
+class _MeshPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
+
+    // Primary Brand Blob
+    paint.color = const Color(0xFF1DB954).withValues(alpha: 0.15);
+    canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.2), 120, paint);
+
+    // Secondary Accent Blob
+    paint.color = Colors.blueAccent.withValues(alpha: 0.1);
+    canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.8), 90, paint);
+    
+    // Tertiary Purple Blob
+    paint.color = Colors.purpleAccent.withValues(alpha: 0.08);
+    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.5), 100, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
