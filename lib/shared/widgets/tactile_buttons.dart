@@ -1,0 +1,294 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+/// A premium icon button that provides a "squeeze" scale animation
+/// and light haptic feedback when pressed.
+class TactileIconButton extends StatefulWidget {
+  final IconData icon;
+  final VoidCallback? onTap;
+  final double size;
+  final Color color;
+  final EdgeInsets padding;
+
+  const TactileIconButton({
+    super.key,
+    required this.icon,
+    this.onTap,
+    this.size = 28,
+    this.color = Colors.white,
+    this.padding = const EdgeInsets.all(12.0),
+  });
+
+  @override
+  State<TactileIconButton> createState() => _TactileIconButtonState();
+}
+
+class _TactileIconButtonState extends State<TactileIconButton> {
+  double _scale = 1.0;
+
+  void _handleTapDown(TapDownDetails details) {
+    if (widget.onTap == null) return;
+    HapticFeedback.selectionClick();
+    setState(() => _scale = 0.85);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _scale = 1.0);
+  }
+
+  void _handleTapCancel() {
+    setState(() => _scale = 1.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOutCubic,
+        child: Opacity(
+          opacity: widget.onTap == null ? 0.3 : 1.0,
+          child: Padding(
+            padding: widget.padding,
+            child: Icon(
+              widget.icon,
+              size: widget.size,
+              color: widget.color,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A premium specialized Play/Pause button for the Player screen
+/// with spring animations and haptic feedback.
+class TactilePlayerPlayPauseButton extends StatefulWidget {
+  final bool isPlaying;
+  final VoidCallback? onTap;
+
+  const TactilePlayerPlayPauseButton({
+    super.key,
+    required this.isPlaying,
+    this.onTap,
+  });
+
+  @override
+  State<TactilePlayerPlayPauseButton> createState() => _TactilePlayerPlayPauseButtonState();
+}
+
+class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  double _scale = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    if (widget.isPlaying) _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(TactilePlayerPlayPauseButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isPlaying != oldWidget.isPlaying) {
+      if (widget.isPlaying) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    if (widget.onTap == null) return;
+    HapticFeedback.mediumImpact();
+    setState(() => _scale = 0.9);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: (_) => setState(() => _scale = 1.0),
+      onTapCancel: () => setState(() => _scale = 1.0),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 100),
+        child: Opacity(
+          opacity: widget.onTap == null ? 0.6 : 1.0,
+          child: Container(
+            width: 76,
+            height: 76,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 15,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Center(
+              child: AnimatedIcon(
+                icon: AnimatedIcons.play_pause,
+                progress: _controller,
+                size: 42,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A signature green play button used in list headers (Radio, Genre, Playlist)
+/// with tactile feedback and animations.
+class TactileActionPlayButton extends StatefulWidget {
+  final VoidCallback? onTap;
+  final double size;
+
+  const TactileActionPlayButton({
+    super.key,
+    this.onTap,
+    this.size = 56,
+  });
+
+  @override
+  State<TactileActionPlayButton> createState() => _TactileActionPlayButtonState();
+}
+
+class _TactileActionPlayButtonState extends State<TactileActionPlayButton> {
+  double _scale = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) {
+        if (widget.onTap == null) return;
+        HapticFeedback.lightImpact();
+        setState(() => _scale = 0.9);
+      },
+      onTapUp: (_) => setState(() => _scale = 1.0),
+      onTapCancel: () => setState(() => _scale = 1.0),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOutBack,
+        child: Opacity(
+          opacity: widget.onTap == null ? 0.5 : 1.0,
+          child: Container(
+            width: widget.size,
+            height: widget.size,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFF1DB954), // Spotify Green
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black45,
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.play_arrow_rounded,
+              size: widget.size * 0.7,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+/// A wrapper that adds premium scale animation and haptic feedback to any child.
+/// Use this for cards, list items, and other large interactive areas.
+class TactileTap extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  final double scaleDown;
+  final HapticFeedbackType hapticType;
+
+  const TactileTap({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.scaleDown = 0.95,
+    this.hapticType = HapticFeedbackType.selection,
+  });
+
+  @override
+  State<TactileTap> createState() => _TactileTapState();
+}
+
+enum HapticFeedbackType { selection, light, medium, heavy }
+
+class _TactileTapState extends State<TactileTap> {
+  double _scale = 1.0;
+
+  void _handleTapDown(TapDownDetails details) {
+    if (widget.onTap == null) return;
+    switch (widget.hapticType) {
+      case HapticFeedbackType.selection:
+        HapticFeedback.selectionClick();
+        break;
+      case HapticFeedbackType.light:
+        HapticFeedback.lightImpact();
+        break;
+      case HapticFeedbackType.medium:
+        HapticFeedback.mediumImpact();
+        break;
+      case HapticFeedbackType.heavy:
+        HapticFeedback.heavyImpact();
+        break;
+    }
+    setState(() => _scale = widget.scaleDown);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _scale = 1.0);
+  }
+
+  void _handleTapCancel() {
+    setState(() => _scale = 1.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOutCubic,
+        child: widget.child,
+      ),
+    );
+  }
+}

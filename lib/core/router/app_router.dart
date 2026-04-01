@@ -1,0 +1,121 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../features/home/home_screen.dart';
+import '../../features/home/genre_details_screen.dart';
+import '../../features/search/search_screen.dart';
+import '../../features/library/library_screen.dart';
+import '../../features/artist/artist_screen.dart';
+import '../../features/album/album_screen.dart';
+import '../../features/player/player_screen.dart';
+import '../../features/library/liked_songs_screen.dart';
+import '../../features/library/playlist_detail_screen.dart';
+import '../../features/library/spotify_playlist_screen.dart';
+import '../../features/radio/radio_details_screen.dart';
+import '../../features/settings/settings_screen.dart';
+import '../../shared/widgets/scaffold_with_nav.dart';
+
+final appRouterProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: '/home',
+    routes: [
+      ShellRoute(
+        builder: (context, state, child) => ScaffoldWithNav(
+          location: state.uri.path,
+          child: child,
+        ),
+        routes: [
+          GoRoute(
+            path: '/home',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: HomeScreen()),
+          ),
+          GoRoute(
+            path: '/search',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: SearchScreen()),
+          ),
+          GoRoute(
+            path: '/library',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: LibraryScreen()),
+          ),
+          GoRoute(
+            path: '/artist/:id',
+            builder: (context, state) =>
+                ArtistScreen(artistId: state.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: '/album/:id',
+            builder: (context, state) =>
+                AlbumScreen(albumId: state.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: '/playlist/:id',
+            builder: (context, state) =>
+                PlaylistDetailScreen(playlistId: int.parse(state.pathParameters['id']!)),
+          ),
+          GoRoute(
+            path: '/spotify-playlist/:id',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              final name = state.uri.queryParameters['name'];
+              return SpotifyPlaylistScreen(playlistId: id, playlistName: name);
+            },
+          ),
+          GoRoute(
+            path: '/player',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              child: const PlayerScreen(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return SlideTransition(
+                  position: animation.drive(
+                    Tween(begin: const Offset(0, 1), end: Offset.zero)
+                        .chain(CurveTween(curve: Curves.easeOutQuart)),
+                  ),
+                  child: child,
+                );
+              },
+            ),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) => const SettingsScreen(),
+          ),
+          GoRoute(
+            path: '/liked-songs',
+            builder: (context, state) => const LikedSongsScreen(),
+          ),
+          GoRoute(
+            path: '/radio/:type/:id',
+            builder: (context, state) {
+              final type = state.pathParameters['type']!;
+              final id = state.pathParameters['id']!;
+              final title = state.uri.queryParameters['title'] ?? 'Radio';
+              final imageUrl = state.uri.queryParameters['imageUrl'] ?? '';
+              
+              final extra = state.extra as Map<String, dynamic>?;
+              final color1 = extra?['color1'] as Color?;
+              final color2 = extra?['color2'] as Color?;
+
+              return RadioDetailsScreen(
+                seedType: type,
+                seedId: id,
+                title: title,
+                imageUrl: imageUrl,
+                color1: color1,
+                color2: color2,
+              );
+            },
+          ),
+          GoRoute(
+            path: '/genre/:name',
+            builder: (context, state) =>
+                GenreDetailsScreen(genreName: state.pathParameters['name']!),
+          ),
+        ],
+      ),
+    ],
+  );
+});
