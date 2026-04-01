@@ -8,6 +8,9 @@ class TactileIconButton extends StatefulWidget {
   final VoidCallback? onTap;
   final double size;
   final Color color;
+  final Color? backgroundColor;
+  final BorderRadius? borderRadius;
+  final BoxBorder? border;
   final EdgeInsets padding;
 
   const TactileIconButton({
@@ -16,6 +19,9 @@ class TactileIconButton extends StatefulWidget {
     this.onTap,
     this.size = 28,
     this.color = Colors.white,
+    this.backgroundColor,
+    this.borderRadius,
+    this.border,
     this.padding = const EdgeInsets.all(12.0),
   });
 
@@ -53,12 +59,19 @@ class _TactileIconButtonState extends State<TactileIconButton> {
         curve: Curves.easeOutCubic,
         child: Opacity(
           opacity: widget.onTap == null ? 0.3 : 1.0,
-          child: Padding(
-            padding: widget.padding,
-            child: Icon(
-              widget.icon,
-              size: widget.size,
-              color: widget.color,
+          child: Container(
+            decoration: BoxDecoration(
+              color: widget.backgroundColor,
+              borderRadius: widget.borderRadius,
+              border: widget.border,
+            ),
+            child: Padding(
+              padding: widget.padding,
+              child: Icon(
+                widget.icon,
+                size: widget.size,
+                color: widget.color,
+              ),
             ),
           ),
         ),
@@ -228,6 +241,7 @@ class _TactileActionPlayButtonState extends State<TactileActionPlayButton> {
 class TactileTap extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final double scaleDown;
   final HapticFeedbackType hapticType;
 
@@ -235,6 +249,7 @@ class TactileTap extends StatefulWidget {
     super.key,
     required this.child,
     this.onTap,
+    this.onLongPress,
     this.scaleDown = 0.95,
     this.hapticType = HapticFeedbackType.selection,
   });
@@ -283,6 +298,7 @@ class _TactileTapState extends State<TactileTap> {
       onTapUp: _handleTapUp,
       onTapCancel: _handleTapCancel,
       onTap: widget.onTap,
+      onLongPress: widget.onLongPress,
       child: AnimatedScale(
         scale: _scale,
         duration: const Duration(milliseconds: 100),

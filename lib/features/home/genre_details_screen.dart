@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
@@ -70,10 +71,16 @@ class GenreDetailsScreen extends ConsumerWidget {
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 300,
+            expandedHeight: 280,
             pinned: true,
             stretch: true,
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.black.withValues(alpha: 0.8),
+            elevation: 0,
+            leading: TactileIconButton(
+              icon: Icons.arrow_back_ios_new_rounded,
+              onTap: () => context.pop(),
+              color: Colors.white,
+            ),
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [
                 StretchMode.zoomBackground,
@@ -175,7 +182,7 @@ class GenreDetailsScreen extends ConsumerWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverToBoxAdapter(
             child: artistsAsync.when(
-              data: (artists) => _ArtistList(artists: artists),
+              data: (artists) => _ArtistList(artists: artists).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
               loading: () => const _LoadingPlaceholder(height: 160),
               error: (e, _) => Center(child: Text('Error: $e')),
             ),
@@ -190,7 +197,7 @@ class GenreDetailsScreen extends ConsumerWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverToBoxAdapter(
             child: albumsAsync.when(
-              data: (albums) => _AlbumList(albums: albums),
+              data: (albums) => _AlbumList(albums: albums).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
               loading: () => const _LoadingPlaceholder(height: 200),
               error: (e, _) => Center(child: Text('Error: $e')),
             ),
@@ -219,8 +226,8 @@ class GenreDetailsScreen extends ConsumerWidget {
                             child: Text(
                               '${index + 1}',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5),
-                                fontSize: 14,
+                                color: Colors.white.withValues(alpha: 0.4),
+                                fontSize: 13,
                                 fontFamily: 'monospace',
                                 fontWeight: FontWeight.w400,
                               ),
@@ -234,7 +241,7 @@ class GenreDetailsScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                    );
+                    ).animate().fadeIn(delay: (300 + index * 40).ms).slideX(begin: 0.05);
                   },
                   childCount: tracks.length,
                 ),

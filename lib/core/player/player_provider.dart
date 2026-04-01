@@ -103,6 +103,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
     ));
   }
 
+  Future<void> playTracks(List<Track> tracks, {int initialIndex = 0}) async {
+    if (tracks.isEmpty) return;
+    final track = (initialIndex >= 0 && initialIndex < tracks.length)
+        ? tracks[initialIndex]
+        : tracks.first;
+    await playTrack(track, queue: tracks);
+  }
+
   Future<void> playPlaylist(int playlistId) async {
     final tracks = await _db.getPlaylistTracks(playlistId);
     if (tracks.isEmpty) return;
@@ -123,7 +131,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
             ))
         .toList();
 
-    await playTrack(modelTracks.first, queue: modelTracks);
+    await playTracks(modelTracks);
   }
 
   Future<void> playRadio(String artistId) async {

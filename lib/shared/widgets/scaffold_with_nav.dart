@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -200,20 +201,23 @@ class _BottomNavBar extends StatelessWidget {
       _ => 0,
     };
 
-    return Container(
-      padding: EdgeInsets.only(
-        top: 8,
-        bottom: MediaQuery.paddingOf(context).bottom + 4,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.98),
-        border: Border(
-          top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.08),
-            width: 0.5,
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 8,
+            bottom: MediaQuery.paddingOf(context).bottom + 4,
           ),
-        ),
-      ),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.85),
+            border: Border(
+              top: BorderSide(
+                color: Colors.white.withValues(alpha: 0.1),
+                width: 0.5,
+              ),
+            ),
+          ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -239,6 +243,8 @@ class _BottomNavBar extends StatelessWidget {
             onTap: () => context.go('/library'),
           ),
         ],
+      ),
+        ),
       ),
     );
   }
@@ -305,86 +311,145 @@ class _MiniPlayerBar extends ConsumerWidget {
 
     if (track == null) return const SizedBox.shrink();
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (playerState.duration.inSeconds > 0)
-          LinearProgressIndicator(
-            value: playerState.position.inSeconds /
-                playerState.duration.inSeconds,
-            backgroundColor: Colors.white10,
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
-            minHeight: 2,
-          ),
-        TactileTap(
-          onTap: () => context.push('/player'),
-          scaleDown: 0.98,
-          child: Container(
-            height: 64,
-            margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey[900],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: CachedNetworkImage(
-                    imageUrl: track.albumImage ?? '',
-                    width: 48,
-                    height: 48,
-                    fit: BoxFit.cover,
-                  ),
+    final progress = playerState.duration.inSeconds > 0
+        ? playerState.position.inSeconds / playerState.duration.inSeconds
+        : 0.0;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: TactileTap(
+            onTap: () => context.push('/player'),
+            scaleDown: 0.98,
+            child: Container(
+              height: 64,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.06),
+                  width: 0.5,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        track.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+              ),
+              child: Stack(
+                children: [
+                  // Progress Bar at the top edge
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 1.5,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
                       ),
-                      Text(
-                        track.artistName,
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7),
-                            fontSize: 12),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: progress.clamp(0.0, 1.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.green.withValues(alpha: 0.3),
+                                blurRadius: 4,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Subtle Logo Watermark
+                  Positioned(
+                    right: -20,
+                    bottom: -15,
+                    child: Opacity(
+                      opacity: 0.05,
+                      child: Transform.rotate(
+                        angle: -0.2,
+                        child: Image.asset(
+                          'assets/logo.png',
+                          width: 100,
+                          height: 100,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: CachedNetworkImage(
+                          imageUrl: track.albumImage ?? '',
+                          width: 48,
+                          height: 48,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              track.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              track.artistName,
+                              style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  fontSize: 11),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      TactileIconButton(
+                        icon: Icons.skip_previous,
+                        onTap: () => ref.read(playerProvider.notifier).skipPrevious(),
+                        size: 24,
+                      ),
+                      TactileIconButton(
+                        icon: playerState.isPlaying ? Icons.pause : Icons.play_arrow,
+                        onTap: () =>
+                            ref.read(playerProvider.notifier).togglePlay(),
+                        size: 28,
+                      ),
+                      TactileIconButton(
+                        icon: Icons.skip_next,
+                        onTap: () => ref.read(playerProvider.notifier).skipNext(),
+                        size: 24,
+                      ),
+                      const SizedBox(width: 4),
+                      TactileIconButton(
+                        icon: showVideo ? Icons.videocam : Icons.videocam_off,
+                        onTap: () => ref.read(settingsProvider.notifier).toggleVideo(),
+                        size: 18,
+                        color: Colors.white.withValues(alpha: 0.4),
                       ),
                     ],
                   ),
-                ),
-                TactileIconButton(
-                  icon: Icons.skip_previous,
-                  onTap: () => ref.read(playerProvider.notifier).skipPrevious(),
-                ),
-                TactileIconButton(
-                  icon: playerState.isPlaying ? Icons.pause : Icons.play_arrow,
-                  onTap: () =>
-                      ref.read(playerProvider.notifier).togglePlay(),
-                ),
-                TactileIconButton(
-                  icon: Icons.skip_next,
-                  onTap: () => ref.read(playerProvider.notifier).skipNext(),
-                ),
-                TactileIconButton(
-                  icon: showVideo ? Icons.videocam : Icons.videocam_off,
-                  onTap: () => ref.read(settingsProvider.notifier).toggleVideo(),
-                  size: 20,
-                  color: Colors.white.withValues(alpha: 0.5),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

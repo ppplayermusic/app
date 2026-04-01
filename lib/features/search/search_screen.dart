@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
@@ -117,19 +118,20 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                 preferredSize: const Size.fromHeight(48),
                 child: TabBar(
                   controller: _tabCtrl,
-                  indicatorColor: Colors.green,
-                  indicatorWeight: 2,
+                  indicator: UnderlineTabIndicator(
+                    borderSide: const BorderSide(color: Color(0xFF1DB954), width: 3),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
                   indicatorSize: TabBarIndicatorSize.label,
                   labelColor: Colors.white,
-                  unselectedLabelColor: Colors.white.withValues(alpha: 0.5),
+                  unselectedLabelColor: Colors.white30,
                   labelStyle: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    letterSpacing: 0.5,
+                    fontSize: 14,
                   ),
                   unselectedLabelStyle: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 13,
+                    fontSize: 14,
                   ),
                   dividerColor: Colors.transparent,
                   overlayColor: WidgetStateProperty.all(Colors.transparent),
@@ -162,18 +164,129 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
 }
 
 class _EmptySearch extends StatelessWidget {
+  final List<Map<String, dynamic>> categories = [
+    {'name': 'Podcasts', 'color': const Color(0xFFE8115B), 'icon': Icons.mic},
+    {'name': 'Made For You', 'color': const Color(0xFF1E3264), 'icon': Icons.favorite},
+    {'name': 'New Releases', 'color': const Color(0xFF8D67AB), 'icon': Icons.new_releases},
+    {'name': 'Pop', 'color': const Color(0xFF148A08), 'icon': Icons.music_note},
+    {'name': 'Hip-Hop', 'color': const Color(0xFFBA5D07), 'icon': Icons.album},
+    {'name': 'Rock', 'color': const Color(0xFFE91429), 'icon': Icons.electric_bolt},
+    {'name': 'Latiin', 'color': const Color(0xFFE1118C), 'icon': Icons.music_video},
+    {'name': 'Wellness', 'color': const Color(0xFF477D95), 'icon': Icons.spa},
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.search, size: 64, color: Color(0xFF3A3A3A)),
-          SizedBox(height: 16),
-          Text('Search for music', style: TextStyle(color: Color(0xFFB3B3B3))),
-        ],
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+            child: const Text(
+              'Browse all',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
+              ),
+            ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.6,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final cat = categories[index];
+                return _CategoryCard(
+                  name: cat['name'] as String,
+                  color: cat['color'] as Color,
+                  icon: cat['icon'] as IconData,
+                ).animate(delay: (index * 50).ms).fadeIn(duration: 400.ms).scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
+              },
+              childCount: categories.length,
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 100)),
+      ],
+    ).animate().fadeIn(duration: 300.ms);
+  }
+}
+
+class _CategoryCard extends StatelessWidget {
+  final String name;
+  final Color color;
+  final IconData icon;
+
+  const _CategoryCard({required this.name, required this.color, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return TactileTap(
+      onTap: () {
+        // Future: Navigation to genre-specific results or playlists
+      },
+      scaleDown: 0.94,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color,
+              color.withValues(alpha: 0.6),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              Positioned(
+                bottom: -15,
+                right: -15,
+                child: Transform.rotate(
+                  angle: 0.3,
+                  child: Icon(
+                    icon,
+                    size: 80,
+                    color: Colors.white.withValues(alpha: 0.15),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-    );
+    ).animate().shimmer(delay: 5.seconds, duration: 2.seconds, color: Colors.white10);
   }
 }
 
@@ -198,7 +311,7 @@ class _TrackResults extends ConsumerWidget {
             imageUrl: promo['image'],
             ctaText: promo['cta']!,
             type: PromotionType.vertical,
-          );
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0);
         }
         
         final trackIndex = i - (i / 9).floor() - 1;
@@ -210,7 +323,7 @@ class _TrackResults extends ConsumerWidget {
                 tracks[trackIndex],
                 queue: tracks,
               ),
-        );
+        ).animate(delay: (i % 10 * 30).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
       },
     );
   }
@@ -307,7 +420,7 @@ class _ArtistResults extends ConsumerWidget {
               ],
             ),
           ),
-        );
+        ).animate(delay: (i % 10 * 30).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
       },
     );
   }
@@ -396,7 +509,7 @@ class _AlbumResults extends StatelessWidget {
                       ),
                     ],
                   ),
-                );
+                ).animate(delay: (i % 10 * 50).ms).fadeIn(duration: 400.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
               },
               childCount: items.length,
             ),

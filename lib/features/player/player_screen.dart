@@ -224,136 +224,153 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                 ),
                               ),
                             ),
-                            // Track Info & Controls
-                            Container(
-                              padding: const EdgeInsets.only(bottom: 32),
-                              child: Column(
-                                children: [
-                                  // Track Info
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                playerState.currentTrack?.name ?? 'Not Playing',
-                                                style: const TextStyle(
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              )
-                                                .animate()
-                                                .fadeIn(duration: 500.ms, delay: 200.ms)
-                                                .slideX(begin: 0.1, duration: 500.ms, curve: Curves.easeOutCubic)
-                                                .shimmer(delay: 5.seconds, duration: 2.seconds, curve: Curves.easeInOut),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                playerState.currentTrack?.artistName ?? 'Unknown Artist',
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.white.withValues(alpha: 0.7),
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              )
-                                                .animate()
-                                                .fadeIn(duration: 500.ms, delay: 300.ms)
-                                                .slideX(begin: 0.1, duration: 500.ms, curve: Curves.easeOutCubic),
-                                            ],
-                                          ),
-                                        ),
-                                        if (playerState.currentTrack != null)
-                                          IconButton(
-                                            icon: Icon(
-                                              playerState.currentTrack!.isFavorite 
-                                                ? Icons.favorite 
-                                                : Icons.favorite_border,
-                                              color: playerState.currentTrack!.isFavorite 
-                                                ? const Color(0xFF1DB954) 
-                                                : Colors.white,
-                                            ),
-                                            onPressed: () => playerNotifier.toggleFavorite(playerState.currentTrack!),
-                                          ),
-                                      ],
+                            // Control Deck (Glassmorphic Card)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(32),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 24),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.08),
+                                      borderRadius: BorderRadius.circular(32),
+                                      border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
                                     ),
-                                  ),
-                                  const SizedBox(height: 24),
-                                  // Controls
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
                                     child: Column(
                                       children: [
-                                        SliderTheme(
-                                          data: SliderTheme.of(context).copyWith(
-                                            trackHeight: 4,
-                                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                                            overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-                                            activeTrackColor: const Color(0xFF1DB954),
-                                            inactiveTrackColor: Colors.white24,
-                                            thumbColor: Colors.white,
-                                          ),
-                                          child: Slider(
-                                            value: playerState.position.inSeconds.toDouble(),
-                                            max: playerState.duration.inSeconds > 0
-                                                ? playerState.duration.inSeconds.toDouble()
-                                                : 1.0,
-                                            onChanged: (v) => playerNotifier.seekTo(Duration(seconds: v.toInt())),
-                                          ),
-                                        ),
+                                        // Track Info
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(_formatDuration(playerState.position),
-                                                  style: const TextStyle(color: Colors.white60, fontSize: 12)),
-                                              Text(_formatDuration(playerState.duration),
-                                                  style: const TextStyle(color: Colors.white60, fontSize: 12)),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      playerState.currentTrack?.name ?? 'Not Playing',
+                                                      style: const TextStyle(
+                                                        fontSize: 22,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                        letterSpacing: -0.5,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    )
+                                                      .animate()
+                                                      .fadeIn(duration: 500.ms, delay: 200.ms)
+                                                      .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
+                                                    const SizedBox(height: 2),
+                                                    Text(
+                                                      playerState.currentTrack?.artistName ?? 'Unknown Artist',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.w500,
+                                                        color: Colors.white.withValues(alpha: 0.6),
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    )
+                                                      .animate()
+                                                      .fadeIn(duration: 500.ms, delay: 300.ms)
+                                                      .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
+                                                  ],
+                                                ),
+                                              ),
+                                              if (playerState.currentTrack != null)
+                                              TactileIconButton(
+                                                icon: playerState.currentTrack!.isFavorite 
+                                                  ? Icons.favorite 
+                                                  : Icons.favorite_border,
+                                                color: playerState.currentTrack!.isFavorite 
+                                                  ? const Color(0xFF1DB954) 
+                                                  : Colors.white,
+                                                onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!),
+                                              ),
                                             ],
                                           ),
                                         ),
                                         const SizedBox(height: 16),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            TactileIconButton(
-                                              icon: Icons.shuffle,
-                                              color: playerState.isShuffled ? const Color(0xFF1DB954) : Colors.white,
-                                              onTap: playerNotifier.toggleShuffle,
-                                            ),
-                                            TactileIconButton(
-                                              icon: Icons.skip_previous,
-                                              size: 38,
-                                              onTap: playerNotifier.skipPrevious,
-                                            ),
-                                            TactilePlayerPlayPauseButton(
-                                              isPlaying: playerState.isPlaying,
-                                              onTap: playerNotifier.togglePlay,
-                                            ),
-                                            TactileIconButton(
-                                              icon: Icons.skip_next,
-                                              size: 38,
-                                              onTap: playerNotifier.skipNext,
-                                            ),
-                                            TactileIconButton(
-                                              icon: playerState.repeatMode == RepeatMode.none ? Icons.repeat : Icons.repeat_one,
-                                              color: playerState.repeatMode != RepeatMode.none
-                                                  ? const Color(0xFF1DB954)
-                                                  : Colors.white,
-                                              onTap: playerNotifier.cycleRepeat,
-                                            ),
-                                          ],
+                                        // Progress Slider
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                          child: Column(
+                                            children: [
+                                              SliderTheme(
+                                                data: SliderTheme.of(context).copyWith(
+                                                  trackHeight: 3,
+                                                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                                                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                                                  activeTrackColor: const Color(0xFF1DB954),
+                                                  inactiveTrackColor: Colors.white12,
+                                                  thumbColor: Colors.white,
+                                                ),
+                                                child: Slider(
+                                                  value: playerState.position.inSeconds.toDouble(),
+                                                  max: playerState.duration.inSeconds > 0
+                                                      ? playerState.duration.inSeconds.toDouble()
+                                                      : 1.0,
+                                                  onChanged: (v) => playerNotifier.seekTo(Duration(seconds: v.toInt())),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(_formatDuration(playerState.position),
+                                                        style: const TextStyle(color: Colors.white54, fontSize: 10, fontWeight: FontWeight.bold)),
+                                                    Text(_formatDuration(playerState.duration),
+                                                        style: const TextStyle(color: Colors.white54, fontSize: 10, fontWeight: FontWeight.bold)),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        // Interaction Controls
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              TactileIconButton(
+                                                icon: Icons.shuffle,
+                                                color: playerState.isShuffled ? const Color(0xFF1DB954) : Colors.white60,
+                                                onTap: playerNotifier.toggleShuffle,
+                                              ),
+                                              TactileIconButton(
+                                                icon: Icons.skip_previous,
+                                                size: 32,
+                                                onTap: playerNotifier.skipPrevious,
+                                              ),
+                                              TactilePlayerPlayPauseButton(
+                                                isPlaying: playerState.isPlaying,
+                                                onTap: playerNotifier.togglePlay,
+                                              ),
+                                              TactileIconButton(
+                                                icon: Icons.skip_next,
+                                                size: 32,
+                                                onTap: playerNotifier.skipNext,
+                                              ),
+                                              TactileIconButton(
+                                                icon: playerState.repeatMode == RepeatMode.none ? Icons.repeat : Icons.repeat_one,
+                                                color: playerState.repeatMode != RepeatMode.none
+                                                    ? const Color(0xFF1DB954)
+                                                    : Colors.white60,
+                                                onTap: playerNotifier.cycleRepeat,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ],
@@ -510,6 +527,28 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
           alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
+            // Dynamic Glow (Backdrop blur based)
+            Positioned(
+              top: -recordSize * 0.1,
+              left: -recordSize * 0.1,
+              right: -recordSize * 0.1,
+              bottom: -recordSize * 0.1,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFF1DB954).withValues(alpha: 0.3),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            )
+            .animate(target: widget.isPlaying ? 1 : 0)
+            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2), duration: 2.seconds, curve: Curves.easeInOut)
+            .fadeIn(duration: 1.seconds),
+
             // The Vinyl Record
             AnimatedPositioned(
               duration: const Duration(milliseconds: 800),
@@ -581,7 +620,7 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 child: CachedNetworkImage(
                   imageUrl: widget.imageUrl,
                   fit: BoxFit.cover,

@@ -100,6 +100,16 @@ class AppDatabase extends _$AppDatabase {
             ..limit(limit))
           .get();
 
+  Stream<List<Track>> watchRecentlyPlayed({int limit = 50}) =>
+      (select(tracks)
+            ..where((t) => t.lastPlayedAt.isNotNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.lastPlayedAt)])
+            ..limit(limit))
+          .watch();
+
+  Future<void> clearHistory() =>
+      (update(tracks)).write(const TracksCompanion(lastPlayedAt: Value(null)));
+
   Future<void> upsertTrack(TracksCompanion entry) =>
       into(tracks).insertOnConflictUpdate(entry);
 

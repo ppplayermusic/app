@@ -104,6 +104,30 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'color2': const Color(0xFFFFC107),
   });
 
+  // Mood Mix: Chill focus
+  mixes.add({
+    'type': 'genre',
+    'id': 'chill',
+    'name': 'Chill Mix',
+    'subtitle': 'Vibey, relaxing tracks picked for you.',
+    'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DX4WYpdgoIcnm.jpeg',
+    'title': 'Chill Mix',
+    'color1': const Color(0xFF1E88E5),
+    'color2': const Color(0xFF673AB7),
+  });
+
+  // Energy Mix: Focus/Study
+  mixes.add({
+    'type': 'genre',
+    'id': 'study',
+    'name': 'Focus Mix',
+    'subtitle': 'Music to help you concentrate.',
+    'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DX8Ueb9C7W3p7.jpeg',
+    'title': 'Focus Mix',
+    'color1': const Color(0xFF00897B),
+    'color2': const Color(0xFF4DB6AC),
+  });
+
   return mixes;
 });
 
@@ -212,15 +236,32 @@ class HomeScreen extends ConsumerWidget {
         slivers: [
           SliverAppBar(
             floating: true,
-            title: Text(
-              'Good morning',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            title: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: 32,
+                    width: 32,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'Good morning',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+              ],
             ),
             actions: [
-              IconButton(icon: Icon(Icons.history), onPressed: null),
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () => context.push('/settings'),
+              TactileIconButton(
+                icon: Icons.history,
+                onTap: () => context.push('/recently-played'),
+              ),
+              TactileIconButton(
+                icon: Icons.settings,
+                onTap: () => context.push('/settings'),
               ),
             ],
           ),
@@ -303,19 +344,20 @@ class HomeScreen extends ConsumerWidget {
                               imageUrl: mix['imageUrl'],
                               color1: mix['color1'] as Color,
                               color2: mix['color2'] as Color,
-                              onTap: () => context.push(
-                                Uri(
-                                  path: '/radio/${mix['type']}/${mix['id']}',
-                                  queryParameters: {
-                                    'title': mix['title'],
-                                    'imageUrl': mix['imageUrl'],
+                                onTap: () => context.push(
+                                  Uri(
+                                    path: '/radio/${mix['type']}/${mix['id']}',
+                                    queryParameters: {
+                                      'title': mix['title'],
+                                      'imageUrl': mix['imageUrl'],
+                                      'subtitle': mix['subtitle'] ?? '',
+                                    },
+                                  ).toString(),
+                                  extra: <String, dynamic>{
+                                    'color1': mix['color1'],
+                                    'color2': mix['color2'],
                                   },
-                                ).toString(),
-                                extra: <String, dynamic>{
-                                  'color1': mix['color1'],
-                                  'color2': mix['color2'],
-                                },
-                              ),
+                                ),
                             );
                           },
                         ),

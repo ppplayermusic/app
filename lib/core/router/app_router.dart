@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/home/home_screen.dart';
+import '../../features/home/recently_played_screen.dart';
 import '../../features/home/genre_details_screen.dart';
 import '../../features/search/search_screen.dart';
 import '../../features/library/library_screen.dart';
@@ -30,6 +31,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/home',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: HomeScreen()),
+          ),
+          GoRoute(
+            path: '/recently-played',
+            builder: (context, state) => const RecentlyPlayedScreen(),
           ),
           GoRoute(
             path: '/search',
@@ -94,6 +99,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               final id = state.pathParameters['id']!;
               final title = state.uri.queryParameters['title'] ?? 'Radio';
               final imageUrl = state.uri.queryParameters['imageUrl'] ?? '';
+              final subtitle = state.uri.queryParameters['subtitle'];
               
               final extra = state.extra as Map<String, dynamic>?;
               final color1 = extra?['color1'] as Color?;
@@ -104,6 +110,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 seedId: id,
                 title: title,
                 imageUrl: imageUrl,
+                subtitle: subtitle,
                 color1: color1,
                 color2: color2,
               );

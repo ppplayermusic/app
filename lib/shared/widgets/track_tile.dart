@@ -1,11 +1,14 @@
+import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../shared/widgets/premium_modals.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/db/app_database.dart' as db;
 import '../../core/models/track.dart' as model;
+import 'package:flutter_animate/flutter_animate.dart';
 
 class TrackTile extends ConsumerWidget {
   const TrackTile({
@@ -100,6 +103,15 @@ class TrackTile extends ConsumerWidget {
                   onTap: () {
                     ref.read(playerProvider.notifier).toggleFavorite(track);
                   },
+                ).animate(target: track.isFavorite ? 1 : 0).scale(
+                  begin: const Offset(1, 1),
+                  end: const Offset(1.2, 1.2),
+                  duration: 200.ms,
+                  curve: Curves.easeOutBack,
+                ).then().scale(
+                  begin: const Offset(1.2, 1.2),
+                  end: const Offset(1, 1),
+                  duration: 150.ms,
                 ),
                 trailing ??
                     TactileIconButton(
@@ -121,50 +133,67 @@ class TrackTile extends ConsumerWidget {
   void _showMoreMenu(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1F1F1F),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.all(8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(2),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF161616).withValues(alpha: 0.8),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(8),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  ListTile(
+                    leading:
+                        const Icon(Icons.playlist_add, color: Colors.white70),
+                    title: const Text('Add to Playlist',
+                        style: TextStyle(color: Colors.white)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      TrackTile.showPlaylistPicker(context, ref, track);
+                    },
+                  ),
+                  ListTile(
+                    leading:
+                        const Icon(Icons.person_outline, color: Colors.white70),
+                    title: const Text('Go to Artist',
+                        style: TextStyle(color: Colors.white)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.push('/artist/${track.artistId}');
+                    },
+                  ),
+                  if (track.albumId != null)
+                    ListTile(
+                      leading: const Icon(Icons.album_outlined,
+                          color: Colors.white70),
+                      title: const Text('Go to Album',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/album/${track.albumId}');
+                      },
+                    ),
+                  const SizedBox(height: 8),
+                ],
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.playlist_add, color: Colors.white70),
-              title: const Text('Add to Playlist', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Navigator.pop(context);
-                TrackTile.showPlaylistPicker(context, ref, track);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person_outline, color: Colors.white70),
-              title: const Text('Go to Artist', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/artist/${track.artistId}');
-              },
-            ),
-            if (track.albumId != null)
-              ListTile(
-                leading: const Icon(Icons.album_outlined, color: Colors.white70),
-                title: const Text('Go to Album', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.push('/album/${track.albumId}');
-                },
-              ),
-            const SizedBox(height: 8),
-          ],
+          ),
         ),
       ),
     );
@@ -180,88 +209,108 @@ class TrackTile extends ConsumerWidget {
     if (context.mounted) {
       showModalBottomSheet(
         context: context,
-        backgroundColor: const Color(0xFF1F1F1F),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (context) => Consumer(
-          builder: (context, ref, child) => FutureBuilder<List<db.Playlist>>(
-            future: database.getPlaylists(),
-            builder: (context, snap) {
-              final playlists = snap.data ?? [];
-              return SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(8),
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(2),
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) => Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          decoration: BoxDecoration(
+            color: const Color(0xFF161616).withValues(alpha: 0.8),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Consumer(
+                builder: (context, ref, child) =>
+                    FutureBuilder<List<db.Playlist>>(
+                  future: database.getPlaylists(),
+                  builder: (context, snap) {
+                    final playlists = snap.data ?? [];
+                    return SafeArea(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(8),
+                            width: 40,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.white24,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: Text(
+                              'Add to Playlist',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          ListTile(
+                            leading: const CircleAvatar(
+                              backgroundColor: Color(0xFF2A2A2A),
+                              child: Icon(Icons.add, color: Colors.white),
+                            ),
+                            title: const Text('Create New Playlist',
+                                style: TextStyle(color: Colors.white)),
+                            onTap: () {
+                              Navigator.pop(context);
+                              _showCreatePlaylistDialog(
+                                  context, database, track);
+                            },
+                          ),
+                          const Divider(color: Colors.white10),
+                          if (playlists.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.all(32),
+                              child: Text(
+                                'No playlists yet.',
+                                style: TextStyle(color: Colors.white54),
+                              ),
+                            ),
+                          Flexible(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: playlists.length,
+                              itemBuilder: (context, i) => ListTile(
+                                leading: const Icon(Icons.playlist_play,
+                                    color: Colors.white70),
+                                title: Text(playlists[i].name,
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                                onTap: () async {
+                                  await database.addToPlaylist(
+                                      playlists[i].id, track.spotifyId);
+                                  if (context.mounted) Navigator.pop(context);
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor:
+                                            const Color(0xFF282828),
+                                        content: Text(
+                                            'Added to ${playlists[i].name}',
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: Text(
-                        'Add to Playlist',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      leading: const CircleAvatar(
-                        backgroundColor: Color(0xFF2A2A2A),
-                        child: Icon(Icons.add, color: Colors.white),
-                      ),
-                      title: const Text('Create New Playlist',
-                          style: TextStyle(color: Colors.white)),
-                      onTap: () {
-                        Navigator.pop(context);
-                        _showCreatePlaylistDialog(context, database, track);
-                      },
-                    ),
-                    const Divider(color: Colors.white10),
-                    if (playlists.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(32),
-                        child: Text(
-                          'No playlists yet.',
-                          style: TextStyle(color: Colors.white54),
-                        ),
-                      ),
-                    Flexible(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: playlists.length,
-                        itemBuilder: (context, i) => ListTile(
-                          leading: const Icon(Icons.playlist_play, color: Colors.white70),
-                          title: Text(playlists[i].name,
-                              style: const TextStyle(color: Colors.white)),
-                          onTap: () async {
-                            await database.addToPlaylist(playlists[i].id, track.spotifyId);
-                            if (context.mounted) Navigator.pop(context);
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: const Color(0xFF282828),
-                                  content: Text('Added to ${playlists[i].name}',
-                                      style: const TextStyle(color: Colors.white)),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+            ),
           ),
         ),
       );
@@ -274,50 +323,72 @@ class TrackTile extends ConsumerWidget {
     model.Track track,
   ) async {
     final controller = TextEditingController();
-    showDialog(
+    showPremiumModal<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF282828),
-        title: const Text('New Playlist', style: TextStyle(color: Colors.white)),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: 'My Awesome Playlist',
-            hintStyle: TextStyle(color: Colors.white24),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white24),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF1DB954)),
+      title: 'New Playlist',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: controller,
+            autofocus: true,
+            style: const TextStyle(color: Colors.white, fontSize: 18),
+            decoration: InputDecoration(
+              hintText: 'My Awesome Playlist',
+              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+              filled: true,
+              fillColor: Colors.white.withValues(alpha: 0.05),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
-          ),
-          TextButton(
-            onPressed: () async {
-              final name = controller.text.trim();
-              if (name.isNotEmpty) {
-                final id = await database.createPlaylist(name);
-                await database.addToPlaylist(id, track.spotifyId);
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: const Color(0xFF282828),
-                      content: Text('Created $name and added track',
-                          style: const TextStyle(color: Colors.white)),
+          const SizedBox(height: 32),
+          Row(
+            children: [
+              Expanded(
+                child: TactileTap(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    height: 54,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white10),
                     ),
-                  );
-                }
-              }
-            },
-            child: const Text('Create', style: TextStyle(color: Color(0xFF1DB954))),
+                    child: const Text('Cancel', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TactileTap(
+                  onTap: () async {
+                    final name = controller.text.trim();
+                    if (name.isNotEmpty) {
+                      final id = await database.createPlaylist(name);
+                      await database.addToPlaylist(id, track.spotifyId);
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    }
+                  },
+                  child: Container(
+                    height: 54,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF450af5), Color(0xFF2d0087)],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Text('Create', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
