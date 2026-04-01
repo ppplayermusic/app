@@ -236,6 +236,19 @@ class SpotifyClient {
     return items.cast<Map<String, dynamic>>();
   }
 
+  Future<List<Map<String, dynamic>>> getCategoryPlaylists(String categoryId, {int limit = 20}) async {
+    final response = await _dio.get(
+      '$_baseUrl/browse/categories/$categoryId/playlists',
+      queryParameters: {
+        'limit': limit,
+        'country': market,
+      },
+      options: Options(headers: await _authHeaders()),
+    );
+    final items = (response.data['playlists']['items'] as List?) ?? [];
+    return items.cast<Map<String, dynamic>>();
+  }
+
   Future<List<Track>> getPopularTracks({int limit = 12}) async {
     try {
       // First, try to find the "Top 50 - [Market]" playlist

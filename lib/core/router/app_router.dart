@@ -117,9 +117,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             },
           ),
           GoRoute(
-            path: '/genre/:name',
-            builder: (context, state) =>
-                GenreDetailsScreen(genreName: state.pathParameters['name']!),
+            path: '/genre/:id',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              final name = state.uri.queryParameters['name'] ?? id;
+              return GenreDetailsScreen(categoryId: id, categoryName: name);
+            },
           ),
         ],
       ),

@@ -11,6 +11,8 @@ import '../../shared/widgets/banner_ad_widget.dart';
 import '../../shared/widgets/promotion_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/ad_service.dart';
+import '../../core/providers/genre_providers.dart';
+import '../home/genre_details_screen.dart';
 
 final _searchQueryProvider = StateProvider<String>((ref) => '');
 
@@ -181,20 +183,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
   }
 }
 
-class _EmptySearch extends StatelessWidget {
-  final List<Map<String, dynamic>> categories = [
-    {'name': 'Podcasts', 'color': const Color(0xFFE8115B), 'icon': Icons.mic},
-    {'name': 'Made For You', 'color': const Color(0xFF1E3264), 'icon': Icons.favorite},
-    {'name': 'New Releases', 'color': const Color(0xFF8D67AB), 'icon': Icons.new_releases},
-    {'name': 'Pop', 'color': const Color(0xFF148A08), 'icon': Icons.music_note},
-    {'name': 'Hip-Hop', 'color': const Color(0xFFBA5D07), 'icon': Icons.album},
-    {'name': 'Rock', 'color': const Color(0xFFE91429), 'icon': Icons.electric_bolt},
-    {'name': 'Latiin', 'color': const Color(0xFFE1118C), 'icon': Icons.music_video},
-    {'name': 'Wellness', 'color': const Color(0xFF477D95), 'icon': Icons.spa},
-  ];
-
+class _EmptySearch extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categoriesAsync = ref.watch(browseCategoriesProvider);
+
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
@@ -211,25 +204,47 @@ class _EmptySearch extends StatelessWidget {
             ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
           ),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.6,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+        categoriesAsync.when(
+          data: (categories) => SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.6,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final cat = categories[index];
+                  final name = cat['name'] as String;
+                  final id = cat['id'] as String;
+                  final imageUrl = ((cat['icons'] as List?)?.firstOrNull?['url'] as String?) ?? '';
+                  final color = ref.watch(categoryColorProvider(name));
+
+                  return _CategoryCard(
+                    id: id,
+                    name: name,
+                    color: color,
+                    imageUrl: imageUrl,
+                  ).animate(delay: (index * 30).ms).fadeIn(duration: 400.ms).scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
+                },
+                childCount: categories.length,
+              ),
             ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final cat = categories[index];
-                return _CategoryCard(
-                  name: cat['name'] as String,
-                  color: cat['color'] as Color,
-                  icon: cat['icon'] as IconData,
-                ).animate(delay: (index * 50).ms).fadeIn(duration: 400.ms).scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
-              },
-              childCount: categories.length,
+          ),
+          loading: () => const SliverToBoxAdapter(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.all(32.0),
+                child: CircularProgressIndicator(color: Colors.green),
+              ),
+            ),
+          ),
+          error: (e, _) => SliverToBoxAdapter(
+            child: Center(
+              child: Text('Error loading categories: $e', 
+                style: const TextStyle(color: Colors.white54)),
             ),
           ),
         ),
@@ -240,18 +255,27 @@ class _EmptySearch extends StatelessWidget {
 }
 
 class _CategoryCard extends StatelessWidget {
+  final String id;
   final String name;
   final Color color;
-  final IconData icon;
+  final String imageUrl;
 
-  const _CategoryCard({required this.name, required this.color, required this.icon});
+  const _CategoryCard({
+    required this.id,
+    required this.name,
+    required this.color,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TactileTap(
-      onTap: () {
-        // Future: Navigation to genre-specific results or playlists
-      },
+      onTap: () => context.push(
+        Uri(
+          path: '/genre/$id',
+          queryParameters: {'name': name},
+        ).toString(),
+      ),
       scaleDown: 0.94,
       child: Container(
         decoration: BoxDecoration(
@@ -278,40 +302,52 @@ class _CategoryCard extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Stack(
-            children: [
-              Positioned(
-                bottom: -15,
-                right: -15,
-                child: Transform.rotate(
-                  angle: 0.3,
-                  child: Icon(
-                    icon,
-                    size: 80,
-                    color: Colors.white.withValues(alpha: 0.15),
+              children: [
+                if (imageUrl.isNotEmpty)
+                  Positioned(
+                    bottom: -15,
+                    right: -15,
+                    child: Transform.rotate(
+                      angle: 0.3,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 20,
+                            ),
+                          ],
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                      shadows: [
+                        Shadow(color: Colors.black45, offset: Offset(0, 2), blurRadius: 8),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                    shadows: [
-                      Shadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 4),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  ).animate().shimmer(delay: 5.seconds, duration: 2.seconds, color: Colors.white10);
+    ).animate().shimmer(delay: 5.seconds, duration: 2.seconds, color: Colors.white10);
   }
 }
 

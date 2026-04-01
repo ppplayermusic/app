@@ -149,7 +149,6 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                       background: Stack(
                         fit: StackFit.expand,
                         children: [
-                          // Base Image
                           if (headerImage != null)
                             CachedNetworkImage(
                               imageUrl: headerImage,
@@ -163,7 +162,6 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                           else
                             Container(color: const Color(0xFF121212)),
 
-                          // High-end cinematic gradient for title readability
                           DecoratedBox(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
@@ -180,7 +178,6 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             ),
                           ),
 
-                          // Large Title (Non-collapsed)
                           Positioned(
                             left: 20,
                             right: 20,
@@ -212,59 +209,10 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                     );
                   },
                 ),
-                      background: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          if (headerImage != null)
-                            CachedNetworkImage(
-                              imageUrl: headerImage,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              placeholder: (context, url) => Container(color: const Color(0xFF121212)),
-                            )
-                          else
-                            Container(color: const Color(0xFF121212)),
-                          
-                          // Cinematic Ambient Overlays
-                          Positioned.fill(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.black.withValues(alpha: 0.3),
-                                    Colors.transparent,
-                                    Colors.black.withValues(alpha: 0.7),
-                                    Colors.black,
-                                  ],
-                                  stops: const [0.0, 0.4, 0.8, 1.0],
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // Header Glassmorphic Panel when collapsed
-                          if (isCollapsed)
-                            Positioned.fill(
-                              child: ClipRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                                  child: Container(
-                                    color: Colors.black.withValues(alpha: 0.4),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -598,7 +546,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             child: _buildSectionHeader('FANS ALSO LIKE'),
                           ),
                           SizedBox(
-                            height: 180,
+                            height: 190,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               physics: const BouncingScrollPhysics(),
@@ -611,22 +559,23 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
 
                                 return TactileTap(
                                   onTap: () => context.push("/artist/${rArtist['id']}"),
+                                  scaleDown: 0.92,
                                   child: Container(
-                                    width: 130,
-                                    margin: const EdgeInsets.only(right: 20),
+                                    width: 140,
+                                    margin: const EdgeInsets.only(right: 16),
                                     child: Column(
                                       children: [
                                         Container(
-                                          width: 120,
-                                          height: 120,
+                                          width: 130,
+                                          height: 130,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.6),
-                                                blurRadius: 25,
-                                                spreadRadius: -5,
-                                                offset: const Offset(0, 12),
+                                                color: Colors.black.withValues(alpha: 0.5),
+                                                blurRadius: 30,
+                                                spreadRadius: -10,
+                                                offset: const Offset(0, 15),
                                               ),
                                             ],
                                           ),
@@ -634,15 +583,19 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                             child: CachedNetworkImage(
                                               imageUrl: rImgUrl,
                                               fit: BoxFit.cover,
-                                              placeholder: (context, url) => Container(color: Colors.white.withValues(alpha: 0.05)),
+                                              placeholder: (context, url) => Container(
+                                                color: Colors.white.withValues(alpha: 0.05),
+                                                child: const Icon(Icons.person, color: Colors.white10),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(height: 14),
+                                        const SizedBox(height: 16),
                                         Text(
                                           rArtist['name'] as String,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w900,
@@ -653,7 +606,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                       ],
                                     ),
                                   ),
-                                ).animate(delay: (i * 100).ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
+                                ).animate(delay: (i * 80).ms).fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutBack);
                               },
                             ),
                           ),
@@ -676,7 +629,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             child: _buildSectionHeader('FEATURING ${artistName.toUpperCase()}'),
                           ),
                           SizedBox(
-                            height: 220,
+                            height: 250,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               physics: const BouncingScrollPhysics(),
@@ -693,31 +646,52 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                     final name = playlist['name'] as String;
                                     context.push('/spotify-playlist/$id?name=${Uri.encodeComponent(name)}');
                                   },
+                                  scaleDown: 0.96,
                                   child: Container(
-                                    width: 160,
-                                    margin: const EdgeInsets.only(right: 24),
+                                    width: 170,
+                                    margin: const EdgeInsets.only(right: 20),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(16),
+                                            borderRadius: BorderRadius.circular(20),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.5),
-                                                blurRadius: 20,
-                                                offset: const Offset(0, 10),
+                                                color: Colors.black.withValues(alpha: 0.4),
+                                                blurRadius: 25,
+                                                spreadRadius: -5,
+                                                offset: const Offset(0, 15),
                                               ),
                                             ],
                                           ),
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(16),
-                                            child: CachedNetworkImage(
-                                              imageUrl: pImgUrl,
-                                              width: 160,
-                                              height: 160,
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) => Container(color: Colors.white.withValues(alpha: 0.05)),
+                                            borderRadius: BorderRadius.circular(20),
+                                            child: Stack(
+                                              children: [
+                                                CachedNetworkImage(
+                                                  imageUrl: pImgUrl,
+                                                  width: 170,
+                                                  height: 170,
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) => Container(
+                                                    color: Colors.white.withValues(alpha: 0.05),
+                                                    child: const Center(child: CircularProgressIndicator(strokeWidth: 1, color: Colors.white10)),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  bottom: 8,
+                                                  right: 8,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.all(6),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black.withValues(alpha: 0.6),
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: const Icon(Icons.playlist_play_rounded, color: Colors.white, size: 14),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
@@ -735,17 +709,18 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          'Spotify Playlist',
+                                          'Spotify Playlist • ${playlist['tracks']?['total'] ?? 0} tracks',
                                           style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 11,
                                             color: Colors.white.withValues(alpha: 0.3),
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.2,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ).animate(delay: (i * 100).ms).fadeIn(duration: 500.ms).slideX(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
+                                ).animate(delay: (i * 100).ms).fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic);
                               },
                             ),
                           ),
@@ -764,27 +739,49 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
   }
 
   Widget _buildSectionHeader(String title) {
-    return Row(
-      children: [
-        Container(
-          width: 2,
-          height: 16,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(1),
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 3,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1DB954),
+                  borderRadius: BorderRadius.circular(1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF1DB954).withValues(alpha: 0.5),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: 2.5,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: 10),
-        Text(
-          title.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-            letterSpacing: 2.0,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -10,6 +10,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/ad_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
+import '../../core/providers/genre_providers.dart';
 
 final newReleasesProvider = FutureProvider((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -48,7 +49,7 @@ final popularArtistsProvider = FutureProvider((ref) async {
 
 final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   final artists = await ref.watch(popularArtistsProvider.future);
-  final genres = await ref.watch(genresProvider.future);
+  final genres = await ref.watch(browseCategoriesProvider.future);
   
   final mixes = <Map<String, dynamic>>[];
   
@@ -135,7 +136,7 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
 
 final suggestedStationsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   final artists = await ref.watch(popularArtistsProvider.future);
-  final genres = await ref.watch(genresProvider.future);
+  final genres = await ref.watch(browseCategoriesProvider.future);
   
   final radios = <Map<String, dynamic>>[];
   
@@ -213,10 +214,7 @@ final suggestedStationsProvider = FutureProvider<List<Map<String, dynamic>>>((re
   return radios;
 });
 
-final genresProvider = FutureProvider((ref) async {
-  final client = ref.watch(spotifyClientProvider);
-  return client.getBrowseCategories(limit: 12);
-});
+
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -231,7 +229,7 @@ class HomeScreen extends ConsumerWidget {
     final popularArtists = ref.watch(popularArtistsProvider);
     final madeForYouMixes = ref.watch(madeForYouMixesProvider);
     final suggestedStations = ref.watch(suggestedStationsProvider);
-    final genres = ref.watch(genresProvider);
+    final genres = ref.watch(browseCategoriesProvider);
 
     return Scaffold(
       body: CustomScrollView(
@@ -401,11 +399,18 @@ class HomeScreen extends ConsumerWidget {
                         itemCount: items.length,
                         itemBuilder: (context, index) {
                           final category = items[index];
+                          final id = category['id'] as String;
+                          final name = category['name'] as String;
                           final imageUrl = (category['icons'] as List?)?.firstOrNull?['url'] ?? '';
                           return _GenreCard(
-                            name: category['name'],
+                            name: name,
                             imageUrl: imageUrl,
-                            onTap: () => context.push("/genre/${category['name']}"),
+                            onTap: () => context.push(
+                              Uri(
+                                path: '/genre/$id',
+                                queryParameters: {'name': name},
+                              ).toString(),
+                            ),
                           ).animate().fadeIn(delay: (1300 + index * 50).ms).scale(begin: const Offset(0.9, 0.9));
                         },
                       ),
