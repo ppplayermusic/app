@@ -24,6 +24,17 @@ final _artistAlbumsProvider =
   return ref.read(spotifyClientProvider).getArtistAlbums(id);
 });
 
+final _relatedArtistsProvider =
+    FutureProvider.family<List<Map<String, dynamic>>, String>((ref, id) {
+  return ref.read(spotifyClientProvider).getRelatedArtists(id);
+});
+
+final _artistPlaylistsProvider =
+    FutureProvider.family<List<Map<String, dynamic>>, String>((ref, name) {
+  if (name.isEmpty) return Future.value([]);
+  return ref.read(spotifyClientProvider).searchPlaylists('Featuring $name', limit: 12);
+});
+
 class ArtistScreen extends ConsumerStatefulWidget {
   const ArtistScreen({super.key, required this.artistId});
   final String artistId;
@@ -48,6 +59,8 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
     final artistAsync = ref.watch(_artistProvider(widget.artistId));
     final tracksAsync = ref.watch(_artistTopTracksProvider(widget.artistId));
     final albumsAsync = ref.watch(_artistAlbumsProvider(widget.artistId));
+    final relatedAsync = ref.watch(_relatedArtistsProvider(widget.artistId));
+    final playlistsAsync = ref.watch(_artistPlaylistsProvider(artistAsync.asData?.value['name'] ?? ''));
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -68,7 +81,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                 pinned: true,
                 stretch: true,
                 elevation: 0,
-                backgroundColor: Colors.transparent,
+                backgroundColor: Colors.black.withValues(alpha: 0.1),
                 leading: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TactileIconButton(
@@ -108,57 +121,97 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                         StretchMode.blurBackground,
                       ],
                       centerTitle: true,
-                      titlePadding: EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: isCollapsed ? 14 : 24,
-                      ),
-                      title: _isSearching && isCollapsed
-                          ? Container(
-                              height: 38,
-                              margin: const EdgeInsets.symmetric(horizontal: 32),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.05),
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                              ),
-                              child: TextField(
-                                controller: _searchController,
-                                autofocus: true,
-                                style: const TextStyle(color: Colors.white, fontSize: 13),
-                                decoration: InputDecoration(
-                                  hintText: 'Search popular songs...',
-                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      expandedTitleScale: 1.0,
+                      titlePadding: EdgeInsets.zero,
+                      title: isCollapsed
+                          ? ClipRect(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: kToolbarHeight + topPadding,
+                                  padding: EdgeInsets.only(top: topPadding),
+                                  color: Colors.black.withValues(alpha: 0.6),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    artistName,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 17,
+                                      letterSpacing: -0.5,
+                                      color: Colors.white,
+                                    ),
+                                  ).animate().fadeIn(duration: 200.ms),
                                 ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _searchQuery = value.toLowerCase();
-                                  });
-                                },
                               ),
                             )
-                          : AnimatedContainer(
-                              duration: 200.ms,
+                          : null,
+                      background: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // Base Image
+                          if (headerImage != null)
+                            CachedNetworkImage(
+                              imageUrl: headerImage,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(color: const Color(0xFF121212)),
+                              errorWidget: (context, url, error) => Container(
+                                color: const Color(0xFF1E1E1E),
+                                child: const Icon(Icons.person, size: 80, color: Colors.white10),
+                              ),
+                            )
+                          else
+                            Container(color: const Color(0xFF121212)),
+
+                          // High-end cinematic gradient for title readability
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black.withValues(alpha: 0.1),
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.3),
+                                  Colors.black.withValues(alpha: 0.8),
+                                ],
+                                stops: const [0.0, 0.4, 0.7, 1.0],
+                              ),
+                            ),
+                          ),
+
+                          // Large Title (Non-collapsed)
+                          Positioned(
+                            left: 20,
+                            right: 20,
+                            bottom: 32,
+                            child: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 200),
+                              opacity: isCollapsed ? 0.0 : 1.0,
                               child: Text(
                                 artistName,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
+                                  fontSize: 64,
                                   fontWeight: FontWeight.w900,
-                                  fontSize: isCollapsed ? 18 : 36,
-                                  letterSpacing: isCollapsed ? 0 : -2.0,
+                                  letterSpacing: -3.5,
+                                  height: 0.85,
                                   shadows: [
                                     Shadow(
-                                      color: Colors.black.withValues(alpha: 0.5),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 2),
+                                      color: Colors.black45,
+                                      blurRadius: 30,
+                                      offset: Offset(0, 15),
                                     ),
                                   ],
                                 ),
-                              ),
+                              ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0),
                             ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
                       background: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -217,9 +270,9 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                     children: [
                       if (!_isSearching) ...[
                         Text(
-                          '${(artist['followers']?['total'] ?? 0).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} FOLLOWERS',
+                          '${(artist['followers']?['total'] ?? 0).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} FOLLOWERS',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.3), 
+                            color: Colors.white.withValues(alpha: 0.4), 
                             fontSize: 10,
                             letterSpacing: 2.0,
                             fontWeight: FontWeight.w900,
@@ -229,36 +282,74 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                TactileTap(
-                                  onTap: () {},
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.05),
-                                      border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                    child: const Text(
-                                      'FOLLOW', 
-                                      style: TextStyle(
-                                        color: Colors.white, 
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 12,
-                                        letterSpacing: 1.0,
-                                      )
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  TactileTap(
+                                    onTap: () {},
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.05),
+                                        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.0),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: const Text(
+                                        'FOLLOW', 
+                                        style: TextStyle(
+                                          color: Colors.white, 
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 11,
+                                          letterSpacing: 1.5,
+                                        )
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                TactileIconButton(
-                                  icon: Icons.more_vert_rounded,
-                                  color: Colors.white70,
-                                  padding: const EdgeInsets.all(12),
-                                  onTap: () {},
-                                ),
-                              ],
+                                  const SizedBox(width: 12),
+                                  TactileTap(
+                                    onTap: () {
+                                      final artistData = artistAsync.asData?.value;
+                                      if (artistData != null) {
+                                        final artistName = artistData['name'] ?? 'Artist';
+                                        final imgs = (artistData['images'] as List?) ?? [];
+                                        final artistImageUrl = imgs.isNotEmpty ? imgs[0]['url'] as String : '';
+                                        
+                                        context.push(
+                                          '/radio/artist/${widget.artistId}?title=$artistName Radio&imageUrl=$artistImageUrl',
+                                          extra: {
+                                            'color1': const Color(0xFF1DB954),
+                                            'color2': Colors.black,
+                                          },
+                                        );
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF1DB954).withValues(alpha: 0.2),
+                                        border: Border.all(color: const Color(0xFF1DB954).withValues(alpha: 0.4), width: 1.0),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.radio_rounded, color: Color(0xFF1DB954), size: 18),
+                                          const SizedBox(width: 10),
+                                          const Text(
+                                            'RADIO', 
+                                            style: TextStyle(
+                                              color: Color(0xFF1DB954), 
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 11,
+                                              letterSpacing: 1.5,
+                                            )
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             TactileActionPlayButton(
                               size: 72,
@@ -273,7 +364,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                               },
                             ).animate().scale(delay: 200.ms, duration: 400.ms, curve: Curves.easeOutBack),
                           ],
-                        ),
+                        ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, curve: Curves.easeOutCubic),
                         const SizedBox(height: 48),
                       ],
                       if (_isSearching)
@@ -493,6 +584,176 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                     ),
                   ),
                 ),
+                relatedAsync.when(
+                  loading: () => const SliverToBoxAdapter(child: SizedBox()),
+                  error: (e, _) => const SliverToBoxAdapter(child: SizedBox()),
+                  data: (artists) {
+                    if (artists.isEmpty) return const SliverToBoxAdapter(child: SizedBox());
+                    return SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
+                            child: _buildSectionHeader('FANS ALSO LIKE'),
+                          ),
+                          SizedBox(
+                            height: 180,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              physics: const BouncingScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: artists.length,
+                              itemBuilder: (context, i) {
+                                final rArtist = artists[i];
+                                final rImgs = (rArtist['images'] as List?) ?? [];
+                                final rImgUrl = rImgs.isNotEmpty ? rImgs[0]['url'] as String : '';
+
+                                return TactileTap(
+                                  onTap: () => context.push("/artist/${rArtist['id']}"),
+                                  child: Container(
+                                    width: 130,
+                                    margin: const EdgeInsets.only(right: 20),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          width: 120,
+                                          height: 120,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(alpha: 0.6),
+                                                blurRadius: 25,
+                                                spreadRadius: -5,
+                                                offset: const Offset(0, 12),
+                                              ),
+                                            ],
+                                          ),
+                                          child: ClipOval(
+                                            child: CachedNetworkImage(
+                                              imageUrl: rImgUrl,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) => Container(color: Colors.white.withValues(alpha: 0.05)),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 14),
+                                        Text(
+                                          rArtist['name'] as String,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 13,
+                                            letterSpacing: -0.2,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ).animate(delay: (i * 100).ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                playlistsAsync.when(
+                  loading: () => const SliverToBoxAdapter(child: SizedBox()),
+                  error: (e, _) => const SliverToBoxAdapter(child: SizedBox()),
+                  data: (playlists) {
+                    if (playlists.isEmpty) return const SliverToBoxAdapter(child: SizedBox());
+                    return SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
+                            child: _buildSectionHeader('FEATURING ${artistName.toUpperCase()}'),
+                          ),
+                          SizedBox(
+                            height: 220,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              physics: const BouncingScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: playlists.length,
+                              itemBuilder: (context, i) {
+                                final playlist = playlists[i];
+                                final pImgs = (playlist['images'] as List?) ?? [];
+                                final pImgUrl = pImgs.isNotEmpty ? pImgs[0]['url'] as String : '';
+
+                                return TactileTap(
+                                  onTap: () {
+                                    final id = playlist['id'];
+                                    final name = playlist['name'] as String;
+                                    context.push('/spotify-playlist/$id?name=${Uri.encodeComponent(name)}');
+                                  },
+                                  child: Container(
+                                    width: 160,
+                                    margin: const EdgeInsets.only(right: 24),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(16),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(alpha: 0.5),
+                                                blurRadius: 20,
+                                                offset: const Offset(0, 10),
+                                              ),
+                                            ],
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(16),
+                                            child: CachedNetworkImage(
+                                              imageUrl: pImgUrl,
+                                              width: 160,
+                                              height: 160,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) => Container(color: Colors.white.withValues(alpha: 0.05)),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          playlist['name'] as String,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 14,
+                                            letterSpacing: -0.2,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Spotify Playlist',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.white.withValues(alpha: 0.3),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ).animate(delay: (i * 100).ms).fadeIn(duration: 500.ms).slideX(begin: 0.1, end: 0, curve: Curves.easeOutCubic);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ],
               const SliverToBoxAdapter(child: SizedBox(height: 120)),
             ],
@@ -503,14 +764,27 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
   }
 
   Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w900,
-        color: Colors.white,
-        letterSpacing: 2.0,
-      ),
+    return Row(
+      children: [
+        Container(
+          width: 2,
+          height: 16,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(1),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          title.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            letterSpacing: 2.0,
+          ),
+        ),
+      ],
     );
   }
 }

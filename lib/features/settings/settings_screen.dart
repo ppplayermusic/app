@@ -539,7 +539,7 @@ class TactileSwitchTile extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.smart_display_rounded, color: Colors.white, size: 22),
+                child: Icon(icon, color: Colors.white, size: 22),
               ),
               const SizedBox(width: 16),
               Expanded(

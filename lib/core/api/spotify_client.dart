@@ -282,6 +282,31 @@ class SpotifyClient {
     );
     return (response.data['markets'] as List).cast<String>();
   }
+
+  // --- New Enhancements ---
+  Future<List<Map<String, dynamic>>> getRelatedArtists(String artistId) async {
+    final response = await _dio.get(
+      '$_baseUrl/artists/$artistId/related-artists',
+      options: Options(headers: await _authHeaders()),
+    );
+    final items = (response.data['artists'] as List?) ?? [];
+    return items.cast<Map<String, dynamic>>();
+  }
+
+  Future<List<Map<String, dynamic>>> searchPlaylists(String query, {int limit = 20}) async {
+    final response = await _dio.get(
+      '$_baseUrl/search',
+      queryParameters: {
+        'q': query,
+        'type': 'playlist',
+        'limit': limit,
+        'market': market,
+      },
+      options: Options(headers: await _authHeaders()),
+    );
+    final items = (response.data['playlists']?['items'] as List?) ?? [];
+    return items.cast<Map<String, dynamic>>();
+  }
 }
 
 final spotifyClientProvider = Provider<SpotifyClient>((ref) {

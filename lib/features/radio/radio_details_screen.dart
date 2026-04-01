@@ -51,7 +51,7 @@ class RadioDetailsScreen extends ConsumerWidget {
             expandedHeight: 320,
             pinned: true,
             stretch: true,
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.black,
             elevation: 0,
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -62,89 +62,107 @@ class RadioDetailsScreen extends ConsumerWidget {
                 color: Colors.white,
               ),
             ),
-            flexibleSpace: LayoutBuilder(
-              builder: (context, constraints) {
-                final isCollapsed = constraints.maxHeight <= kToolbarHeight + MediaQuery.of(context).padding.top + 10;
-                return FlexibleSpaceBar(
-                  stretchModes: const [
-                    StretchMode.zoomBackground,
-                    StretchMode.blurBackground,
-                  ],
-                  titlePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  title: isCollapsed 
-                    ? const Text(
-                        'Radio Station',
-                        style: TextStyle(
+            flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const [
+                StretchMode.zoomBackground,
+                StretchMode.blurBackground,
+              ],
+              centerTitle: true,
+              expandedTitleScale: 1.0,
+              titlePadding: EdgeInsets.zero,
+              title: LayoutBuilder(
+                builder: (context, constraints) {
+                  final topPadding = MediaQuery.of(context).padding.top;
+                  final isCollapsed = constraints.maxHeight <= kToolbarHeight + topPadding + 10;
+                  
+                  return AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isCollapsed ? 1.0 : 0.0,
+                    child: Container(
+                      height: kToolbarHeight + topPadding,
+                      padding: EdgeInsets.only(top: topPadding),
+                      alignment: Alignment.center,
+                      child: Text(
+                        title,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w900,
-                          fontSize: 20,
-                          letterSpacing: -1.0,
+                          fontSize: 17,
+                          letterSpacing: -0.5,
                           color: Colors.white,
                         ),
-                      )
-                    : null,
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      // Base Image
-                      CachedNetworkImage(
-                        imageUrl: imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(color: const Color(0xFF121212)),
-                        errorWidget: (context, url, error) => Container(
-                          color: const Color(0xFF1E1E1E),
-                          child: const Icon(Icons.radio, size: 80, color: Colors.white10),
-                        ),
                       ),
+                    ),
+                  );
+                },
+              ),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Base Image
+                  CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(color: const Color(0xFF121212)),
+                    errorWidget: (context, url, error) => Container(
+                      color: const Color(0xFF1E1E1E),
+                      child: const Icon(Icons.radio, size: 80, color: Colors.white10),
+                    ),
+                  ),
 
-                      // Ambient Mesh Pulsing Overlay (Advanced Cinema)
-                      Positioned.fill(
-                        child: Opacity(
-                          opacity: 0.6,
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              gradient: RadialGradient(
-                                center: Alignment(-0.8, -0.6),
-                                radius: 1.5,
-                                colors: [
-                                  Color(0xFF1DB954),
-                                  Colors.transparent,
-                                ],
-                              ),
-                            ),
-                          ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
-                            begin: const Offset(1, 1),
-                            end: const Offset(1.3, 1.3),
-                            duration: 10.seconds,
-                            curve: Curves.easeInOut,
-                          ).move(
-                            begin: const Offset(-20, -20),
-                            end: const Offset(20, 20),
-                            duration: 12.seconds,
-                            curve: Curves.easeInOut,
-                          ),
-                        ),
-                      ),
-
-                      // Depth Overlay
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
+                  // Ambient Mesh Pulsing Overlay (Advanced Cinema)
+                  Positioned.fill(
+                    child: Opacity(
+                      opacity: 0.6,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: RadialGradient(
+                            center: Alignment(-0.8, -0.6),
+                            radius: 1.5,
                             colors: [
-                              Colors.black.withValues(alpha: 0.2),
+                              Color(0xFF1DB954),
                               Colors.transparent,
-                              Colors.black.withValues(alpha: 0.6),
-                              Colors.black,
                             ],
-                            stops: const [0.0, 0.3, 0.7, 1.0],
                           ),
                         ),
+                      ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                        begin: const Offset(1, 1),
+                        end: const Offset(1.3, 1.3),
+                        duration: 10.seconds,
+                        curve: Curves.easeInOut,
+                      ).move(
+                        begin: const Offset(-20, -20),
+                        end: const Offset(20, 20),
+                        duration: 12.seconds,
+                        curve: Curves.easeInOut,
                       ),
+                    ),
+                  ),
 
-                      // Large Title (Non-collapsed)
-                      if (!isCollapsed)
-                        Positioned(
+                  // Depth Overlay
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.2),
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.6),
+                          Colors.black,
+                        ],
+                        stops: const [0.0, 0.3, 0.7, 1.0],
+                      ),
+                    ),
+                  ),
+
+                  // Large Title (Non-collapsed)
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isCollapsed = constraints.maxHeight <= kToolbarHeight + MediaQuery.of(context).padding.top + 50;
+                      return AnimatedOpacity(
+                        duration: const Duration(milliseconds: 200),
+                        opacity: isCollapsed ? 0.0 : 1.0,
+                        child: Positioned(
                           left: 20,
                           right: 20,
                           bottom: 24,
@@ -164,12 +182,13 @@ class RadioDetailsScreen extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
+                          ),
                         ),
-                    ],
+                      );
+                    }
                   ),
-                );
-              },
+                ],
+              ),
             ),
             actions: [
               Padding(

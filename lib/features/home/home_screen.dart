@@ -1301,10 +1301,13 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                               ),
                             ],
                           ),
-                          child: Image.asset(
-                            'assets/logo.png',
-                            width: 64,
-                            height: 64,
+                          child: Hero(
+                            tag: 'app_logo',
+                            child: Image.asset(
+                              'assets/logo.png',
+                              width: 64,
+                              height: 64,
+                            ),
                           ).animate(onPlay: (controller) => controller.repeat(reverse: true))
                            .scale(begin: const Offset(1,1), end: const Offset(1.1, 1.1), duration: 2000.ms, curve: Curves.easeInOut),
                         ),
@@ -1361,9 +1364,12 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
               child: Row(
                 children: [
                   if (progress > 0.5)
-                    Image.asset(
-                      'assets/logo.png',
-                      height: 32,
+                    Hero(
+                      tag: 'app_logo',
+                      child: Image.asset(
+                        'assets/logo.png',
+                        height: 32,
+                      ),
                     ).animate().fadeIn().scale(),
                   const SizedBox(width: 12),
                   if (progress > 0.5)
@@ -1382,15 +1388,15 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                   const Spacer(),
                   TactileIconButton(
                     icon: Icons.history,
-                    backgroundColor: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    backgroundColor: Colors.white.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
                     onTap: () => context.push('/recently-played'),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   TactileIconButton(
                     icon: Icons.settings,
-                    backgroundColor: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    backgroundColor: Colors.white.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
                     onTap: () => context.push('/settings'),
                   ),
                 ],
@@ -1406,7 +1412,7 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
   double get maxExtent => 280;
 
   @override
-  double get minExtent => 100;
+  double get minExtent => 110;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
