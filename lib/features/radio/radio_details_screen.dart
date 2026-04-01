@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
@@ -57,7 +58,7 @@ class RadioDetailsScreen extends ConsumerWidget {
               child: TactileIconButton(
                 icon: Icons.arrow_back_ios_new_rounded,
                 size: 18,
-                onTap: () => Navigator.of(context).pop(),
+                onTap: () => context.pop(),
                 color: Colors.white,
               ),
             ),
