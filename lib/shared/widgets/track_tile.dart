@@ -97,7 +97,7 @@ class TrackTile extends ConsumerWidget {
                 TactileIconButton(
                   icon: track.isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: track.isFavorite
-                      ? const Color(0xFF1DB954)
+                      ? Theme.of(context).colorScheme.primary
                       : Colors.white.withValues(alpha: 0.3),
                   size: 20,
                   onTap: () {
@@ -379,8 +379,11 @@ class TrackTile extends ConsumerWidget {
                     height: 54,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF450af5), Color(0xFF2d0087)],
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),

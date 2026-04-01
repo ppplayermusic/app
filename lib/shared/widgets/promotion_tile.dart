@@ -55,7 +55,7 @@ class PromotionTile extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.05),
               child: Row(
                 children: [
-                  _buildImageFrame(64, 64),
+                  _buildImageFrame(context, 64, 64),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -125,7 +125,7 @@ class PromotionTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildImageFrame(double.infinity, 100),
+                  _buildImageFrame(context, double.infinity, 100),
                   const SizedBox(height: 12),
                   _buildSponsoredBadge(),
                   const SizedBox(height: 8),
@@ -151,7 +151,7 @@ class PromotionTile extends StatelessWidget {
     );
   }
 
-  Widget _buildImageFrame(double width, double height) {
+  Widget _buildImageFrame(BuildContext context, double width, double height) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: imageUrl != null && imageUrl!.startsWith('http')
@@ -167,14 +167,14 @@ class PromotionTile extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.amber.withValues(alpha: 0.3),
-                    Colors.orange.withValues(alpha: 0.1),
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
               ),
-              child: const Icon(Icons.stars_rounded, color: Colors.amber, size: 32),
+              child: Icon(Icons.stars_rounded, color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8), size: 32),
             ),
     );
   }

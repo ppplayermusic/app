@@ -12,6 +12,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/db/app_database.dart';
 import 'core/player/media_handler.dart';
+import 'core/services/settings_provider.dart';
 
 /// Global access to the provider container for the [AudioHandler].
 late ProviderContainer globalContainer;
@@ -73,10 +74,13 @@ class PpPlayerApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
+    final settings = ref.watch(settingsProvider);
+    final themeColor = AppTheme.themeColors[settings.themeIndex];
+
     return MaterialApp.router(
       title: 'PPPLAYER',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark(),
+      theme: AppTheme.dark(primaryColor: themeColor),
       routerConfig: router,
     );
   }

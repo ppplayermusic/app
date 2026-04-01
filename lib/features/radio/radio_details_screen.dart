@@ -143,12 +143,12 @@ class RadioDetailsScreen extends ConsumerWidget {
                         child: Opacity(
                           opacity: 0.6,
                           child: Container(
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               gradient: RadialGradient(
-                                center: Alignment(-0.8, -0.6),
+                                center: const Alignment(-0.8, -0.6),
                                 radius: 1.5,
                                 colors: [
-                                  Color(0xFF1DB954),
+                                  Theme.of(context).colorScheme.primary,
                                   Colors.transparent,
                                 ],
                               ),
@@ -197,7 +197,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                                         blurRadius: 40,
                                         spreadRadius: 0,
                                       ),
@@ -280,22 +280,22 @@ class RadioDetailsScreen extends ConsumerWidget {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1DB954).withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(100),
                               border: Border.all(
-                                color: const Color(0xFF1DB954).withValues(alpha: 0.2),
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                                 width: 0.5,
                               ),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.radio_rounded, color: Color(0xFF1DB954), size: 12),
-                                SizedBox(width: 6),
+                                Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.primary, size: 12),
+                                const SizedBox(width: 6),
                                 Text(
                                   'RADIO STATION',
                                   style: TextStyle(
-                                    color: Color(0xFF1DB954),
+                                    color: Theme.of(context).colorScheme.primary,
                                     fontSize: 10,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 2.0,
@@ -330,7 +330,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                     ),
                   ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('CURATED TRACKS'),
+                  _buildSectionHeader(context, 'CURATED TRACKS'),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -472,7 +472,7 @@ class RadioDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
@@ -491,11 +491,11 @@ class RadioDetailsScreen extends ConsumerWidget {
                 width: 3,
                 height: 14,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1DB954),
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(1),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1DB954).withValues(alpha: 0.5),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                       blurRadius: 10,
                       spreadRadius: 1,
                     ),

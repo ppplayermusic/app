@@ -72,8 +72,8 @@ class LibraryScreen extends ConsumerStatefulWidget {
                     height: 54,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF450af5), Color(0xFF2d0087)],
+                      gradient: LinearGradient(
+                        colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primaryContainer],
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -198,7 +198,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                     border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1.5),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF450af5).withValues(alpha: 0.4),
+                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                                         blurRadius: 20,
                                         spreadRadius: -2,
                                       ),
@@ -350,15 +350,15 @@ class _LikedSongsCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(32),
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF450af5).withValues(alpha: 0.9),
-                  const Color(0xFF1a004d).withValues(alpha: 0.8),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF450af5).withValues(alpha: 0.25),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
                   blurRadius: 30,
                   offset: const Offset(0, 15),
                 ),
@@ -379,7 +379,7 @@ class _LikedSongsCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF450af5).withValues(alpha: 0.4),
+                          Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                           Colors.transparent,
                         ],
                       ),
@@ -439,7 +439,7 @@ class _LikedSongsCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF2d0087).withValues(alpha: 0.1),
+                          Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -460,18 +460,18 @@ class _LikedSongsCard extends StatelessWidget {
                         width: 92,
                         height: 92,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              Color(0xFF450af5),
-                              Color(0xFF2d0087),
+                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme.primaryContainer,
                             ],
                           ),
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF450af5).withValues(alpha: 0.4),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                               blurRadius: 20,
                               offset: const Offset(0, 8),
                             ),
@@ -811,14 +811,14 @@ class _FilterBar extends StatelessWidget {
                 duration: 250.ms,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF450af5) : Colors.white.withValues(alpha: 0.05),
+                  color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
                     color: isSelected ? Colors.white.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.05),
                   ),
                   boxShadow: isSelected ? [
                     BoxShadow(
-                      color: const Color(0xFF450af5).withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 4),
                     ),
@@ -1198,11 +1198,11 @@ class _EmptyState extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF450af5),
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF450af5).withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 4),
                     ),

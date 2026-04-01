@@ -1019,11 +1019,11 @@ class _RadioCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1DB954),
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1DB954).withValues(alpha: 0.4),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                       blurRadius: 12,
                     ),
                   ],
@@ -1254,7 +1254,7 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
         Container(
           color: Colors.black,
           child: CustomPaint(
-            painter: _MeshPainter(),
+            painter: _MeshPainter(primaryColor: Theme.of(context).colorScheme.primary),
           ),
         ),
         
@@ -1298,7 +1298,7 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF4B4B).withValues(alpha: 0.2),
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                                 blurRadius: 40,
                                 spreadRadius: 5,
                               ),
@@ -1337,11 +1337,11 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF4B4B),
+                            color: Theme.of(context).colorScheme.primary,
                             borderRadius: BorderRadius.circular(2),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF4B4B).withValues(alpha: 0.4),
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                                 blurRadius: 10,
                               ),
                             ],
@@ -1422,23 +1422,28 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
 }
 
 class _MeshPainter extends CustomPainter {
+  final Color primaryColor;
+  _MeshPainter({required this.primaryColor});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
 
     // Primary Brand Blob
-    paint.color = const Color(0xFFFF4B4B).withValues(alpha: 0.15);
+    paint.color = primaryColor.withValues(alpha: 0.15);
     canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.2), 120, paint);
 
-    // Secondary Accent Blob
-    paint.color = Colors.blueAccent.withValues(alpha: 0.1);
+    // Dynamic Secondary Blob (derived from theme)
+    final secondaryColor = Color.lerp(primaryColor, Colors.blueAccent, 0.2) ?? primaryColor;
+    paint.color = secondaryColor.withValues(alpha: 0.1);
     canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.8), 90, paint);
     
-    // Tertiary Purple Blob
-    paint.color = Colors.purpleAccent.withValues(alpha: 0.08);
+    // Dynamic Tertiary Blob (derived from theme)
+    final tertiaryColor = Color.lerp(primaryColor, Colors.purpleAccent, 0.2) ?? primaryColor;
+    paint.color = tertiaryColor.withValues(alpha: 0.08);
     canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.5), 100, paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _MeshPainter oldDelegate) => oldDelegate.primaryColor != primaryColor;
 }

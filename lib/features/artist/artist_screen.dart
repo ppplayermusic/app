@@ -195,7 +195,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                                         blurRadius: 40,
                                         spreadRadius: 0,
                                       ),
@@ -306,11 +306,11 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                           decoration: BoxDecoration(
                                             color: isFollowed 
-                                                ? const Color(0xFF1DB954).withValues(alpha: 0.2)
+                                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
                                                 : Colors.white.withValues(alpha: 0.05),
                                             border: Border.all(
                                               color: isFollowed 
-                                                  ? const Color(0xFF1DB954).withValues(alpha: 0.4)
+                                                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.4)
                                                   : Colors.white.withValues(alpha: 0.1), 
                                               width: 1.0
                                             ),
@@ -319,7 +319,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                           child: Text(
                                             isFollowed ? 'FOLLOWING' : 'FOLLOW', 
                                             style: TextStyle(
-                                              color: isFollowed ? const Color(0xFF1DB954) : Colors.white, 
+                                              color: isFollowed ? Theme.of(context).colorScheme.primary : Colors.white, 
                                               fontWeight: FontWeight.w900,
                                               fontSize: 11,
                                               letterSpacing: 1.5,
@@ -341,7 +341,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                         context.push(
                                           '/radio/artist/${widget.artistId}?title=$artistName Radio&imageUrl=$artistImageUrl',
                                           extra: {
-                                            'color1': const Color(0xFF1DB954),
+                                            'color1': Theme.of(context).colorScheme.primary,
                                             'color2': Colors.black,
                                           },
                                         );
@@ -350,19 +350,19 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF1DB954).withValues(alpha: 0.2),
-                                        border: Border.all(color: const Color(0xFF1DB954).withValues(alpha: 0.4), width: 1.0),
+                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                                        border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4), width: 1.0),
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(Icons.radio_rounded, color: Color(0xFF1DB954), size: 18),
+                                          Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.primary, size: 18),
                                           const SizedBox(width: 10),
-                                          const Text(
+                                          Text(
                                             'RADIO', 
                                             style: TextStyle(
-                                              color: Color(0xFF1DB954), 
+                                              color: Theme.of(context).colorScheme.primary, 
                                               fontWeight: FontWeight.w900,
                                               fontSize: 11,
                                               letterSpacing: 1.5,
@@ -425,7 +425,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   child: TextField(
                                     controller: _searchController,
                                     style: const TextStyle(color: Colors.white, fontSize: 15),
-                                    cursorColor: const Color(0xFF1DB954),
+                                    cursorColor: Theme.of(context).colorScheme.primary,
                                     decoration: InputDecoration(
                                       hintText: 'Search popular songs...',
                                       hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),

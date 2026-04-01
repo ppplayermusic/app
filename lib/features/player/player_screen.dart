@@ -29,41 +29,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   @override
   void initState() {
     super.initState();
-    // Proactively update layout after mounting to catch the initial position
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateVideoLayout());
-    
-    // Staggered updates to ensure we capture the final position after 
-    // GoRouter transition animations finish (which usually take ~300ms)
-    _frequentLayoutUpdate();
+    // Proactively update layout after mounting
+    _scheduleLayoutUpdates();
   }
 
-  void _frequentLayoutUpdate() {
-    // Immediate update
-    if (mounted) _updateVideoLayout();
-
-    // Update every 50ms for the first 1.5s during potential animations
-    int count = 0;
-    const duration = Duration(milliseconds: 50);
-    const limit = 30; // 1.5 seconds
-
-    Future.doWhile(() async {
-      await Future.delayed(duration);
-      if (!mounted) return false;
-      _updateVideoLayout();
-      count++;
-      return count < limit;
-    });
+  void _scheduleLayoutUpdates() {
+    // Schedule multiple updates to catch layout settling during animations
+    for (var ms in [0, 50, 100, 250, 500, 800]) {
+      Future.delayed(Duration(milliseconds: ms), () {
+        if (mounted) _updateVideoLayout();
+      });
+    }
   }
 
   void _updateVideoLayout() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final RenderBox? box = _videoKey.currentContext?.findRenderObject() as RenderBox?;
-      if (box != null) {
-        final position = box.localToGlobal(Offset.zero);
-        ref.read(videoLayoutProvider.notifier).updateLayout(box.size, position);
-      }
-    });
+    if (!mounted) return;
+    final RenderBox? box = _videoKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box != null) {
+      final position = box.localToGlobal(Offset.zero);
+      ref.read(videoLayoutProvider.notifier).updateLayout(box.size, position);
+    }
   }
 
   @override
@@ -79,6 +64,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         body: Center(child: Text('No track playing')),
       );
     }
+
+    ref.listen(settingsProvider.select((s) => s.playerView), (prev, next) {
+      if (next == PlayerView.video) {
+        _scheduleLayoutUpdates();
+      }
+    });
 
     final isQueueView = settings.playerView == PlayerView.queue;
     final isVideoView = settings.playerView == PlayerView.video;
@@ -128,7 +119,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                   center: Alignment.center,
                   radius: 1.5,
                   colors: [
-                    const Color(0xFF1DB954).withValues(alpha: 0.08),
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                     Colors.transparent,
                   ],
                 ),
@@ -257,12 +248,18 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                     child: AspectRatio(
                                       aspectRatio: 16 / 9,
                                       child: isVideoView
-                                          ? Container(
-                                              key: _videoKey,
-                                              decoration: BoxDecoration(
-                                                color: Colors.black,
-                                                borderRadius: BorderRadius.circular(24),
-                                              ),
+                                          ? LayoutBuilder(
+                                              builder: (context, constraints) {
+                                                // Trigger layout updates whenever the container's constraints change
+                                                _updateVideoLayout();
+                                                return Container(
+                                                  key: _videoKey,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black,
+                                                    borderRadius: BorderRadius.circular(24),
+                                                  ),
+                                                );
+                                              },
                                             )
                                           : _VinylArtwork(
                                               imageUrl: playerState.currentTrack?.albumImage ?? '',
@@ -345,7 +342,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                       style: TextStyle(
                                                         fontSize: 12,
                                                         fontWeight: FontWeight.w800,
-                                                        color: const Color(0xFF1DB954).withValues(alpha: 0.9),
+                                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
                                                         letterSpacing: 2.0,
                                                       ),
                                                       maxLines: 1,
@@ -363,7 +360,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   ? Icons.favorite 
                                                   : Icons.favorite_border,
                                                 color: playerState.currentTrack!.isFavorite 
-                                                  ? const Color(0xFF1DB954) 
+                                                  ? Theme.of(context).colorScheme.primary 
                                                   : Colors.white,
                                                 onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!),
                                               ),
@@ -381,7 +378,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   trackHeight: 4,
                                                   thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 5),
                                                   overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
-                                                  activeTrackColor: const Color(0xFF1DB954),
+                                                  activeTrackColor: Theme.of(context).colorScheme.primary,
                                                   inactiveTrackColor: Colors.white.withValues(alpha: 0.05),
                                                   thumbColor: Colors.white,
                                                   trackShape: const RoundedRectSliderTrackShape(),
@@ -418,7 +415,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                             children: [
                                               TactileIconButton(
                                                 icon: Icons.shuffle,
-                                                color: playerState.isShuffled ? const Color(0xFF1DB954) : Colors.white60,
+                                                color: playerState.isShuffled ? Theme.of(context).colorScheme.primary : Colors.white60,
                                                 onTap: playerNotifier.toggleShuffle,
                                               ),
                                               TactileIconButton(
@@ -438,7 +435,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                               TactileIconButton(
                                                 icon: playerState.repeatMode == RepeatMode.none ? Icons.repeat : Icons.repeat_one,
                                                 color: playerState.repeatMode != RepeatMode.none
-                                                    ? const Color(0xFF1DB954)
+                                                    ? Theme.of(context).colorScheme.primary
                                                     : Colors.white60,
                                                 onTap: playerNotifier.cycleRepeat,
                                               ),
@@ -543,19 +540,19 @@ class _QueueView extends StatelessWidget {
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: isCurrent 
-                        ? const Color(0xFF1DB954).withValues(alpha: 0.12) 
+                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12) 
                         : Colors.white.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isCurrent 
-                          ? const Color(0xFF1DB954).withValues(alpha: 0.5) 
+                          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5) 
                           : Colors.white.withValues(alpha: 0.12),
                       width: 0.5,
                     ),
                     boxShadow: [
                       if (isCurrent)
                         BoxShadow(
-                          color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -577,8 +574,8 @@ class _QueueView extends StatelessWidget {
                               Positioned.fill(
                                 child: Container(
                                   color: Colors.black.withValues(alpha: 0.3),
-                                  child: const Center(
-                                    child: Icon(Icons.equalizer, color: Color(0xFF1DB954), size: 24),
+                                  child: Center(
+                                    child: Icon(Icons.equalizer, color: Theme.of(context).colorScheme.primary, size: 24),
                                   ),
                                 ),
                               ),
@@ -606,7 +603,7 @@ class _QueueView extends StatelessWidget {
                               t.artistName.toUpperCase(),
                               style: TextStyle(
                                 color: isCurrent 
-                                    ? const Color(0xFF1DB954).withValues(alpha: 0.8) 
+                                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.8) 
                                     : Colors.white.withValues(alpha: 0.4),
                                 fontWeight: FontWeight.w900,
                                 fontSize: 11,
@@ -625,7 +622,7 @@ class _QueueView extends StatelessWidget {
                           child: Icon(
                             Icons.drag_handle, 
                             color: isCurrent 
-                                ? const Color(0xFF1DB954).withValues(alpha: 0.6) 
+                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.6) 
                                 : Colors.white.withValues(alpha: 0.2),
                           ),
                         ),
@@ -710,8 +707,8 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF1DB954).withValues(alpha: 0.35),
-                      const Color(0xFF1DB954).withValues(alpha: 0.08),
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.4, 1.0],

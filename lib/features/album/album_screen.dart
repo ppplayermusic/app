@@ -219,12 +219,12 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                             child: Opacity(
                               opacity: 0.4,
                               child: Container(
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   gradient: RadialGradient(
-                                    center: Alignment(-0.8, -0.6),
+                                    center: const Alignment(-0.8, -0.6),
                                     radius: 1.5,
                                     colors: [
-                                      Color(0xFF1DB954),
+                                      Theme.of(context).colorScheme.primary,
                                       Colors.transparent,
                                     ],
                                   ),
@@ -276,7 +276,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                                         blurRadius: 40,
                                         spreadRadius: 0,
                                       ),
@@ -408,7 +408,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                final isLiked = snapshot.data?.isLiked ?? false;
                                return TactileIconButton(
                                  icon: isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                                 color: isLiked ? const Color(0xFF1DB954) : Colors.white70,
+                                 color: isLiked ? Theme.of(context).colorScheme.primary : Colors.white70,
                                  padding: const EdgeInsets.all(12),
                                  onTap: () {
                                    ref.read(db.appDatabaseProvider).toggleAlbumLike(

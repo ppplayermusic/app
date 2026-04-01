@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/services/settings_provider.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/db/app_database.dart' as db;
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
@@ -52,7 +53,13 @@ class SettingsScreen extends ConsumerWidget {
 
           // Hero Section
           SliverToBoxAdapter(
-            child: _SettingsHero().animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+            child: Consumer(
+              builder: (context, ref, _) {
+                final settings = ref.watch(settingsProvider);
+                final themeColor = AppTheme.themeColors[settings.themeIndex];
+                return _SettingsHero(themeColor: themeColor);
+              },
+            ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
           ),
 
           // Settings Groups
@@ -79,6 +86,8 @@ class SettingsScreen extends ConsumerWidget {
                   value: settings.showVideo,
                   onChanged: (v) => ref.read(settingsProvider.notifier).toggleVideo(),
                 ).animate(delay: 300.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 12),
+                _buildThemeSelector(context, ref, settings),
                 const SizedBox(height: 32),
                 _buildSectionHeader('Data & Storage')
                     .animate(delay: 400.ms)
@@ -110,6 +119,107 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildThemeSelector(BuildContext context, WidgetRef ref, SettingsState settings) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionHeader('Theme Color'),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
+              child: Text(
+                AppTheme.themeNames[settings.themeIndex],
+                style: TextStyle(
+                  color: AppTheme.themeColors[settings.themeIndex],
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ).animate(key: ValueKey(settings.themeIndex)).fadeIn().slideX(begin: 0.2),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 70,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: AppTheme.themeColors.length,
+                      separatorBuilder: (context, index) => const SizedBox(width: 16),
+                      itemBuilder: (context, index) {
+                        final color = AppTheme.themeColors[index];
+                        final isSelected = settings.themeIndex == index;
+
+                        return TactileTap(
+                          onTap: () {
+                            if (!isSelected) {
+                              HapticFeedback.mediumImpact();
+                              ref.read(settingsProvider.notifier).setTheme(index);
+                            }
+                          },
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              AnimatedContainer(
+                                duration: 400.ms,
+                                width: isSelected ? 54 : 46,
+                                height: isSelected ? 54 : 46,
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isSelected ? Colors.white : Colors.white24,
+                                    width: isSelected ? 3 : 1,
+                                  ),
+                                  boxShadow: isSelected
+                                      ? [
+                                          BoxShadow(
+                                            color: color.withValues(alpha: 0.5),
+                                            blurRadius: 20,
+                                            spreadRadius: 2,
+                                          ),
+                                        ]
+                                      : [],
+                                ),
+                              ),
+                              if (isSelected)
+                                const Icon(
+                                  Icons.check_rounded,
+                                  color: Colors.black,
+                                  size: 26,
+                                ).animate().scale(duration: 200.ms, curve: Curves.easeOutBack),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    ).animate(delay: 350.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic);
   }
 
   Widget _buildSectionHeader(String title) {
@@ -201,6 +311,8 @@ class SettingsScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final code = markets[index];
                     final isSelected = code == currentCountry;
+                    final settings = ref.watch(settingsProvider);
+                    final themeColor = AppTheme.themeColors[settings.themeIndex];
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
@@ -224,12 +336,12 @@ class SettingsScreen extends ConsumerWidget {
                                 width: 32,
                                 height: 32,
                                 decoration: BoxDecoration(
-                                  color: isSelected ? const Color(0xFFFF4B4B) : Colors.white10,
+                                  color: isSelected ? themeColor : Colors.white10,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
                                   child: Text(
-                                    code.substring(0, index < 2 ? code.length : 2),
+                                    code.substring(0, code.length >= 2 ? 2 : code.length),
                                     style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -243,7 +355,7 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                               ),
                               const Spacer(),
-                              if (isSelected) const Icon(Icons.check_rounded, color: Color(0xFFFF4B4B), size: 20),
+                              if (isSelected) Icon(Icons.check_rounded, color: themeColor, size: 20),
                             ],
                           ),
                         ),
@@ -252,8 +364,12 @@ class SettingsScreen extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF4B4B))),
-              error: (err, _) => Center(child: Text('Error loding markets: $err')),
+              loading: () {
+                final settings = ref.watch(settingsProvider);
+                final themeColor = AppTheme.themeColors[settings.themeIndex];
+                return Center(child: CircularProgressIndicator(color: themeColor));
+              },
+              error: (err, _) => Center(child: Text('Error loading markets: $err')),
             );
           },
         ),
@@ -263,6 +379,10 @@ class SettingsScreen extends ConsumerWidget {
 }
 
 class _SettingsHero extends StatelessWidget {
+  final Color themeColor;
+
+  const _SettingsHero({required this.themeColor});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -284,7 +404,7 @@ class _SettingsHero extends StatelessWidget {
               ).custom(
                 duration: const Duration(seconds: 15),
                 builder: (context, value, child) => CustomPaint(
-                  painter: _MeshPainter(animationValue: value),
+                  painter: _MeshPainter(animationValue: value, themeColor: themeColor),
                 ),
               ),
             ),
@@ -318,7 +438,7 @@ class _SettingsHero extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF4B4B).withValues(alpha: 0.3),
+                            color: themeColor.withValues(alpha: 0.3),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
@@ -348,7 +468,7 @@ class _SettingsHero extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2.0,
-                      color: const Color(0xFFFF4B4B).withValues(alpha: 0.9),
+                      color: themeColor.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -363,31 +483,34 @@ class _SettingsHero extends StatelessWidget {
 
 class _MeshPainter extends CustomPainter {
   final double animationValue;
+  final Color themeColor;
 
-  _MeshPainter({required this.animationValue});
+  _MeshPainter({required this.animationValue, required this.themeColor});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
 
     // Primary Brand Blob
-    paint.color = const Color(0xFFFF4B4B).withValues(alpha: 0.3);
+    paint.color = themeColor.withValues(alpha: 0.3);
     final center1 = Offset(
       size.width * (0.5 + 0.35 * math.cos(animationValue * 2 * math.pi)),
       size.height * (0.5 + 0.35 * math.sin(animationValue * 2 * math.pi)),
     );
     canvas.drawCircle(center1, 120, paint);
 
-    // Secondary Accent Blob
-    paint.color = Colors.blueAccent.withValues(alpha: 0.2);
+    // Dynamic Secondary Blob (derived from theme)
+    final secondaryColor = Color.lerp(themeColor, Colors.blueAccent, 0.2) ?? themeColor;
+    paint.color = secondaryColor.withValues(alpha: 0.2);
     final center2 = Offset(
       size.width * (0.5 + 0.45 * math.cos((animationValue + 0.3) * 2 * math.pi)),
       size.height * (0.5 + 0.25 * math.sin((animationValue + 0.3) * 2 * math.pi)),
     );
     canvas.drawCircle(center2, 100, paint);
 
-    // Deep Purple Blob
-    paint.color = Colors.deepPurpleAccent.withValues(alpha: 0.15);
+    // Dynamic Tertiary Blob (derived from theme)
+    final tertiaryColor = Color.lerp(themeColor, Colors.purpleAccent, 0.2) ?? themeColor;
+    paint.color = tertiaryColor.withValues(alpha: 0.15);
     final center3 = Offset(
       size.width * (0.5 + 0.25 * math.cos((animationValue + 0.7) * 2 * math.pi)),
       size.height * (0.5 + 0.45 * math.sin((animationValue + 0.7) * 2 * math.pi)),
@@ -568,13 +691,19 @@ class TactileSwitchTile extends StatelessWidget {
               ),
               Transform.scale(
                 scale: 0.8,
-                child: Switch.adaptive(
-                  value: value,
-                  activeTrackColor: const Color(0xFFFF4B4B).withValues(alpha: 0.5),
-                  activeThumbColor: const Color(0xFFFF4B4B),
-                  onChanged: (v) {
-                    HapticFeedback.mediumImpact();
-                    onChanged(v);
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final settings = ref.watch(settingsProvider);
+                    final themeColor = AppTheme.themeColors[settings.themeIndex];
+                    return Switch.adaptive(
+                      value: value,
+                      activeTrackColor: themeColor.withValues(alpha: 0.5),
+                      activeThumbColor: themeColor,
+                      onChanged: (v) {
+                        HapticFeedback.mediumImpact();
+                        onChanged(v);
+                      },
+                    );
                   },
                 ),
               ),

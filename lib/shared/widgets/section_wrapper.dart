@@ -72,11 +72,11 @@ class _DefaultHeader extends StatelessWidget {
             width: 4,
             height: 24,
             decoration: BoxDecoration(
-              color: const Color(0xFF1DB954),
+              color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(2),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF1DB954).withValues(alpha: 0.5),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                   blurRadius: 8,
                 ),
               ],

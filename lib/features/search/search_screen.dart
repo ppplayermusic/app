@@ -72,8 +72,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
             color: Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(100),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.12),
-              width: 0.5,
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+              width: 1,
             ),
             boxShadow: [
               BoxShadow(
@@ -81,11 +81,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
-              const BoxShadow(
-                color: Colors.white10,
-                blurRadius: 4,
-                offset: Offset(0, -1),
-                spreadRadius: -1,
+              BoxShadow(
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                blurRadius: 20,
+                spreadRadius: -5,
               ),
             ],
           ),
@@ -93,7 +92,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
             controller: _ctrl,
             autofocus: false,
             style: const TextStyle(color: Colors.white, fontSize: 16),
-            cursorColor: Colors.green,
+            cursorColor: Theme.of(context).colorScheme.primary,
             decoration: InputDecoration(
               hintText: 'What do you want to listen to?',
               hintStyle: TextStyle(
@@ -136,9 +135,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                 preferredSize: const Size.fromHeight(48),
                 child: TabBar(
                   controller: _tabCtrl,
-                  indicator: const UnderlineTabIndicator(
-                    borderSide: BorderSide(color: Color(0xFF1DB954), width: 3),
-                    insets: EdgeInsets.symmetric(horizontal: 16),
+                  indicator: UnderlineTabIndicator(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 3),
+                    insets: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
                   labelColor: Colors.white,
@@ -167,7 +166,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
       body: query.isEmpty
           ? _EmptySearch()
           : results.when(
-              loading: () => const SliverSectionShimmer(count: 12, isGrid: false),
+              loading: () => const CustomScrollView(
+                slivers: [
+                   SliverSectionShimmer(count: 12, isGrid: false),
+                ],
+              ),
               error: (e, _) => Center(child: Text('Error: $e')),
               data: (data) => TabBarView(
                 controller: _tabCtrl,
@@ -468,7 +471,7 @@ class _ArtistResults extends ConsumerWidget {
                       Text(
                         'Artist'.toUpperCase(),
                         style: TextStyle(
-                          color: const Color(0xFF1DB954).withValues(alpha: 0.8),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.2,
@@ -567,7 +570,7 @@ class _AlbumResults extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                           letterSpacing: 0.5,
                         ),
                       ),

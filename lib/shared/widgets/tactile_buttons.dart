@@ -215,9 +215,9 @@ class _TactileActionPlayButtonState extends State<TactileActionPlayButton> {
           child: Container(
             width: widget.size,
             height: widget.size,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFF1DB954), // Spotify Green
+              color: Theme.of(context).colorScheme.primary, // Dynamic Theme Color
               boxShadow: [
                 BoxShadow(
                   color: Colors.black45,
