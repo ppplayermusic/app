@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -65,69 +64,108 @@ class RadioDetailsScreen extends ConsumerWidget {
             flexibleSpace: LayoutBuilder(
               builder: (context, constraints) {
                 final isCollapsed = constraints.maxHeight <= kToolbarHeight + MediaQuery.of(context).padding.top + 10;
-                return ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: isCollapsed ? 20 : 0,
-                      sigmaY: isCollapsed ? 20 : 0,
-                    ),
-                    child: FlexibleSpaceBar(
-                      stretchModes: const [
-                        StretchMode.zoomBackground,
-                        StretchMode.blurBackground,
-                      ],
-                      titlePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      title: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: 1.0,
-                        child: Text(
-                          title,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: isCollapsed ? 18 : 32,
-                            letterSpacing: isCollapsed ? -0.2 : -1.2,
-                            shadows: [
-                              if (!isCollapsed)
-                                Shadow(
-                                  color: Colors.black.withValues(alpha: 0.8),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 4),
-                                ),
-                            ],
+                return FlexibleSpaceBar(
+                  stretchModes: const [
+                    StretchMode.zoomBackground,
+                    StretchMode.blurBackground,
+                  ],
+                  titlePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  title: isCollapsed 
+                    ? const Text(
+                        'Radio Station',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20,
+                          letterSpacing: -1.0,
+                          color: Colors.white,
+                        ),
+                      )
+                    : null,
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Base Image
+                      CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(color: const Color(0xFF121212)),
+                        errorWidget: (context, url, error) => Container(
+                          color: const Color(0xFF1E1E1E),
+                          child: const Icon(Icons.radio, size: 80, color: Colors.white10),
+                        ),
+                      ),
+
+                      // Ambient Mesh Pulsing Overlay (Advanced Cinema)
+                      Positioned.fill(
+                        child: Opacity(
+                          opacity: 0.6,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              gradient: RadialGradient(
+                                center: Alignment(-0.8, -0.6),
+                                radius: 1.5,
+                                colors: [
+                                  Color(0xFF1DB954),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                            begin: const Offset(1, 1),
+                            end: const Offset(1.3, 1.3),
+                            duration: 10.seconds,
+                            curve: Curves.easeInOut,
+                          ).move(
+                            begin: const Offset(-20, -20),
+                            end: const Offset(20, 20),
+                            duration: 12.seconds,
+                            curve: Curves.easeInOut,
                           ),
                         ),
                       ),
-                      background: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(color: const Color(0xFF121212)),
-                            errorWidget: (context, url, error) => Container(
-                              color: const Color(0xFF1E1E1E),
-                              child: const Icon(Icons.radio, size: 80, color: Colors.white10),
-                            ),
+
+                      // Depth Overlay
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.2),
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.6),
+                              Colors.black,
+                            ],
+                            stops: const [0.0, 0.3, 0.7, 1.0],
                           ),
-                          // Premium Gradient Overlay
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  color1?.withValues(alpha: 0.3) ?? Colors.transparent,
-                                  color2?.withValues(alpha: 0.5) ?? const Color(0x33000000),
-                                  const Color(0xAA000000),
-                                  Colors.black,
-                                ],
-                                stops: const [0.0, 0.4, 0.75, 1.0],
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+
+                      // Large Title (Non-collapsed)
+                      if (!isCollapsed)
+                        Positioned(
+                          left: 20,
+                          right: 20,
+                          bottom: 24,
+                          child: Text(
+                            title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 38,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -1.8,
+                              height: 0.9,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black45,
+                                  blurRadius: 20,
+                                  offset: Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
+                        ),
+                    ],
                   ),
                 );
               },
@@ -151,13 +189,13 @@ class RadioDetailsScreen extends ConsumerWidget {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1DB954).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
+                          color: const Color(0xFF1DB954).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: const Color(0xFF1DB954).withValues(alpha: 0.3),
-                            width: 1,
+                            color: const Color(0xFF1DB954).withValues(alpha: 0.25),
+                            width: 0.5,
                           ),
                         ),
                         child: const Text(
@@ -166,22 +204,22 @@ class RadioDetailsScreen extends ConsumerWidget {
                             color: Color(0xFF1DB954),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            letterSpacing: 1.5,
+                            letterSpacing: 2.0,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 16),
                       Text(
                         'Based on your taste',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.2,
+                          color: Colors.white.withValues(alpha: 0.3),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ],
-                  ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
+                  ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
                   const SizedBox(height: 16),
                   Text(
                     subtitle ?? 'A curated mix featuring $title and other artists you like.',
@@ -248,21 +286,23 @@ class RadioDetailsScreen extends ConsumerWidget {
                   (context, index) {
                     final track = tracks[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                       child: Row(
                         children: [
                           SizedBox(
-                            width: 36,
+                            width: 32,
                             child: Text(
-                              '${index + 1}',
+                              (index + 1).toString().padLeft(2, '0'),
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.3),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 fontSize: 13,
                                 fontFamily: 'monospace',
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.5,
                               ),
                             ),
                           ),
+                          const SizedBox(width: 8),
                           Expanded(
                             child: TrackTile(
                               track: track,
@@ -271,7 +311,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                    ).animate(delay: (400 + index * 35).ms).fadeIn(duration: 500.ms).slideX(begin: 0.04, end: 0, curve: Curves.easeOutQuad);
+                    ).animate(delay: (200 + index * 40).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
                   },
                   childCount: tracks.length,
                 ),

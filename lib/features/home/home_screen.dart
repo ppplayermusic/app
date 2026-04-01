@@ -374,18 +374,18 @@ class HomeScreen extends ConsumerWidget {
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Albums'),
+                  _buildSectionHeader('Popular Albums').animate().fadeIn(delay: 1000.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   popularAlbums.when(
                     data: (albums) => _HorizontalList(
                       items: albums,
                       onTap: (item) => context.push("/album/${item['id']}"),
-                    ),
+                    ).animate().fadeIn(delay: 1100.ms).slideY(begin: 0.1),
                     loading: () => const _LoadingPlaceholder(height: 200),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Genres'),
+                  _buildSectionHeader('Popular Genres').animate().fadeIn(delay: 1200.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   genres.when(
                     data: (items) => SizedBox(
@@ -394,9 +394,9 @@ class HomeScreen extends ConsumerWidget {
                         scrollDirection: Axis.horizontal,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                          childAspectRatio: 0.4,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.45,
                         ),
                         itemCount: items.length,
                         itemBuilder: (context, index) {
@@ -406,7 +406,7 @@ class HomeScreen extends ConsumerWidget {
                             name: category['name'],
                             imageUrl: imageUrl,
                             onTap: () => context.push("/genre/${category['name']}"),
-                          );
+                          ).animate().fadeIn(delay: (1300 + index * 50).ms).scale(begin: const Offset(0.9, 0.9));
                         },
                       ),
                     ),
@@ -416,18 +416,18 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: 32),
                   const BannerAdWidget(),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('New Releases'),
+                  _buildSectionHeader('New Releases').animate().fadeIn(delay: 1400.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   newReleases.when(
                     data: (items) => _HorizontalList(
                       items: items,
                       onTap: (item) => context.push("/album/${item['id']}"),
-                    ),
+                    ).animate().fadeIn(delay: 1500.ms).slideY(begin: 0.1),
                     loading: () => const _LoadingPlaceholder(height: 200),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Featured Playlists'),
+                  _buildSectionHeader('Featured Playlists').animate().fadeIn(delay: 1600.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   featuredPlaylists.when(
                     data: (items) => _HorizontalList(
@@ -438,12 +438,12 @@ class HomeScreen extends ConsumerWidget {
                           queryParameters: {'name': item['name']},
                         ).toString(),
                       ),
-                    ),
+                    ).animate().fadeIn(delay: 1700.ms).slideY(begin: 0.1),
                     loading: () => const _LoadingPlaceholder(height: 200),
                     error: (e, _) => Text('Error: $e'),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionHeader('Popular Tracks').animate().fadeIn(delay: 1100.ms).slideX(begin: -0.1),
+                  _buildSectionHeader('Popular Tracks').animate().fadeIn(delay: 1800.ms).slideX(begin: -0.1),
                   const SizedBox(height: 16),
                   popularTracks.when(
                     data: (tracks) => SizedBox(
@@ -460,7 +460,7 @@ class HomeScreen extends ConsumerWidget {
                               imageUrl: promo['image'],
                               ctaText: promo['cta']!,
                               type: PromotionType.horizontal,
-                            ).animate().fadeIn(delay: (1200 + index * 100).ms).scale(begin: const Offset(0.9, 0.9));
+                            ).animate().fadeIn(delay: (1900 + index * 100).ms).scale(begin: const Offset(0.9, 0.9));
                           }
                           
                           final trackIndex = index > 4 ? index - 1 : index;
@@ -471,7 +471,7 @@ class HomeScreen extends ConsumerWidget {
                             imageUrl: track.albumImage ?? '',
                             onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
                             artistId: track.artistId,
-                          ).animate().fadeIn(delay: (1200 + index * 100).ms).slideY(begin: 0.1);
+                          ).animate().fadeIn(delay: (1900 + index * 100).ms).slideY(begin: 0.1);
                         },
                       ),
                     ),
@@ -489,12 +489,35 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 24,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1DB954),
+              borderRadius: BorderRadius.circular(2),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF1DB954).withValues(alpha: 0.5),
+                  blurRadius: 8,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: -0.5,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -560,32 +583,47 @@ class _GenreCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 0.5,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
             if (imageUrl.isNotEmpty)
               Positioned(
-                right: -10,
-                bottom: -10,
+                right: -15,
+                bottom: -15,
                 child: Transform.rotate(
-                  angle: 0.5,
-                  child: CachedNetworkImage(
-                    imageUrl: imageUrl,
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
+                  angle: 0.4,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 15,
+                        ),
+                      ],
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(14.0),
               child: Text(
                 name,
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16,
+                  letterSpacing: -0.5,
                 ),
               ),
             ),
@@ -607,28 +645,55 @@ class _HistoryCard extends StatelessWidget {
       onTap: onTap,
       scaleDown: 0.98,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             height: 56,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.08),
+                width: 0.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             clipBehavior: Clip.antiAlias,
             child: Row(
               children: [
                 AspectRatio(
                   aspectRatio: 1,
-                  child: CachedNetworkImage(
-                    imageUrl: track.albumImage ?? '',
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => const Icon(Icons.music_note),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: track.albumImage ?? '',
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => const Icon(Icons.music_note),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.1),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -638,18 +703,27 @@ class _HistoryCard extends StatelessWidget {
                         track.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 13,
+                          letterSpacing: -0.2,
+                        ),
                       ),
+                      const SizedBox(height: 1),
                       Text(
                         track.artistName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.white70, fontSize: 11),
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.5),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 8),
               ],
             ),
           ),
@@ -680,42 +754,49 @@ class _AlbumCard extends StatelessWidget {
       onTap: onTap,
       scaleDown: 0.95,
       child: Container(
-        width: 140,
+        width: 156,
         margin: const EdgeInsets.only(right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.4),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+                    blurRadius: 25,
+                    offset: const Offset(0, 12),
                   ),
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   children: [
                     CachedNetworkImage(
                       imageUrl: imageUrl,
-                      width: 140,
-                      height: 140,
+                      width: 156,
+                      height: 156,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(color: Colors.white10),
+                      placeholder: (context, url) => Container(
+                        color: Colors.white.withValues(alpha: 0.05),
+                      ),
                     ),
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            width: 0.5,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              Colors.black.withValues(alpha: 0.4),
+                              Colors.black.withValues(alpha: 0.3),
                             ],
                           ),
                         ),
@@ -725,25 +806,27 @@ class _AlbumCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Text(
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontWeight: FontWeight.bold, 
-                fontSize: 14,
-                letterSpacing: -0.2,
+                fontWeight: FontWeight.w900,
+                fontSize: 15,
+                letterSpacing: -0.4,
+                height: 1.2,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               subtitle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5), 
+                color: Colors.white.withValues(alpha: 0.4),
                 fontSize: 12,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -782,13 +865,13 @@ class _ArtistCircle extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.4),
-                    blurRadius: 25,
-                    offset: const Offset(0, 10),
+                    blurRadius: 30,
+                    offset: const Offset(0, 12),
                   ),
                 ],
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.1),
-                  width: 2,
+                  color: Colors.white.withValues(alpha: 0.15),
+                  width: 1.5,
                 ),
               ),
               child: ClipOval(
@@ -813,26 +896,30 @@ class _ArtistCircle extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w900,
                 fontSize: 13,
                 color: Colors.white,
-                letterSpacing: -0.1,
+                letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(10),
+                color: const Color(0xFF1DB954).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF1DB954).withValues(alpha: 0.2),
+                  width: 0.5,
+                ),
               ),
               child: const Text(
                 'ARTIST',
                 style: TextStyle(
-                  color: Colors.white38,
+                  color: Color(0xFF1DB954),
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 1.2,
+                  letterSpacing: 1.5,
                 ),
               ),
             ),
@@ -873,15 +960,15 @@ class _RadioCard extends StatelessWidget {
       onTap: onTap,
       scaleDown: 0.95,
       child: Container(
-        width: 150,
+        width: 156,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.5),
-              blurRadius: 25,
-              offset: const Offset(0, 10),
+              blurRadius: 30,
+              offset: const Offset(0, 12),
             ),
           ],
         ),
@@ -902,9 +989,13 @@ class _RadioCard extends StatelessWidget {
             Positioned.fill(
               child: ClipRRect(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                   child: Container(
                     decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        width: 0.5,
+                      ),
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -920,17 +1011,17 @@ class _RadioCard extends StatelessWidget {
             ),
             // Radio Badge
             Positioned(
-              top: 12,
-              left: 12,
+              top: 14,
+              left: 14,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1DB954).withValues(alpha: 0.9),
+                  color: const Color(0xFF1DB954),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF1DB954).withValues(alpha: 0.4),
-                      blurRadius: 8,
+                      blurRadius: 12,
                     ),
                   ],
                 ),
@@ -945,7 +1036,7 @@ class _RadioCard extends StatelessWidget {
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         color: Colors.black,
-                        letterSpacing: 1.0,
+                        letterSpacing: 1.2,
                       ),
                     ),
                   ],
@@ -954,14 +1045,14 @@ class _RadioCard extends StatelessWidget {
             ),
             // Text info
             Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
+              bottom: 18,
+              left: 18,
+              right: 18,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                   Text(
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -969,17 +1060,18 @@ class _RadioCard extends StatelessWidget {
                       fontWeight: FontWeight.w900,
                       fontSize: 16,
                       color: Colors.white,
-                      height: 1.2,
-                      letterSpacing: -0.5,
+                      height: 1.1,
+                      letterSpacing: -0.6,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
-                    'Radio Station',
+                    'Exclusive Station',
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.5),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ],
@@ -987,14 +1079,14 @@ class _RadioCard extends StatelessWidget {
             ),
             // Play indicator overlay
             Positioned(
-              bottom: 12,
-              right: 12,
+              bottom: 14,
+              right: 14,
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white24),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                 ),
                 child: const Icon(Icons.play_arrow_rounded, size: 20, color: Colors.white),
               ),
@@ -1038,20 +1130,20 @@ class _SpotifyMixCard extends StatelessWidget {
               width: 160,
               height: 160,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(28),
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    color1.withValues(alpha: 0.8),
-                    color2.withValues(alpha: 0.8),
+                    color1.withValues(alpha: 0.9),
+                    color2.withValues(alpha: 0.9),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: color2.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+                    color: color2.withValues(alpha: 0.4),
+                    blurRadius: 25,
+                    offset: const Offset(0, 12),
                   ),
                 ],
               ),
@@ -1061,26 +1153,34 @@ class _SpotifyMixCard extends StatelessWidget {
                 children: [
                   // Glass Layer
                   BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(color: Colors.transparent),
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          width: 0.5,
+                        ),
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                    ),
                   ),
                   if (imageUrl.isNotEmpty)
                     Positioned(
-                      bottom: -20,
-                      right: -20,
+                      bottom: -15,
+                      right: -15,
                       child: Transform.rotate(
-                        angle: 0.2,
+                        angle: 0.15,
                         child: Container(
                           decoration: BoxDecoration(
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 15,
+                                color: Colors.black.withValues(alpha: 0.4),
+                                blurRadius: 20,
                               ),
                             ],
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             child: CachedNetworkImage(
                               imageUrl: imageUrl,
                               width: 110,
@@ -1092,40 +1192,40 @@ class _SpotifyMixCard extends StatelessWidget {
                       ),
                     ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(18.0),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
                         title.replaceAll(' ', '\n'),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 22,
+                          fontSize: 24,
                           fontWeight: FontWeight.w900,
-                          height: 1.0,
-                          letterSpacing: -1,
+                          height: 0.9,
+                          letterSpacing: -1.2,
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    top: 16,
-                    right: 16,
+                    top: 18,
+                    right: 18,
                     child: Icon(
                       Icons.auto_awesome, 
-                      color: Colors.white.withValues(alpha: 0.5), 
-                      size: 24,
+                      color: Colors.white.withValues(alpha: 0.6), 
+                      size: 22,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Text(
               subtitle,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5),
+                color: Colors.white.withValues(alpha: 0.4),
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 height: 1.3,
@@ -1209,13 +1309,36 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                            .scale(begin: const Offset(1,1), end: const Offset(1.1, 1.1), duration: 2000.ms, curve: Curves.easeInOut),
                         ),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           'Good morning',
                           style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -1.5,
+                            fontSize: 36,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -2.0,
                             color: Colors.white,
+                            height: 0.9,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1DB954),
+                            borderRadius: BorderRadius.circular(2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF1DB954).withValues(alpha: 0.4),
+                                blurRadius: 10,
+                              ),
+                            ],
                           ),
                         ),
                       ],

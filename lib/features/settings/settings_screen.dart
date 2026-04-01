@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,8 +41,10 @@ class SettingsScreen extends ConsumerWidget {
             title: const Text(
               'Settings',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                fontSize: 22,
+                letterSpacing: -0.8,
+                color: Colors.white,
               ),
             ),
             centerTitle: true,
@@ -57,14 +60,17 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                _buildSectionHeader('Preferences'),
+                _buildSectionHeader('Preferences')
+                    .animate(delay: 200.ms)
+                    .fadeIn(duration: 400.ms)
+                    .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSettingTile(
                   title: 'Content Market',
                   subtitle: 'Current: ${settings.selectedCountry}',
                   icon: Icons.public_rounded,
                   onTap: () => _showCountryPicker(context, ref),
-                ),
+                ).animate(delay: 250.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSwitchTile(
                   title: 'Show Video Player',
@@ -72,9 +78,12 @@ class SettingsScreen extends ConsumerWidget {
                   icon: Icons.smart_display_rounded,
                   value: settings.showVideo,
                   onChanged: (v) => ref.read(settingsProvider.notifier).toggleVideo(),
-                ),
+                ).animate(delay: 300.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 32),
-                _buildSectionHeader('Data & Storage'),
+                _buildSectionHeader('Data & Storage')
+                    .animate(delay: 400.ms)
+                    .fadeIn(duration: 400.ms)
+                    .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSettingTile(
                   title: 'Clear Recently Played',
@@ -82,15 +91,18 @@ class SettingsScreen extends ConsumerWidget {
                   icon: Icons.history_rounded,
                   color: Colors.redAccent.withValues(alpha: 0.8),
                   onTap: () => _showClearHistoryConfirm(context, ref),
-                ),
+                ).animate(delay: 450.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 32),
-                _buildSectionHeader('About'),
+                _buildSectionHeader('About')
+                    .animate(delay: 600.ms)
+                    .fadeIn(duration: 400.ms)
+                    .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 const TactileSettingTile(
                   title: 'App version',
                   subtitle: '0.1.0 Premium Beta',
                   icon: Icons.info_outline_rounded,
-                ),
+                ).animate(delay: 650.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 100),
               ]),
             ),
@@ -102,14 +114,14 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
+      padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
           color: Colors.white.withValues(alpha: 0.4),
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
+          fontSize: 11,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 2.2,
         ),
       ),
     );
@@ -267,23 +279,29 @@ class _SettingsHero extends StatelessWidget {
           children: [
             // Mesh Gradient / Ambient Background
             Positioned.fill(
-              child: CustomPaint(
-                painter: _MeshPainter(),
+              child: Animate(
+                onPlay: (controller) => controller.repeat(),
+              ).custom(
+                duration: const Duration(seconds: 15),
+                builder: (context, value, child) => CustomPaint(
+                  painter: _MeshPainter(animationValue: value),
+                ),
               ),
             ),
             // Glass Surface
             BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.white.withValues(alpha: 0.05),
-                      Colors.white.withValues(alpha: 0.01),
+                      Colors.white.withValues(alpha: 0.12),
+                      Colors.white.withValues(alpha: 0.04),
                     ],
                   ),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
                 ),
               ),
             ),
@@ -295,31 +313,32 @@ class _SettingsHero extends StatelessWidget {
                   Hero(
                     tag: 'app_logo',
                     child: Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF1DB954).withValues(alpha: 0.2),
-                            blurRadius: 30,
-                            spreadRadius: 5,
+                            color: const Color(0xFF1DB954).withValues(alpha: 0.3),
+                            blurRadius: 40,
+                            spreadRadius: 10,
                           ),
                         ],
                       ),
                       child: Image.asset(
                         'assets/logo.png',
-                        width: 70,
-                        height: 70,
+                        width: 80,
+                        height: 80,
                       ),
-                    ),
+                    ).animate(onPlay: (c) => c.repeat())
+                     .rotate(duration: 10.seconds, begin: 0, end: 1),
                   ),
                   const SizedBox(height: 12),
                   const Text(
                     'ppplayer',
                     style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -1.5,
+                      fontSize: 36,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1.8,
                       color: Colors.white,
                     ),
                   ),
@@ -329,7 +348,7 @@ class _SettingsHero extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2.0,
-                      color: const Color(0xFF1DB954).withValues(alpha: 0.8),
+                      color: const Color(0xFF1DB954).withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -343,21 +362,41 @@ class _SettingsHero extends StatelessWidget {
 }
 
 class _MeshPainter extends CustomPainter {
+  final double animationValue;
+
+  _MeshPainter({required this.animationValue});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
 
     // Primary Brand Blob
-    paint.color = const Color(0xFF1DB954).withValues(alpha: 0.15);
-    canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.2), 80, paint);
+    paint.color = const Color(0xFF1DB954).withValues(alpha: 0.3);
+    final center1 = Offset(
+      size.width * (0.5 + 0.35 * math.cos(animationValue * 2 * math.pi)),
+      size.height * (0.5 + 0.35 * math.sin(animationValue * 2 * math.pi)),
+    );
+    canvas.drawCircle(center1, 120, paint);
 
     // Secondary Accent Blob
-    paint.color = Colors.blueAccent.withValues(alpha: 0.1);
-    canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.8), 60, paint);
+    paint.color = Colors.blueAccent.withValues(alpha: 0.2);
+    final center2 = Offset(
+      size.width * (0.5 + 0.45 * math.cos((animationValue + 0.3) * 2 * math.pi)),
+      size.height * (0.5 + 0.25 * math.sin((animationValue + 0.3) * 2 * math.pi)),
+    );
+    canvas.drawCircle(center2, 100, paint);
+
+    // Deep Purple Blob
+    paint.color = Colors.deepPurpleAccent.withValues(alpha: 0.15);
+    final center3 = Offset(
+      size.width * (0.5 + 0.25 * math.cos((animationValue + 0.7) * 2 * math.pi)),
+      size.height * (0.5 + 0.45 * math.sin((animationValue + 0.7) * 2 * math.pi)),
+    );
+    canvas.drawCircle(center3, 110, paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _MeshPainter oldDelegate) => oldDelegate.animationValue != animationValue;
 }
 
 class TactileSettingTile extends StatelessWidget {
@@ -380,53 +419,75 @@ class TactileSettingTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return TactileTap(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+        child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: (color ?? Colors.white).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color ?? Colors.white70, size: 22),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
-                      fontSize: 13,
-                    ),
-                  ),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withValues(alpha: 0.05),
+                  Colors.white.withValues(alpha: 0.01),
                 ],
               ),
             ),
-            if (onTap != null)
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.white.withValues(alpha: 0.2),
-              ),
-          ],
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: (color ?? Colors.white).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (color ?? Colors.white).withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Icon(icon, color: color ?? Colors.white.withValues(alpha: 0.9), size: 22),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.4,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.5),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (onTap != null)
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.white.withValues(alpha: 0.3),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -451,57 +512,75 @@ class TactileSwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.smart_display_rounded, color: Colors.white70, size: 22),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4),
-                    fontSize: 13,
-                  ),
-                ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.05),
+                Colors.white.withValues(alpha: 0.01),
               ],
             ),
           ),
-          Switch.adaptive(
-            value: value,
-            activeTrackColor: const Color(0xFF1DB954).withValues(alpha: 0.5),
-            activeThumbColor: const Color(0xFF1DB954),
-            onChanged: (v) {
-              HapticFeedback.mediumImpact();
-              onChanged(v);
-            },
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(Icons.smart_display_rounded, color: Colors.white, size: 22),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Transform.scale(
+                scale: 0.8,
+                child: Switch.adaptive(
+                  value: value,
+                  activeTrackColor: const Color(0xFF1DB954).withValues(alpha: 0.5),
+                  activeThumbColor: const Color(0xFF1DB954),
+                  onChanged: (v) {
+                    HapticFeedback.mediumImpact();
+                    onChanged(v);
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -87,7 +87,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Background blurred image
+          // Background blurred image (Ambient Ambient Motion)
           Positioned.fill(
             child: CachedNetworkImage(
               imageUrl: track.albumImage ?? '',
@@ -95,14 +95,57 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               errorWidget: (context, url, error) => const SizedBox.shrink(),
             )
             .animate(onPlay: (controller) => controller.repeat(reverse: true))
-            .scale(begin: const Offset(1.0, 1.0), end: const Offset(1.15, 1.15), duration: 20.seconds, curve: Curves.easeInOutSine)
-            .move(begin: const Offset(-20, -10), end: const Offset(20, 10), duration: 15.seconds, curve: Curves.easeInOutSine),
+            .scale(begin: const Offset(1.1, 1.1), end: const Offset(1.5, 1.5), duration: 25.seconds, curve: Curves.easeInOutSine)
+            .move(begin: const Offset(-60, -30), end: const Offset(60, 30), duration: 22.seconds, curve: Curves.easeInOutSine)
+            .blur(begin: const Offset(80, 80), end: const Offset(120, 120), duration: 25.seconds, curve: Curves.easeInOutSine),
           ),
+          // Deep Cinematic Blur Layer
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
+              filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
               child: Container(
-                color: Colors.black.withValues(alpha: 0.6),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.3),
+                      Colors.black.withValues(alpha: 0.6),
+                      Colors.black.withValues(alpha: 0.8),
+                      Colors.black.withValues(alpha: 0.95),
+                    ],
+                    stops: const [0.0, 0.3, 0.7, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Additional Ambient "Breathe" Layer (Dynamic Glow)
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 1.5,
+                  colors: [
+                    const Color(0xFF1DB954).withValues(alpha: 0.08),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            )
+            .animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .fadeIn(duration: 4.seconds, curve: Curves.easeInOutSine)
+            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.4, 1.4), duration: 10.seconds, curve: Curves.easeInOutSine),
+          ),
+          // Subtle Noise Overlay (Editorial Feel)
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.03,
+              child: Image.network(
+                'https://www.transparenttextures.com/patterns/p6.png',
+                repeat: ImageRepeat.repeat,
+                color: Colors.white,
               ),
             ),
           ),
@@ -123,17 +166,23 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                         onTap: () => context.pop(),
                       ),
                       const Spacer(),
-                      // Center Toggles (Premium Segmented Style)
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(28),
                         child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: Colors.white10),
+                              color: Colors.white.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(28),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.12), width: 0.5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.3),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -157,7 +206,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                             ),
                           ),
                         ),
-                      ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 600.ms, delay: 200.ms)
+                      .slideY(begin: -0.2, end: 0, curve: Curves.easeOutCubic),
                       const Spacer(),
                       PopupMenuButton<String>(
                         icon: const Icon(Icons.more_vert),
@@ -217,8 +269,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                               isPlaying: playerState.isPlaying,
                                             )
                                               .animate()
-                                              .fadeIn(duration: 600.ms, curve: Curves.easeOut)
-                                              .slideY(begin: -0.1, end: 0, duration: 600.ms, curve: Curves.easeOut),
+                                              .fadeIn(duration: 800.ms, curve: Curves.easeOut)
+                                              .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 800.ms, curve: Curves.easeOutCubic),
                                     ),
                                   ),
                                 ),
@@ -228,18 +280,41 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(32),
+                                borderRadius: BorderRadius.circular(36),
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                                  filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 24),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.08),
-                                      borderRadius: BorderRadius.circular(32),
-                                      border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                            padding: const EdgeInsets.symmetric(vertical: 28),
+                            decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.05),
+                                      borderRadius: BorderRadius.circular(36),
+                                      border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 0.5),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.4),
+                                          blurRadius: 30,
+                                          offset: const Offset(0, 15),
+                                        ),
+                                        BoxShadow(
+                                          color: Colors.white.withValues(alpha: 0.03),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, -2),
+                                          spreadRadius: -2,
+                                        ),
+                                      ],
                                     ),
                                     child: Column(
                                       children: [
+                                        // Premium Highlight Line
+                                        Container(
+                                          width: 40,
+                                          height: 4,
+                                          margin: const EdgeInsets.only(bottom: 20),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white10,
+                                            borderRadius: BorderRadius.circular(2),
+                                          ),
+                                        ),
                                         // Track Info
                                         Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -249,27 +324,29 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      playerState.currentTrack?.name ?? 'Not Playing',
-                                                      style: const TextStyle(
-                                                        fontSize: 22,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.white,
-                                                        letterSpacing: -0.5,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    )
+                                                      Text(
+                                                        playerState.currentTrack?.name ?? 'Not Playing',
+                                                        style: const TextStyle(
+                                                          fontSize: 26,
+                                                          fontWeight: FontWeight.w900,
+                                                          color: Colors.white,
+                                                          letterSpacing: -1.2,
+                                                          height: 1.1,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                      )
                                                       .animate()
                                                       .fadeIn(duration: 500.ms, delay: 200.ms)
                                                       .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
                                                     const SizedBox(height: 2),
                                                     Text(
-                                                      playerState.currentTrack?.artistName ?? 'Unknown Artist',
+                                                      playerState.currentTrack?.artistName.toUpperCase() ?? 'UNKNOWN ARTIST',
                                                       style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w500,
-                                                        color: Colors.white.withValues(alpha: 0.6),
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w800,
+                                                        color: const Color(0xFF1DB954).withValues(alpha: 0.9),
+                                                        letterSpacing: 2.0,
                                                       ),
                                                       maxLines: 1,
                                                       overflow: TextOverflow.ellipsis,
@@ -301,12 +378,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                             children: [
                                               SliderTheme(
                                                 data: SliderTheme.of(context).copyWith(
-                                                  trackHeight: 3,
-                                                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                                                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                                                  trackHeight: 4,
+                                                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 5),
+                                                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
                                                   activeTrackColor: const Color(0xFF1DB954),
-                                                  inactiveTrackColor: Colors.white12,
+                                                  inactiveTrackColor: Colors.white.withValues(alpha: 0.05),
                                                   thumbColor: Colors.white,
+                                                  trackShape: const RoundedRectSliderTrackShape(),
                                                 ),
                                                 child: Slider(
                                                   value: playerState.position.inSeconds.toDouble(),
@@ -322,9 +400,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Text(_formatDuration(playerState.position),
-                                                        style: const TextStyle(color: Colors.white54, fontSize: 10, fontWeight: FontWeight.bold)),
+                                                        style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
                                                     Text(_formatDuration(playerState.duration),
-                                                        style: const TextStyle(color: Colors.white54, fontSize: 10, fontWeight: FontWeight.bold)),
+                                                        style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
                                                   ],
                                                 ),
                                               ),
@@ -377,8 +455,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                         ),
                 )
                   .animate()
-                  .fadeIn(duration: 500.ms, delay: 400.ms)
-                  .slideY(begin: 0.1, duration: 500.ms, curve: Curves.easeOutCubic),
+                  .fadeIn(duration: 600.ms, delay: 300.ms)
+                  .slideY(begin: 0.05, duration: 600.ms, curve: Curves.easeOutCubic),
               ],
             ),
           ),
@@ -412,10 +490,10 @@ class _ToggleTab extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-            color: isActive ? Colors.white : Colors.white60,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
+            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -451,22 +529,116 @@ class _QueueView extends StatelessWidget {
       itemBuilder: (context, i) {
         final t = playerState.queue[i];
         final isCurrent = playerState.currentIndex == i;
-        return TactileTap(
+        return Padding(
           key: ValueKey(t.spotifyId),
-          onTap: () => ProviderScope.containerOf(context).read(playerProvider.notifier).skipTo(i),
-          scaleDown: 0.98,
-          child: ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: CachedNetworkImage(imageUrl: t.albumImage ?? '', width: 40, height: 40, fit: BoxFit.cover),
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: TactileTap(
+            onTap: () => ProviderScope.containerOf(context).read(playerProvider.notifier).skipTo(i),
+            scaleDown: 0.98,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isCurrent 
+                        ? const Color(0xFF1DB954).withValues(alpha: 0.12) 
+                        : Colors.white.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: isCurrent 
+                          ? const Color(0xFF1DB954).withValues(alpha: 0.5) 
+                          : Colors.white.withValues(alpha: 0.12),
+                      width: 0.5,
+                    ),
+                    boxShadow: [
+                      if (isCurrent)
+                        BoxShadow(
+                          color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+                          blurRadius: 20,
+                          offset: const Offset(0, 4),
+                        ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Stack(
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: t.albumImage ?? '',
+                              width: 52,
+                              height: 52,
+                              fit: BoxFit.cover,
+                            ),
+                            if (isCurrent)
+                              Positioned.fill(
+                                child: Container(
+                                  color: Colors.black.withValues(alpha: 0.3),
+                                  child: const Center(
+                                    child: Icon(Icons.equalizer, color: Color(0xFF1DB954), size: 24),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              t.name,
+                              style: TextStyle(
+                                color: isCurrent ? Colors.white : Colors.white.withValues(alpha: 0.9),
+                                fontWeight: isCurrent ? FontWeight.w900 : FontWeight.w800,
+                                fontSize: 17,
+                                letterSpacing: -0.7,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              t.artistName.toUpperCase(),
+                              style: TextStyle(
+                                color: isCurrent 
+                                    ? const Color(0xFF1DB954).withValues(alpha: 0.8) 
+                                    : Colors.white.withValues(alpha: 0.4),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 11,
+                                letterSpacing: 1.0,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      ReorderableDragStartListener(
+                        index: i,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Icon(
+                            Icons.drag_handle, 
+                            color: isCurrent 
+                                ? const Color(0xFF1DB954).withValues(alpha: 0.6) 
+                                : Colors.white.withValues(alpha: 0.2),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            title: Text(t.name, style: TextStyle(color: isCurrent ? Colors.green : Colors.white, fontWeight: isCurrent ? FontWeight.bold : null)),
-            subtitle: Text(t.artistName, style: const TextStyle(color: Colors.white54, fontSize: 12)),
-            trailing: ReorderableDragStartListener(
-              index: i,
-              child: const Icon(Icons.drag_handle, color: Colors.white24),
-            ),
-          ),
+          )
+          .animate()
+          .fadeIn(duration: 400.ms, delay: (i * 50).ms)
+          .slideX(begin: 0.1, duration: 400.ms, curve: Curves.easeOutCubic),
         );
       },
     );
@@ -522,38 +694,46 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        final recordSize = height * 0.95;
+        final recordSize = height * 0.92;
         return Stack(
           alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
-            // Dynamic Glow (Backdrop blur based)
+            // Premium Dynamic Glow (Reactive-style pulse)
             Positioned(
-              top: -recordSize * 0.1,
-              left: -recordSize * 0.1,
-              right: -recordSize * 0.1,
-              bottom: -recordSize * 0.1,
+              top: -recordSize * 0.15,
+              left: -recordSize * 0.15,
+              right: -recordSize * 0.15,
+              bottom: -recordSize * 0.15,
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF1DB954).withValues(alpha: 0.3),
+                      const Color(0xFF1DB954).withValues(alpha: 0.35),
+                      const Color(0xFF1DB954).withValues(alpha: 0.08),
                       Colors.transparent,
                     ],
+                    stops: const [0.0, 0.4, 1.0],
                   ),
                 ),
+              )
+              .animate(target: widget.isPlaying ? 1 : 0)
+              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2), duration: 2.seconds, curve: Curves.easeInOutSine)
+              .custom(
+                duration: 2.seconds,
+                builder: (context, value, child) => Opacity(
+                  opacity: 0.5 + (0.5 * value),
+                  child: child,
+                ),
               ),
-            )
-            .animate(target: widget.isPlaying ? 1 : 0)
-            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2), duration: 2.seconds, curve: Curves.easeInOut)
-            .fadeIn(duration: 1.seconds),
+            ),
 
-            // The Vinyl Record
+            // The Vinyl Record (High Fidelity Grooves)
             AnimatedPositioned(
-              duration: const Duration(milliseconds: 800),
-              curve: Curves.easeOutCubic,
-              right: widget.isPlaying ? -recordSize * 0.4 : height * 0.05,
+              duration: const Duration(milliseconds: 1000),
+              curve: Curves.easeOutQuart,
+              right: widget.isPlaying ? -recordSize * 0.42 : height * 0.04,
               child: RotationTransition(
                 turns: _rotationController,
                 child: Container(
@@ -563,41 +743,55 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        blurRadius: 20,
-                        offset: const Offset(10, 5),
+                        color: Colors.black.withValues(alpha: 0.6),
+                        blurRadius: 30,
+                        offset: const Offset(15, 10),
                       ),
                     ],
                     gradient: const SweepGradient(
                       colors: [
-                        Color(0xFF1A1A1A),
+                        Color(0xFF0F0F0F),
+                        Color(0xFF2A2A2A),
+                        Color(0xFF0F0F0F),
                         Color(0xFF333333),
-                        Color(0xFF1A1A1A),
-                        Color(0xFF333333),
-                        Color(0xFF1A1A1A),
+                        Color(0xFF0F0F0F),
                       ],
                       stops: [0.0, 0.25, 0.5, 0.75, 1.0],
                     ),
                   ),
-                  child: Center(
-                    child: Container(
-                      width: recordSize * 0.35,
-                      height: recordSize * 0.35,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.black, width: 2),
-                        image: DecorationImage(
-                          image: CachedNetworkImageProvider(widget.imageUrl),
-                          fit: BoxFit.cover,
+                  child: Container(
+                    margin: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white10.withValues(alpha: 0.05), width: 1),
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: recordSize * 0.36,
+                        height: recordSize * 0.36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFF0F0F0F), width: 3),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                            ),
+                          ],
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(widget.imageUrl),
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      child: Center(
-                        child: Container(
-                          width: recordSize * 0.05,
-                          height: recordSize * 0.05,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            shape: BoxShape.circle,
+                        child: Center(
+                          child: Container(
+                            width: recordSize * 0.06,
+                            height: recordSize * 0.06,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0F0F0F),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white10),
+                            ),
                           ),
                         ),
                       ),
@@ -607,28 +801,34 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
               ),
             ),
             
-            // The Sleeve
+            // The Sleeve (Premium Rounded Corner Card)
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.4),
-                    blurRadius: 30,
-                    offset: const Offset(-5, 10),
+                    color: Colors.black.withValues(alpha: 0.5),
+                    blurRadius: 40,
+                    offset: const Offset(-10, 20),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    blurRadius: 20,
+                    offset: const Offset(-5, -5),
                   ),
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
                 child: CachedNetworkImage(
                   imageUrl: widget.imageUrl,
                   fit: BoxFit.cover,
                   width: constraints.maxWidth,
                   height: constraints.maxHeight,
+                  placeholder: (context, url) => Container(color: Colors.white.withValues(alpha: 0.05)),
                   errorWidget: (_, _, _) => Container(
-                    color: Colors.white10,
-                    child: const Icon(Icons.music_note, size: 64, color: Colors.white24),
+                    color: Colors.white.withValues(alpha: 0.05),
+                    child: const Icon(Icons.music_note, size: 64, color: Colors.white12),
                   ),
                 ),
               ),

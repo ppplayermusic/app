@@ -54,22 +54,37 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.black.withValues(alpha: 0.7),
+        backgroundColor: Colors.black.withValues(alpha: 0.1),
         flexibleSpace: ClipRect(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-            child: Container(color: Colors.transparent),
+            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+            child: Container(
+              color: Colors.black.withValues(alpha: 0.2),
+            ),
           ),
         ),
         title: Container(
           height: 48,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.12),
+            color: Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(100),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.08),
-              width: 1,
+              color: Colors.white.withValues(alpha: 0.12),
+              width: 0.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+              const BoxShadow(
+                color: Colors.white10,
+                blurRadius: 4,
+                offset: Offset(0, -1),
+                spreadRadius: -1,
+              ),
+            ],
           ),
           child: TextField(
             controller: _ctrl,
@@ -118,27 +133,30 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                 preferredSize: const Size.fromHeight(48),
                 child: TabBar(
                   controller: _tabCtrl,
-                  indicator: UnderlineTabIndicator(
-                    borderSide: const BorderSide(color: Color(0xFF1DB954), width: 3),
-                    borderRadius: BorderRadius.circular(3),
+                  indicator: const UnderlineTabIndicator(
+                    borderSide: BorderSide(color: Color(0xFF1DB954), width: 3),
+                    insets: EdgeInsets.symmetric(horizontal: 16),
                   ),
-                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorSize: TabBarIndicatorSize.tab,
                   labelColor: Colors.white,
-                  unselectedLabelColor: Colors.white30,
+                  unselectedLabelColor: Colors.white.withValues(alpha: 0.4),
                   labelStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 13,
+                    letterSpacing: 1.0,
                   ),
                   unselectedLabelStyle: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                    letterSpacing: 1.0,
                   ),
                   dividerColor: Colors.transparent,
                   overlayColor: WidgetStateProperty.all(Colors.transparent),
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 8),
                   tabs: const [
-                    Tab(text: 'Tracks'),
-                    Tab(text: 'Artists'),
-                    Tab(text: 'Albums'),
+                    Tab(text: 'TRACKS'),
+                    Tab(text: 'ARTISTS'),
+                    Tab(text: 'ALBUMS'),
                   ],
                 ),
               ),
@@ -186,11 +204,11 @@ class _EmptySearch extends StatelessWidget {
               'Browse all',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.8,
               ),
-            ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
+            ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
           ),
         ),
         SliverPadding(
@@ -237,26 +255,29 @@ class _CategoryCard extends StatelessWidget {
       scaleDown: 0.94,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              color,
-              color.withValues(alpha: 0.6),
+              color.withValues(alpha: 0.8),
+              color.withValues(alpha: 0.4),
             ],
           ),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
           boxShadow: [
             BoxShadow(
               color: color.withValues(alpha: 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Stack(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Stack(
             children: [
               Positioned(
                 bottom: -15,
@@ -276,9 +297,12 @@ class _CategoryCard extends StatelessWidget {
                   name,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
+                    shadows: [
+                      Shadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 4),
+                    ],
                   ),
                 ),
               ),
@@ -286,7 +310,8 @@ class _CategoryCard extends StatelessWidget {
           ),
         ),
       ),
-    ).animate().shimmer(delay: 5.seconds, duration: 2.seconds, color: Colors.white10);
+    ),
+  ).animate().shimmer(delay: 5.seconds, duration: 2.seconds, color: Colors.white10);
   }
 }
 
@@ -323,7 +348,7 @@ class _TrackResults extends ConsumerWidget {
                 tracks[trackIndex],
                 queue: tracks,
               ),
-        ).animate(delay: (i % 10 * 30).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
+        ).animate(delay: (100 + i % 10 * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
       },
     );
   }
@@ -401,26 +426,29 @@ class _ArtistResults extends ConsumerWidget {
                         a['name'] as String,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Artist',
+                      const SizedBox(height: 2),
+                      Text(
+                        'Artist'.toUpperCase(),
                         style: TextStyle(
-                          color: Colors.white54,
-                          fontSize: 14,
+                          color: const Color(0xFF1DB954).withValues(alpha: 0.8),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.2,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: Colors.white24),
+                const Icon(Icons.chevron_right, color: Colors.white24, size: 20),
               ],
             ),
           ),
-        ).animate(delay: (i % 10 * 30).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
+        ).animate(delay: (100 + i % 10 * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
       },
     );
   }
@@ -466,17 +494,17 @@ class _AlbumResults extends StatelessWidget {
                         aspectRatio: 1,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.4),
-                                blurRadius: 12,
-                                offset: const Offset(0, 6),
+                                color: Colors.black.withValues(alpha: 0.5),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
                               ),
                             ],
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(16),
                             child: imageUrl.isNotEmpty
                                 ? CachedNetworkImage(
                                     imageUrl: imageUrl,
@@ -492,24 +520,27 @@ class _AlbumResults extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: 15,
+                          letterSpacing: -0.4,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
-                        (album['artists'] as List?)?.firstOrNull?['name'] ?? '',
+                        ((album['artists'] as List?)?.firstOrNull?['name'] ?? '').toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white54,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white.withValues(alpha: 0.4),
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ],
                   ),
-                ).animate(delay: (i % 10 * 50).ms).fadeIn(duration: 400.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
+                ).animate(delay: (100 + i % 10 * 50).ms).fadeIn(duration: 600.ms).slideY(begin: 0.1, duration: 600.ms, curve: Curves.easeOutCubic);
               },
               childCount: items.length,
             ),

@@ -64,21 +64,24 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
-                expandedHeight: 340,
+                expandedHeight: 400,
                 pinned: true,
                 stretch: true,
                 elevation: 0,
                 backgroundColor: Colors.transparent,
-                leading: TactileIconButton(
-                  icon: Icons.arrow_back_ios_new,
-                  size: 20,
-                  onTap: () => context.pop(),
+                leading: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TactileIconButton(
+                    icon: Icons.arrow_back_ios_new_rounded,
+                    size: 18,
+                    onTap: () => context.pop(),
+                  ),
                 ),
                 actions: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: TactileIconButton(
-                      icon: _isSearching ? Icons.close : Icons.search,
+                      icon: _isSearching ? Icons.close_rounded : Icons.search_rounded,
                       size: 24,
                       onTap: () {
                         setState(() {
@@ -94,109 +97,116 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                     ),
                   ),
                 ],
-                flexibleSpace: FlexibleSpaceBar(
-                  stretchModes: const [
-                    StretchMode.zoomBackground,
-                    StretchMode.blurBackground,
-                  ],
-                  titlePadding: EdgeInsets.zero,
-                  title: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isCollapsed =
-                          constraints.maxHeight <= kToolbarHeight + 44;
-                      return Stack(
+                flexibleSpace: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final topPadding = MediaQuery.of(context).padding.top;
+                    final isCollapsed = constraints.maxHeight <= kToolbarHeight + topPadding + 10;
+                    
+                    return FlexibleSpaceBar(
+                      stretchModes: const [
+                        StretchMode.zoomBackground,
+                        StretchMode.blurBackground,
+                      ],
+                      centerTitle: true,
+                      titlePadding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: isCollapsed ? 14 : 24,
+                      ),
+                      title: _isSearching && isCollapsed
+                          ? Container(
+                              height: 38,
+                              margin: const EdgeInsets.symmetric(horizontal: 32),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                              ),
+                              child: TextField(
+                                controller: _searchController,
+                                autofocus: true,
+                                style: const TextStyle(color: Colors.white, fontSize: 13),
+                                decoration: InputDecoration(
+                                  hintText: 'Search popular songs...',
+                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _searchQuery = value.toLowerCase();
+                                  });
+                                },
+                              ),
+                            )
+                          : AnimatedContainer(
+                              duration: 200.ms,
+                              child: Text(
+                                artistName,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: isCollapsed ? 18 : 36,
+                                  letterSpacing: isCollapsed ? 0 : -2.0,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black.withValues(alpha: 0.5),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                      background: Stack(
+                        fit: StackFit.expand,
                         children: [
+                          if (headerImage != null)
+                            CachedNetworkImage(
+                              imageUrl: headerImage,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              placeholder: (context, url) => Container(color: const Color(0xFF121212)),
+                            )
+                          else
+                            Container(color: const Color(0xFF121212)),
+                          
+                          // Cinematic Ambient Overlays
+                          Positioned.fill(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.black.withValues(alpha: 0.3),
+                                    Colors.transparent,
+                                    Colors.black.withValues(alpha: 0.7),
+                                    Colors.black,
+                                  ],
+                                  stops: const [0.0, 0.4, 0.8, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Header Glassmorphic Panel when collapsed
                           if (isCollapsed)
                             Positioned.fill(
                               child: ClipRect(
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                                  filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
                                   child: Container(
-                                    color: Colors.black.withValues(alpha: 0.5),
+                                    color: Colors.black.withValues(alpha: 0.4),
                                   ),
                                 ),
                               ),
                             ),
-                          Container(
-                            height: kToolbarHeight + 44,
-                            alignment: Alignment.bottomCenter,
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _isSearching && isCollapsed
-                                ? Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 48),
-                                    child: TextField(
-                                      controller: _searchController,
-                                      autofocus: true,
-                                      style: const TextStyle(color: Colors.white, fontSize: 16),
-                                      cursorColor: const Color(0xFF1DB954),
-                                      decoration: InputDecoration(
-                                        hintText: 'Search songs...',
-                                        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                      ),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _searchQuery = value.toLowerCase();
-                                        });
-                                      },
-                                    ),
-                                  )
-                                : AnimatedOpacity(
-                                    duration: const Duration(milliseconds: 200),
-                                    opacity: 1.0,
-                                    child: Text(
-                                      artistName,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: isCollapsed ? 18 : 36,
-                                        letterSpacing: -1.0,
-                                        shadows: [
-                                          if (!isCollapsed)
-                                            const Shadow(
-                                                color: Colors.black,
-                                                blurRadius: 20,
-                                                offset: Offset(0, 4)),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                          ),
                         ],
-                      );
-                    },
-                  ),
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      if (headerImage != null)
-                        CachedNetworkImage(
-                          imageUrl: headerImage,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          placeholder: (context, url) => Container(color: const Color(0xFF121212)),
-                        )
-                      else
-                        Container(color: const Color(0xFF121212)),
-                      // Modern Premium Gradient Overlay
-                      const DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Color(0x33000000),
-                              Color(0x99000000),
-                              Colors.black,
-                            ],
-                            stops: [0.0, 0.4, 0.7, 1.0],
-                          ),
-                        ),
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
               SliverToBoxAdapter(
@@ -207,11 +217,13 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                     children: [
                       if (!_isSearching) ...[
                         Text(
-                          '${(artist['followers']?['total'] ?? 0).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} followers',
+                          '${(artist['followers']?['total'] ?? 0).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} FOLLOWERS',
                           style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4), 
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400),
+                            color: Colors.white.withValues(alpha: 0.3), 
+                            fontSize: 10,
+                            letterSpacing: 2.0,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ).animate().fadeIn(duration: 400.ms),
                         const SizedBox(height: 24),
                         Row(
@@ -222,78 +234,83 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                 TactileTap(
                                   onTap: () {},
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.white30, width: 0.8),
-                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white.withValues(alpha: 0.05),
+                                      border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+                                      borderRadius: BorderRadius.circular(24),
                                     ),
                                     child: const Text(
-                                      'Follow', 
+                                      'FOLLOW', 
                                       style: TextStyle(
                                         color: Colors.white, 
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 12,
+                                        letterSpacing: 1.0,
                                       )
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 TactileIconButton(
-                                  icon: Icons.more_vert,
+                                  icon: Icons.more_vert_rounded,
                                   color: Colors.white70,
-                                  padding: const EdgeInsets.all(10),
+                                  padding: const EdgeInsets.all(12),
                                   onTap: () {},
                                 ),
                               ],
                             ),
                             TactileActionPlayButton(
-                              size: 64,
+                              size: 72,
                               onTap: () {
                                 final tracks = tracksAsync.asData?.value;
                                 if (tracks != null && tracks.isNotEmpty) {
                                   final modelTracks = tracks
-                                      .map((j) => Track.fromSpotify(
-                                          j as Map<String, dynamic>))
+                                      .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
                                       .toList();
-                                  ref
-                                      .read(playerProvider.notifier)
-                                      .playTrack(modelTracks.first,
-                                          queue: modelTracks);
+                                  ref.read(playerProvider.notifier).playTrack(modelTracks.first, queue: modelTracks);
                                 }
                               },
                             ).animate().scale(delay: 200.ms, duration: 400.ms, curve: Curves.easeOutBack),
                           ],
                         ),
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 48),
                       ],
                       if (_isSearching)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 24),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: TextField(
-                              controller: _searchController,
-                              style: const TextStyle(color: Colors.white),
-                              cursorColor: const Color(0xFF1DB954),
-                              decoration: InputDecoration(
-                                hintText: 'Search popular songs...',
-                                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
-                                border: InputBorder.none,
-                                icon: const Icon(Icons.search, color: Colors.white54, size: 20),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+                                ),
+                                child: TextField(
+                                  controller: _searchController,
+                                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                                  cursorColor: const Color(0xFF1DB954),
+                                  decoration: InputDecoration(
+                                    hintText: 'Search popular songs...',
+                                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                                    border: InputBorder.none,
+                                    icon: const Icon(Icons.search_rounded, color: Colors.white30, size: 22),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _searchQuery = value.toLowerCase();
+                                    });
+                                  },
+                                ),
                               ),
-                              onChanged: (value) {
-                                setState(() {
-                                  _searchQuery = value.toLowerCase();
-                                });
-                              },
                             ),
                           ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0),
                         ),
-                      _buildSectionHeader('Popular'),
+                      _buildSectionHeader('POPULAR'),
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -302,16 +319,12 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
               tracksAsync.when(
                 loading: () => const SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(32.0),
-                      child: Center(child: CircularProgressIndicator(color: Color(0xFF1DB954))),
+                      padding: EdgeInsets.all(48.0),
+                      child: Center(child: CircularProgressIndicator(color: Color(0xFF1DB954), strokeWidth: 2)),
                     )),
-                error: (e, _) =>
-                    SliverToBoxAdapter(child: Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white54)))),
+                error: (e, _) => SliverToBoxAdapter(child: Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white30)))),
                 data: (items) {
-                  var tracks = items
-                      .map((j) => Track.fromSpotify(
-                          j as Map<String, dynamic>))
-                      .toList();
+                  var tracks = items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
                   
                   if (_searchQuery.isNotEmpty) {
                     tracks = tracks.where((t) => t.name.toLowerCase().contains(_searchQuery)).toList();
@@ -323,11 +336,11 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                         padding: const EdgeInsets.all(64.0),
                         child: Column(
                           children: [
-                            const Icon(Icons.search_off, size: 48, color: Colors.white24),
+                            Icon(Icons.search_off_rounded, size: 48, color: Colors.white.withValues(alpha: 0.1)),
                             const SizedBox(height: 16),
                             Text(
                               'No tracks found for "$_searchQuery"',
-                              style: const TextStyle(color: Colors.white54, fontSize: 14),
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -337,38 +350,58 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                   }
 
                   return SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 32),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (_, i) {
                           final track = tracks[i];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 32,
-                                  child: Text(
-                                    '${i + 1}',
-                                    style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.5),
-                                      fontSize: 14,
-                                      fontFamily: 'monospace',
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.03),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white.withValues(alpha: 0.05),
+                                      Colors.white.withValues(alpha: 0.01),
+                                    ],
                                   ),
                                 ),
-                                Expanded(
-                                  child: TrackTile(
-                                    track: track,
-                                    onTap: () => ref
-                                        .read(playerProvider.notifier)
-                                        .playTrack(track, queue: tracks),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 28,
+                                        child: Text(
+                                          '${i + 1}',
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(alpha: 0.2),
+                                            fontSize: 12,
+                                            fontFamily: 'monospace',
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: TrackTile(
+                                          track: track,
+                                          onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ).animate(delay: (i * 50).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0);
+                          ).animate(delay: (i * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0);
                         },
                         childCount: tracks.length,
                       ),
@@ -379,27 +412,25 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
               if (!_isSearching) ...[
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-                    child: _buildSectionHeader('Albums'),
+                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 20),
+                    child: _buildSectionHeader('ALBUMS'),
                   ),
                 ),
                 albumsAsync.when(
-                  loading: () => const SliverToBoxAdapter(
-                      child: Center(child: CircularProgressIndicator(color: Color(0xFF1DB954)))),
-                  error: (e, _) =>
-                      SliverToBoxAdapter(child: Text('Error: $e')),
+                  loading: () => const SliverToBoxAdapter(child: SizedBox()),
+                  error: (e, _) => const SliverToBoxAdapter(child: SizedBox()),
                   data: (items) => SliverToBoxAdapter(
                     child: SizedBox(
-                      height: 230,
+                      height: 250,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: items.length,
                         itemBuilder: (context, i) {
                           final album = items[i] as Map<String, dynamic>;
                           final imgs = (album['images'] as List?) ?? [];
-                          final imageUrl =
-                              imgs.isNotEmpty ? imgs[0]['url'] as String : '';
+                          final imageUrl = imgs.isNotEmpty ? imgs[0]['url'] as String : '';
 
                           return TactileTap(
                             onTap: () => context.push("/album/${album['id']}"),
@@ -410,42 +441,53 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: CachedNetworkImage(
-                                      imageUrl: imageUrl,
-                                      height: 160,
-                                      width: 160,
-                                      fit: BoxFit.cover,
-                                      placeholder: (_, _) => Container(
-                                          color: const Color(0xFF1A1A1A)),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.3),
+                                          blurRadius: 20,
+                                          offset: const Offset(0, 10),
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: CachedNetworkImage(
+                                        imageUrl: imageUrl,
+                                        height: 160,
+                                        width: 160,
+                                        fit: BoxFit.cover,
+                                        placeholder: (_, _) => Container(color: const Color(0xFF1A1A1A)),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(height: 12),
+                                  const SizedBox(height: 16),
                                   Text(
                                     album['name'] as String,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: 13),
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      letterSpacing: -0.2,
+                                    ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    album['release_date']
-                                            ?.toString()
-                                            .substring(0, 4) ??
-                                        '',
+                                    album['release_date']?.toString().substring(0, 4) ?? '',
                                     style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.white.withValues(alpha: 0.4),
-                                        fontWeight: FontWeight.w400),
+                                      fontSize: 12,
+                                      color: Colors.white.withValues(alpha: 0.3),
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                          ).animate(delay: (i * 100).ms).fadeIn(duration: 500.ms).scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
+                          ).animate(delay: (i * 100).ms).fadeIn(duration: 500.ms).scale(begin: const Offset(0.9, 0.9));
                         },
                       ),
                     ),
@@ -464,10 +506,10 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
     return Text(
       title,
       style: const TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
+        fontSize: 12,
+        fontWeight: FontWeight.w900,
         color: Colors.white,
-        letterSpacing: -0.5,
+        letterSpacing: 2.0,
       ),
     );
   }

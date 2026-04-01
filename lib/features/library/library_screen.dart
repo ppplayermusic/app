@@ -79,7 +79,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     children: [
                       if (isCollapsed)
                         Positioned.fill(
-                          child: ClipRect(
+                          child: ClipRRect(
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                               child: Container(
@@ -123,9 +123,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                 isCollapsed ? 'Library' : 'Your Library',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: isCollapsed ? 18 : 32,
-                                  letterSpacing: isCollapsed ? -0.5 : -1.2,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: isCollapsed ? 20 : 36,
+                                  letterSpacing: -1.2,
                                 ),
                               ),
                             ],
@@ -180,11 +180,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     const Text(
                       'Playlists',
                       style: TextStyle(
-                        fontSize: 20, 
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
+                        fontSize: 24, 
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.8,
                       ),
-                    ),
+                    ).animate().fadeIn(delay: 200.ms).slideX(begin: -0.1, end: 0),
                   ],
                 ),
               ),
@@ -282,19 +282,23 @@ class _LikedSongsCard extends StatelessWidget {
           child: Container(
             height: 140,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF2d0087), Color(0xFF1a004d)],
+              borderRadius: BorderRadius.circular(32),
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF450af5).withValues(alpha: 0.9),
+                  const Color(0xFF1a004d).withValues(alpha: 0.8),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  color: const Color(0xFF450af5).withValues(alpha: 0.25),
+                  blurRadius: 30,
+                  offset: const Offset(0, 15),
                 ),
               ],
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
             ),
             clipBehavior: Clip.antiAlias,
             child: Stack(
@@ -433,9 +437,9 @@ class _LikedSongsCard extends StatelessWidget {
                               'Liked Songs',
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: -1.2),
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -1.5),
                             ),
                             const SizedBox(height: 6),
                             Container(
@@ -567,15 +571,27 @@ class _PlaylistCard extends StatelessWidget {
 
         return TactileTap(
           onTap: () => context.push('/playlist/${playlist.id}'),
-          onLongPress: () => _confirmDelete(context),
+          onLongPress: () => _confirmDelete(context, playlist),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AspectRatio(
                 aspectRatio: 1,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: PlaylistCover(images: images, size: double.infinity),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.4),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: PlaylistCover(images: images, size: double.infinity),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -584,18 +600,19 @@ class _PlaylistCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold, 
-                  fontSize: 14,
-                  letterSpacing: -0.3,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16,
+                  letterSpacing: -0.6,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
-                '${tracks.length} songs',
+                '${tracks.length} tracks'.toUpperCase(),
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5), 
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                  color: Colors.white.withValues(alpha: 0.4),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
                 ),
               ),
             ],
@@ -605,7 +622,7 @@ class _PlaylistCard extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context) {
+  void _confirmDelete(BuildContext context, db.Playlist playlist) {
     showPremiumModal<void>(
       context: context,
       title: 'Delete Playlist',
