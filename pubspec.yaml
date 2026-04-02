@@ -1,5 +1,5 @@
 name: ppplayer
-description: "Music player powered by Spotify + YouTube."
+description: "Music player powered by Lucas Veneno."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -45,6 +45,7 @@ dev_dependencies:
   freezed: ^2.5.7
   json_serializable: ^6.9.3
   flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.7
 
 flutter_launcher_icons:
   android: "ic_launcher"
@@ -58,3 +59,8 @@ flutter:
     - .env
     - assets/
 
+flutter_native_splash:
+  color: "#0A0A0A"
+  image: "assets/logo.png"
+  android: true
+  ios: true

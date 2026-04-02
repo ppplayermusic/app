@@ -1,4 +1,4 @@
-package com.ppplayer.music
+package com.ppplayer.app
 
 import com.ryanheise.audioservice.AudioServiceActivity
 

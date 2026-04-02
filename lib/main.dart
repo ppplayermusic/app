@@ -37,7 +37,7 @@ void main() async {
       () => globalContainer,
     ),
     config: AudioServiceConfig(
-      androidNotificationChannelId: 'com.ppplayer.music.playback',
+      androidNotificationChannelId: 'com.ppplayer.app.playback',
       androidNotificationChannelName: 'Music Playback',
       androidStopForegroundOnPause: false, // Keep notification visible so user can press Play
       androidNotificationIcon: 'mipmap/ic_launcher',
