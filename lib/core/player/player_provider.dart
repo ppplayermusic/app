@@ -92,6 +92,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
       videoId: null,
       candidateIds: [],
       candidateIndex: 0,
+      position: Duration.zero,
+      duration: Duration.zero,
     );
 
     await _resolveVideo(track);
@@ -213,6 +215,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
       videoId: null,
       candidateIds: [],
       candidateIndex: 0,
+      position: Duration.zero,
+      duration: Duration.zero,
     );
 
     // Clear db cache for this track so we rescan YouTube

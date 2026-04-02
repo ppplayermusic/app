@@ -33,8 +33,14 @@ class YoutubePlayerService with WidgetsBindingObserver {
     ref.listen(playerProvider, (previous, next) {
       final audioHandler = ref.read(audioHandlerProvider);
 
-      if (previous?.videoId != next.videoId && next.videoId != null) {
-        _loadVideo(next.videoId!);
+      if (previous?.videoId != next.videoId) {
+        if (next.videoId != null) {
+          _loadVideo(next.videoId!);
+        } else {
+          // Explicitly clear/stop when videoId is set to null
+          _pause();
+          _intentionalPause = false; // still wanting to play eventually
+        }
       }
 
       // Sync Metadata
@@ -552,7 +558,9 @@ class YoutubePlayerService with WidgetsBindingObserver {
       // We retry at small intervals to ensure it catches if the OS had suspended the JS engine.
       for (final delay in [0, 200, 500, 1000]) {
         Future.delayed(Duration(milliseconds: delay), () {
-          if (!_intentionalPause && ref.read(playerProvider).isPlaying) {
+          if (!_intentionalPause && 
+              ref.read(playerProvider).isPlaying && 
+              _isDesktopReady) {
             _desktopController
                 ?.runJavaScript('try { playVideo(); } catch(e) {}')
                 .catchError((_) {});
