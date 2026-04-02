@@ -97,6 +97,21 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
   /// with orderOut keeps the process alive: music never stops.
   /// The user can restore the window by clicking the app's Dock icon.
   override func miniaturize(_ sender: Any?) {
+    NSLog("[ppplayer] NSWindow miniaturize intercepted; performing orderOut(nil) to keep WebContent processes alive.")
     self.orderOut(nil)
+  }
+
+  func windowDidResignKey(_ notification: Notification) {
+    NSLog("[ppplayer] windowDidResignKey (window lost focus)")
+  }
+
+  func windowDidBecomeKey(_ notification: Notification) {
+    NSLog("[ppplayer] windowDidBecomeKey (window gained focus)")
+  }
+
+  func windowWillClose(_ notification: Notification) {
+     // If the user clicks the red X, it triggers this.
+     // If they use Command+Q or QUIT, it triggers applicationShouldTerminate.
+    NSLog("[ppplayer] windowWillClose")
   }
 }
