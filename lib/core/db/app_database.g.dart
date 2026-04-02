@@ -2442,6 +2442,426 @@ class PlaylistTracksCompanion extends UpdateCompanion<PlaylistTrack> {
   }
 }
 
+class $RadiosTable extends Radios with TableInfo<$RadiosTable, Radio> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RadiosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _seedIdMeta = const VerificationMeta('seedId');
+  @override
+  late final GeneratedColumn<String> seedId = GeneratedColumn<String>(
+    'seed_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _seedTypeMeta = const VerificationMeta(
+    'seedType',
+  );
+  @override
+  late final GeneratedColumn<String> seedType = GeneratedColumn<String>(
+    'seed_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _imageUrlMeta = const VerificationMeta(
+    'imageUrl',
+  );
+  @override
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+    'image_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isFollowedMeta = const VerificationMeta(
+    'isFollowed',
+  );
+  @override
+  late final GeneratedColumn<bool> isFollowed = GeneratedColumn<bool>(
+    'is_followed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_followed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    seedId,
+    seedType,
+    title,
+    imageUrl,
+    isFollowed,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'radios';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Radio> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('seed_id')) {
+      context.handle(
+        _seedIdMeta,
+        seedId.isAcceptableOrUnknown(data['seed_id']!, _seedIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_seedIdMeta);
+    }
+    if (data.containsKey('seed_type')) {
+      context.handle(
+        _seedTypeMeta,
+        seedType.isAcceptableOrUnknown(data['seed_type']!, _seedTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_seedTypeMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('image_url')) {
+      context.handle(
+        _imageUrlMeta,
+        imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta),
+      );
+    }
+    if (data.containsKey('is_followed')) {
+      context.handle(
+        _isFollowedMeta,
+        isFollowed.isAcceptableOrUnknown(data['is_followed']!, _isFollowedMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {seedId, seedType};
+  @override
+  Radio map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Radio(
+      seedId:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}seed_id'],
+          )!,
+      seedType:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}seed_type'],
+          )!,
+      title:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}title'],
+          )!,
+      imageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}image_url'],
+      ),
+      isFollowed:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.bool,
+            data['${effectivePrefix}is_followed'],
+          )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
+    );
+  }
+
+  @override
+  $RadiosTable createAlias(String alias) {
+    return $RadiosTable(attachedDatabase, alias);
+  }
+}
+
+class Radio extends DataClass implements Insertable<Radio> {
+  final String seedId;
+  final String seedType;
+  final String title;
+  final String? imageUrl;
+  final bool isFollowed;
+  final DateTime? updatedAt;
+  const Radio({
+    required this.seedId,
+    required this.seedType,
+    required this.title,
+    this.imageUrl,
+    required this.isFollowed,
+    this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['seed_id'] = Variable<String>(seedId);
+    map['seed_type'] = Variable<String>(seedType);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
+    }
+    map['is_followed'] = Variable<bool>(isFollowed);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
+    return map;
+  }
+
+  RadiosCompanion toCompanion(bool nullToAbsent) {
+    return RadiosCompanion(
+      seedId: Value(seedId),
+      seedType: Value(seedType),
+      title: Value(title),
+      imageUrl:
+          imageUrl == null && nullToAbsent
+              ? const Value.absent()
+              : Value(imageUrl),
+      isFollowed: Value(isFollowed),
+      updatedAt:
+          updatedAt == null && nullToAbsent
+              ? const Value.absent()
+              : Value(updatedAt),
+    );
+  }
+
+  factory Radio.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Radio(
+      seedId: serializer.fromJson<String>(json['seedId']),
+      seedType: serializer.fromJson<String>(json['seedType']),
+      title: serializer.fromJson<String>(json['title']),
+      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
+      isFollowed: serializer.fromJson<bool>(json['isFollowed']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'seedId': serializer.toJson<String>(seedId),
+      'seedType': serializer.toJson<String>(seedType),
+      'title': serializer.toJson<String>(title),
+      'imageUrl': serializer.toJson<String?>(imageUrl),
+      'isFollowed': serializer.toJson<bool>(isFollowed),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
+    };
+  }
+
+  Radio copyWith({
+    String? seedId,
+    String? seedType,
+    String? title,
+    Value<String?> imageUrl = const Value.absent(),
+    bool? isFollowed,
+    Value<DateTime?> updatedAt = const Value.absent(),
+  }) => Radio(
+    seedId: seedId ?? this.seedId,
+    seedType: seedType ?? this.seedType,
+    title: title ?? this.title,
+    imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
+    isFollowed: isFollowed ?? this.isFollowed,
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+  );
+  Radio copyWithCompanion(RadiosCompanion data) {
+    return Radio(
+      seedId: data.seedId.present ? data.seedId.value : this.seedId,
+      seedType: data.seedType.present ? data.seedType.value : this.seedType,
+      title: data.title.present ? data.title.value : this.title,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
+      isFollowed:
+          data.isFollowed.present ? data.isFollowed.value : this.isFollowed,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Radio(')
+          ..write('seedId: $seedId, ')
+          ..write('seedType: $seedType, ')
+          ..write('title: $title, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('isFollowed: $isFollowed, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(seedId, seedType, title, imageUrl, isFollowed, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Radio &&
+          other.seedId == this.seedId &&
+          other.seedType == this.seedType &&
+          other.title == this.title &&
+          other.imageUrl == this.imageUrl &&
+          other.isFollowed == this.isFollowed &&
+          other.updatedAt == this.updatedAt);
+}
+
+class RadiosCompanion extends UpdateCompanion<Radio> {
+  final Value<String> seedId;
+  final Value<String> seedType;
+  final Value<String> title;
+  final Value<String?> imageUrl;
+  final Value<bool> isFollowed;
+  final Value<DateTime?> updatedAt;
+  final Value<int> rowid;
+  const RadiosCompanion({
+    this.seedId = const Value.absent(),
+    this.seedType = const Value.absent(),
+    this.title = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.isFollowed = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RadiosCompanion.insert({
+    required String seedId,
+    required String seedType,
+    required String title,
+    this.imageUrl = const Value.absent(),
+    this.isFollowed = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : seedId = Value(seedId),
+       seedType = Value(seedType),
+       title = Value(title);
+  static Insertable<Radio> custom({
+    Expression<String>? seedId,
+    Expression<String>? seedType,
+    Expression<String>? title,
+    Expression<String>? imageUrl,
+    Expression<bool>? isFollowed,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (seedId != null) 'seed_id': seedId,
+      if (seedType != null) 'seed_type': seedType,
+      if (title != null) 'title': title,
+      if (imageUrl != null) 'image_url': imageUrl,
+      if (isFollowed != null) 'is_followed': isFollowed,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RadiosCompanion copyWith({
+    Value<String>? seedId,
+    Value<String>? seedType,
+    Value<String>? title,
+    Value<String?>? imageUrl,
+    Value<bool>? isFollowed,
+    Value<DateTime?>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return RadiosCompanion(
+      seedId: seedId ?? this.seedId,
+      seedType: seedType ?? this.seedType,
+      title: title ?? this.title,
+      imageUrl: imageUrl ?? this.imageUrl,
+      isFollowed: isFollowed ?? this.isFollowed,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (seedId.present) {
+      map['seed_id'] = Variable<String>(seedId.value);
+    }
+    if (seedType.present) {
+      map['seed_type'] = Variable<String>(seedType.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
+    if (isFollowed.present) {
+      map['is_followed'] = Variable<bool>(isFollowed.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RadiosCompanion(')
+          ..write('seedId: $seedId, ')
+          ..write('seedType: $seedType, ')
+          ..write('title: $title, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('isFollowed: $isFollowed, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2450,6 +2870,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AlbumsTable albums = $AlbumsTable(this);
   late final $PlaylistsTable playlists = $PlaylistsTable(this);
   late final $PlaylistTracksTable playlistTracks = $PlaylistTracksTable(this);
+  late final $RadiosTable radios = $RadiosTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2460,6 +2881,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     albums,
     playlists,
     playlistTracks,
+    radios,
   ];
 }
 
@@ -3709,6 +4131,228 @@ typedef $$PlaylistTracksTableProcessedTableManager =
       PlaylistTrack,
       PrefetchHooks Function()
     >;
+typedef $$RadiosTableCreateCompanionBuilder =
+    RadiosCompanion Function({
+      required String seedId,
+      required String seedType,
+      required String title,
+      Value<String?> imageUrl,
+      Value<bool> isFollowed,
+      Value<DateTime?> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$RadiosTableUpdateCompanionBuilder =
+    RadiosCompanion Function({
+      Value<String> seedId,
+      Value<String> seedType,
+      Value<String> title,
+      Value<String?> imageUrl,
+      Value<bool> isFollowed,
+      Value<DateTime?> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$RadiosTableFilterComposer
+    extends Composer<_$AppDatabase, $RadiosTable> {
+  $$RadiosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get seedId => $composableBuilder(
+    column: $table.seedId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get seedType => $composableBuilder(
+    column: $table.seedType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isFollowed => $composableBuilder(
+    column: $table.isFollowed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RadiosTableOrderingComposer
+    extends Composer<_$AppDatabase, $RadiosTable> {
+  $$RadiosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get seedId => $composableBuilder(
+    column: $table.seedId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get seedType => $composableBuilder(
+    column: $table.seedType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isFollowed => $composableBuilder(
+    column: $table.isFollowed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RadiosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RadiosTable> {
+  $$RadiosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get seedId =>
+      $composableBuilder(column: $table.seedId, builder: (column) => column);
+
+  GeneratedColumn<String> get seedType =>
+      $composableBuilder(column: $table.seedType, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFollowed => $composableBuilder(
+    column: $table.isFollowed,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$RadiosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RadiosTable,
+          Radio,
+          $$RadiosTableFilterComposer,
+          $$RadiosTableOrderingComposer,
+          $$RadiosTableAnnotationComposer,
+          $$RadiosTableCreateCompanionBuilder,
+          $$RadiosTableUpdateCompanionBuilder,
+          (Radio, BaseReferences<_$AppDatabase, $RadiosTable, Radio>),
+          Radio,
+          PrefetchHooks Function()
+        > {
+  $$RadiosTableTableManager(_$AppDatabase db, $RadiosTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer:
+              () => $$RadiosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer:
+              () => $$RadiosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer:
+              () => $$RadiosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> seedId = const Value.absent(),
+                Value<String> seedType = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                Value<bool> isFollowed = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RadiosCompanion(
+                seedId: seedId,
+                seedType: seedType,
+                title: title,
+                imageUrl: imageUrl,
+                isFollowed: isFollowed,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String seedId,
+                required String seedType,
+                required String title,
+                Value<String?> imageUrl = const Value.absent(),
+                Value<bool> isFollowed = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RadiosCompanion.insert(
+                seedId: seedId,
+                seedType: seedType,
+                title: title,
+                imageUrl: imageUrl,
+                isFollowed: isFollowed,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper:
+              (p0) =>
+                  p0
+                      .map(
+                        (e) => (
+                          e.readTable(table),
+                          BaseReferences(db, table, e),
+                        ),
+                      )
+                      .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RadiosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RadiosTable,
+      Radio,
+      $$RadiosTableFilterComposer,
+      $$RadiosTableOrderingComposer,
+      $$RadiosTableAnnotationComposer,
+      $$RadiosTableCreateCompanionBuilder,
+      $$RadiosTableUpdateCompanionBuilder,
+      (Radio, BaseReferences<_$AppDatabase, $RadiosTable, Radio>),
+      Radio,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3723,4 +4367,6 @@ class $AppDatabaseManager {
       $$PlaylistsTableTableManager(_db, _db.playlists);
   $$PlaylistTracksTableTableManager get playlistTracks =>
       $$PlaylistTracksTableTableManager(_db, _db.playlistTracks);
+  $$RadiosTableTableManager get radios =>
+      $$RadiosTableTableManager(_db, _db.radios);
 }

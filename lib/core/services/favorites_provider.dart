@@ -3,7 +3,7 @@ import '../db/app_database.dart' as db;
 import '../models/track.dart';
 import 'package:drift/drift.dart';
 
-enum FavoriteType { track, artist, album, playlist }
+enum FavoriteType { track, artist, album, playlist, radio }
 
 final favoritesStatusProvider = StreamProvider.family<bool, (FavoriteType, String)>((ref, arg) {
   final database = ref.watch(db.appDatabaseProvider);
@@ -19,6 +19,10 @@ final favoritesStatusProvider = StreamProvider.family<bool, (FavoriteType, Strin
       return database.watchAlbum(id).map((a) => a?.isLiked ?? false);
     case FavoriteType.playlist:
       return database.watchPlaylistIsFavorite(id);
+    case FavoriteType.radio:
+      final parts = id.split(':');
+      if (parts.length < 2) return Stream.value(false);
+      return database.watchRadio(parts[0], parts[1]).map((r) => r?.isFollowed ?? false);
   }
 });
 
@@ -53,6 +57,22 @@ class FavoritesController extends AutoDisposeNotifier<void> {
 
   Future<void> togglePlaylistLike(String id, String name, String? imageUrl, bool isCurrentlyLiked) async {
     await _db.togglePlaylistLike(id, !isCurrentlyLiked, name: name, imageUrl: imageUrl);
+  }
+
+  Future<void> toggleRadioFollow({
+    required String seedId,
+    required String seedType,
+    required String title,
+    String? imageUrl,
+    required bool isCurrentlyFollowed,
+  }) async {
+    await _db.toggleRadioFollow(
+      seedId,
+      seedType,
+      !isCurrentlyFollowed,
+      title: title,
+      imageUrl: imageUrl,
+    );
   }
 
   Future<void> toggleTrackFavoriteById({

@@ -12,7 +12,7 @@ import '../../core/player/player_provider.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 
 
-enum LibraryFilter { all, playlists, artists, albums }
+enum LibraryFilter { all, playlists, artists, albums, stations }
 enum LibrarySort { recent, alphabetical }
 
 class LibraryScreen extends ConsumerStatefulWidget {
@@ -336,6 +336,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             
           if (_selectedFilter == LibraryFilter.all || _selectedFilter == LibraryFilter.albums) ...[
             _AlbumsSliverGrid(
+              database: database, 
+              searchQuery: _searchQuery,
+              sortByRecent: _selectedSort == LibrarySort.recent,
+              showHeader: _selectedFilter == LibraryFilter.all && _searchQuery.isEmpty,
+            ),
+          ],
+            
+          if (_selectedFilter == LibraryFilter.all || _selectedFilter == LibraryFilter.stations) ...[
+            _RadiosSliverGrid(
               database: database, 
               searchQuery: _searchQuery,
               sortByRecent: _selectedSort == LibrarySort.recent,
@@ -1291,6 +1300,189 @@ class _AlbumsShimmer extends StatelessWidget {
       crossAxisCount: 2,
       childAspectRatio: 0.75,
       spacing: 16,
+    );
+  }
+}
+
+class _RadiosSliverGrid extends StatelessWidget {
+  const _RadiosSliverGrid({
+    required this.database, 
+    this.searchQuery = '',
+    this.sortByRecent = true,
+    this.showHeader = false,
+  });
+  final db.AppDatabase database;
+  final String searchQuery;
+  final bool sortByRecent;
+  final bool showHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<db.Radio>>(
+      stream: database.watchFollowedRadios(sortByRecent: sortByRecent),
+      builder: (context, snap) {
+        final isLoading = snap.connectionState == ConnectionState.waiting;
+        var radios = snap.data ?? [];
+        if (searchQuery.isNotEmpty) {
+          radios = radios.where((r) => r.title.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+        }
+
+        if (isLoading) {
+          return const _AlbumsShimmer(); // Reuse same grid shimmer
+        }
+
+        if (radios.isEmpty) {
+          if (searchQuery.isNotEmpty) {
+            return const SliverToBoxAdapter(
+              child: _EmptyState(
+                icon: Icons.search_off_rounded,
+                title: 'No results found',
+                subtitle: 'Try a different search term',
+              ),
+            );
+          }
+          return SliverToBoxAdapter(
+            child: _EmptyState(
+              icon: Icons.radio_rounded,
+              title: 'No stations followed',
+              subtitle: 'Follow stations to see them here',
+              buttonText: 'Discover Music',
+              onPressed: () => context.push('/search'),
+            ),
+          );
+        }
+
+        return SliverMainAxisGroup(
+          slivers: [
+            if (showHeader)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  child: Text(
+                    'Radio Stations',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 0.75,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) {
+                    final radio = radios[i];
+                    return _RadioCard(radio: radio)
+                        .animate(delay: (i * 60).ms)
+                        .fadeIn(duration: 500.ms)
+                        .slideY(begin: 0.15, end: 0, curve: Curves.easeOutQuart);
+                  },
+                  childCount: radios.length,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _RadioCard extends ConsumerWidget {
+  const _RadioCard({required this.radio});
+  final db.Radio radio;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return TactileTap(
+      onTap: () => context.push(
+        Uri(
+          path: '/radio/${radio.seedType}/${radio.seedId}',
+          queryParameters: {
+            'title': radio.title,
+            'imageUrl': radio.imageUrl ?? '',
+          },
+        ).toString(),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+                image: radio.imageUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(radio.imageUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+              ),
+              child: radio.imageUrl == null
+                  ? Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2), size: 40)
+                  : Stack(
+                      children: [
+                        Positioned(
+                          right: 12,
+                          bottom: 12,
+                              child: ClipOval(
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.radio_rounded,
+                                      color: Theme.of(context).colorScheme.primary,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            radio.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 16,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'Radio Station'.toUpperCase(),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

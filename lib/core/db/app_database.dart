@@ -65,6 +65,19 @@ class Playlists extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
+class Radios extends Table {
+  TextColumn get seedId => text()();
+  TextColumn get seedType => text()(); // artist, track, genre
+  TextColumn get title => text()();
+  TextColumn get imageUrl => text().nullable()();
+  BoolColumn get isFollowed =>
+      boolean().withDefault(const Constant(true))();
+  DateTimeColumn get updatedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {seedId, seedType};
+}
+
 class PlaylistTracks extends Table {
   IntColumn get playlistId => integer()();
   TextColumn get trackSpotifyId => text()();
@@ -76,12 +89,12 @@ class PlaylistTracks extends Table {
 
 // --- Database ---
 
-@DriftDatabase(tables: [Tracks, Artists, Albums, Playlists, PlaylistTracks])
+@DriftDatabase(tables: [Tracks, Artists, Albums, Playlists, PlaylistTracks, Radios])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -104,6 +117,9 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(albums, albums.updatedAt);
             await customStatement('UPDATE artists SET updated_at = ? WHERE is_followed = 1', [DateTime.now().millisecondsSinceEpoch]);
             await customStatement('UPDATE albums SET updated_at = ? WHERE is_liked = 1', [DateTime.now().millisecondsSinceEpoch]);
+          }
+          if (from < 6) {
+            await m.createTable(radios);
           }
         },
       );
@@ -191,6 +207,37 @@ class AppDatabase extends _$AppDatabase {
       query.orderBy([(a) => OrderingTerm.desc(a.updatedAt, nulls: NullsOrder.last)]);
     } else {
       query.orderBy([(a) => OrderingTerm.asc(a.name)]);
+    }
+    return query.watch();
+  }
+
+  // --- Radio queries ---
+
+  Future<void> toggleRadioFollow(String seedId, String seedType, bool value, {String? title, String? imageUrl}) async {
+    final companion = RadiosCompanion(
+      seedId: Value(seedId),
+      seedType: Value(seedType),
+      isFollowed: Value(value),
+      title: title != null ? Value(title) : const Value.absent(),
+      imageUrl: imageUrl != null ? Value(imageUrl) : const Value.absent(),
+      updatedAt: Value(DateTime.now()),
+    );
+    await into(radios).insertOnConflictUpdate(companion);
+  }
+
+  Stream<Radio?> watchRadio(String seedId, String seedType) =>
+      (select(radios)..where((r) => r.seedId.equals(seedId) & r.seedType.equals(seedType)))
+          .watchSingleOrNull();
+
+  Future<List<Radio>> getFollowedRadios() =>
+      (select(radios)..where((r) => r.isFollowed.equals(true))).get();
+
+  Stream<List<Radio>> watchFollowedRadios({bool sortByRecent = true}) {
+    final query = select(radios)..where((r) => r.isFollowed.equals(true));
+    if (sortByRecent) {
+      query.orderBy([(r) => OrderingTerm.desc(r.updatedAt, nulls: NullsOrder.last)]);
+    } else {
+      query.orderBy([(r) => OrderingTerm.asc(r.title)]);
     }
     return query.watch();
   }

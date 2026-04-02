@@ -18,6 +18,7 @@ class TrackTile extends ConsumerWidget {
     this.trailing,
     this.showImage = true,
     this.showSubtitle = true,
+    this.showMore = true,
   });
 
   final model.Track track;
@@ -25,6 +26,7 @@ class TrackTile extends ConsumerWidget {
   final Widget? trailing;
   final bool showImage;
   final bool showSubtitle;
+  final bool showMore;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -118,15 +120,16 @@ class TrackTile extends ConsumerWidget {
                     );
                   },
                 ),
-                trailing ??
-                    TactileIconButton(
-                      icon: Icons.more_vert,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                      size: 20,
-                      onTap: () {
-                        _showMoreMenu(context, ref);
-                      },
-                    ),
+                if (showMore)
+                  trailing ??
+                      TactileIconButton(
+                        icon: Icons.more_vert,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                        size: 20,
+                        onTap: () {
+                          _showMoreMenu(context, ref);
+                        },
+                      ),
               ],
             ),
           ],

@@ -424,12 +424,6 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                           );
                         },
                       ),
-                          TactileIconButton(
-                            icon: Icons.more_vert_rounded,
-                            color: colorScheme.onSurface.withValues(alpha: 0.7),
-                            padding: const EdgeInsets.all(12),
-                            onTap: () {},
-                          ),
                           const Spacer(),
                           TactileIconButton(
                             icon: Icons.shuffle_rounded,

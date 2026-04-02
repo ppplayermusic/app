@@ -373,6 +373,30 @@ class RadioDetailsScreen extends ConsumerWidget {
                             },
                           ),
                           const SizedBox(width: 4),
+                          // Radio Follow Station Button
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final statusAsync = ref.watch(favoritesStatusProvider((FavoriteType.radio, "$seedId:$seedType")));
+                              final isFollowed = statusAsync.value ?? false;
+                              
+                              return TactileIconButton(
+                                icon: isFollowed ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                                size: 28,
+                                color: isFollowed ? Theme.of(context).colorScheme.primary : colorScheme.onSurfaceVariant,
+                                padding: const EdgeInsets.all(12),
+                                onTap: () {
+                                  ref.read(favoritesControllerProvider.notifier).toggleRadioFollow(
+                                    seedId: seedId,
+                                    seedType: seedType,
+                                    title: title,
+                                    imageUrl: imageUrl,
+                                    isCurrentlyFollowed: isFollowed,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 4),
                           TactileIconButton(
                             icon: Icons.shuffle_rounded,
                             size: 28,
@@ -460,6 +484,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                               Expanded(
                                 child: TrackTile(
                                   track: track,
+                                  showMore: false,
                                   onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
                                 ),
                               ),
