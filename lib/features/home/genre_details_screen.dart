@@ -13,7 +13,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/providers/genre_providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/favorites_provider.dart';
-import '../../core/models/track.dart';
+
 
 final categoryColorProvider = Provider.family<Color, String>((ref, name) {
   final index = name.length % AppTheme.themeColors.length;
