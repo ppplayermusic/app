@@ -9,28 +9,28 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/db/app_database.dart' as db;
 
-final spotifyPlaylistTracksProvider =
+final remotePlaylistTracksProvider =
     FutureProvider.family<List<Track>, String>((ref, id) async {
   final client = ref.read(spotifyClientProvider);
   return client.getPlaylistTracks(id, limit: 50);
 });
 
-class SpotifyPlaylistScreen extends ConsumerStatefulWidget {
+class RemotePlaylistScreen extends ConsumerStatefulWidget {
   final String playlistId;
   final String? playlistName;
 
-  const SpotifyPlaylistScreen({
+  const RemotePlaylistScreen({
     super.key,
     required this.playlistId,
     this.playlistName,
   });
 
   @override
-  ConsumerState<SpotifyPlaylistScreen> createState() =>
-      _SpotifyPlaylistScreenState();
+  ConsumerState<RemotePlaylistScreen> createState() =>
+      _RemotePlaylistScreenState();
 }
 
-class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
+class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
@@ -66,7 +66,7 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tracksAsync = ref.watch(spotifyPlaylistTracksProvider(widget.playlistId));
+    final tracksAsync = ref.watch(remotePlaylistTracksProvider(widget.playlistId));
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -268,7 +268,7 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                             ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9)),
                             const SizedBox(height: 24),
                             Text(
-                              'SPOTIFY PLAYLIST',
+                              'PLAYLIST',
                               style: TextStyle(
                                 color: colorScheme.onSurfaceVariant,
                                 fontSize: 10,

@@ -12,7 +12,7 @@ import '../../features/album/album_screen.dart';
 import '../../features/player/player_screen.dart';
 import '../../features/library/liked_songs_screen.dart';
 import '../../features/library/playlist_detail_screen.dart';
-import '../../features/library/spotify_playlist_screen.dart';
+import '../../features/library/remote_playlist_screen.dart';
 import '../../features/radio/radio_details_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../shared/widgets/scaffold_with_nav.dart';
@@ -62,11 +62,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 PlaylistDetailScreen(playlistId: int.parse(state.pathParameters['id']!)),
           ),
           GoRoute(
-            path: '/spotify-playlist/:id',
+            path: '/playlist/remote/:id',
             builder: (context, state) {
               final id = state.pathParameters['id']!;
               final name = state.uri.queryParameters['name'];
-              return SpotifyPlaylistScreen(playlistId: id, playlistName: name);
+              return RemotePlaylistScreen(playlistId: id, playlistName: name);
             },
           ),
           GoRoute(

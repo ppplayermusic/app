@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import '../../shared/widgets/pp_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
@@ -89,13 +89,17 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
 
   // Discover Weekly
   String discoverSeed = 'pop';
-  String discoverImageUrl = 'https://t.scdn.co/images/37i9dQZF1DXcBWIGoYBM3M.jpeg';
+  String discoverImageUrl = 'asset:assets/images/mix_covers/discover_weekly.png';
   
   for (final genre in genres) {
     final id = genre['id'] as String;
     if (validSeeds.contains(id)) {
       discoverSeed = id;
-      discoverImageUrl = (genre['icons'] as List?)?.firstOrNull?['url'] ?? discoverImageUrl;
+      // We still try to use the genre icon if available from Spotify, but default to our asset
+      final iconUrl = (genre['icons'] as List?)?.firstOrNull?['url'];
+      if (iconUrl != null) {
+        discoverImageUrl = iconUrl;
+      }
       break;
     }
   }
@@ -117,7 +121,7 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'id': 'new-release',
     'name': 'Release Radar',
     'subtitle': 'Catch up on the latest releases.',
-    'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DXcBWIGoYBM3M.jpeg',
+    'imageUrl': 'asset:assets/images/mix_covers/discover_weekly.png',
     'title': 'Release Radar',
     'color1': AppTheme.themeColors[6],
     'color2': AppTheme.themeColors[7],
@@ -129,7 +133,7 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'id': 'chill',
     'name': 'Chill Mix',
     'subtitle': 'Vibey, relaxing tracks picked for you.',
-    'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DX4WYpdgoIcnm.jpeg',
+    'imageUrl': 'asset:assets/images/mix_covers/chill_mix.png',
     'title': 'Chill Mix',
     'color1': AppTheme.themeColors[8],
     'color2': AppTheme.themeColors[9],
@@ -141,7 +145,7 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'id': 'study',
     'name': 'Focus Mix',
     'subtitle': 'Music to help you concentrate.',
-    'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DX8Ueb9C7W3p7.jpeg',
+    'imageUrl': 'asset:assets/images/mix_covers/focus_mix.png',
     'title': 'Focus Mix',
     'color1': AppTheme.themeColors[10],
     'color2': AppTheme.themeColors[11],
@@ -220,7 +224,7 @@ final suggestedStationsProvider = FutureProvider<List<Map<String, dynamic>>>((re
           'type': 'genre',
           'id': d['seed'],
           'name': d['name'],
-          'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DXcBWIGoYBM3M.jpeg',
+          'imageUrl': 'asset:assets/images/mix_covers/discover_weekly.png',
           'title': '${d['name']} Radio',
         });
       }
@@ -326,7 +330,7 @@ class HomeScreen extends ConsumerWidget {
                         itemCount: mixes.length,
                         itemBuilder: (context, index) {
                           final mix = mixes[index];
-                          return _SpotifyMixCard(
+                          return _MixCard(
                             title: mix['title'],
                             subtitle: mix['subtitle'],
                             imageUrl: mix['imageUrl'],
@@ -446,7 +450,7 @@ class HomeScreen extends ConsumerWidget {
                       items: items,
                       onTap: (item) => context.push(
                         Uri(
-                          path: '/spotify-playlist/${item['id']}',
+                          path: '/playlist/remote/${item['id']}',
                           queryParameters: {'name': item['name']},
                         ).toString(),
                       ),
@@ -616,7 +620,7 @@ class _GenreCard extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
+                      child: PPImage(
                         imageUrl: imageUrl,
                         width: 64,
                         height: 64,
@@ -693,10 +697,9 @@ class _HistoryCard extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      CachedNetworkImage(
+                      PPImage(
                         imageUrl: track.albumImage ?? '',
                         fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => const Icon(Icons.music_note),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -795,14 +798,11 @@ class _AlbumCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   children: [
-                    CachedNetworkImage(
+                    PPImage(
                       imageUrl: imageUrl,
                       width: 156,
                       height: 156,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: colorScheme.onSurface.withValues(alpha: 0.05),
-                      ),
                     ),
                     Positioned.fill(
                       child: Container(
@@ -898,17 +898,9 @@ class _ArtistCircle extends StatelessWidget {
                 ),
               ),
               child: ClipOval(
-                child: CachedNetworkImage(
+                child: PPImage(
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: colorScheme.onSurface.withValues(alpha: 0.05),
-                    child: Icon(Icons.person, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 40),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: colorScheme.onSurface.withValues(alpha: 0.05),
-                    child: Icon(Icons.person, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 40),
-                  ),
                 ),
               ),
             ),
@@ -989,14 +981,9 @@ class _RadioCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            CachedNetworkImage(
+            PPImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(color: colorScheme.onSurface.withValues(alpha: 0.05)),
-              errorWidget: (context, url, error) => Container(
-                color: colorScheme.surfaceContainerHighest,
-                child: Icon(Icons.radio, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 40),
-              ),
             ),
             // Glassmorphic Layer
             Positioned.fill(
@@ -1111,7 +1098,7 @@ class _RadioCard extends StatelessWidget {
   }
 }
 
-class _SpotifyMixCard extends StatelessWidget {
+class _MixCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String imageUrl;
@@ -1119,7 +1106,7 @@ class _SpotifyMixCard extends StatelessWidget {
   final Color color2;
   final VoidCallback onTap;
 
-  const _SpotifyMixCard({
+  const _MixCard({
     required this.title,
     required this.subtitle,
     required this.imageUrl,
@@ -1195,7 +1182,7 @@ class _SpotifyMixCard extends StatelessWidget {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16),
-                            child: CachedNetworkImage(
+                            child: PPImage(
                               imageUrl: imageUrl,
                               width: 110,
                               height: 110,

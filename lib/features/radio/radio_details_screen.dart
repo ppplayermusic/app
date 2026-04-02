@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import '../../shared/widgets/pp_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
@@ -134,14 +134,9 @@ class RadioDetailsScreen extends ConsumerWidget {
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
-                      CachedNetworkImage(
+                      PPImage(
                         imageUrl: imageUrl,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(color: colorScheme.surfaceContainer),
-                        errorWidget: (context, url, error) => Container(
-                          color: colorScheme.surfaceContainerHigh,
-                          child: Icon(Icons.radio, size: 80, color: colorScheme.onSurface.withValues(alpha: 0.1)),
-                        ),
                       ),
                       
                       // Ambient Mesh Pulsing Overlay
@@ -343,35 +338,6 @@ class RadioDetailsScreen extends ConsumerWidget {
                     children: [
                       Row(
                         children: [
-                          Consumer(
-                            builder: (context, ref, child) {
-                              final favType = seedType == 'artist' ? FavoriteType.artist : (seedType == 'track' ? FavoriteType.track : null);
-                              if (favType == null) return const SizedBox.shrink();
-                              
-                              final isFav = ref.watch(favoritesStatusProvider((favType, seedId))).value ?? false;
-                              
-                              return TactileIconButton(
-                                icon: isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                                size: 28,
-                                color: isFav ? Theme.of(context).colorScheme.primary : colorScheme.onSurfaceVariant,
-                                padding: const EdgeInsets.all(12),
-                                onTap: () {
-                                  if (favType == FavoriteType.artist) {
-                                    ref.read(favoritesControllerProvider.notifier).toggleArtistFollow(seedId, title, imageUrl, isFav);
-                                  } else if (favType == FavoriteType.track) {
-                                    ref.read(favoritesControllerProvider.notifier).toggleTrackFavoriteById(
-                                      id: seedId,
-                                      name: title,
-                                      artistId: artistId ?? '',
-                                      artistName: artistName ?? 'Various Artists',
-                                      imageUrl: imageUrl,
-                                      isCurrentlyFavorite: isFav,
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          ),
                           const SizedBox(width: 4),
                           // Radio Follow Station Button
                           Consumer(
@@ -380,7 +346,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                               final isFollowed = statusAsync.value ?? false;
                               
                               return TactileIconButton(
-                                icon: isFollowed ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                                icon: isFollowed ? Icons.favorite_rounded : Icons.favorite_border_rounded,
                                 size: 28,
                                 color: isFollowed ? Theme.of(context).colorScheme.primary : colorScheme.onSurfaceVariant,
                                 padding: const EdgeInsets.all(12),

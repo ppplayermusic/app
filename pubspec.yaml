@@ -58,6 +58,7 @@ flutter:
   assets:
     - .env
     - assets/
+    - assets/images/mix_covers/
 
 flutter_native_splash:
   color: "#0A0A0A"

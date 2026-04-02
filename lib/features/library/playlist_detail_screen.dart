@@ -10,6 +10,8 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/playlist_cover.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
+import '../../core/api/spotify_client.dart';
+import 'package:drift/drift.dart' show Value;
 
 class PlaylistDetailScreen extends ConsumerStatefulWidget {
   const PlaylistDetailScreen({super.key, required this.playlistId});
@@ -23,6 +25,8 @@ class PlaylistDetailScreen extends ConsumerStatefulWidget {
 class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
+  bool _isSyncing = false;
+  String? _syncError;
 
   @override
   void initState() {
@@ -38,6 +42,52 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
 
   void _onSearchChanged() {
     setState(() {}); // Rebuild to apply filtering in StreamBuilder
+  }
+
+  Future<void> _syncTracksIfNeeded(db.Playlist playlist) async {
+    if (_isSyncing || _syncError != null) return;
+    
+    // Check if it has a spotifyId and tracks but it's empty
+    // Actually we should trigger this when allTracks is empty and it has a spotifyId
+    
+    setState(() {
+      _isSyncing = true;
+      _syncError = null;
+    });
+
+    try {
+      final spotifyId = playlist.spotifyId;
+      if (spotifyId == null) {
+        setState(() => _isSyncing = false);
+        return;
+      }
+
+      final client = ref.read(spotifyClientProvider);
+      final tracks = await client.getPlaylistTracks(spotifyId, limit: 50);
+      
+      if (tracks.isNotEmpty) {
+        final database = ref.read(db.appDatabaseProvider);
+        await database.syncPlaylistTracks(
+          widget.playlistId, 
+          tracks.map((t) => db.TracksCompanion(
+            spotifyId: Value(t.spotifyId),
+            name: Value(t.name),
+            artistId: Value(t.artistId),
+            artistName: Value(t.artistName),
+            albumId: Value(t.albumId),
+            albumName: Value(t.albumName),
+            albumImage: Value(t.albumImage),
+            durationMs: Value(t.durationMs),
+          )).toList()
+        );
+      }
+    } catch (e) {
+      setState(() => _syncError = e.toString());
+    } finally {
+      if (mounted) {
+        setState(() => _isSyncing = false);
+      }
+    }
   }
 
   void _onReorder(int oldIndex, int newIndex, List<db.Track> currentTracks) {
@@ -105,6 +155,12 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
           stream: database.watchPlaylistTracks(widget.playlistId),
           builder: (context, tracksSnapshot) {
             final allTracks = tracksSnapshot.data ?? [];
+            
+            // Trigger sync if empty and has spotifyId
+            if (allTracks.isEmpty && playlist.spotifyId != null && !_isSyncing && _syncError == null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) => _syncTracksIfNeeded(playlist));
+            }
+
             final query = _searchController.text.toLowerCase();
 
             final filteredTracks = query.isEmpty
@@ -364,6 +420,25 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
   List<Widget> _buildBody(BuildContext context, db.Playlist playlist,
       List<db.Track> allTracks, List<model.Track> modelTracks) {
     final colorScheme = Theme.of(context).colorScheme;
+
+    if (_isSyncing) {
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(color: colorScheme.primary),
+                const SizedBox(height: 16),
+                Text('Fetching tracks...',
+                    style: TextStyle(color: colorScheme.onSurfaceVariant)),
+              ],
+            ),
+          ),
+        ),
+      ];
+    }
 
     if (allTracks.isEmpty) {
       return [

@@ -271,16 +271,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (!_isSearching) ...[
-                        Text(
-                          '${(artist['followers']?['total'] ?? 0).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} FOLLOWERS',
-                          style: TextStyle(
-                            color: colorScheme.onSurface.withValues(alpha: 0.4), 
-                            fontSize: 10,
-                            letterSpacing: 2.0,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ).animate().fadeIn(duration: 400.ms),
-                        const SizedBox(height: 24),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -694,7 +685,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                           onTap: () {
                             final id = playlist['id'];
                             final name = playlist['name'] as String;
-                            context.push('/spotify-playlist/$id?name=${Uri.encodeComponent(name)}');
+                            context.push('/playlist/remote/$id?name=${Uri.encodeComponent(name)}');
                           },
                           scaleDown: 0.96,
                           child: Container(
@@ -758,7 +749,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Spotify Playlist • ${playlist['tracks']?['total'] ?? 0} tracks',
+                                  'Playlist • ${playlist['tracks']?['total'] ?? 0} tracks',
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: colorScheme.onSurface.withValues(alpha: 0.4),

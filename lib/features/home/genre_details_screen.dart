@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../shared/widgets/pp_image.dart';
 
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
@@ -12,6 +12,8 @@ import '../../shared/widgets/tactile_buttons.dart';
 
 import '../../core/providers/genre_providers.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/services/favorites_provider.dart';
+import '../../core/models/track.dart';
 
 final categoryColorProvider = Provider.family<Color, String>((ref, name) {
   final index = name.length % AppTheme.themeColors.length;
@@ -248,10 +250,28 @@ class GenreDetailsScreen extends ConsumerWidget {
                     },
                   ),
                   const SizedBox(width: 16),
-                  TactileIconButton(
-                    icon: Icons.favorite_border_rounded,
-                    size: 28,
-                    onTap: () {},
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final isFavorite = ref.watch(favoritesStatusProvider((FavoriteType.radio, '$categoryId:genre'))).value ?? false;
+                      // Get the first playlist's image as a representative icon if available
+                      final playlists = playlistsAsync.asData?.value;
+                      final iconUrl = (playlists != null && playlists.isNotEmpty && (playlists.first['images'] as List?)?.isNotEmpty == true) ? playlists.first['images'][0]['url'] as String? : null;
+
+                      return TactileIconButton(
+                        icon: isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                        color: isFavorite ? colorScheme.primary : colorScheme.onSurface,
+                        size: 28,
+                        onTap: () {
+                          ref.read(favoritesControllerProvider.notifier).toggleRadioFollow(
+                            seedId: categoryId,
+                            seedType: 'genre',
+                            title: categoryName,
+                            imageUrl: iconUrl,
+                            isCurrentlyFollowed: isFavorite,
+                          );
+                        },
+                      );
+                    }
                   ),
                   const Spacer(),
                   TactileIconButton(
@@ -352,7 +372,7 @@ class _PlaylistList extends StatelessWidget {
               ((playlist['images'] as List?)?.firstOrNull?['url'] as String?) ??
                   '';
           return TactileTap(
-            onTap: () => context.push('/spotify-playlist/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}'),
+            onTap: () => context.push('/playlist/remote/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}'),
             scaleDown: 0.95,
             child: Container(
               width: 160,
@@ -375,16 +395,9 @@ class _PlaylistList extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImage(
+                        child: PPImage(
                           imageUrl: imageUrl,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Container(color: colorScheme.onSurface.withValues(alpha: 0.1)),
-                          errorWidget: (context, url, error) => Container(
-                            color: colorScheme.onSurface.withValues(alpha: 0.1),
-                            child: Icon(Icons.music_note,
-                                color: colorScheme.onSurface.withValues(alpha: 0.24)),
-                          ),
                         ),
                       ),
                     ),

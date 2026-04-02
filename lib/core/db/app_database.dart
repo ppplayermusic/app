@@ -358,6 +358,27 @@ class AppDatabase extends _$AppDatabase {
     ));
   }
 
+  Future<void> syncPlaylistTracks(int playlistId, List<TracksCompanion> trackCompanions) async {
+    await transaction(() async {
+      // 1. Ensure all tracks exist in the main tracks table
+      for (final companion in trackCompanions) {
+        await into(tracks).insertOnConflictUpdate(companion);
+      }
+
+      // 2. Clear existing links for this playlist
+      await (delete(playlistTracks)..where((pt) => pt.playlistId.equals(playlistId))).go();
+
+      // 3. Rebuild the playlist structure with correct ordering
+      for (int i = 0; i < trackCompanions.length; i++) {
+        await into(playlistTracks).insert(PlaylistTracksCompanion(
+          playlistId: Value(playlistId),
+          trackSpotifyId: Value(trackCompanions[i].spotifyId.value),
+          position: Value(i),
+        ));
+      }
+    });
+  }
+
   Future<void> reorderTracks(int playlistId, List<String> trackIdsInOrder) async {
     await transaction(() async {
       for (int i = 0; i < trackIdsInOrder.length; i++) {

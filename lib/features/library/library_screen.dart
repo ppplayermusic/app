@@ -1399,15 +1399,21 @@ class _RadioCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return TactileTap(
-      onTap: () => context.push(
-        Uri(
-          path: '/radio/${radio.seedType}/${radio.seedId}',
-          queryParameters: {
-            'title': radio.title,
-            'imageUrl': radio.imageUrl ?? '',
-          },
-        ).toString(),
-      ),
+      onTap: () {
+        if (radio.seedType == 'genre') {
+          context.push('/genre/${radio.seedId}?name=${Uri.encodeComponent(radio.title)}');
+        } else {
+          context.push(
+            Uri(
+              path: '/radio/${radio.seedType}/${radio.seedId}',
+              queryParameters: {
+                'title': radio.title,
+                'imageUrl': radio.imageUrl ?? '',
+              },
+            ).toString(),
+          );
+        }
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1473,7 +1479,7 @@ class _RadioCard extends ConsumerWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            'Radio Station'.toUpperCase(),
+            (radio.seedType == 'genre' ? 'Genre' : 'Radio Station').toUpperCase(),
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 11,

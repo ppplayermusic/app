@@ -393,7 +393,7 @@ class _SettingsHero extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.all(16.0),
-      height: 200,
+      height: 280,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         color: colorScheme.onSurface.withValues(alpha: 0.03),
