@@ -76,15 +76,16 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
   @override
   Widget build(BuildContext context) {
     final tracksAsync = ref.watch(spotifyPlaylistTracksProvider(widget.playlistId));
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surface,
       body: tracksAsync.when(
-        loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFF1DB954))),
+        loading: () => Center(
+            child: CircularProgressIndicator(color: colorScheme.primary)),
         error: (e, _) => Center(
             child: Text('Error: $e',
-                style: const TextStyle(color: Colors.white54))),
+                style: TextStyle(color: colorScheme.onSurfaceVariant))),
         data: (tracks) {
           var filteredTracks = tracks;
           if (_searchQuery.isNotEmpty) {
@@ -107,7 +108,7 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                 leading: TactileIconButton(
                   icon: Icons.arrow_back_ios_new_rounded,
                   onTap: () => context.pop(),
-                  color: Colors.white,
+                  color: colorScheme.onSurface,
                   size: 20,
                 ),
                 actions: [
@@ -121,12 +122,12 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                         }
                       });
                     },
-                    color: Colors.white,
+                    color: colorScheme.onSurface,
                   ),
                   TactileIconButton(
                     icon: Icons.more_vert_rounded,
                     onTap: () {},
-                    color: Colors.white,
+                    color: colorScheme.onSurface,
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -151,14 +152,14 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                               alignment: Alignment.bottomCenter,
                               padding: const EdgeInsets.only(bottom: 12),
                               child: Text(
-                                widget.playlistName ?? 'Playlist',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 18,
-                                  letterSpacing: -0.5,
-                                  color: Colors.white,
-                                ),
-                              ).animate().fadeIn(duration: 200.ms),
+                                  widget.playlistName ?? 'Playlist',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 18,
+                                    letterSpacing: -0.5,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ).animate().fadeIn(duration: 200.ms),
                             ),
                           ),
                         );
@@ -176,9 +177,9 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              const Color(0xFF1DB954).withValues(alpha: 0.8),
-                              const Color(0xFF1DB954).withValues(alpha: 0.4),
-                              Colors.black,
+                              colorScheme.primary.withValues(alpha: 0.8),
+                              colorScheme.primary.withValues(alpha: 0.4),
+                              colorScheme.surface,
                             ],
                             stops: const [0.0, 0.4, 1.0],
                           ),
@@ -190,12 +191,12 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                         child: Opacity(
                           opacity: 0.6,
                           child: Container(
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               gradient: RadialGradient(
-                                center: Alignment(-0.8, -0.6),
+                                center: const Alignment(-0.8, -0.6),
                                 radius: 1.5,
                                 colors: [
-                                  Color(0xFF1DB954),
+                                  colorScheme.primary,
                                   Colors.transparent,
                                 ],
                               ),
@@ -221,10 +222,10 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.black.withValues(alpha: 0.2),
+                              colorScheme.surface.withValues(alpha: 0.2),
                               Colors.transparent,
-                              Colors.black.withValues(alpha: 0.5),
-                              Colors.black,
+                              colorScheme.surface.withValues(alpha: 0.5),
+                              colorScheme.surface,
                             ],
                             stops: const [0.0, 0.4, 0.7, 1.0],
                           ),
@@ -246,14 +247,14 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                                 height: 180,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                  boxShadow: const [
+                                  boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black54,
+                                      color: colorScheme.shadow.withValues(alpha: 0.3),
                                       blurRadius: 30,
-                                      offset: Offset(0, 10),
+                                      offset: const Offset(0, 10),
                                     ),
                                     BoxShadow(
-                                      color: Color(0x441DB954),
+                                      color: colorScheme.primary.withValues(alpha: 0.2),
                                       blurRadius: 40,
                                       spreadRadius: -5,
                                     ),
@@ -267,18 +268,18 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                                           fit: BoxFit.cover,
                                         )
                                       : Container(
-                                          color: Colors.white10,
-                                          child: const Icon(Icons.playlist_play,
-                                              size: 80, color: Colors.white24),
+                                          color: colorScheme.surfaceContainer,
+                                          child: Icon(Icons.playlist_play,
+                                              size: 80, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2)),
                                         ),
                                 ),
                               ),
                             ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9)),
                             const SizedBox(height: 24),
-                            const Text(
+                            Text(
                               'SPOTIFY PLAYLIST',
                               style: TextStyle(
-                                color: Colors.white70,
+                                color: colorScheme.onSurfaceVariant,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -288,8 +289,8 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                             Text(
                               widget.playlistName ?? 'Playlist',
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: colorScheme.onSurface,
                                 fontSize: 48,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -2,
@@ -310,13 +311,13 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (!_isSearching) ...[
-                        Text(
-                          '${tracks.length} tracks',
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400),
-                        ).animate().fadeIn(duration: 400.ms),
+                          Text(
+                            '${tracks.length} tracks',
+                            style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400),
+                          ).animate().fadeIn(duration: 400.ms),
                         const SizedBox(height: 24),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -329,14 +330,14 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 18, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: _isLiked ? const Color(0xFF1DB954) : Colors.transparent,
+                                      color: _isLiked ? colorScheme.primary : Colors.transparent,
                                       border: Border.all(
-                                          color: _isLiked ? const Color(0xFF1DB954) : Colors.white30, width: 0.8),
+                                          color: _isLiked ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.3), width: 0.8),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(_isLiked ? 'Following' : 'Follow',
                                         style: TextStyle(
-                                          color: _isLiked ? Colors.black : Colors.white,
+                                          color: _isLiked ? colorScheme.onPrimary : colorScheme.onSurface,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 13,
                                         )),
@@ -345,7 +346,7 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                                 const SizedBox(width: 8),
                                 TactileIconButton(
                                   icon: Icons.more_vert,
-                                  color: Colors.white70,
+                                  color: colorScheme.onSurfaceVariant,
                                   padding: const EdgeInsets.all(10),
                                   onTap: () {},
                                 ),
@@ -379,12 +380,12 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.search_off,
-                            size: 48, color: Colors.white24),
+                        Icon(Icons.search_off,
+                            size: 48, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2)),
                         const SizedBox(height: 16),
                         Text(
                           'No tracks found for "$_searchQuery"',
-                          style: const TextStyle(color: Colors.white54),
+                          style: TextStyle(color: colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -406,7 +407,7 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                               child: Text(
                                 '${index + 1}',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
+                                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                                   fontSize: 14,
                                   fontFamily: 'monospace',
                                   fontWeight: FontWeight.w400,

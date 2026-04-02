@@ -32,7 +32,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
     final database = ref.watch(db.appDatabaseProvider);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -85,19 +85,19 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                     height: 48,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                      border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
                     ),
                     child: TextField(
                         controller: _searchController,
                         autofocus: true,
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
-                        cursorColor: Colors.white70,
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16),
+                        cursorColor: Theme.of(context).colorScheme.primary,
                         decoration: InputDecoration(
                           hintText: 'Search liked songs...',
                           hintStyle: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: 15),
                           border: InputBorder.none,
                           isDense: true,
@@ -116,12 +116,13 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                       child: Container(
-                        color: Colors.black.withValues(alpha: 0.6),
+                        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
                       ),
                     ),
                   )
                 : LayoutBuilder(
                     builder: (context, constraints) {
+                      final colorScheme = Theme.of(context).colorScheme;
                       final isCollapsed = constraints.maxHeight <=
                           kToolbarHeight +
                               MediaQuery.of(context).padding.top +
@@ -148,13 +149,13 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: isCollapsed ? 18 : 32,
                                   letterSpacing: -1.0,
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                   shadows: [
                                     if (!isCollapsed)
-                                      const Shadow(
-                                          color: Colors.black,
-                                          blurRadius: 20,
-                                          offset: Offset(0, 4)),
+                                    Shadow(
+                                        color: colorScheme.scrim.withValues(alpha: 0.8),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 4)),
                                   ],
                                 ),
                               ),
@@ -163,21 +164,21 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                               fit: StackFit.expand,
                               children: [
                                 Container(
-                                  decoration: const BoxDecoration(
+                                  decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
-                                      colors: [
-                                        Color(0xFF450af5),
-                                        Color(0xFF2d0087),
-                                        Color(0xFF121212)
-                                      ],
-                                      stops: [0.0, 0.4, 1.0],
+                                        colors: [
+                                          Theme.of(context).colorScheme.primary,
+                                          Theme.of(context).colorScheme.primaryContainer,
+                                          Theme.of(context).colorScheme.surface,
+                                        ],
+                                        stops: const [0.0, 0.4, 1.0],
+                                      ),
                                     ),
-                                  ),
-                                  child: Center(
-                                    child: const Icon(Icons.favorite,
-                                            color: Colors.white10, size: 140)
+                                    child: Center(
+                                      child: Icon(Icons.favorite,
+                                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1), size: 140)
                                         .animate(
                                             onPlay: (controller) =>
                                                 controller.repeat(reverse: true))
@@ -190,20 +191,20 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                                   ),
                                 ),
                                 // Lush Premium Gradient Overlay
-                                const DecoratedBox(
+                                DecoratedBox(
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Color(0x22000000),
-                                        Color(0x77000000),
-                                        Colors.black,
-                                      ],
-                                      stops: [0.0, 0.4, 0.7, 1.0],
+                                        colors: [
+                                          Colors.transparent,
+                                          Theme.of(context).colorScheme.surface.withValues(alpha: 0.2),
+                                          Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
+                                          Theme.of(context).colorScheme.surface,
+                                        ],
+                                        stops: const [0.0, 0.4, 0.7, 1.0],
+                                      ),
                                     ),
-                                  ),
                                 ),
                               ],
                             ),
@@ -227,7 +228,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                         return Text(
                           '$count tracks stored locally',
                           style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.35),
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                               letterSpacing: 0.5,
                               fontWeight: FontWeight.w600),
@@ -252,15 +253,18 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                             child: Container(
                               height: 60,
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Color(0xFF450af5), Color(0xFF2d0087)],
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Theme.of(context).colorScheme.primary,
+                                    Theme.of(context).colorScheme.tertiary,
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF450af5).withValues(alpha: 0.3),
+                                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                                     blurRadius: 15,
                                     offset: const Offset(0, 8),
                                   ),
@@ -270,13 +274,13 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.play_arrow_rounded,
-                                        color: Colors.white, size: 32),
+                                    Icon(Icons.play_arrow_rounded,
+                                        color: Theme.of(context).colorScheme.onPrimary, size: 32),
                                     const SizedBox(width: 8),
-                                    const Text(
+                                    Text(
                                       'PLAY ALL',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: Theme.of(context).colorScheme.onPrimary,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 1.5,
                                         fontSize: 14,
@@ -310,15 +314,15 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                             height: 60,
                             width: 60,
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.1),
+                                color: Theme.of(context).colorScheme.outlineVariant,
                               ),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.shuffle_rounded,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onSurface,
                               size: 24,
                             ),
                           ),
@@ -326,8 +330,8 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                         const SizedBox(width: 12),
                         TactileIconButton(
                           icon: Icons.more_vert_rounded,
-                          color: Colors.white70,
-                          backgroundColor: Colors.white.withValues(alpha: 0.05),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                           size: 24,
                           onTap: () {},
                         ),
@@ -343,8 +347,8 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
             future: database.getFavorites(),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
-                return const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator(color: Color(0xFF1DB954))));
+                return SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)));
               }
               var dbTracks = snap.data ?? [];
               
@@ -366,12 +370,12 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.03),
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03),
                           ),
                           child: Icon(
                             _searchQuery.isNotEmpty ? Icons.search_off_rounded : Icons.favorite_rounded,
                             size: 64,
-                            color: Colors.white10,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                           ),
                         )
                         .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -382,8 +386,8 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                           _searchQuery.isNotEmpty 
                             ? 'Nothing matches your vibe'
                             : 'Your collection is quiet',
-                          style: const TextStyle(
-                            color: Colors.white38,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             letterSpacing: -0.5,
@@ -395,7 +399,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                             ? 'Try searching for something else'
                             : 'Save tracks to see them here',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                             fontSize: 14,
                           ),
                         ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0),
@@ -423,7 +427,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                               child: Text(
                                 '${i + 1}',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.3),
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   fontSize: 13,
                                   fontFamily: 'monospace',
                                   fontWeight: FontWeight.w600,

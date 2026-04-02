@@ -11,28 +11,11 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
 import '../../core/providers/genre_providers.dart';
+import '../../core/theme/app_theme.dart';
 
 final categoryColorProvider = Provider.family<Color, String>((ref, name) {
-  final colors = [
-    const Color(0xFFE8115B), // Pink
-    const Color(0xFF148A08), // Green
-    const Color(0xFFBC59FF), // Purple
-    const Color(0xFF8D67AB), // Muted Purple
-    const Color(0xFF503750), // Dark Purple
-    const Color(0xFF777777), // Grey
-    const Color(0xFFFF4632), // Red
-    const Color(0xFF006450), // Dark Green
-    const Color(0xFF27856A), // Teal
-    const Color(0xFF1E3264), // Dark Blue
-    const Color(0xFF477D95), // Muted Blue
-    const Color(0xFF8C1932), // Maroon
-    const Color(0xFFAF2896), // Magenta
-    const Color(0xFFE13300), // Bright Orange
-    const Color(0xFF509BF5), // Blue
-    const Color(0xFF0D73EC), // Bright Blue
-  ];
-  final index = name.length % colors.length;
-  return colors[index];
+  final index = name.length % AppTheme.themeColors.length;
+  return AppTheme.themeColors[index];
 });
 
 class GenreDetailsScreen extends ConsumerWidget {
@@ -49,10 +32,11 @@ class GenreDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final playlistsAsync = ref.watch(categoryPlaylistsProvider(categoryId));
     final tracksAsync = ref.watch(categoryTopTracksProvider(categoryId));
+    final colorScheme = Theme.of(context).colorScheme;
     final themeColor = ref.watch(categoryColorProvider(categoryName));
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surface,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -61,7 +45,7 @@ class GenreDetailsScreen extends ConsumerWidget {
             pinned: true,
             stretch: true,
             elevation: 0,
-            backgroundColor: Colors.black.withValues(alpha: 0.1),
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
               child: TactileIconButton(
@@ -92,15 +76,15 @@ class GenreDetailsScreen extends ConsumerWidget {
                               width: double.infinity,
                               height: kToolbarHeight + topPadding,
                               padding: EdgeInsets.only(top: topPadding),
-                              color: Colors.black.withValues(alpha: 0.7),
+                              color: colorScheme.surface.withValues(alpha: 0.7),
                               alignment: Alignment.center,
                               child: Text(
                                 categoryName.toUpperCase(),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.w900,
                                   fontSize: 16,
                                   letterSpacing: -0.5,
-                                  color: Colors.white,
+                                  color: colorScheme.onSurface,
                                 ),
                               ).animate().fadeIn(duration: 200.ms),
                             ),
@@ -119,7 +103,7 @@ class GenreDetailsScreen extends ConsumerWidget {
                             colors: [
                               themeColor,
                               themeColor.withValues(alpha: 0.6),
-                              Colors.black,
+                              colorScheme.surface,
                             ],
                             stops: const [0.0, 0.4, 1.0],
                           ),
@@ -162,10 +146,10 @@ class GenreDetailsScreen extends ConsumerWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.black.withValues(alpha: 0.1),
+                              colorScheme.surface.withValues(alpha: 0.1),
                               Colors.transparent,
-                              Colors.black.withValues(alpha: 0.4),
-                              Colors.black.withValues(alpha: 0.9),
+                              colorScheme.surface.withValues(alpha: 0.4),
+                              colorScheme.surface.withValues(alpha: 0.9),
                             ],
                             stops: const [0.0, 0.4, 0.7, 1.0],
                           ),
@@ -200,10 +184,10 @@ class GenreDetailsScreen extends ConsumerWidget {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withValues(alpha: 0.3),
+                                      color: colorScheme.scrim.withValues(alpha: 0.3),
                                       borderRadius: BorderRadius.circular(24),
                                       border: Border.all(
-                                        color: Colors.white.withValues(alpha: 0.15),
+                                        color: colorScheme.onSurface.withValues(alpha: 0.15),
                                         width: 0.5,
                                       ),
                                     ),
@@ -213,7 +197,7 @@ class GenreDetailsScreen extends ConsumerWidget {
                                         Text(
                                           'GENRE',
                                           style: TextStyle(
-                                            color: Colors.white.withValues(alpha: 0.5),
+                                            color: colorScheme.onSurface.withValues(alpha: 0.5),
                                             fontSize: 10,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 4.0,
@@ -225,8 +209,8 @@ class GenreDetailsScreen extends ConsumerWidget {
                                           textAlign: TextAlign.center,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Colors.white,
+                                          style: TextStyle(
+                                            color: colorScheme.onSurface,
                                             fontSize: 48,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: -2.5,
@@ -309,7 +293,7 @@ class GenreDetailsScreen extends ConsumerWidget {
                               child: Text(
                                 '${index + 1}',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.4),
+                                color: colorScheme.onSurface.withValues(alpha: 0.4),
                                   fontSize: 13,
                                   fontFamily: 'monospace',
                                   fontWeight: FontWeight.w400,
@@ -353,6 +337,7 @@ class _PlaylistList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (playlists.isEmpty) return const SizedBox.shrink();
     return SizedBox(
       height: 220,
@@ -382,7 +367,7 @@ class _PlaylistList extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.4),
+                            color: colorScheme.scrim.withValues(alpha: 0.4),
                             blurRadius: 15,
                             offset: const Offset(0, 8),
                           ),
@@ -394,11 +379,11 @@ class _PlaylistList extends StatelessWidget {
                           imageUrl: imageUrl,
                           fit: BoxFit.cover,
                           placeholder: (context, url) =>
-                              Container(color: Colors.white10),
+                              Container(color: colorScheme.onSurface.withValues(alpha: 0.1)),
                           errorWidget: (context, url, error) => Container(
-                            color: Colors.white10,
-                            child: const Icon(Icons.music_note,
-                                color: Colors.white24),
+                            color: colorScheme.onSurface.withValues(alpha: 0.1),
+                            child: Icon(Icons.music_note,
+                                color: colorScheme.onSurface.withValues(alpha: 0.24)),
                           ),
                         ),
                       ),
@@ -409,10 +394,10 @@ class _PlaylistList extends StatelessWidget {
                     playlist['name'] ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 14,
-                      color: Colors.white,
+                      color: colorScheme.onSurface,
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -423,7 +408,7 @@ class _PlaylistList extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: colorScheme.onSurface.withValues(alpha: 0.4),
                       height: 1.2,
                     ),
                   ),

@@ -37,17 +37,17 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     // Schedule multiple updates to catch layout settling during animations
     for (var ms in [0, 50, 100, 250, 500, 800]) {
       Future.delayed(Duration(milliseconds: ms), () {
-        if (mounted) _updateVideoLayout();
+        if (mounted) _updateVideoLayout('scheduled_$ms');
       });
     }
   }
 
-  void _updateVideoLayout() {
+  void _updateVideoLayout([String label = 'manual']) {
     if (!mounted) return;
     final RenderBox? box = _videoKey.currentContext?.findRenderObject() as RenderBox?;
     if (box != null) {
       final position = box.localToGlobal(Offset.zero);
-      ref.read(videoLayoutProvider.notifier).updateLayout(box.size, position);
+      ref.read(videoLayoutProvider.notifier).updateLayout(box.size, position, label: label);
     }
   }
 
@@ -59,23 +59,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final track = playerState.currentTrack;
 
     if (track == null) {
-      return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: Text('No track playing')),
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: const Center(child: Text('No track playing')),
       );
     }
 
     ref.listen(settingsProvider.select((s) => s.playerView), (prev, next) {
       if (next == PlayerView.video) {
         _scheduleLayoutUpdates();
+      } else {
+        ref.read(videoLayoutProvider.notifier).setVisible(false, label: 'player_screen_view_switch');
       }
     });
 
     final isQueueView = settings.playerView == PlayerView.queue;
     final isVideoView = settings.playerView == PlayerView.video;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
           // Background blurred image (Ambient Ambient Motion)
@@ -100,10 +103,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.black.withValues(alpha: 0.3),
-                      Colors.black.withValues(alpha: 0.6),
-                      Colors.black.withValues(alpha: 0.8),
-                      Colors.black.withValues(alpha: 0.95),
+                      colorScheme.surface.withValues(alpha: 0.3),
+                      colorScheme.surface.withValues(alpha: 0.6),
+                      colorScheme.surface.withValues(alpha: 0.8),
+                      colorScheme.surface.withValues(alpha: 0.95),
                     ],
                     stops: const [0.0, 0.3, 0.7, 1.0],
                   ),
@@ -136,7 +139,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               child: Image.network(
                 'https://www.transparenttextures.com/patterns/p6.png',
                 repeat: ImageRepeat.repeat,
-                color: Colors.white,
+                color: colorScheme.onSurface.withValues(alpha: 0.1),
               ),
             ),
           ),
@@ -164,12 +167,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: colorScheme.onSurface.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(28),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.12), width: 0.5),
+                              border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.12), width: 0.5),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.3),
+                                  color: colorScheme.shadow.withValues(alpha: 0.3),
                                   blurRadius: 15,
                                   offset: const Offset(0, 8),
                                 ),
@@ -251,11 +254,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                           ? LayoutBuilder(
                                               builder: (context, constraints) {
                                                 // Trigger layout updates whenever the container's constraints change
-                                                _updateVideoLayout();
+                                                WidgetsBinding.instance.addPostFrameCallback((_) => _updateVideoLayout('layout_builder'));
                                                 return Container(
                                                   key: _videoKey,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.black,
+                                                    color: colorScheme.surface, // Themed background for video container
                                                     borderRadius: BorderRadius.circular(24),
                                                   ),
                                                 );
@@ -283,17 +286,17 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                   child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 28),
                             decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.05),
+                                      color: colorScheme.surfaceContainerLow.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(36),
-                                      border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 0.5),
+                                      border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.08), width: 0.5),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.4),
+                                          color: colorScheme.scrim.withValues(alpha: 0.4),
                                           blurRadius: 30,
                                           offset: const Offset(0, 15),
                                         ),
                                         BoxShadow(
-                                          color: Colors.white.withValues(alpha: 0.03),
+                                          color: colorScheme.onSurface.withValues(alpha: 0.03),
                                           blurRadius: 10,
                                           offset: const Offset(0, -2),
                                           spreadRadius: -2,
@@ -308,7 +311,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                           height: 4,
                                           margin: const EdgeInsets.only(bottom: 20),
                                           decoration: BoxDecoration(
-                                            color: Colors.white10,
+                                            color: colorScheme.onSurface.withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(2),
                                           ),
                                         ),
@@ -323,10 +326,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   children: [
                                                       Text(
                                                         playerState.currentTrack?.name ?? 'Not Playing',
-                                                        style: const TextStyle(
+                                                        style: TextStyle(
                                                           fontSize: 26,
                                                           fontWeight: FontWeight.w900,
-                                                          color: Colors.white,
+                                                          color: colorScheme.onSurface,
                                                           letterSpacing: -1.2,
                                                           height: 1.1,
                                                         ),
@@ -360,8 +363,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   ? Icons.favorite 
                                                   : Icons.favorite_border,
                                                 color: playerState.currentTrack!.isFavorite 
-                                                  ? Theme.of(context).colorScheme.primary 
-                                                  : Colors.white,
+                                                  ? colorScheme.primary 
+                                                  : colorScheme.onSurface,
                                                 onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!),
                                               ),
                                             ],
@@ -378,9 +381,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   trackHeight: 4,
                                                   thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 5),
                                                   overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
-                                                  activeTrackColor: Theme.of(context).colorScheme.primary,
-                                                  inactiveTrackColor: Colors.white.withValues(alpha: 0.05),
-                                                  thumbColor: Colors.white,
+                                                  activeTrackColor: colorScheme.primary,
+                                                  inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.05),
+                                                  thumbColor: colorScheme.onSurface,
                                                   trackShape: const RoundedRectSliderTrackShape(),
                                                 ),
                                                 child: Slider(
@@ -397,9 +400,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Text(_formatDuration(playerState.position),
-                                                        style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+                                                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
                                                     Text(_formatDuration(playerState.duration),
-                                                        style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+                                                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
                                                   ],
                                                 ),
                                               ),
@@ -415,12 +418,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                             children: [
                                               TactileIconButton(
                                                 icon: Icons.shuffle,
-                                                color: playerState.isShuffled ? Theme.of(context).colorScheme.primary : Colors.white60,
+                                                color: playerState.isShuffled ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.5),
                                                 onTap: playerNotifier.toggleShuffle,
                                               ),
                                               TactileIconButton(
                                                 icon: Icons.skip_previous,
                                                 size: 32,
+                                                color: colorScheme.onSurface,
                                                 onTap: playerNotifier.skipPrevious,
                                               ),
                                               TactilePlayerPlayPauseButton(
@@ -430,13 +434,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                               TactileIconButton(
                                                 icon: Icons.skip_next,
                                                 size: 32,
+                                                color: colorScheme.onSurface,
                                                 onTap: playerNotifier.skipNext,
                                               ),
                                               TactileIconButton(
                                                 icon: playerState.repeatMode == RepeatMode.none ? Icons.repeat : Icons.repeat_one,
                                                 color: playerState.repeatMode != RepeatMode.none
-                                                    ? Theme.of(context).colorScheme.primary
-                                                    : Colors.white60,
+                                                    ? colorScheme.primary
+                                                    : colorScheme.onSurface.withValues(alpha: 0.5),
                                                 onTap: playerNotifier.cycleRepeat,
                                               ),
                                             ],
@@ -481,7 +486,7 @@ class _ToggleTab extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? Colors.white.withValues(alpha: 0.1) : Colors.transparent,
+          color: isActive ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -490,7 +495,7 @@ class _ToggleTab extends StatelessWidget {
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
-            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.5),
+            color: isActive ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -514,7 +519,7 @@ class _QueueView extends StatelessWidget {
           final elevation = lerpDouble(0, 8, animValue)!;
           return Material(
             elevation: elevation,
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
             child: child,
           );
         },
@@ -526,6 +531,7 @@ class _QueueView extends StatelessWidget {
       itemBuilder: (context, i) {
         final t = playerState.queue[i];
         final isCurrent = playerState.currentIndex == i;
+        final colorScheme = Theme.of(context).colorScheme;
         return Padding(
           key: ValueKey(t.spotifyId),
           padding: const EdgeInsets.only(bottom: 12.0),
@@ -540,13 +546,13 @@ class _QueueView extends StatelessWidget {
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: isCurrent 
-                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12) 
-                        : Colors.white.withValues(alpha: 0.03),
+                        ? colorScheme.primary.withValues(alpha: 0.12) 
+                        : colorScheme.onSurface.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isCurrent 
-                          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5) 
-                          : Colors.white.withValues(alpha: 0.12),
+                          ? colorScheme.primary.withValues(alpha: 0.5) 
+                          : colorScheme.onSurface.withValues(alpha: 0.12),
                       width: 0.5,
                     ),
                     boxShadow: [
@@ -573,7 +579,7 @@ class _QueueView extends StatelessWidget {
                             if (isCurrent)
                               Positioned.fill(
                                 child: Container(
-                                  color: Colors.black.withValues(alpha: 0.3),
+                                  color: colorScheme.shadow.withValues(alpha: 0.3),
                                   child: Center(
                                     child: Icon(Icons.equalizer, color: Theme.of(context).colorScheme.primary, size: 24),
                                   ),
@@ -590,7 +596,7 @@ class _QueueView extends StatelessWidget {
                             Text(
                               t.name,
                               style: TextStyle(
-                                color: isCurrent ? Colors.white : Colors.white.withValues(alpha: 0.9),
+                                color: isCurrent ? colorScheme.onSurface : colorScheme.onSurface.withValues(alpha: 0.9),
                                 fontWeight: isCurrent ? FontWeight.w900 : FontWeight.w800,
                                 fontSize: 17,
                                 letterSpacing: -0.7,
@@ -604,7 +610,7 @@ class _QueueView extends StatelessWidget {
                               style: TextStyle(
                                 color: isCurrent 
                                     ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.8) 
-                                    : Colors.white.withValues(alpha: 0.4),
+                                    : colorScheme.onSurface.withValues(alpha: 0.4),
                                 fontWeight: FontWeight.w900,
                                 fontSize: 11,
                                 letterSpacing: 1.0,
@@ -623,7 +629,7 @@ class _QueueView extends StatelessWidget {
                             Icons.drag_handle, 
                             color: isCurrent 
                                 ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.6) 
-                                : Colors.white.withValues(alpha: 0.2),
+                                : colorScheme.onSurface.withValues(alpha: 0.2),
                           ),
                         ),
                       ),
@@ -688,6 +694,7 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
@@ -740,27 +747,27 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.6),
+                        color: colorScheme.shadow.withValues(alpha: 0.6),
                         blurRadius: 30,
                         offset: const Offset(15, 10),
                       ),
                     ],
-                    gradient: const SweepGradient(
+                    gradient: SweepGradient(
                       colors: [
-                        Color(0xFF0F0F0F),
-                        Color(0xFF2A2A2A),
-                        Color(0xFF0F0F0F),
-                        Color(0xFF333333),
-                        Color(0xFF0F0F0F),
+                        colorScheme.surfaceContainerHighest,
+                        colorScheme.surfaceContainerHigh,
+                        colorScheme.surfaceContainerHighest,
+                        colorScheme.surfaceContainer,
+                        colorScheme.surfaceContainerHighest,
                       ],
-                      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+                      stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
                     ),
                   ),
                   child: Container(
                     margin: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white10.withValues(alpha: 0.05), width: 1),
+                      border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.05), width: 1),
                     ),
                     child: Center(
                       child: Container(
@@ -768,10 +775,10 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                         height: recordSize * 0.36,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFF0F0F0F), width: 3),
+                          border: Border.all(color: colorScheme.surfaceContainerHighest, width: 3),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.3),
+                              color: colorScheme.shadow.withValues(alpha: 0.2),
                               blurRadius: 10,
                             ),
                           ],
@@ -785,9 +792,9 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                             width: recordSize * 0.06,
                             height: recordSize * 0.06,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0F0F0F),
+                              color: colorScheme.surfaceContainerHighest,
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white10),
+                              border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.05)),
                             ),
                           ),
                         ),
@@ -804,12 +811,12 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
+                    color: colorScheme.shadow.withValues(alpha: 0.5),
                     blurRadius: 40,
                     offset: const Offset(-10, 20),
                   ),
                   BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: colorScheme.onSurface.withValues(alpha: 0.05),
                     blurRadius: 20,
                     offset: const Offset(-5, -5),
                   ),
@@ -822,10 +829,10 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                   fit: BoxFit.cover,
                   width: constraints.maxWidth,
                   height: constraints.maxHeight,
-                  placeholder: (context, url) => Container(color: Colors.white.withValues(alpha: 0.05)),
+                  placeholder: (context, url) => Container(color: colorScheme.onSurface.withValues(alpha: 0.05)),
                   errorWidget: (_, _, _) => Container(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    child: const Icon(Icons.music_note, size: 64, color: Colors.white12),
+                    color: colorScheme.onSurface.withValues(alpha: 0.05),
+                    child: Icon(Icons.music_note, size: 64, color: colorScheme.onSurface.withValues(alpha: 0.12)),
                   ),
                 ),
               ),

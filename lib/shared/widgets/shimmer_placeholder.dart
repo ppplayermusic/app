@@ -52,7 +52,7 @@ class ShimmerPlaceholder extends StatelessWidget {
       height: height,
       margin: margin,
       decoration: BoxDecoration(
-        color: color ?? Colors.white.withValues(alpha: 0.05),
+        color: color ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
     )
@@ -60,7 +60,7 @@ class ShimmerPlaceholder extends StatelessWidget {
         .shimmer(
           duration: 1500.ms,
           curve: Curves.easeInOut,
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         );
   }
 }
@@ -293,7 +293,7 @@ class ArtistDetailsShimmer extends StatelessWidget {
           child: Container(
             height: 400,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
             ),
             child: Stack(
               children: [

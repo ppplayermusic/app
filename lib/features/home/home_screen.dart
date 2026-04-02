@@ -12,6 +12,7 @@ import '../../core/services/ad_service.dart';
 import 'dart:ui' show ImageFilter;
 import '../../core/providers/genre_providers.dart';
 import '../../shared/widgets/section_wrapper.dart';
+import '../../core/theme/app_theme.dart';
 
 final newReleasesProvider = FutureProvider((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -67,8 +68,8 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
       'subtitle': '${artists[0]['name']} and more',
       'imageUrl': (artists[0]['images'] as List?)?.firstOrNull?['url'] ?? '',
       'title': 'Daily Mix 1',
-      'color1': const Color(0xFFE91E63),
-      'color2': const Color(0xFF9C27B0),
+      'color1': AppTheme.themeColors[0],
+      'color2': AppTheme.themeColors[1],
     });
   }
   
@@ -81,12 +82,12 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
       'subtitle': '${artists[1]['name']}, ${artists[2]['name']} and more',
       'imageUrl': (artists[1]['images'] as List?)?.firstOrNull?['url'] ?? '',
       'title': 'Daily Mix 2',
-      'color1': const Color(0xFF2196F3),
-      'color2': const Color(0xFF00BCD4),
+      'color1': AppTheme.themeColors[2],
+      'color2': AppTheme.themeColors[3],
     });
   }
 
-  // Discover Weekly: Find a valid genre seed that exists in browse categories
+  // Discover Weekly
   String discoverSeed = 'pop';
   String discoverImageUrl = 'https://t.scdn.co/images/37i9dQZF1DXcBWIGoYBM3M.jpeg';
   
@@ -106,8 +107,8 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'subtitle': 'New music based on your favorite genres.',
     'imageUrl': discoverImageUrl,
     'title': 'Discover Weekly',
-    'color1': const Color(0xFF4CAF50),
-    'color2': const Color(0xFF8BC34A),
+    'color1': AppTheme.themeColors[4],
+    'color2': AppTheme.themeColors[5],
   });
 
   // Release Radar
@@ -116,10 +117,10 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'id': 'new-release',
     'name': 'Release Radar',
     'subtitle': 'Catch up on the latest releases.',
-    'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DXcBWIGoYBM3M.jpeg', // Pop icon
+    'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DXcBWIGoYBM3M.jpeg',
     'title': 'Release Radar',
-    'color1': const Color(0xFFFF9800),
-    'color2': const Color(0xFFFFC107),
+    'color1': AppTheme.themeColors[6],
+    'color2': AppTheme.themeColors[7],
   });
 
   // Mood Mix: Chill focus
@@ -130,8 +131,8 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'subtitle': 'Vibey, relaxing tracks picked for you.',
     'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DX4WYpdgoIcnm.jpeg',
     'title': 'Chill Mix',
-    'color1': const Color(0xFF1E88E5),
-    'color2': const Color(0xFF673AB7),
+    'color1': AppTheme.themeColors[8],
+    'color2': AppTheme.themeColors[9],
   });
 
   // Energy Mix: Focus/Study
@@ -142,8 +143,8 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'subtitle': 'Music to help you concentrate.',
     'imageUrl': 'https://t.scdn.co/images/37i9dQZF1DX8Ueb9C7W3p7.jpeg',
     'title': 'Focus Mix',
-    'color1': const Color(0xFF00897B),
-    'color2': const Color(0xFF4DB6AC),
+    'color1': AppTheme.themeColors[10],
+    'color2': AppTheme.themeColors[11],
   });
 
   return mixes;
@@ -246,7 +247,10 @@ class HomeScreen extends ConsumerWidget {
     final suggestedStations = ref.watch(suggestedStationsProvider);
     final genres = ref.watch(browseCategoriesProvider);
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           SliverPersistentHeader(
@@ -551,20 +555,21 @@ class _GenreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.98,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: colorScheme.onSurface.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: colorScheme.onSurface.withValues(alpha: 0.1),
             width: 0.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: colorScheme.scrim.withValues(alpha: 0.2),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -584,7 +589,7 @@ class _GenreCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.05),
+                      colorScheme.onSurface.withValues(alpha: 0.05),
                       Colors.transparent,
                     ],
                   ),
@@ -603,7 +608,7 @@ class _GenreCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.5),
+                          color: colorScheme.scrim.withValues(alpha: 0.5),
                           blurRadius: 12,
                           offset: const Offset(2, 2),
                         ),
@@ -630,11 +635,11 @@ class _GenreCard extends StatelessWidget {
                     name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 14,
                       letterSpacing: -0.5,
-                      color: Colors.white,
+                      color: colorScheme.onSurface,
                       height: 1.1,
                     ),
                   ),
@@ -655,6 +660,7 @@ class _HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.98,
@@ -665,15 +671,15 @@ class _HistoryCard extends StatelessWidget {
           child: Container(
             height: 56,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: colorScheme.onSurface.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.08),
+                color: colorScheme.onSurface.withValues(alpha: 0.08),
                 width: 0.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: colorScheme.scrim.withValues(alpha: 0.2),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -698,7 +704,7 @@ class _HistoryCard extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              Colors.white.withValues(alpha: 0.1),
+                              colorScheme.onSurface.withValues(alpha: 0.1),
                               Colors.transparent,
                             ],
                           ),
@@ -729,7 +735,7 @@ class _HistoryCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: colorScheme.onSurface.withValues(alpha: 0.5),
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                         ),
@@ -764,6 +770,7 @@ class _AlbumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.95,
@@ -778,7 +785,7 @@ class _AlbumCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.4),
+                    color: colorScheme.scrim.withValues(alpha: 0.4),
                     blurRadius: 25,
                     offset: const Offset(0, 12),
                   ),
@@ -794,14 +801,14 @@ class _AlbumCard extends StatelessWidget {
                       height: 156,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
-                        color: Colors.white.withValues(alpha: 0.05),
+                        color: colorScheme.onSurface.withValues(alpha: 0.05),
                       ),
                     ),
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.1),
+                            color: colorScheme.onSurface.withValues(alpha: 0.1),
                             width: 0.5,
                           ),
                           borderRadius: BorderRadius.circular(20),
@@ -810,7 +817,7 @@ class _AlbumCard extends StatelessWidget {
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              Colors.black.withValues(alpha: 0.3),
+                              colorScheme.scrim.withValues(alpha: 0.3),
                             ],
                           ),
                         ),
@@ -825,11 +832,12 @@ class _AlbumCard extends StatelessWidget {
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w900,
                 fontSize: 15,
                 letterSpacing: -0.4,
                 height: 1.2,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 4),
@@ -838,7 +846,7 @@ class _AlbumCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4),
+                color: colorScheme.onSurface.withValues(alpha: 0.4),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
@@ -863,6 +871,7 @@ class _ArtistCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.92,
@@ -878,13 +887,13 @@ class _ArtistCircle extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.4),
+                    color: colorScheme.scrim.withValues(alpha: 0.4),
                     blurRadius: 30,
                     offset: const Offset(0, 12),
                   ),
                 ],
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.15),
+                  color: colorScheme.onSurface.withValues(alpha: 0.15),
                   width: 1.5,
                 ),
               ),
@@ -893,12 +902,12 @@ class _ArtistCircle extends StatelessWidget {
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    child: const Icon(Icons.person, color: Colors.white24, size: 40),
+                    color: colorScheme.onSurface.withValues(alpha: 0.05),
+                    child: Icon(Icons.person, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 40),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    child: const Icon(Icons.person, color: Colors.white24, size: 40),
+                    color: colorScheme.onSurface.withValues(alpha: 0.05),
+                    child: Icon(Icons.person, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 40),
                   ),
                 ),
               ),
@@ -909,10 +918,10 @@ class _ArtistCircle extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w900,
                 fontSize: 13,
-                color: Colors.white,
+                color: colorScheme.onSurface,
                 letterSpacing: -0.3,
               ),
             ),
@@ -920,17 +929,17 @@ class _ArtistCircle extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
               decoration: BoxDecoration(
-                color: const Color(0xFF1DB954).withValues(alpha: 0.1),
+                color: colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF1DB954).withValues(alpha: 0.2),
+                  color: colorScheme.primary.withValues(alpha: 0.2),
                   width: 0.5,
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'ARTIST',
                 style: TextStyle(
-                  color: Color(0xFF1DB954),
+                  color: colorScheme.primary,
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
@@ -959,6 +968,7 @@ class _RadioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.95,
@@ -969,7 +979,7 @@ class _RadioCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: colorScheme.scrim.withValues(alpha: 0.5),
               blurRadius: 30,
               offset: const Offset(0, 12),
             ),
@@ -982,10 +992,10 @@ class _RadioCard extends StatelessWidget {
             CachedNetworkImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(color: Colors.white.withValues(alpha: 0.05)),
+              placeholder: (context, url) => Container(color: colorScheme.onSurface.withValues(alpha: 0.05)),
               errorWidget: (context, url, error) => Container(
-                color: Colors.blueGrey[900],
-                child: const Icon(Icons.radio, color: Colors.white24, size: 40),
+                color: colorScheme.surfaceContainerHighest,
+                child: Icon(Icons.radio, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 40),
               ),
             ),
             // Glassmorphic Layer
@@ -996,7 +1006,7 @@ class _RadioCard extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: colorScheme.onSurface.withValues(alpha: 0.1),
                         width: 0.5,
                       ),
                       gradient: LinearGradient(
@@ -1004,7 +1014,7 @@ class _RadioCard extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withValues(alpha: 0.8),
+                          colorScheme.scrim.withValues(alpha: 0.8),
                         ],
                       ),
                     ),
@@ -1028,17 +1038,17 @@ class _RadioCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.sensors, size: 12, color: Colors.black),
-                    SizedBox(width: 4),
+                    Icon(Icons.sensors, size: 12, color: colorScheme.onPrimary),
+                    const SizedBox(width: 4),
                     Text(
                       'LIVE',
                       style: TextStyle(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
-                        color: Colors.black,
+                        color: colorScheme.onPrimary,
                         letterSpacing: 1.2,
                       ),
                     ),
@@ -1059,10 +1069,10 @@ class _RadioCard extends StatelessWidget {
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 16,
-                      color: Colors.white,
+                      color: colorScheme.onSurface,
                       height: 1.1,
                       letterSpacing: -0.6,
                     ),
@@ -1071,7 +1081,7 @@ class _RadioCard extends StatelessWidget {
                   Text(
                     'Exclusive Station',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
@@ -1087,11 +1097,11 @@ class _RadioCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
+                  color: colorScheme.onSurface.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                  border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.2)),
                 ),
-                child: const Icon(Icons.play_arrow_rounded, size: 20, color: Colors.white),
+                child: Icon(Icons.play_arrow_rounded, size: 20, color: colorScheme.onSurface),
               ),
             ),
           ],
@@ -1120,6 +1130,7 @@ class _SpotifyMixCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.96,
@@ -1160,7 +1171,7 @@ class _SpotifyMixCard extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.15),
+                          color: colorScheme.onSurface.withValues(alpha: 0.15),
                           width: 0.5,
                         ),
                         borderRadius: BorderRadius.circular(28),
@@ -1177,7 +1188,7 @@ class _SpotifyMixCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.4),
+                                color: colorScheme.scrim.withValues(alpha: 0.4),
                                 blurRadius: 20,
                               ),
                             ],
@@ -1200,8 +1211,8 @@ class _SpotifyMixCard extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       child: Text(
                         title.replaceAll(' ', '\n'),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
                           height: 0.9,
@@ -1215,7 +1226,7 @@ class _SpotifyMixCard extends StatelessWidget {
                     right: 18,
                     child: Icon(
                       Icons.auto_awesome, 
-                      color: Colors.white.withValues(alpha: 0.6), 
+                      color: colorScheme.onSurface.withValues(alpha: 0.6), 
                       size: 22,
                     ),
                   ),
@@ -1228,7 +1239,7 @@ class _SpotifyMixCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4),
+                color: colorScheme.onSurface.withValues(alpha: 0.4),
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 height: 1.3,
@@ -1244,6 +1255,7 @@ class _SpotifyMixCard extends StatelessWidget {
 class _HomeHero extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final colorScheme = Theme.of(context).colorScheme;
     final progress = shrinkOffset / maxExtent;
     final titleOpacity = progress.clamp(0.0, 1.0);
 
@@ -1252,9 +1264,9 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
       children: [
         // Animated Mesh Background
         Container(
-          color: Colors.black,
+          color: colorScheme.surface,
           child: CustomPaint(
-            painter: _MeshPainter(primaryColor: Theme.of(context).colorScheme.primary),
+            painter: _MeshPainter(primaryColor: colorScheme.primary),
           ),
         ),
         
@@ -1271,8 +1283,8 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.2 + (0.6 * progress)),
-                    Colors.black.withValues(alpha: 0.8 + (0.2 * progress)),
+                    colorScheme.surface.withValues(alpha: 0.2 + (0.6 * progress)),
+                    colorScheme.surface.withValues(alpha: 0.8 + (0.2 * progress)),
                   ],
                 ),
               ),
@@ -1310,6 +1322,7 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                               'assets/logo.png',
                               width: 64,
                               height: 64,
+                              errorBuilder: (context, error, stackTrace) => Container(color: colorScheme.surfaceContainer),
                             ),
                           ).animate(onPlay: (controller) => controller.repeat(reverse: true))
                            .scale(begin: const Offset(1,1), end: const Offset(1.1, 1.1), duration: 2000.ms, curve: Curves.easeInOut),
@@ -1321,11 +1334,11 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                             fontSize: 36,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -2.0,
-                            color: Colors.white,
+                            color: colorScheme.onSurface,
                             height: 0.9,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withValues(alpha: 0.3),
+                                color: colorScheme.scrim.withValues(alpha: 0.3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -1378,27 +1391,27 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                   if (progress > 0.5)
                     Opacity(
                       opacity: titleOpacity,
-                      child: const Text(
+                      child: Text(
                         'PPPLAYER',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 4,
-                          color: Colors.white,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
                   const Spacer(),
                   TactileIconButton(
                     icon: Icons.history,
-                    backgroundColor: Colors.white.withValues(alpha: 0.12),
+                    backgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(14),
                     onTap: () => context.push('/recently-played'),
                   ),
                   const SizedBox(width: 10),
                   TactileIconButton(
                     icon: Icons.settings,
-                    backgroundColor: Colors.white.withValues(alpha: 0.12),
+                    backgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(14),
                     onTap: () => context.push('/settings'),
                   ),
@@ -1434,12 +1447,12 @@ class _MeshPainter extends CustomPainter {
     canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.2), 120, paint);
 
     // Dynamic Secondary Blob (derived from theme)
-    final secondaryColor = Color.lerp(primaryColor, Colors.blueAccent, 0.2) ?? primaryColor;
+    final secondaryColor = Color.lerp(primaryColor, primaryColor.withValues(alpha: 0.8), 0.2) ?? primaryColor;
     paint.color = secondaryColor.withValues(alpha: 0.1);
     canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.8), 90, paint);
     
     // Dynamic Tertiary Blob (derived from theme)
-    final tertiaryColor = Color.lerp(primaryColor, Colors.purpleAccent, 0.2) ?? primaryColor;
+    final tertiaryColor = Color.lerp(primaryColor, primaryColor.withValues(alpha: 0.6), 0.2) ?? primaryColor;
     paint.color = tertiaryColor.withValues(alpha: 0.08);
     canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.5), 100, paint);
   }

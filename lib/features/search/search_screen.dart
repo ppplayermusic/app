@@ -53,36 +53,37 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
   Widget build(BuildContext context) {
     final query = ref.watch(_searchQueryProvider);
     final results = ref.watch(_searchResultsProvider(query));
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.black.withValues(alpha: 0.1),
+        backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
         flexibleSpace: ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
             child: Container(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: colorScheme.surface.withValues(alpha: 0.2),
             ),
           ),
         ),
         title: Container(
           height: 48,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: colorScheme.onSurface.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(100),
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+              color: colorScheme.primary.withValues(alpha: 0.15),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: colorScheme.scrim.withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
               BoxShadow(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                color: colorScheme.primary.withValues(alpha: 0.15),
                 blurRadius: 20,
                 spreadRadius: -5,
               ),
@@ -91,17 +92,20 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
           child: TextField(
             controller: _ctrl,
             autofocus: false,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-            cursorColor: Theme.of(context).colorScheme.primary,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontSize: 16,
+            ),
+            cursorColor: colorScheme.primary,
             decoration: InputDecoration(
               hintText: 'What do you want to listen to?',
               hintStyle: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4),
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                 fontSize: 15,
               ),
               prefixIcon: Icon(
                 Icons.search,
-                color: Colors.white.withValues(alpha: 0.6),
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 size: 22,
               ),
               suffixIcon: _ctrl.text.isNotEmpty 
@@ -113,7 +117,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                       setState(() {});
                     },
                     size: 20,
-                    color: Colors.white70,
+                    color: colorScheme.onSurfaceVariant,
                   )
                 : null,
               border: InputBorder.none,
@@ -136,12 +140,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                 child: TabBar(
                   controller: _tabCtrl,
                   indicator: UnderlineTabIndicator(
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 3),
+                    borderSide: BorderSide(color: colorScheme.primary, width: 3),
                     insets: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.white.withValues(alpha: 0.4),
+                  labelColor: colorScheme.onSurface,
+                  unselectedLabelColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                   labelStyle: const TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 13,
@@ -189,16 +193,17 @@ class _EmptySearch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesAsync = ref.watch(browseCategoriesProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-            child: const Text(
+            child: Text(
               'Browse all',
               style: TextStyle(
-                color: Colors.white,
+                color: colorScheme.onSurface,
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -0.8,
@@ -244,7 +249,7 @@ class _EmptySearch extends ConsumerWidget {
           error: (e, _) => SliverToBoxAdapter(
             child: Center(
               child: Text('Error loading categories: $e', 
-                style: const TextStyle(color: Colors.white54)),
+                style: TextStyle(color: colorScheme.error)),
             ),
           ),
         ),
@@ -269,6 +274,7 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TactileTap(
       onTap: () => context.push(
         Uri(
@@ -288,10 +294,10 @@ class _CategoryCard extends StatelessWidget {
               color.withValues(alpha: 0.4),
             ],
           ),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+          border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1), width: 0.5),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: 0.2),
+              color: colorScheme.scrim.withValues(alpha: 0.2),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -312,13 +318,13 @@ class _CategoryCard extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              blurRadius: 20,
-                            ),
-                          ],
-                        ),
-                        child: CachedNetworkImage(
+                          BoxShadow(
+                            color: colorScheme.scrim.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                          ),
+                        ],
+                      ),
+                      child: CachedNetworkImage(
                           imageUrl: imageUrl,
                           width: 80,
                           height: 80,
@@ -327,27 +333,27 @@ class _CategoryCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -0.5,
-                      shadows: [
-                        Shadow(color: Colors.black45, offset: Offset(0, 2), blurRadius: 8),
-                      ],
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      name,
+                      style: TextStyle(
+                        color: colorScheme.onPrimary, // Standard for vibrant cards, semantic value below
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                        shadows: [
+                          Shadow(color: colorScheme.scrim.withValues(alpha: 0.3), offset: const Offset(0, 1), blurRadius: 4),
+                        ],
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
         ),
       ),
-    ).animate().shimmer(delay: 5.seconds, duration: 2.seconds, color: Colors.white10);
+    ).animate().shimmer(delay: 5.seconds, duration: 2.seconds, color: colorScheme.onSurface.withValues(alpha: 0.05));
   }
 }
 
@@ -396,6 +402,7 @@ class _ArtistResults extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (items.isEmpty) return const Center(child: Text('No artists found'));
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -434,7 +441,7 @@ class _ArtistResults extends ConsumerWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
+                        color: colorScheme.scrim.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -445,11 +452,11 @@ class _ArtistResults extends ConsumerWidget {
                         ? CachedNetworkImage(
                             imageUrl: imageUrl,
                             fit: BoxFit.cover,
-                            placeholder: (_, _) => Container(color: Colors.white10),
+                            placeholder: (_, _) => Container(color: colorScheme.surfaceContainerHighest),
                           )
                         : Container(
-                            color: Colors.white10,
-                            child: const Icon(Icons.person, color: Colors.white24),
+                            color: colorScheme.surfaceContainerHighest,
+                            child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
                           ),
                   ),
                 ),
@@ -460,8 +467,8 @@ class _ArtistResults extends ConsumerWidget {
                     children: [
                       Text(
                         a['name'] as String,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
                           fontSize: 17,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -0.5,
@@ -471,7 +478,7 @@ class _ArtistResults extends ConsumerWidget {
                       Text(
                         'Artist'.toUpperCase(),
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                          color: colorScheme.primary.withValues(alpha: 0.8),
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.2,
@@ -480,7 +487,7 @@ class _ArtistResults extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: Colors.white24, size: 20),
+                Icon(Icons.chevron_right, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 20),
               ],
             ),
           ),
@@ -496,6 +503,7 @@ class _AlbumResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (items.isEmpty) return const Center(child: Text('No albums found'));
     return CustomScrollView(
       slivers: [
@@ -533,7 +541,7 @@ class _AlbumResults extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.5),
+                                color: colorScheme.scrim.withValues(alpha: 0.5),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),
@@ -546,7 +554,7 @@ class _AlbumResults extends StatelessWidget {
                                     imageUrl: imageUrl,
                                     fit: BoxFit.cover,
                                   )
-                                : Container(color: const Color(0xFF2A2A2A)),
+                                : Container(color: colorScheme.surfaceContainerHighest),
                           ),
                         ),
                       ),
@@ -555,9 +563,9 @@ class _AlbumResults extends StatelessWidget {
                         album['name'] as String,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: colorScheme.onSurface,
                           fontSize: 15,
                           letterSpacing: -0.4,
                         ),
@@ -570,7 +578,7 @@ class _AlbumResults extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                          color: colorScheme.primary.withValues(alpha: 0.5),
                           letterSpacing: 0.5,
                         ),
                       ),

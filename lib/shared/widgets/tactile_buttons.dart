@@ -7,7 +7,7 @@ class TactileIconButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback? onTap;
   final double size;
-  final Color color;
+  final Color? color;
   final Color? backgroundColor;
   final BorderRadius? borderRadius;
   final BoxBorder? border;
@@ -18,7 +18,7 @@ class TactileIconButton extends StatefulWidget {
     required this.icon,
     this.onTap,
     this.size = 28,
-    this.color = Colors.white,
+    this.color,
     this.backgroundColor,
     this.borderRadius,
     this.border,
@@ -48,6 +48,7 @@ class _TactileIconButtonState extends State<TactileIconButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTapDown: _handleTapDown,
@@ -71,7 +72,7 @@ class _TactileIconButtonState extends State<TactileIconButton> {
               child: Icon(
                 widget.icon,
                 size: widget.size,
-                color: widget.color,
+                color: widget.color ?? colorScheme.onSurface,
               ),
             ),
           ),
@@ -137,6 +138,7 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTapDown: _handleTapDown,
       onTapUp: (_) => setState(() => _scale = 1.0),
@@ -150,14 +152,14 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
           child: Container(
             width: 76,
             height: 76,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white,
+              color: colorScheme.onSurface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black26,
+                  color: colorScheme.shadow.withValues(alpha: 0.26),
                   blurRadius: 15,
-                  offset: Offset(0, 5),
+                  offset: const Offset(0, 5),
                 ),
               ],
             ),
@@ -166,7 +168,7 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
                 icon: AnimatedIcons.play_pause,
                 progress: _controller,
                 size: 42,
-                color: Colors.black,
+                color: colorScheme.surface,
               ),
             ),
           ),
@@ -197,6 +199,7 @@ class _TactileActionPlayButtonState extends State<TactileActionPlayButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTapDown: (_) {
         if (widget.onTap == null) return;
@@ -217,19 +220,19 @@ class _TactileActionPlayButtonState extends State<TactileActionPlayButton> {
             height: widget.size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Theme.of(context).colorScheme.primary, // Dynamic Theme Color
+              color: colorScheme.primary, // Dynamic Theme Color
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black45,
+                  color: colorScheme.shadow.withValues(alpha: 0.45),
                   blurRadius: 12,
-                  offset: Offset(0, 6),
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
             child: Icon(
               Icons.play_arrow_rounded,
               size: widget.size * 0.7,
-              color: Colors.black,
+              color: colorScheme.onPrimary,
             ),
           ),
         ),

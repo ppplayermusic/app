@@ -23,67 +23,84 @@ class LibraryScreen extends ConsumerStatefulWidget {
     showPremiumModal<void>(
       context: context,
       title: 'New Playlist',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: ctrl,
-            autofocus: true,
-            style: const TextStyle(color: Colors.white, fontSize: 18),
-            decoration: InputDecoration(
-              hintText: 'Name your masterpiece...',
-              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-              filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.05),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
+      child: Builder(
+        builder: (dialogContext) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: ctrl,
+              autofocus: true,
+              style: TextStyle(color: Theme.of(dialogContext).colorScheme.onSurface, fontSize: 18),
+              decoration: InputDecoration(
+                hintText: 'Name your masterpiece...',
+                hintStyle: TextStyle(color: Theme.of(dialogContext).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
+                filled: true,
+                fillColor: Theme.of(dialogContext).colorScheme.onSurface.withValues(alpha: 0.05),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             ),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: TactileTap(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white10),
-                    ),
-                    child: const Text('Cancel', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TactileTap(
-                  onTap: () async {
-                    if (ctrl.text.isNotEmpty) {
-                      await database.createPlaylist(ctrl.text);
-                      if (context.mounted) Navigator.pop(context);
-                    }
-                  },
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primaryContainer],
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: TactileTap(
+                    onTap: () => Navigator.pop(dialogContext),
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Theme.of(dialogContext).colorScheme.outlineVariant.withValues(alpha: 0.5)),
                       ),
-                      borderRadius: BorderRadius.circular(16),
+                      child: Text('Cancel', 
+                        style: TextStyle(
+                          color: Theme.of(dialogContext).colorScheme.onSurfaceVariant, 
+                          fontWeight: FontWeight.bold
+                        )
+                      ),
                     ),
-                    child: const Text('Create', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TactileTap(
+                    onTap: () async {
+                      if (ctrl.text.isNotEmpty) {
+                        await database.createPlaylist(ctrl.text);
+                        if (dialogContext.mounted) {
+                          Navigator.pop(dialogContext);
+                        }
+                      }
+                    },
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(dialogContext).colorScheme.primary, 
+                            Theme.of(dialogContext).colorScheme.primaryContainer
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text('Create', 
+                        style: TextStyle(
+                          color: Theme.of(dialogContext).colorScheme.onPrimary, 
+                          fontWeight: FontWeight.bold
+                        )
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -137,9 +154,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     decoration: InputDecoration(
                       hintText: 'Search in library...',
                       border: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                      hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
                     ),
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18),
                     onChanged: (value) {
                       setState(() {
                         _searchQuery = value.toLowerCase();
@@ -164,6 +181,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               titlePadding: EdgeInsets.zero,
               title: LayoutBuilder(
                 builder: (context, constraints) {
+                  final theme = Theme.of(context);
                   final isCollapsed = constraints.maxHeight <= kToolbarHeight + 64; // Account for 48px filter bar + buffer
                   return Stack(
                     children: [
@@ -173,7 +191,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                               child: Container(
-                                color: Colors.black.withValues(alpha: 0.5),
+                                color: theme.colorScheme.surface.withValues(alpha: 0.5),
                               ),
                             ),
                           ),
@@ -195,10 +213,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                   height: 38,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1.5),
+                                    border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2), width: 1.5),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+                                        color: theme.colorScheme.primary.withValues(alpha: 0.4),
                                         blurRadius: 20,
                                         spreadRadius: -2,
                                       ),
@@ -216,7 +234,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                   isCollapsed ? 'Library' : 'Your Library',
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: theme.colorScheme.onSurface,
                                     fontWeight: FontWeight.w900,
                                     fontSize: isCollapsed ? 22 : 36,
                                     letterSpacing: isCollapsed ? -0.5 : -1.5,
@@ -363,7 +381,7 @@ class _LikedSongsCard extends StatelessWidget {
                   offset: const Offset(0, 15),
                 ),
               ],
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2), width: 0.5),
             ),
             clipBehavior: Clip.antiAlias,
             child: Stack(
@@ -397,7 +415,7 @@ class _LikedSongsCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF9000ff).withValues(alpha: 0.2),
+                          Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
                           Colors.transparent,
                         ],
                       ),
@@ -417,7 +435,7 @@ class _LikedSongsCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF450af5).withValues(alpha: 0.15),
+                          Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.15),
                           Colors.transparent,
                         ],
                       ),
@@ -478,9 +496,9 @@ class _LikedSongsCard extends StatelessWidget {
                           ],
                         ),
                         child: Center(
-                          child: const Icon(
+                          child: Icon(
                             Icons.favorite_rounded,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             size: 42,
                           )
                           .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -498,10 +516,10 @@ class _LikedSongsCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Liked Songs',
                               style: TextStyle(
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.9),
                                   fontSize: 28,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: -1.5),
@@ -510,14 +528,14 @@ class _LikedSongsCard extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.1),
+                                color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(100),
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                                border: Border.all(color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.1)),
                               ),
                               child: Text(
                                 '$count TRACKS',
-                                style: const TextStyle(
-                                    color: Colors.white70, 
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8), 
                                     fontSize: 10,
                                     letterSpacing: 1.2,
                                     fontWeight: FontWeight.w800),
@@ -539,17 +557,17 @@ class _LikedSongsCard extends StatelessWidget {
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.12),
-                              border: Border.all(color: Colors.white10),
+                              color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.15),
+                              border: Border.all(color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.1)),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black26,
+                                  color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.2),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 ),
                               ],
                             ),
-                            child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 32),
+                            child: Icon(Icons.play_arrow_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 32),
                           ),
                         ),
                       ),
@@ -683,7 +701,7 @@ class _PlaylistCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.4),
+                        color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.4),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -716,7 +734,7 @@ class _PlaylistCard extends StatelessWidget {
               Text(
                 '${tracks.length} tracks'.toUpperCase(),
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
@@ -733,53 +751,76 @@ class _PlaylistCard extends StatelessWidget {
     showPremiumModal<void>(
       context: context,
       title: 'Delete Playlist',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Are you sure you want to delete "${playlist.name}"?\nThis action cannot be undone.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.6), height: 1.5),
-          ),
-          const SizedBox(height: 32),
-          Row(
+      child: Builder(
+        builder: (dialogContext) {
+          final colorScheme = Theme.of(dialogContext).colorScheme;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: TactileTap(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white10),
-                    ),
-                    child: const Text('Cancel', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-                  ),
+              Text(
+                'Are you sure you want to delete "${playlist.name}"?\nThis action cannot be undone.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                  height: 1.5,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TactileTap(
-                  onTap: () {
-                    database.deletePlaylist(playlist.id);
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
+              const SizedBox(height: 32),
+              Row(
+                children: [
+                  Expanded(
+                    child: TactileTap(
+                      onTap: () => Navigator.pop(dialogContext),
+                      child: Container(
+                        height: 54,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: colorScheme.outlineVariant),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                    child: const Text('Delete', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TactileTap(
+                      onTap: () async {
+                        await database.deletePlaylist(playlist.id);
+                        if (dialogContext.mounted) {
+                          Navigator.pop(dialogContext);
+                        }
+                      },
+                      child: Container(
+                        height: 54,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: colorScheme.error.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
+                        ),
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(
+                            color: colorScheme.error,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -811,10 +852,10 @@ class _FilterBar extends StatelessWidget {
                 duration: 250.ms,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 decoration: BoxDecoration(
-                  color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white.withValues(alpha: 0.05),
+                  color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
-                    color: isSelected ? Colors.white.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.05),
+                    color: isSelected ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.2) : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                   ),
                   boxShadow: isSelected ? [
                     BoxShadow(
@@ -827,7 +868,7 @@ class _FilterBar extends StatelessWidget {
                 child: Text(
                   filter.name[0].toUpperCase() + filter.name.substring(1),
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.white70,
+                    color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
                     fontSize: 14,
                     letterSpacing: 0.2,
@@ -926,17 +967,17 @@ class _ArtistsSliverList extends StatelessWidget {
                                         fit: BoxFit.cover,
                                       )
                                     : null,
-                                color: Colors.white.withValues(alpha: 0.05),
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.3),
+                                    color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.3),
                                     blurRadius: 15,
                                     offset: const Offset(0, 8),
                                   ),
                                 ],
                               ),
                               child: artist.imageUrl == null
-                                  ? const Icon(Icons.person, color: Colors.white24, size: 40)
+                                  ? Icon(Icons.person, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3), size: 40)
                                   : null,
                             ),
                             const SizedBox(width: 20),
@@ -946,10 +987,10 @@ class _ArtistsSliverList extends StatelessWidget {
                                 children: [
                                   Text(
                                     artist.name,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w900,
-                                      color: Colors.white,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       letterSpacing: -0.5,
                                     ),
                                   ),
@@ -957,7 +998,7 @@ class _ArtistsSliverList extends StatelessWidget {
                                   Text(
                                     'Artist',
                                     style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.5),
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 0.2,
@@ -1064,7 +1105,7 @@ class _AlbumsSliverGrid extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(24),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.4),
+                                    color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.4),
                                     blurRadius: 20,
                                     offset: const Offset(0, 10),
                                   ),
@@ -1075,10 +1116,10 @@ class _AlbumsSliverGrid extends StatelessWidget {
                                         fit: BoxFit.cover,
                                       )
                                     : null,
-                                color: Colors.white.withValues(alpha: 0.05),
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
                               ),
                               child: album.imageUrl == null
-                                  ? const Icon(Icons.album_rounded, color: Colors.white24, size: 40)
+                                  ? Icon(Icons.album_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2), size: 40)
                                   : null,
                             ),
                           ),
@@ -1087,7 +1128,7 @@ class _AlbumsSliverGrid extends StatelessWidget {
                             album.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: -0.5,
                             ),
                           ),
@@ -1097,7 +1138,7 @@ class _AlbumsSliverGrid extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                             ),
@@ -1167,17 +1208,17 @@ class _EmptyState extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
             ),
-            child: Icon(icon, size: 48, color: Colors.white24),
+            child: Icon(icon, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
           ),
           const SizedBox(height: 24),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: -0.5,
             ),
           ),
@@ -1187,7 +1228,7 @@ class _EmptyState extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.5),
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -1210,8 +1251,8 @@ class _EmptyState extends StatelessWidget {
                 ),
                 child: Text(
                   buttonText!,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.5,
                   ),

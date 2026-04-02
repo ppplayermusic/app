@@ -133,7 +133,7 @@ class AppDatabase extends _$AppDatabase {
   Future<void> upsertTrack(TracksCompanion entry) =>
       into(tracks).insertOnConflictUpdate(entry);
 
-  Future<void> cacheYoutubeId(String spotifyId, String videoId) =>
+  Future<void> cacheYoutubeId(String spotifyId, String? videoId) =>
       (update(tracks)..where((t) => t.spotifyId.equals(spotifyId)))
           .write(TracksCompanion(youtubeVideoId: Value(videoId)));
 

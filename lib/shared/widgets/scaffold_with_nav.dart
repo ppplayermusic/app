@@ -30,6 +30,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     final settings = ref.watch(settingsProvider);
     final showVideo = settings.showVideo;
     final playerView = settings.playerView;
+    final isVideoView = playerView == PlayerView.video;
     final playerState = ref.watch(playerProvider);
     final isPlayerScreen = widget.location == '/player';
     final hasVideoId = playerState.videoId != null;
@@ -73,18 +74,17 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                   bool showShadow;
 
                   if (isPlayerScreen) {
-                    if (playerView == PlayerView.video && videoLayout.isReady) {
-                      // Snap WebView into the video slot reported by PlayerScreen
-                      // Use viewPadding as a fallback if the stack isn't laid out yet
-                      final topPadding = MediaQuery.viewPaddingOf(context).top;
+                    if (isVideoView && videoLayout.isVisible && videoLayout.isReady) {
+                      // Initial values (will be refined by globalToLocal in the Builder below)
                       renderW = videoLayout.size.width;
                       renderH = videoLayout.size.height;
-                      renderTop = videoLayout.position.dy - topPadding;
-                      renderLeft = videoLayout.position.dx;
-                      renderRadius = 12;
+                      renderTop = 0; 
+                      renderLeft = 0;
+                      renderRadius = 24;
                       showShadow = false;
                     } else {
-                      // ARTWORK / QUEUE tabs — keep 2×2 peek so JS stays alive
+                      // ARTWORK / QUEUE tabs — keep 2×2 peek so JS stays alive.
+                      // We place it at the bottom-right of the Stack.
                       renderW = kMinW;
                       renderH = kMinH;
                       renderTop = stackHeight - kPeek;
@@ -98,12 +98,12 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                       renderW = kMinW;
                       renderH = kMinH;
                       renderLeft = screenWidth - kMinW - 16;
-                      // Sit above the mini-player bar (64) + system bottom padding
-                      renderRadius = 8;
-                      showShadow = true;
+                      // Sit above the mini-player bar (approx 64px) + padding
                       renderTop = stackHeight - kMinH - 8;
+                      renderRadius = 12;
+                      showShadow = true;
                     } else {
-                      // showVideo=false — keep 2×2 peek so JS stays alive
+                      // Miniplayer hidden — keep 2×2 peek at the bottom-right
                       renderW = kMinW;
                       renderH = kMinH;
                       renderTop = stackHeight - kPeek;
@@ -123,11 +123,12 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                         double finalTop = renderTop;
                         double finalLeft = renderLeft;
 
-                        if (isPlayerScreen && playerView == PlayerView.video && videoLayout.isReady) {
+                        // Precise alignment for the video slot in PlayerScreen
+                        if (isPlayerScreen && isVideoView && videoLayout.isVisible && videoLayout.isReady) {
                           final RenderBox? stackBox = _stackKey.currentContext?.findRenderObject() as RenderBox?;
                           if (stackBox != null) {
-                            // Use globalToLocal for precise alignment relative to THIS stack.
-                            // This handles status bars, safely consumed paddings, and any parent offsets.
+                            // globalToLocal is the gold standard for syncing separate widget trees.
+                            // It automatically handles SafeArea, TabBars, and parent offsets.
                             final localPos = stackBox.globalToLocal(videoLayout.position);
                             finalTop = localPos.dy;
                             finalLeft = localPos.dx;
@@ -135,34 +136,108 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                         }
 
                         return AnimatedPositioned(
-                          duration: const Duration(milliseconds: 80),
-                          curve: Curves.easeOutCubic,
+                          duration: const Duration(milliseconds: 120),
+                          curve: Curves.easeOutQuart,
                           top: finalTop,
                           left: finalLeft,
                           width: renderW,
                           height: renderH,
                           child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 80),
-                            curve: Curves.easeOutCubic,
+                            duration: const Duration(milliseconds: 120),
+                            curve: Curves.easeOutQuart,
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.surface,
                               borderRadius: BorderRadius.circular(renderRadius),
                               boxShadow: [
                                 if (showShadow)
-                                  const BoxShadow(
-                                    color: Colors.black54,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 4),
+                                  BoxShadow(
+                                    color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 6),
                                   ),
                               ],
                             ),
                             clipBehavior: Clip.antiAlias,
-                            child: RepaintBoundary(
-                              child: (playerService.isMobile)
-                                  ? mobile.YoutubePlayer(
-                                      controller: playerService.mobileController!,
-                                    )
-                                  : WebViewWidget(controller: playerService.desktopController!),
+                            child: Stack(
+                              children: [
+                                RepaintBoundary(
+                                  child: (playerService.isMobile)
+                                      ? mobile.YoutubePlayer(
+                                          controller: playerService.mobileController!,
+                                        )
+                                      : WebViewWidget(controller: playerService.desktopController!),
+                                ),
+                                if (playerState.loadError != null)
+                                  Positioned.fill(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(renderRadius),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                        child: Container(
+                                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.error_outline_rounded,
+                                                color: Theme.of(context).colorScheme.error,
+                                                size: renderH * 0.25,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                                child: Text(
+                                                  playerState.loadError!,
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Theme.of(context).colorScheme.onSurface,
+                                                    fontSize: renderH * 0.08 < 12 ? 12 : renderH * 0.08,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 16),
+                                              TactileTap(
+                                                onTap: () => ref.read(playerProvider.notifier).retryLoad(),
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                    borderRadius: BorderRadius.circular(20),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                                                        blurRadius: 10,
+                                                        offset: const Offset(0, 4),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      const Icon(Icons.refresh_rounded, color: Colors.white, size: 20),
+                                                      const SizedBox(width: 8),
+                                                      const Text(
+                                                        'Retry',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         );
@@ -193,6 +268,7 @@ class _BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final location = GoRouterState.of(context).matchedLocation;
     final currentIndex = switch (location) {
       String s when s.startsWith('/home') => 0,
@@ -203,20 +279,27 @@ class _BottomNavBar extends StatelessWidget {
 
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           padding: EdgeInsets.only(
-            top: 8,
-            bottom: MediaQuery.paddingOf(context).bottom + 4,
+            top: 10,
+            bottom: MediaQuery.paddingOf(context).bottom + 6,
           ),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.85),
+            color: colorScheme.surface.withValues(alpha: 0.85),
             border: Border(
               top: BorderSide(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: colorScheme.onSurface.withValues(alpha: 0.1),
                 width: 0.5,
               ),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.scrim.withValues(alpha: 0.2),
+                blurRadius: 20,
+                offset: const Offset(0, -5),
+              ),
+            ],
           ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -267,7 +350,8 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected ? Colors.white : Colors.white.withValues(alpha: 0.5);
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = isSelected ? colorScheme.onSurface : colorScheme.onSurface.withValues(alpha: 0.5);
     
     return TactileTap(
       onTap: onTap,
@@ -308,6 +392,7 @@ class _MiniPlayerBar extends ConsumerWidget {
     final playerState = ref.watch(playerProvider);
     final track = playerState.currentTrack;
     final showVideo = ref.watch(settingsProvider.select((s) => s.showVideo));
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (track == null) return const SizedBox.shrink();
 
@@ -328,10 +413,10 @@ class _MiniPlayerBar extends ConsumerWidget {
               height: 64,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
+                color: colorScheme.onSurface.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.06),
+                  color: colorScheme.onSurface.withValues(alpha: 0.06),
                   width: 0.5,
                 ),
               ),
@@ -346,17 +431,17 @@ class _MiniPlayerBar extends ConsumerWidget {
                       height: 1.5,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: colorScheme.onSurface.withValues(alpha: 0.1),
                       ),
                       child: FractionallySizedBox(
                         alignment: Alignment.centerLeft,
                         widthFactor: progress.clamp(0.0, 1.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: colorScheme.primary,
                             boxShadow: [
                               BoxShadow(
-                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                                color: colorScheme.primary.withValues(alpha: 0.3),
                                 blurRadius: 4,
                                 spreadRadius: 1,
                               ),
@@ -411,7 +496,7 @@ class _MiniPlayerBar extends ConsumerWidget {
                             Text(
                               track.artistName,
                               style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
+                                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                                   fontSize: 11),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -440,7 +525,7 @@ class _MiniPlayerBar extends ConsumerWidget {
                         icon: showVideo ? Icons.videocam : Icons.videocam_off,
                         onTap: () => ref.read(settingsProvider.notifier).toggleVideo(),
                         size: 18,
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                       ),
                     ],
                   ),

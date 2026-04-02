@@ -60,9 +60,10 @@ class RadioDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tracksAsync = ref.watch(radioTracksProvider((type: seedType, id: seedId)));
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surface,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -70,7 +71,7 @@ class RadioDetailsScreen extends ConsumerWidget {
             expandedHeight: 400,
             pinned: true,
             stretch: true,
-            backgroundColor: Colors.black.withValues(alpha: 0.1),
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
             elevation: 0,
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -110,15 +111,15 @@ class RadioDetailsScreen extends ConsumerWidget {
                               width: double.infinity,
                               height: kToolbarHeight + topPadding,
                               padding: EdgeInsets.only(top: topPadding),
-                              color: Colors.black.withValues(alpha: 0.6),
+                              color: colorScheme.surface.withValues(alpha: 0.6),
                               alignment: Alignment.center,
                               child: Text(
                                 title,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.w900,
                                   fontSize: 17,
                                   letterSpacing: -0.5,
-                                  color: Colors.white,
+                                  color: colorScheme.onSurface,
                                 ),
                               ).animate().fadeIn(duration: 200.ms),
                             ),
@@ -131,10 +132,10 @@ class RadioDetailsScreen extends ConsumerWidget {
                       CachedNetworkImage(
                         imageUrl: imageUrl,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(color: const Color(0xFF121212)),
+                        placeholder: (context, url) => Container(color: colorScheme.surfaceContainer),
                         errorWidget: (context, url, error) => Container(
-                          color: const Color(0xFF1E1E1E),
-                          child: const Icon(Icons.radio, size: 80, color: Colors.white10),
+                          color: colorScheme.surfaceContainerHigh,
+                          child: Icon(Icons.radio, size: 80, color: colorScheme.onSurface.withValues(alpha: 0.1)),
                         ),
                       ),
                       
@@ -173,10 +174,10 @@ class RadioDetailsScreen extends ConsumerWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.black.withValues(alpha: 0.2),
+                              colorScheme.surface.withValues(alpha: 0.2),
                               Colors.transparent,
-                              Colors.black.withValues(alpha: 0.4),
-                              Colors.black.withValues(alpha: 0.9),
+                              colorScheme.surface.withValues(alpha: 0.4),
+                              colorScheme.surface.withValues(alpha: 0.9),
                             ],
                             stops: const [0.0, 0.4, 0.7, 1.0],
                           ),
@@ -210,10 +211,10 @@ class RadioDetailsScreen extends ConsumerWidget {
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                                         decoration: BoxDecoration(
-                                          color: Colors.black.withValues(alpha: 0.3),
+                                          color: colorScheme.surface.withValues(alpha: 0.3),
                                           borderRadius: BorderRadius.circular(24),
                                           border: Border.all(
-                                            color: Colors.white.withValues(alpha: 0.15),
+                                            color: colorScheme.onSurface.withValues(alpha: 0.15),
                                             width: 0.5,
                                           ),
                                         ),
@@ -223,7 +224,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                                             Text(
                                               'RADIO',
                                               style: TextStyle(
-                                                color: Colors.white.withValues(alpha: 0.5),
+                                                color: colorScheme.onSurface.withValues(alpha: 0.5),
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: 4.0,
@@ -235,17 +236,17 @@ class RadioDetailsScreen extends ConsumerWidget {
                                               textAlign: TextAlign.center,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                color: Colors.white,
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface,
                                                 fontSize: 48,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: -2.5,
                                                 height: 1.0,
                                                 shadows: [
                                                   Shadow(
-                                                    color: Colors.black45,
+                                                    color: colorScheme.shadow.withValues(alpha: 0.45),
                                                     blurRadius: 30,
-                                                    offset: Offset(0, 15),
+                                                    offset: const Offset(0, 15),
                                                   ),
                                                 ],
                                               ),
@@ -310,7 +311,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                       Text(
                         'Based on your taste',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: colorScheme.onSurface.withValues(alpha: 0.3),
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.5,
@@ -322,7 +323,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                   Text(
                     subtitle ?? 'A curated mix featuring $title and other artists you like.',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.65),
+                      color: colorScheme.onSurface.withValues(alpha: 0.65),
                       fontSize: 15,
                       height: 1.5,
                       fontWeight: FontWeight.w400,
@@ -340,7 +341,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                           TactileIconButton(
                             icon: Icons.favorite_border_rounded,
                             size: 28,
-                            color: Colors.white70,
+                            color: colorScheme.onSurfaceVariant,
                             padding: const EdgeInsets.all(12),
                             onTap: () {},
                           ),
@@ -348,7 +349,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                           TactileIconButton(
                             icon: Icons.download_for_offline_outlined,
                             size: 28,
-                            color: Colors.white70,
+                            color: colorScheme.onSurfaceVariant,
                             padding: const EdgeInsets.all(12),
                             onTap: () {},
                           ),
@@ -356,7 +357,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                           TactileIconButton(
                             icon: Icons.shuffle_rounded,
                             size: 28,
-                            color: Colors.white70,
+                            color: colorScheme.onSurfaceVariant,
                             padding: const EdgeInsets.all(12),
                             onTap: () => ref.read(playerProvider.notifier).toggleShuffle(),
                           ),
@@ -386,12 +387,12 @@ class RadioDetailsScreen extends ConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.music_off_rounded, size: 64, color: Colors.white10),
+                        Icon(Icons.music_off_rounded, size: 64, color: colorScheme.onSurface.withValues(alpha: 0.1)),
                         const SizedBox(height: 16),
                         Text(
                           'No tracks found for this radio.',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: colorScheme.onSurface.withValues(alpha: 0.5),
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -400,7 +401,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                         Text(
                           'Try another station or check your connection.',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.3),
+                            color: colorScheme.onSurface.withValues(alpha: 0.3),
                             fontSize: 14,
                           ),
                         ),
@@ -423,7 +424,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                                 child: Text(
                                   (index + 1).toString().padLeft(2, '0'),
                                   style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.2),
+                                    color: colorScheme.onSurface.withValues(alpha: 0.2),
                                     fontSize: 13,
                                     fontFamily: 'monospace',
                                     fontWeight: FontWeight.w900,
@@ -454,12 +455,12 @@ class RadioDetailsScreen extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.white24),
+                      Icon(Icons.error_outline, size: 48, color: colorScheme.onSurface.withValues(alpha: 0.24)),
                       const SizedBox(height: 16),
                       Text(
                         'Error loading radio results.\nCheck your connection and try again.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white54),
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -480,9 +481,9 @@ class RadioDetailsScreen extends ConsumerWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+            border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1), width: 0.5),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -505,10 +506,10 @@ class RadioDetailsScreen extends ConsumerWidget {
               const SizedBox(width: 12),
               Text(
                 title.toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: 2.5,
                 ),
               ),
@@ -529,58 +530,61 @@ class _RadioShimmerSliver extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, index) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(2),
+          (context, index) {
+            final colorScheme = Theme.of(context).colorScheme;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: colorScheme.onSurface.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(4),
+                  const SizedBox(width: 12),
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: colorScheme.onSurface.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(2),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: colorScheme.onSurface.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: 150,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(2),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: 150,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: colorScheme.onSurface.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ).animate(onPlay: (c) => c.repeat()).shimmer(
-            duration: 1200.ms,
-            color: Colors.white.withValues(alpha: 0.05),
-          ),
+                ],
+              ),
+            ).animate(onPlay: (c) => c.repeat()).shimmer(
+              duration: 1200.ms,
+              color: colorScheme.onSurface.withValues(alpha: 0.05),
+            );
+          },
           childCount: 15,
         ),
       ),

@@ -96,23 +96,27 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
       );
     }
 
     if (_playlist == null) {
-      return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: Text('Playlist not found')),
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: Center(
+            child: Text(
+          'Playlist not found',
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        )),
       );
     }
 
     final modelTracks = _filteredTracks.map(model.Track.fromDb).toList();
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -125,7 +129,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             leading: TactileIconButton(
               icon: Icons.arrow_back_ios_new_rounded,
               onTap: () => context.pop(),
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onSurface,
               size: 20,
             ),
             actions: [
@@ -139,12 +143,12 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                     }
                   });
                 },
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               TactileIconButton(
                 icon: Icons.more_vert_rounded,
                 onTap: () {},
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               const SizedBox(width: 8),
             ],
@@ -170,11 +174,11 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             _playlist!.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w900,
                               fontSize: 18,
                               letterSpacing: -0.5,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ).animate().fadeIn(duration: 200.ms),
                         ),
@@ -194,9 +198,9 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          const Color(0xFF509BF5).withValues(alpha: 0.8),
-                          const Color(0xFF509BF5).withValues(alpha: 0.4),
-                          Colors.black,
+                          Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                          Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.4),
+                          Theme.of(context).colorScheme.surface,
                         ],
                         stops: const [0.0, 0.4, 1.0],
                       ),
@@ -208,12 +212,12 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                     child: Opacity(
                       opacity: 0.6,
                       child: Container(
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           gradient: RadialGradient(
-                            center: Alignment(-0.8, -0.6),
+                            center: const Alignment(-0.8, -0.6),
                             radius: 1.5,
                             colors: [
-                              Color(0xFF509BF5),
+                              Theme.of(context).colorScheme.primary,
                               Colors.transparent,
                             ],
                           ),
@@ -239,10 +243,10 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withValues(alpha: 0.2),
+                          Theme.of(context).colorScheme.surface.withValues(alpha: 0.2),
                           Colors.transparent,
-                          Colors.black.withValues(alpha: 0.5),
-                          Colors.black,
+                          Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+                          Theme.of(context).colorScheme.surface,
                         ],
                         stops: const [0.0, 0.4, 0.7, 1.0],
                       ),
@@ -264,14 +268,14 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                             height: 180,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              boxShadow: const [
+                              boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black54,
+                                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.5),
                                   blurRadius: 30,
-                                  offset: Offset(0, 10),
+                                  offset: const Offset(0, 10),
                                 ),
                                 BoxShadow(
-                                  color: Color(0x44509BF5),
+                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                                   blurRadius: 40,
                                   spreadRadius: -5,
                                 ),
@@ -291,10 +295,10 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                           ),
                         ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9)),
                         const SizedBox(height: 24),
-                        const Text(
+                        Text(
                           'PLAYLIST',
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -304,8 +308,8 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                         Text(
                           _playlist!.name,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 48,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -2,
@@ -326,14 +330,14 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                 child: TextField(
                   controller: _searchController,
                   autofocus: true,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   decoration: InputDecoration(
                     hintText: 'Search in playlist',
-                    hintStyle: const TextStyle(color: Colors.white38),
+                    hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                     prefixIcon:
-                        const Icon(Icons.search_rounded, color: Colors.white38),
+                        Icon(Icons.search_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     filled: true,
-                    fillColor: Colors.white.withValues(alpha: 0.1),
+                    fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -350,11 +354,11 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.playlist_add,
-                        color: Colors.white24, size: 80),
+                    Icon(Icons.playlist_add,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4), size: 80),
                     const SizedBox(height: 16),
-                    const Text('No tracks in this playlist yet.',
-                        style: TextStyle(color: Colors.white54)),
+                    Text('No tracks in this playlist yet.',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     const SizedBox(height: 24),
                     TactileTap(
                       onTap: () => context.go('/search'),
@@ -362,13 +366,13 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1DB954),
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Find Songs',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -388,35 +392,35 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                     Text(
                       'Playlist • ${_allTracks.length} songs',
                       style:
-                          const TextStyle(color: Colors.white54, fontSize: 13),
+                          TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
                     ),
                     const SizedBox(height: 16),
                     Row(
                       children: [
                         TactileIconButton(
                           icon: Icons.favorite_border_rounded,
-                          color: Colors.white54,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 28,
                           onTap: () {},
                         ),
                         const SizedBox(width: 8),
                         TactileIconButton(
                           icon: Icons.download_for_offline_outlined,
-                          color: Colors.white54,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 28,
                           onTap: () {},
                         ),
                         const SizedBox(width: 8),
                         TactileIconButton(
                           icon: Icons.more_vert_rounded,
-                          color: Colors.white54,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 28,
                           onTap: () {},
                         ),
                         const Spacer(),
                         TactileIconButton(
                           icon: Icons.shuffle_rounded,
-                          color: Colors.white54,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 32,
                           onTap: () {
                             final shuffled =
@@ -463,7 +467,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                           child: Text(
                             '${index + 1}',
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.3),
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),

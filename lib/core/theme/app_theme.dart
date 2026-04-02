@@ -57,8 +57,14 @@ class AppTheme {
   ];
 
   static const _bgColor = Color(0xFF0A0A0A);
-  static const _surfaceColor = Color(0xFF1A1A1A);
-  static const _surface2Color = Color(0xFF242424);
+  static const _surfaceColor = Color(0xFF121212);
+  static const _surfaceHoverColor = Color(0xFF1A1A1A);
+  static const _surfaceFocusedColor = Color(0xFF242424);
+  static const _surfaceVariantColor = Color(0xFF2C2C2C);
+  static const _onSurfaceColor = Color(0xFFFFFFFF);
+  static const _onSurfaceVariantColor = Color(0xFFB3B3B3);
+  static const _outlineColor = Color(0xFF6A6A6A);
+  static const _surface3Color = Color(0xFF3A3A3A);
 
   static ThemeData dark({Color primaryColor = crimsonRed}) {
     final base = ThemeData.dark(useMaterial3: true);
@@ -68,7 +74,14 @@ class AppTheme {
       seedColor: primaryColor,
       brightness: Brightness.dark,
       primary: primaryColor,
-      surface: _surfaceColor,
+      surface: _bgColor,
+      surfaceContainer: _surfaceColor,
+      surfaceContainerHigh: _surfaceHoverColor,
+      surfaceContainerHighest: _surfaceFocusedColor,
+      surfaceVariant: _surfaceVariantColor,
+      outline: _outlineColor,
+      onSurface: _onSurfaceColor,
+      onSurfaceVariant: _onSurfaceVariantColor,
     );
 
     return base.copyWith(
@@ -77,14 +90,14 @@ class AppTheme {
       textTheme: _buildTextTheme(base.textTheme),
       appBarTheme: const AppBarTheme(
         backgroundColor: _bgColor,
-        foregroundColor: Colors.white,
+        foregroundColor: _onSurfaceColor,
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Color(0xFF121212),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Color(0xFFB3B3B3),
+        backgroundColor: _surfaceColor,
+        selectedItemColor: _onSurfaceColor,
+        unselectedItemColor: _onSurfaceVariantColor,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
       ),
@@ -94,28 +107,28 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: _surfaceColor,
         indicatorColor: primaryColor.withValues(alpha: 0.1),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold);
+            return const TextStyle(color: _onSurfaceColor, fontSize: 12, fontWeight: FontWeight.bold);
           }
-          return const TextStyle(color: Color(0xFFB3B3B3), fontSize: 12);
+          return const TextStyle(color: _onSurfaceVariantColor, fontSize: 12);
         }),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: _surface2Color,
+        fillColor: _surfaceHoverColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
         ),
-        hintStyle: const TextStyle(color: Color(0xFF6A6A6A)),
+        hintStyle: const TextStyle(color: _outlineColor),
       ),
       sliderTheme: SliderThemeData(
         activeTrackColor: primaryColor,
-        thumbColor: Colors.white,
-        inactiveTrackColor: const Color(0xFF3A3A3A),
+        thumbColor: _onSurfaceColor,
+        inactiveTrackColor: _surface3Color,
         trackHeight: 3,
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
@@ -127,22 +140,22 @@ class AppTheme {
     return base.copyWith(
       displayLarge: base.displayLarge?.copyWith(
         fontWeight: FontWeight.w700,
-        color: Colors.white,
+        color: _onSurfaceColor,
       ),
       titleLarge: base.titleLarge?.copyWith(
         fontWeight: FontWeight.w700,
         fontSize: 18,
-        color: Colors.white,
+        color: _onSurfaceColor,
       ),
       titleMedium: base.titleMedium?.copyWith(
         fontWeight: FontWeight.w600,
-        color: Colors.white,
+        color: _onSurfaceColor,
       ),
       bodyMedium: base.bodyMedium?.copyWith(
-        color: const Color(0xFFB3B3B3),
+        color: _onSurfaceVariantColor,
       ),
       labelSmall: base.labelSmall?.copyWith(
-        color: const Color(0xFF6A6A6A),
+        color: _outlineColor,
         letterSpacing: 0.5,
       ),
     );

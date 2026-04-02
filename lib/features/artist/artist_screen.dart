@@ -59,6 +59,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final artistAsync = ref.watch(_artistProvider(widget.artistId));
     final tracksAsync = ref.watch(_artistTopTracksProvider(widget.artistId));
     final albumsAsync = ref.watch(_artistAlbumsProvider(widget.artistId));
@@ -66,10 +67,10 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
     final playlistsAsync = ref.watch(_artistPlaylistsProvider(artistAsync.asData?.value['name'] ?? ''));
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surface,
       body: artistAsync.when(
         loading: () => const ArtistDetailsShimmer(),
-        error: (e, _) => Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white54))),
+        error: (e, _) => Center(child: Text('Error: $e', style: TextStyle(color: colorScheme.onSurfaceVariant))),
         data: (artist) {
           final images = (artist['images'] as List?) ?? [];
           final headerImage =
@@ -84,7 +85,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                 pinned: true,
                 stretch: true,
                 elevation: 0,
-                backgroundColor: Colors.black.withValues(alpha: 0.1),
+                backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
                 leading: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TactileIconButton(
@@ -134,15 +135,15 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   width: double.infinity,
                                   height: kToolbarHeight + topPadding,
                                   padding: EdgeInsets.only(top: topPadding),
-                                  color: Colors.black.withValues(alpha: 0.6),
+                                  color: colorScheme.surface.withValues(alpha: 0.6),
                                   alignment: Alignment.center,
                                   child: Text(
                                     artistName,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.w900,
                                       fontSize: 17,
                                       letterSpacing: -0.5,
-                                      color: Colors.white,
+                                      color: colorScheme.onSurface,
                                     ),
                                   ).animate().fadeIn(duration: 200.ms),
                                 ),
@@ -156,14 +157,14 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             CachedNetworkImage(
                               imageUrl: headerImage,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(color: const Color(0xFF121212)),
+                              placeholder: (context, url) => Container(color: colorScheme.surfaceContainerHighest),
                               errorWidget: (context, url, error) => Container(
-                                color: const Color(0xFF1E1E1E),
-                                child: const Icon(Icons.person, size: 80, color: Colors.white10),
+                                color: colorScheme.surfaceContainerHighest,
+                                child: Icon(Icons.person, size: 80, color: colorScheme.onSurface.withValues(alpha: 0.1)),
                               ),
                             )
                           else
-                            Container(color: const Color(0xFF121212)),
+                            Container(color: colorScheme.surfaceContainerHighest),
 
                           DecoratedBox(
                             decoration: BoxDecoration(
@@ -171,10 +172,10 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Colors.black.withValues(alpha: 0.1),
+                                  colorScheme.surface.withValues(alpha: 0.1),
                                   Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.3),
-                                  Colors.black.withValues(alpha: 0.8),
+                                  colorScheme.surface.withValues(alpha: 0.3),
+                                  colorScheme.surface.withValues(alpha: 0.8),
                                 ],
                                 stops: const [0.0, 0.4, 0.7, 1.0],
                               ),
@@ -208,10 +209,10 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                                         decoration: BoxDecoration(
-                                          color: Colors.black.withValues(alpha: 0.3),
+                                          color: colorScheme.surface.withValues(alpha: 0.3),
                                           borderRadius: BorderRadius.circular(24),
                                           border: Border.all(
-                                            color: Colors.white.withValues(alpha: 0.15),
+                                            color: colorScheme.onSurface.withValues(alpha: 0.15),
                                             width: 0.5,
                                           ),
                                         ),
@@ -221,7 +222,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                             Text(
                                               'ARTIST',
                                               style: TextStyle(
-                                                color: Colors.white.withValues(alpha: 0.5),
+                                                color: colorScheme.onSurface.withValues(alpha: 0.5),
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: 4.0,
@@ -233,17 +234,17 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                               textAlign: TextAlign.center,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                color: Colors.white,
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface,
                                                 fontSize: 48,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: -2.5,
                                                 height: 1.0,
                                                 shadows: [
                                                   Shadow(
-                                                    color: Colors.black45,
+                                                    color: colorScheme.surface.withValues(alpha: 0.45),
                                                     blurRadius: 30,
-                                                    offset: Offset(0, 15),
+                                                    offset: const Offset(0, 15),
                                                   ),
                                                 ],
                                               ),
@@ -273,7 +274,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                         Text(
                           '${(artist['followers']?['total'] ?? 0).toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} FOLLOWERS',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.4), 
+                            color: colorScheme.onSurface.withValues(alpha: 0.4), 
                             fontSize: 10,
                             letterSpacing: 2.0,
                             fontWeight: FontWeight.w900,
@@ -306,12 +307,12 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                           decoration: BoxDecoration(
                                             color: isFollowed 
-                                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
-                                                : Colors.white.withValues(alpha: 0.05),
+                                                ? colorScheme.primary.withValues(alpha: 0.2)
+                                                : colorScheme.onSurface.withValues(alpha: 0.05),
                                             border: Border.all(
                                               color: isFollowed 
-                                                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.4)
-                                                  : Colors.white.withValues(alpha: 0.1), 
+                                                  ? colorScheme.primary.withValues(alpha: 0.4)
+                                                  : colorScheme.onSurface.withValues(alpha: 0.1), 
                                               width: 1.0
                                             ),
                                             borderRadius: BorderRadius.circular(30),
@@ -319,7 +320,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                           child: Text(
                                             isFollowed ? 'FOLLOWING' : 'FOLLOW', 
                                             style: TextStyle(
-                                              color: isFollowed ? Theme.of(context).colorScheme.primary : Colors.white, 
+                                              color: isFollowed ? colorScheme.primary : colorScheme.onSurface, 
                                               fontWeight: FontWeight.w900,
                                               fontSize: 11,
                                               letterSpacing: 1.5,
@@ -341,8 +342,8 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                         context.push(
                                           '/radio/artist/${widget.artistId}?title=$artistName Radio&imageUrl=$artistImageUrl',
                                           extra: {
-                                            'color1': Theme.of(context).colorScheme.primary,
-                                            'color2': Colors.black,
+                                            'color1': colorScheme.primary,
+                                            'color2': colorScheme.surface,
                                           },
                                         );
                                       }
@@ -418,19 +419,19 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.05),
+                                    color: colorScheme.onSurface.withValues(alpha: 0.05),
                                     borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+                                    border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1), width: 0.5),
                                   ),
                                   child: TextField(
                                     controller: _searchController,
-                                    style: const TextStyle(color: Colors.white, fontSize: 15),
-                                    cursorColor: Theme.of(context).colorScheme.primary,
+                                    style: TextStyle(color: colorScheme.onSurface, fontSize: 15),
+                                    cursorColor: colorScheme.primary,
                                     decoration: InputDecoration(
                                       hintText: 'Search popular songs...',
-                                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                                      hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.3)),
                                       border: InputBorder.none,
-                                      icon: const Icon(Icons.search_rounded, color: Colors.white30, size: 22),
+                                      icon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withValues(alpha: 0.3), size: 22),
                                     ),
                                     onChanged: (value) {
                                       setState(() {
@@ -448,11 +449,11 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             child: Center(
                               child: Column(
                                 children: [
-                                  Icon(Icons.search_off_rounded, size: 48, color: Colors.white.withValues(alpha: 0.1)),
+                                  Icon(Icons.search_off_rounded, size: 48, color: colorScheme.onSurface.withValues(alpha: 0.1)),
                                   const SizedBox(height: 16),
                                   Text(
                                     'No tracks found for "$_searchQuery"',
-                                    style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
+                                    style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.3), fontSize: 14),
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
@@ -472,15 +473,15 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                       child: Container(
                                         margin: const EdgeInsets.only(bottom: 8),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.03),
+                                          color: colorScheme.onSurface.withValues(alpha: 0.03),
                                           borderRadius: BorderRadius.circular(16),
-                                          border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
+                                          border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.05), width: 0.5),
                                           gradient: LinearGradient(
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: [
-                                              Colors.white.withValues(alpha: 0.05),
-                                              Colors.white.withValues(alpha: 0.01),
+                                              colorScheme.onSurface.withValues(alpha: 0.05),
+                                              colorScheme.onSurface.withValues(alpha: 0.01),
                                             ],
                                           ),
                                         ),
@@ -493,7 +494,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                                 child: Text(
                                                   '${i + 1}',
                                                   style: TextStyle(
-                                                    color: Colors.white.withValues(alpha: 0.2),
+                                                    color: colorScheme.onSurface.withValues(alpha: 0.2),
                                                     fontSize: 12,
                                                     fontFamily: 'monospace',
                                                     fontWeight: FontWeight.w900,
@@ -552,7 +553,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                     borderRadius: BorderRadius.circular(16),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.3),
+                                        color: colorScheme.shadow.withValues(alpha: 0.3),
                                         blurRadius: 20,
                                         offset: const Offset(0, 10),
                                       ),
@@ -565,7 +566,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                       height: 160,
                                       width: 160,
                                       fit: BoxFit.cover,
-                                      placeholder: (_, _) => Container(color: const Color(0xFF1A1A1A)),
+                                      placeholder: (_, _) => Container(color: colorScheme.surfaceContainerHighest),
                                     ),
                                   ),
                                 ),
@@ -574,9 +575,9 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   album['name'] as String,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.white,
+                                    color: colorScheme.onSurface,
                                     fontSize: 14,
                                     letterSpacing: -0.2,
                                   ),
@@ -586,7 +587,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   album['release_date']?.toString().substring(0, 4) ?? '',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.white.withValues(alpha: 0.3),
+                                    color: colorScheme.onSurface.withValues(alpha: 0.3),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -631,7 +632,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.5),
+                                        color: colorScheme.shadow.withValues(alpha: 0.5),
                                         blurRadius: 30,
                                         spreadRadius: -10,
                                         offset: const Offset(0, 15),
@@ -643,8 +644,8 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                       imageUrl: rImgUrl,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) => Container(
-                                        color: Colors.white.withValues(alpha: 0.05),
-                                        child: const Icon(Icons.person, color: Colors.white10),
+                                        color: colorScheme.onSurface.withValues(alpha: 0.05),
+                                        child: Icon(Icons.person, color: colorScheme.onSurface.withValues(alpha: 0.1)),
                                       ),
                                     ),
                                   ),
@@ -655,8 +656,8 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: colorScheme.onSurface,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 13,
                                     letterSpacing: -0.2,
@@ -706,7 +707,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.4),
+                                        color: colorScheme.shadow.withValues(alpha: 0.4),
                                         blurRadius: 25,
                                         spreadRadius: -5,
                                         offset: const Offset(0, 15),
@@ -732,10 +733,10 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                           child: Container(
                                             padding: const EdgeInsets.all(6),
                                             decoration: BoxDecoration(
-                                              color: Colors.black.withValues(alpha: 0.6),
+                                              color: colorScheme.surface.withValues(alpha: 0.6),
                                               shape: BoxShape.circle,
                                             ),
-                                            child: const Icon(Icons.playlist_play_rounded, color: Colors.white, size: 14),
+                                            child: Icon(Icons.playlist_play_rounded, color: colorScheme.onSurface, size: 14),
                                           ),
                                         ),
                                       ],
@@ -747,8 +748,8 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   playlist['name'] as String,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: colorScheme.onSurface,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 14,
                                     letterSpacing: -0.2,
@@ -759,7 +760,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   'Spotify Playlist • ${playlist['tracks']?['total'] ?? 0} tracks',
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: Colors.white.withValues(alpha: 0.3),
+                                    color: colorScheme.onSurface.withValues(alpha: 0.4),
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.2,
                                   ),

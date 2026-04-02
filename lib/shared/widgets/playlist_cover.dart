@@ -19,11 +19,11 @@ class PlaylistCover extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -31,18 +31,18 @@ class PlaylistCover extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: _buildCoverContent(),
+        child: _buildCoverContent(context),
       ),
     );
   }
 
-  Widget _buildCoverContent() {
+  Widget _buildCoverContent(BuildContext context) {
     if (images.isEmpty) {
       return Center(
         child: Icon(
           Icons.music_note,
           size: size * 0.4,
-          color: Colors.white24,
+          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
         ),
       );
     }
@@ -83,8 +83,8 @@ class _Image extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: url,
       fit: BoxFit.cover,
-      placeholder: (context, url) => Container(color: Colors.grey[900]),
-      errorWidget: (context, url, e) => Container(color: Colors.grey[900]),
+      placeholder: (context, url) => Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
+      errorWidget: (context, url, e) => Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
     );
   }
 }

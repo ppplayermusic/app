@@ -9,24 +9,26 @@ Future<T?> showPremiumModal<T>({
   required String title,
   required Widget child,
 }) {
+  final theme = Theme.of(context);
   return showGeneralDialog<T>(
     context: context,
     barrierDismissible: true,
     barrierLabel: '',
-    barrierColor: Colors.black87,
-    transitionDuration: const Duration(milliseconds: 300),
+    barrierColor: theme.colorScheme.scrim.withValues(alpha: 0.6), // Standardized M3 barrier
+    transitionDuration: const Duration(milliseconds: 250),
+    useRootNavigator: true, // Crucial for apps with ShellRoute (GoRouter)
     pageBuilder: (context, anim1, anim2) => Center(
       child: Material(
         color: Colors.transparent,
         child: Container(
           margin: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: const Color(0xFF161616).withValues(alpha: 0.8),
+            color: theme.colorScheme.surface.withValues(alpha: 0.85), // Adaptive Background
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.15)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: theme.colorScheme.scrim.withValues(alpha: 0.5),
                 blurRadius: 40,
                 offset: const Offset(0, 20),
               ),
@@ -38,23 +40,27 @@ Future<T?> showPremiumModal<T>({
               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -1.0,
+                child: Builder( 
+                  // Provides a dedicated context for the dialog's content.
+                  // Use Navigator.of(dialogContext, rootNavigator: true).pop()
+                  builder: (dialogContext) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -1.0,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    child,
-                  ],
+                      const SizedBox(height: 32),
+                      child,
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -70,3 +76,4 @@ Future<T?> showPremiumModal<T>({
     },
   );
 }
+

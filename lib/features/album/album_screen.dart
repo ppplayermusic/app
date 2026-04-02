@@ -40,11 +40,12 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
     final albumAsync = ref.watch(_albumProvider(widget.albumId));
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: albumAsync.when(
         loading: () => const AlbumDetailsShimmer(),
-        error: (e, _) => Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white54))),
+        error: (e, _) => Center(child: Text('Error: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54)))),
         data: (album) {
+          final colorScheme = Theme.of(context).colorScheme;
           final images = (album['images'] as List?) ?? [];
           final imageUrl =
               images.isNotEmpty ? images[0]['url'] as String : null;
@@ -78,7 +79,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                 expandedHeight: _isSearching ? kToolbarHeight + MediaQuery.of(context).padding.top : 420,
                 pinned: true,
                 stretch: true,
-                backgroundColor: Colors.black.withValues(alpha: 0.1),
+                backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
                 elevation: 0,
                 leading: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -107,10 +108,10 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                           child: Container(
                             height: 42,
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.05),
+                              color: colorScheme.onSurface.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.1),
+                                color: colorScheme.onSurface.withValues(alpha: 0.1),
                                 width: 0.5,
                               ),
                             ),
@@ -119,15 +120,15 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                               autofocus: true,
                               decoration: InputDecoration(
                                 hintText: 'Search in album...',
-                                prefixIcon: Icon(Icons.search_rounded, color: Colors.white.withValues(alpha: 0.3), size: 20),
+                                prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withValues(alpha: 0.3), size: 20),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
                                 hintStyle: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.3),
+                                  color: colorScheme.onSurface.withValues(alpha: 0.3),
                                   fontSize: 14,
                                 ),
                               ),
-                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                              style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
                               onChanged: (value) {
                                 setState(() {
                                   _searchQuery = value.toLowerCase();
@@ -185,15 +186,15 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                   width: double.infinity,
                                   height: kToolbarHeight + topPadding,
                                   padding: EdgeInsets.only(top: topPadding),
-                                  color: Colors.black.withValues(alpha: 0.6),
+                                  color: colorScheme.surface.withValues(alpha: 0.6),
                                   alignment: Alignment.center,
                                   child: Text(
                                     albumName,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.w900,
                                       fontSize: 17,
                                       letterSpacing: -0.5,
-                                      color: Colors.white,
+                                      color: colorScheme.onSurface,
                                     ),
                                   ).animate().fadeIn(duration: 200.ms),
                                 ),
@@ -209,10 +210,10 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                               fit: BoxFit.cover,
                               width: double.infinity,
                               placeholder: (context, url) =>
-                                  Container(color: const Color(0xFF121212)),
+                                  Container(color: colorScheme.surfaceContainerHighest),
                             )
                           else
-                            Container(color: const Color(0xFF121212)),
+                            Container(color: colorScheme.surfaceContainer),
                           
                           // Cinematic Ambient Overlays
                           Positioned.fill(
@@ -224,7 +225,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                     center: const Alignment(-0.8, -0.6),
                                     radius: 1.5,
                                     colors: [
-                                      Theme.of(context).colorScheme.primary,
+                                      colorScheme.primary,
                                       Colors.transparent,
                                     ],
                                   ),
@@ -250,10 +251,10 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    Colors.black.withValues(alpha: 0.1),
+                                    colorScheme.surface.withValues(alpha: 0.1),
                                     Colors.transparent,
-                                    Colors.black.withValues(alpha: 0.4),
-                                    Colors.black.withValues(alpha: 0.9),
+                                    colorScheme.surface.withValues(alpha: 0.4),
+                                    colorScheme.surface.withValues(alpha: 0.9),
                                   ],
                                   stops: const [0.0, 0.4, 0.7, 1.0],
                                 ),
@@ -276,7 +277,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                     borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                                        color: colorScheme.primary.withValues(alpha: 0.15),
                                         blurRadius: 40,
                                         spreadRadius: 0,
                                       ),
@@ -289,10 +290,10 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                                         decoration: BoxDecoration(
-                                          color: Colors.black.withValues(alpha: 0.3),
+                                          color: colorScheme.surface.withValues(alpha: 0.3),
                                           borderRadius: BorderRadius.circular(24),
                                           border: Border.all(
-                                            color: Colors.white.withValues(alpha: 0.15),
+                                            color: colorScheme.onSurface.withValues(alpha: 0.15),
                                             width: 0.5,
                                           ),
                                         ),
@@ -302,7 +303,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                             Text(
                                               'ALBUM',
                                               style: TextStyle(
-                                                color: Colors.white.withValues(alpha: 0.5),
+                                                color: colorScheme.onSurface.withValues(alpha: 0.5),
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: 4.0,
@@ -314,15 +315,15 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                               textAlign: TextAlign.center,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                color: Colors.white,
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface,
                                                 fontSize: 48,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: -2.5,
                                                 height: 1.0,
                                                 shadows: [
                                                   Shadow(
-                                                    color: Colors.black45,
+                                                    color: colorScheme.shadow.withValues(alpha: 0.45),
                                                     blurRadius: 30,
                                                     offset: Offset(0, 15),
                                                   ),
@@ -360,29 +361,29 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.03),
+                            color: colorScheme.onSurface.withValues(alpha: 0.03),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                            border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.05)),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const CircleAvatar(
+                              CircleAvatar(
                                 radius: 10,
-                                backgroundColor: Colors.white10,
-                                child: Icon(Icons.person, size: 12, color: Colors.white70),
+                                backgroundColor: colorScheme.onSurface.withValues(alpha: 0.1),
+                                child: Icon(Icons.person, size: 12, color: colorScheme.onSurface.withValues(alpha: 0.7)),
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 artistName,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                                  color: colorScheme.onSurface,
                                   fontSize: 13,
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              Icon(Icons.arrow_forward_ios_rounded, size: 10, color: Colors.white.withValues(alpha: 0.3)),
+                              Icon(Icons.arrow_forward_ios_rounded, size: 10, color: colorScheme.onSurface.withValues(alpha: 0.3)),
                             ],
                           ),
                         ),
@@ -393,7 +394,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                         child: Text(
                           'Album • ${album['release_date']?.toString().substring(0, 4) ?? ''}',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.4),
+                            color: colorScheme.onSurface.withValues(alpha: 0.4),
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
                           ),
@@ -408,7 +409,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                final isLiked = snapshot.data?.isLiked ?? false;
                                return TactileIconButton(
                                  icon: isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                                 color: isLiked ? Theme.of(context).colorScheme.primary : Colors.white70,
+                                 color: isLiked ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.7),
                                  padding: const EdgeInsets.all(12),
                                  onTap: () {
                                    ref.read(db.appDatabaseProvider).toggleAlbumLike(
@@ -424,20 +425,20 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                            ),
                           TactileIconButton(
                             icon: Icons.download_for_offline_outlined,
-                            color: Colors.white70,
+                            color: colorScheme.onSurface.withValues(alpha: 0.7),
                             padding: const EdgeInsets.all(12),
                             onTap: () {},
                           ),
                           TactileIconButton(
                             icon: Icons.more_vert_rounded,
-                            color: Colors.white70,
+                            color: colorScheme.onSurface.withValues(alpha: 0.7),
                             padding: const EdgeInsets.all(12),
                             onTap: () {},
                           ),
                           const Spacer(),
                           TactileIconButton(
                             icon: Icons.shuffle_rounded,
-                            color: Colors.white70,
+                            color: colorScheme.onSurface.withValues(alpha: 0.7),
                             size: 26,
                             padding: const EdgeInsets.all(12),
                             onTap: tracks.isNotEmpty
@@ -467,11 +468,11 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.search_off_rounded, size: 48, color: Colors.white.withValues(alpha: 0.1)),
+                        Icon(Icons.search_off_rounded, size: 48, color: colorScheme.onSurface.withValues(alpha: 0.1)),
                         const SizedBox(height: 16),
                         Text(
                           'No tracks found matching "$_searchQuery"',
-                          style: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                          style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.3)),
                         ),
                       ],
                     ),
@@ -490,18 +491,18 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 8),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.03),
+                              color: colorScheme.onSurface.withValues(alpha: 0.03),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.05),
+                                color: colorScheme.onSurface.withValues(alpha: 0.05),
                                 width: 0.5,
                               ),
                               gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  Colors.white.withValues(alpha: 0.05),
-                                  Colors.white.withValues(alpha: 0.01),
+                                  colorScheme.onSurface.withValues(alpha: 0.05),
+                                  colorScheme.onSurface.withValues(alpha: 0.01),
                                 ],
                               ),
                             ),
@@ -514,7 +515,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                     child: Text(
                                       '${i + 1}',
                                       style: TextStyle(
-                                        color: Colors.white.withValues(alpha: 0.2),
+                                        color: colorScheme.onSurface.withValues(alpha: 0.2),
                                         fontSize: 12,
                                         fontFamily: 'monospace',
                                         fontWeight: FontWeight.w900,
@@ -553,7 +554,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                       Text(
                         '${album['release_date']} • ${tracks.length} songs',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: colorScheme.onSurface.withValues(alpha: 0.3),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
@@ -564,7 +565,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                           child: Text(
                             c['text'] as String,
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.15),
+                              color: colorScheme.onSurface.withValues(alpha: 0.15),
                               fontSize: 11,
                               height: 1.4,
                             ),

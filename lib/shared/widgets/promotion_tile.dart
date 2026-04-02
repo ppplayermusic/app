@@ -24,21 +24,22 @@ class PromotionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (type == PromotionType.horizontal) {
-      return _buildHorizontalCard(context);
+      return _buildHorizontalCard(context, colorScheme);
     }
-    return _buildVerticalListTile(context);
+    return _buildVerticalListTile(context, colorScheme);
   }
 
-  Widget _buildVerticalListTile(BuildContext context) {
+  Widget _buildVerticalListTile(BuildContext context, ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: colorScheme.shadow.withValues(alpha: 0.2),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -52,7 +53,7 @@ class PromotionTile extends StatelessWidget {
             onTap: onTap,
             child: Container(
               padding: const EdgeInsets.all(12.0),
-              color: Colors.white.withValues(alpha: 0.05),
+              color: colorScheme.onSurface.withValues(alpha: 0.05),
               child: Row(
                 children: [
                   _buildImageFrame(context, 64, 64),
@@ -62,14 +63,14 @@ class PromotionTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _buildSponsoredBadge(),
+                        _buildSponsoredBadge(colorScheme),
                         const SizedBox(height: 4),
                         Text(
                           title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: Colors.white,
+                            color: colorScheme.onSurface,
                             letterSpacing: -0.5,
                           ),
                           maxLines: 1,
@@ -79,7 +80,7 @@ class PromotionTile extends StatelessWidget {
                           subtitle,
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.white.withValues(alpha: 0.6),
+                            color: colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -88,7 +89,7 @@ class PromotionTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  _buildCTA(context, isCompact: true),
+                  _buildCTA(context, colorScheme, isCompact: true),
                 ],
               ),
             ),
@@ -98,16 +99,16 @@ class PromotionTile extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalCard(BuildContext context) {
+  Widget _buildHorizontalCard(BuildContext context, ColorScheme colorScheme) {
     return Container(
       width: 180,
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: colorScheme.shadow.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
@@ -121,27 +122,27 @@ class PromotionTile extends StatelessWidget {
             onTap: onTap,
             child: Container(
               padding: const EdgeInsets.all(16.0),
-              color: Colors.white.withValues(alpha: 0.08),
+              color: colorScheme.onSurface.withValues(alpha: 0.08),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildImageFrame(context, double.infinity, 100),
                   const SizedBox(height: 12),
-                  _buildSponsoredBadge(),
+                  _buildSponsoredBadge(colorScheme),
                   const SizedBox(height: 8),
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
-                      color: Colors.white,
+                      color: colorScheme.onSurface,
                       letterSpacing: -0.3,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
-                  _buildCTA(context, isCompact: false),
+                  _buildCTA(context, colorScheme, isCompact: false),
                 ],
               ),
             ),
@@ -179,18 +180,18 @@ class PromotionTile extends StatelessWidget {
     );
   }
 
-  Widget _buildSponsoredBadge() {
+  Widget _buildSponsoredBadge(ColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.amber.withValues(alpha: 0.15),
+        color: colorScheme.tertiary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+        border: Border.all(color: colorScheme.tertiary.withValues(alpha: 0.3)),
       ),
-      child: const Text(
+      child: Text(
         'SPONSORED',
         style: TextStyle(
-          color: Colors.amber,
+          color: colorScheme.tertiary,
           fontSize: 9,
           fontWeight: FontWeight.w900,
           letterSpacing: 1.2,
@@ -199,7 +200,7 @@ class PromotionTile extends StatelessWidget {
     );
   }
 
-  Widget _buildCTA(BuildContext context, {required bool isCompact}) {
+  Widget _buildCTA(BuildContext context, ColorScheme colorScheme, {required bool isCompact}) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isCompact ? 16 : 12,
@@ -208,14 +209,14 @@ class PromotionTile extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).primaryColor,
-            Theme.of(context).primaryColor.withValues(alpha: 0.8),
+            colorScheme.primary,
+            colorScheme.primary.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).primaryColor.withValues(alpha: 0.4),
+            color: colorScheme.primary.withValues(alpha: 0.4),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -224,7 +225,7 @@ class PromotionTile extends StatelessWidget {
       child: Text(
         ctaText.toUpperCase(),
         style: TextStyle(
-          color: Colors.white,
+          color: colorScheme.onPrimary,
           fontSize: isCompact ? 11 : 10,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.5,

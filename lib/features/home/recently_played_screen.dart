@@ -21,10 +21,11 @@ class RecentlyPlayedScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final tracksAsync = ref.watch(recentlyPlayedTracksProvider);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surface,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -32,7 +33,7 @@ class RecentlyPlayedScreen extends ConsumerWidget {
             expandedHeight: 120,
             pinned: true,
             stretch: true,
-            backgroundColor: Colors.black.withValues(alpha: 0.8),
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.8),
             elevation: 0,
             actions: [
               tracksAsync.when(
@@ -41,7 +42,7 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                   : TactileIconButton(
                       icon: Icons.delete_sweep_rounded,
                       onTap: () => _showClearHistoryConfirm(context, ref),
-                      color: Colors.white54,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                 loading: () => const SizedBox.shrink(),
                 error: (_, _) => const SizedBox.shrink(),
@@ -51,15 +52,15 @@ class RecentlyPlayedScreen extends ConsumerWidget {
             leading: TactileIconButton(
               icon: Icons.arrow_back_ios_new_rounded,
               onTap: () => context.pop(),
-              color: Colors.white,
+              color: colorScheme.onSurface,
             ),
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
+              title: Text(
                 'Recently Played',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
-                  color: Colors.white,
+                  color: colorScheme.onSurface,
                 ),
               ),
               centerTitle: true,
@@ -72,7 +73,7 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.white.withValues(alpha: 0.05),
+                          colorScheme.onSurface.withValues(alpha: 0.05),
                           Colors.transparent,
                         ],
                       ),
@@ -91,13 +92,13 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.history_rounded, color: Colors.white10, size: 80)
+                        Icon(Icons.history_rounded, color: colorScheme.onSurface.withValues(alpha: 0.1), size: 80)
                             .animate(onPlay: (c) => c.repeat(reverse: true))
                             .scale(duration: 2.seconds, begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1)),
                         const SizedBox(height: 24),
-                        const Text(
+                        Text(
                           'Your listening history is empty.',
-                          style: TextStyle(color: Colors.white38, fontSize: 16),
+                          style: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6), fontSize: 16),
                         ),
                         const SizedBox(height: 32),
                         TactileTap(
@@ -105,10 +106,10 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white24),
+                              border: Border.all(color: colorScheme.outlineVariant),
                               borderRadius: BorderRadius.circular(25),
                             ),
-                            child: const Text('Go Home', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            child: Text('Go Home', style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold)),
                           ),
                         ),
                       ],
@@ -131,7 +132,7 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                           onTap: () => ref.read(playerProvider.notifier).playTrack(
                                 track,
                                 queue: tracks,
-                              ),
+                               ),
                         ),
                       ).animate().fadeIn(delay: (index * 40).ms).slideX(begin: 0.05, curve: Curves.easeOutCubic);
                     },
@@ -140,11 +141,11 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                 ),
               );
             },
-            loading: () => const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator(color: Color(0xFF1DB954))),
+            loading: () => SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator(color: colorScheme.primary)),
             ),
             error: (e, _) => SliverFillRemaining(
-              child: Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white54))),
+              child: Center(child: Text('Error: $e', style: TextStyle(color: colorScheme.onSurfaceVariant))),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 140)),
@@ -157,52 +158,69 @@ class RecentlyPlayedScreen extends ConsumerWidget {
     showPremiumModal(
       context: context,
       title: 'Clear History?',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'This will permanently remove your listening history. This action cannot be undone.',
-            style: TextStyle(color: Colors.white70, fontSize: 14),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          Row(
+      child: Builder(
+        builder: (dialogContext) {
+          final colorScheme = Theme.of(dialogContext).colorScheme;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: TactileTap(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white10),
-                    ),
-                    child: const Text('Cancel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ),
-                ),
+              Text(
+                'This will permanently remove your listening history. This action cannot be undone.',
+                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TactileTap(
-                  onTap: () async {
-                    await ref.read(db.appDatabaseProvider).clearHistory();
-                    if (context.mounted) Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent,
-                      borderRadius: BorderRadius.circular(16),
+              const SizedBox(height: 32),
+              Row(
+                children: [
+                  Expanded(
+                    child: TactileTap(
+                      onTap: () => Navigator.pop(dialogContext),
+                      child: Container(
+                        height: 54,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                        ),
+                        child: Text('Cancel', 
+                          style: TextStyle(
+                            color: colorScheme.onSurfaceVariant, 
+                            fontWeight: FontWeight.bold
+                          )
+                        ),
+                      ),
                     ),
-                    child: const Text('Clear All', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TactileTap(
+                      onTap: () async {
+                        await ref.read(db.appDatabaseProvider).clearHistory();
+                        if (context.mounted) {
+                          Navigator.pop(dialogContext);
+                        }
+                      },
+                      child: Container(
+                        height: 54,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: colorScheme.error,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text('Clear All', 
+                          style: TextStyle(
+                            color: colorScheme.onError, 
+                            fontWeight: FontWeight.bold
+                          )
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }

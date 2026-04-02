@@ -46,16 +46,16 @@ class TrackTile extends ConsumerWidget {
                         height: 48,
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Container(
-                            width: 48, height: 48, color: const Color(0xFF2A2A2A)),
+                            width: 48, height: 48, color: Theme.of(context).colorScheme.surfaceContainerHighest),
                         errorWidget: (context, url, error) =>
-                            const Icon(Icons.music_note, color: Color(0xFF6A6A6A)),
+                            Icon(Icons.music_note, color: Theme.of(context).colorScheme.onSurfaceVariant),
                       )
                     : Container(
                         width: 48,
                         height: 48,
-                        color: const Color(0xFF2A2A2A),
-                        child: const Icon(Icons.music_note,
-                            color: Color(0xFF6A6A6A)),
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: Icon(Icons.music_note,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
               ),
               const SizedBox(width: 16),
@@ -68,8 +68,8 @@ class TrackTile extends ConsumerWidget {
                     track.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       letterSpacing: -0.2,
@@ -82,7 +82,7 @@ class TrackTile extends ConsumerWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                       ),
@@ -98,7 +98,7 @@ class TrackTile extends ConsumerWidget {
                   icon: track.isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: track.isFavorite
                       ? Theme.of(context).colorScheme.primary
-                      : Colors.white.withValues(alpha: 0.3),
+                      : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                   size: 20,
                   onTap: () {
                     ref.read(playerProvider.notifier).toggleFavorite(track);
@@ -116,7 +116,7 @@ class TrackTile extends ConsumerWidget {
                 trailing ??
                     TactileIconButton(
                       icon: Icons.more_vert,
-                      color: Colors.white.withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                       size: 20,
                       onTap: () {
                         _showMoreMenu(context, ref);
@@ -137,9 +137,9 @@ class TrackTile extends ConsumerWidget {
       isScrollControlled: true,
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF161616).withValues(alpha: 0.8),
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
         ),
         child: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -154,38 +154,38 @@ class TrackTile extends ConsumerWidget {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.white24,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                   ListTile(
                     leading:
-                        const Icon(Icons.playlist_add, color: Colors.white70),
-                    title: const Text('Add to Playlist',
-                        style: TextStyle(color: Colors.white)),
+                        Icon(Icons.playlist_add, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    title: Text('Add to Playlist',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.of(context).pop();
                       TrackTile.showPlaylistPicker(context, ref, track);
                     },
                   ),
                   ListTile(
                     leading:
-                        const Icon(Icons.person_outline, color: Colors.white70),
-                    title: const Text('Go to Artist',
-                        style: TextStyle(color: Colors.white)),
+                        Icon(Icons.person_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    title: Text('Go to Artist',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.of(context).pop();
                       context.push('/artist/${track.artistId}');
                     },
                   ),
                   if (track.albumId != null)
                     ListTile(
-                      leading: const Icon(Icons.album_outlined,
-                          color: Colors.white70),
-                      title: const Text('Go to Album',
-                          style: TextStyle(color: Colors.white)),
+                      leading: Icon(Icons.album_outlined,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      title: Text('Go to Album',
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                       onTap: () {
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
                         context.push('/album/${track.albumId}');
                       },
                     ),
@@ -214,9 +214,9 @@ class TrackTile extends ConsumerWidget {
         builder: (context) => Container(
           height: MediaQuery.of(context).size.height * 0.7,
           decoration: BoxDecoration(
-            color: const Color(0xFF161616).withValues(alpha: 0.8),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
           ),
           child: ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -237,41 +237,41 @@ class TrackTile extends ConsumerWidget {
                             width: 40,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: Colors.white24,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                             child: Text(
                               'Add to Playlist',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ),
                           ListTile(
-                            leading: const CircleAvatar(
-                              backgroundColor: Color(0xFF2A2A2A),
-                              child: Icon(Icons.add, color: Colors.white),
+                            leading: CircleAvatar(
+                              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              child: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
                             ),
-                            title: const Text('Create New Playlist',
-                                style: TextStyle(color: Colors.white)),
+                            title: Text('Create New Playlist',
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                             onTap: () {
-                              Navigator.pop(context);
+                              Navigator.of(context).pop();
                               _showCreatePlaylistDialog(
                                   context, database, track);
                             },
                           ),
-                          const Divider(color: Colors.white10),
+                          Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
                           if (playlists.isEmpty)
-                            const Padding(
-                              padding: EdgeInsets.all(32),
+                            Padding(
+                              padding: const EdgeInsets.all(32),
                               child: Text(
                                 'No playlists yet.',
-                                style: TextStyle(color: Colors.white54),
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
                               ),
                             ),
                           Flexible(
@@ -279,24 +279,24 @@ class TrackTile extends ConsumerWidget {
                               shrinkWrap: true,
                               itemCount: playlists.length,
                               itemBuilder: (context, i) => ListTile(
-                                leading: const Icon(Icons.playlist_play,
-                                    color: Colors.white70),
+                                leading: Icon(Icons.playlist_play,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant),
                                 title: Text(playlists[i].name,
                                     style:
-                                        const TextStyle(color: Colors.white)),
+                                        TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                                 onTap: () async {
                                   await database.addToPlaylist(
                                       playlists[i].id, track.spotifyId);
-                                  if (context.mounted) Navigator.pop(context);
+                                  if (context.mounted) Navigator.of(context).pop();
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         backgroundColor:
-                                            const Color(0xFF282828),
+                                            Theme.of(context).colorScheme.surfaceContainerHighest,
                                         content: Text(
                                             'Added to ${playlists[i].name}',
-                                            style: const TextStyle(
-                                                color: Colors.white)),
+                                            style: TextStyle(
+                                                color: Theme.of(context).colorScheme.onSurface)),
                                       ),
                                     );
                                   }
@@ -326,74 +326,76 @@ class TrackTile extends ConsumerWidget {
     showPremiumModal<void>(
       context: context,
       title: 'New Playlist',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: controller,
-            autofocus: true,
-            style: const TextStyle(color: Colors.white, fontSize: 18),
-            decoration: InputDecoration(
-              hintText: 'My Awesome Playlist',
-              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-              filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.05),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
+      child: Builder(
+        builder: (dialogContext) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              autofocus: true,
+              style: TextStyle(color: Theme.of(dialogContext).colorScheme.onSurface, fontSize: 18),
+              decoration: InputDecoration(
+                hintText: 'My Awesome Playlist',
+                hintStyle: TextStyle(color: Theme.of(dialogContext).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
+                filled: true,
+                fillColor: Theme.of(dialogContext).colorScheme.onSurface.withValues(alpha: 0.05),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             ),
-          ),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              Expanded(
-                child: TactileTap(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white10),
-                    ),
-                    child: const Text('Cancel', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TactileTap(
-                  onTap: () async {
-                    final name = controller.text.trim();
-                    if (name.isNotEmpty) {
-                      final id = await database.createPlaylist(name);
-                      await database.addToPlaylist(id, track.spotifyId);
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    }
-                  },
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
-                        ],
+            const SizedBox(height: 32),
+            Row(
+              children: [
+                Expanded(
+                  child: TactileTap(
+                    onTap: () => Navigator.pop(dialogContext),
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Theme.of(dialogContext).colorScheme.outlineVariant),
                       ),
-                      borderRadius: BorderRadius.circular(16),
+                      child: Text('Cancel', style: TextStyle(color: Theme.of(dialogContext).colorScheme.onSurfaceVariant, fontWeight: FontWeight.bold)),
                     ),
-                    child: const Text('Create', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TactileTap(
+                    onTap: () async {
+                      final name = controller.text.trim();
+                      if (name.isNotEmpty) {
+                        final id = await database.createPlaylist(name);
+                        await database.addToPlaylist(id, track.spotifyId);
+                        if (dialogContext.mounted) {
+                          Navigator.pop(dialogContext);
+                        }
+                      }
+                    },
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(dialogContext).colorScheme.primary,
+                            Theme.of(dialogContext).colorScheme.primary.withValues(alpha: 0.7),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text('Create', style: TextStyle(color: Theme.of(dialogContext).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

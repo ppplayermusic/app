@@ -282,6 +282,12 @@ class YoutubePlayerService with WidgetsBindingObserver {
             _mobileController!.value.metaData.duration,
           );
     }
+
+    if (_mobileController!.value.hasError) {
+      debugPrint('Mobile Player Error: ${_mobileController!.value.errorCode}');
+      // Trigger candidate cycling or error state
+      ref.read(playerProvider.notifier).onVideoError();
+    }
   }
 
   void _loadVideo(String id) {

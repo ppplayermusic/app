@@ -19,6 +19,7 @@ class PlayerState {
     this.isShuffled = false,
     this.videoId,
     this.isLoadingVideo = false,
+    this.loadError,
     this.candidateIds = const [],
     this.candidateIndex = 0,
     this.position = Duration.zero,
@@ -32,6 +33,7 @@ class PlayerState {
   final bool isShuffled;
   final String? videoId;
   final bool isLoadingVideo;
+  final String? loadError;
   final List<String> candidateIds;
   final int candidateIndex;
   final Duration position;
@@ -50,6 +52,7 @@ class PlayerState {
     bool? isShuffled,
     String? videoId,
     bool? isLoadingVideo,
+    String? loadError,
     List<String>? candidateIds,
     int? candidateIndex,
     Duration? position,
@@ -63,6 +66,7 @@ class PlayerState {
         isShuffled: isShuffled ?? this.isShuffled,
         videoId: videoId ?? this.videoId,
         isLoadingVideo: isLoadingVideo ?? this.isLoadingVideo,
+        loadError: loadError ?? this.loadError,
         candidateIds: candidateIds ?? this.candidateIds,
         candidateIndex: candidateIndex ?? this.candidateIndex,
         position: position ?? this.position,
@@ -84,6 +88,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       currentIndex: idx < 0 ? 0 : idx,
       isPlaying: true,
       isLoadingVideo: true,
+      loadError: null,
       videoId: null,
       candidateIds: [],
       candidateIndex: 0,
@@ -153,6 +158,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
         videoId: track.youtubeVideoId,
         candidateIds: [track.youtubeVideoId!],
         isLoadingVideo: false,
+        loadError: null,
       );
       return;
     }
@@ -162,7 +168,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
         await _resolver.resolve(track.artistName, track.name, regionCode: regionCode);
 
     if (candidates.isEmpty) {
-      state = state.copyWith(isLoadingVideo: false);
+      state = state.copyWith(
+        isLoadingVideo: false,
+        loadError: 'No video found for this track. Click to retry.',
+      );
       return;
     }
 
@@ -174,6 +183,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       candidateIndex: 0,
       videoId: candidates[0],
       isLoadingVideo: false,
+      loadError: null,
     );
   }
 
@@ -184,8 +194,32 @@ class PlayerNotifier extends Notifier<PlayerState> {
       state = state.copyWith(
         candidateIndex: next,
         videoId: state.candidateIds[next],
+        loadError: null,
+      );
+    } else {
+      state = state.copyWith(
+        loadError: 'Failed to load video. Click to retry.',
       );
     }
+  }
+
+  Future<void> retryLoad() async {
+    final track = state.currentTrack;
+    if (track == null) return;
+
+    state = state.copyWith(
+      loadError: null,
+      isLoadingVideo: true,
+      videoId: null,
+      candidateIds: [],
+      candidateIndex: 0,
+    );
+
+    // Clear db cache for this track so we rescan YouTube
+    await _db.cacheYoutubeId(track.spotifyId, null);
+
+    // Refresh resolution
+    await _resolveVideo(track);
   }
 
   void pause() => state = state.copyWith(isPlaying: false);
