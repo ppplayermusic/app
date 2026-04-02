@@ -96,8 +96,7 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
   /// process (a separate OS process), killing all JS timers. Hiding the window
   /// with orderOut keeps the process alive: music never stops.
   /// The user can restore the window by clicking the app's Dock icon.
-  func windowShouldMiniaturize(_ sender: NSWindow) -> Bool {
-    sender.orderOut(nil)
-    return false
+  override func miniaturize(_ sender: Any?) {
+    self.orderOut(nil)
   }
 }
