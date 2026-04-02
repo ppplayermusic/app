@@ -9,6 +9,7 @@ import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../core/db/app_database.dart' as db;
 
 String _formatDuration(Duration d) {
   final minutes = d.inMinutes;
@@ -358,14 +359,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                 ),
                                               ),
                                               if (playerState.currentTrack != null)
-                                              TactileIconButton(
-                                                icon: playerState.currentTrack!.isFavorite 
-                                                  ? Icons.favorite 
-                                                  : Icons.favorite_border,
-                                                color: playerState.currentTrack!.isFavorite 
-                                                  ? colorScheme.primary 
-                                                  : colorScheme.onSurface,
-                                                onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!),
+                                              StreamBuilder<bool>(
+                                                stream: ref.watch(db.appDatabaseProvider).watchTrackFavorite(playerState.currentTrack!.spotifyId),
+                                                initialData: playerState.currentTrack!.isFavorite,
+                                                builder: (context, snapshot) {
+                                                  final isFav = snapshot.data ?? playerState.currentTrack!.isFavorite;
+                                                  return TactileIconButton(
+                                                    icon: isFav ? Icons.favorite : Icons.favorite_border,
+                                                    color: isFav ? colorScheme.primary : colorScheme.onSurface,
+                                                    onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!.copyWith(isFavorite: isFav)),
+                                                  ).animate(target: isFav ? 1 : 0).scale(
+                                                    begin: const Offset(1, 1),
+                                                    end: const Offset(1.1, 1.1),
+                                                    duration: 200.ms,
+                                                    curve: Curves.easeOutBack,
+                                                  ).then().scale(
+                                                    begin: const Offset(1.1, 1.1),
+                                                    end: const Offset(1, 1),
+                                                    duration: 150.ms,
+                                                  );
+                                                },
                                               ),
                                             ],
                                           ),

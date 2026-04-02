@@ -33,31 +33,22 @@ class SpotifyPlaylistScreen extends ConsumerStatefulWidget {
 class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
-  final String _searchQuery = '';
-  bool _isLiked = false;
-
+  String _searchQuery = '';
   @override
   void initState() {
     super.initState();
-    _checkLikedState();
+    _searchController.addListener(_onSearchChanged);
   }
 
-  Future<void> _checkLikedState() async {
-    final database = ref.read(db.appDatabaseProvider);
-    final playlist = await (database.select(database.playlists)
-          ..where((p) => p.spotifyId.equals(widget.playlistId)))
-        .getSingleOrNull();
-    if (mounted) {
-      setState(() {
-        _isLiked = playlist != null;
-      });
-    }
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text.toLowerCase();
+    });
   }
 
-  Future<void> _toggleLike(List<Track> tracks) async {
+  Future<void> _toggleLike(List<Track> tracks, bool currentIsLiked) async {
     final database = ref.read(db.appDatabaseProvider);
-    final newV = !_isLiked;
-    setState(() => _isLiked = newV);
+    final newV = !currentIsLiked;
     
     await database.togglePlaylistLike(
       widget.playlistId,
@@ -322,28 +313,34 @@ class _SpotifyPlaylistScreenState extends ConsumerState<SpotifyPlaylistScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                TactileTap(
-                                  onTap: () => _toggleLike(tracks),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 18, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: _isLiked ? colorScheme.primary : Colors.transparent,
-                                      border: Border.all(
-                                          color: _isLiked ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.3), width: 0.8),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(_isLiked ? 'Following' : 'Follow',
-                                        style: TextStyle(
-                                          color: _isLiked ? colorScheme.onPrimary : colorScheme.onSurface,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13,
-                                        )),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
+                             Row(
+                               children: [
+                                 StreamBuilder<bool>(
+                                   stream: ref.read(db.appDatabaseProvider).watchPlaylistIsFavorite(widget.playlistId),
+                                   builder: (context, snap) {
+                                     final isLiked = snap.data ?? false;
+                                     return TactileTap(
+                                       onTap: () => _toggleLike(tracks, isLiked),
+                                       child: Container(
+                                         padding: const EdgeInsets.symmetric(
+                                             horizontal: 18, vertical: 8),
+                                         decoration: BoxDecoration(
+                                           color: isLiked ? colorScheme.primary : Colors.transparent,
+                                           border: Border.all(
+                                               color: isLiked ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.3), width: 0.8),
+                                           borderRadius: BorderRadius.circular(20),
+                                         ),
+                                         child: Text(isLiked ? 'Following' : 'Follow',
+                                             style: TextStyle(
+                                               color: isLiked ? colorScheme.onPrimary : colorScheme.onSurface,
+                                               fontWeight: FontWeight.bold,
+                                               fontSize: 13,
+                                             )),
+                                       ),
+                                     );
+                                   }
+                                 ),
+                                 const SizedBox(width: 8),
                                 TactileIconButton(
                                   icon: Icons.more_vert,
                                   color: colorScheme.onSurfaceVariant,

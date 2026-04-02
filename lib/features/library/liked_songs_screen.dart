@@ -221,8 +221,8 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (!_isSearching) ...[
-                    FutureBuilder<List<db.Track>>(
-                      future: database.getFavorites(),
+                    StreamBuilder<List<db.Track>>(
+                      stream: database.watchFavorites(),
                       builder: (context, snap) {
                         final count = snap.data?.length ?? 0;
                         return Text(
@@ -343,10 +343,10 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
               ),
             ),
           ),
-          FutureBuilder<List<db.Track>>(
-            future: database.getFavorites(),
+          StreamBuilder<List<db.Track>>(
+            stream: database.watchFavorites(),
             builder: (context, snap) {
-              if (snap.connectionState == ConnectionState.waiting) {
+              if (snap.connectionState == ConnectionState.waiting && !snap.hasData) {
                 return SliverFillRemaining(
                     child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)));
               }

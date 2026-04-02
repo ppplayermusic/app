@@ -8,6 +8,7 @@ import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../core/services/favorites_provider.dart';
 
 final radioTracksProvider = FutureProvider.family<List<Track>, ({String type, String id})>((ref, arg) async {
   final client = ref.watch(spotifyClientProvider);
@@ -43,6 +44,8 @@ class RadioDetailsScreen extends ConsumerWidget {
   final String title;
   final String imageUrl;
   final String? subtitle;
+  final String? artistId;
+  final String? artistName;
   final Color? color1;
   final Color? color2;
 
@@ -53,6 +56,8 @@ class RadioDetailsScreen extends ConsumerWidget {
     required this.title,
     required this.imageUrl,
     this.subtitle,
+    this.artistId,
+    this.artistName,
     this.color1,
     this.color2,
   });
@@ -338,20 +343,34 @@ class RadioDetailsScreen extends ConsumerWidget {
                     children: [
                       Row(
                         children: [
-                          TactileIconButton(
-                            icon: Icons.favorite_border_rounded,
-                            size: 28,
-                            color: colorScheme.onSurfaceVariant,
-                            padding: const EdgeInsets.all(12),
-                            onTap: () {},
-                          ),
-                          const SizedBox(width: 4),
-                          TactileIconButton(
-                            icon: Icons.download_for_offline_outlined,
-                            size: 28,
-                            color: colorScheme.onSurfaceVariant,
-                            padding: const EdgeInsets.all(12),
-                            onTap: () {},
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final favType = seedType == 'artist' ? FavoriteType.artist : (seedType == 'track' ? FavoriteType.track : null);
+                              if (favType == null) return const SizedBox.shrink();
+                              
+                              final isFav = ref.watch(favoritesStatusProvider((favType, seedId))).value ?? false;
+                              
+                              return TactileIconButton(
+                                icon: isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                                size: 28,
+                                color: isFav ? Theme.of(context).colorScheme.primary : colorScheme.onSurfaceVariant,
+                                padding: const EdgeInsets.all(12),
+                                onTap: () {
+                                  if (favType == FavoriteType.artist) {
+                                    ref.read(favoritesControllerProvider.notifier).toggleArtistFollow(seedId, title, imageUrl, isFav);
+                                  } else if (favType == FavoriteType.track) {
+                                    ref.read(favoritesControllerProvider.notifier).toggleTrackFavoriteById(
+                                      id: seedId,
+                                      name: title,
+                                      artistId: artistId ?? '',
+                                      artistName: artistName ?? 'Various Artists',
+                                      imageUrl: imageUrl,
+                                      isCurrentlyFavorite: isFav,
+                                    );
+                                  }
+                                },
+                              );
+                            },
                           ),
                           const SizedBox(width: 4),
                           TactileIconButton(
@@ -359,7 +378,12 @@ class RadioDetailsScreen extends ConsumerWidget {
                             size: 28,
                             color: colorScheme.onSurfaceVariant,
                             padding: const EdgeInsets.all(12),
-                            onTap: () => ref.read(playerProvider.notifier).toggleShuffle(),
+                            onTap: () {
+                              final tracks = tracksAsync.asData?.value;
+                              if (tracks != null && tracks.isNotEmpty) {
+                                ref.read(playerProvider.notifier).shuffleAndPlay(tracks);
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -369,7 +393,7 @@ class RadioDetailsScreen extends ConsumerWidget {
                         onTap: () {
                           final tracks = tracksAsync.asData?.value;
                           if (tracks != null && tracks.isNotEmpty) {
-                            ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+                            ref.read(playerProvider.notifier).playTracks(tracks);
                           }
                         },
                       ).animate().scale(delay: 300.ms, curve: Curves.easeOutBack, duration: 500.ms),

@@ -141,6 +141,17 @@ class AppDatabase extends _$AppDatabase {
       (update(tracks)..where((t) => t.spotifyId.equals(spotifyId)))
           .write(TracksCompanion(isFavorite: Value(value)));
 
+  Stream<bool> watchTrackFavorite(String spotifyId) {
+    return (select(tracks)..where((t) => t.spotifyId.equals(spotifyId)))
+        .watchSingleOrNull()
+        .map((t) => t?.isFavorite ?? false);
+  }
+
+  Stream<List<Track>> watchFavorites() {
+    return (select(tracks)..where((t) => t.isFavorite.equals(true)))
+        .watch();
+  }
+
   Future<void> recordPlay(TracksCompanion companion) async {
     // Insert or update basic info, then increment count manually
     await into(tracks).insertOnConflictUpdate(companion);
@@ -244,6 +255,17 @@ class AppDatabase extends _$AppDatabase {
     return rows.map((row) => row.readTable(tracks)).toList();
   }
 
+  Stream<List<Track>> watchPlaylistTracks(int playlistId) {
+    final query = select(tracks).join([
+      innerJoin(playlistTracks,
+          playlistTracks.trackSpotifyId.equalsExp(tracks.spotifyId)),
+    ])
+      ..where(playlistTracks.playlistId.equals(playlistId))
+      ..orderBy([OrderingTerm.asc(playlistTracks.position)]);
+
+    return query.watch().map((rows) => rows.map((row) => row.readTable(tracks)).toList());
+  }
+
   Future<int> createPlaylist(String name, {String? spotifyId, String? imageUrl}) =>
       into(playlists).insert(PlaylistsCompanion(
         name: Value(name),
@@ -262,6 +284,12 @@ class AppDatabase extends _$AppDatabase {
       // Unlike: remove from playlists table
       await (delete(playlists)..where((p) => p.spotifyId.equals(spotifyId))).go();
     }
+  }
+
+  Stream<bool> watchPlaylistIsFavorite(String spotifyId) {
+    return (select(playlists)..where((p) => p.spotifyId.equals(spotifyId)))
+        .watch()
+        .map((list) => list.isNotEmpty);
   }
 
   Future<void> deletePlaylist(int id) async {

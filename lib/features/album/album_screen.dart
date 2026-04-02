@@ -9,7 +9,7 @@ import '../../core/player/player_provider.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
-import '../../core/db/app_database.dart' as db;
+import '../../core/services/favorites_provider.dart';
 
 final _albumProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -403,32 +403,27 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                       const SizedBox(height: 32),
                       Row(
                         children: [
-                           StreamBuilder<db.Album?>(
-                             stream: ref.watch(db.appDatabaseProvider).watchAlbum(widget.albumId),
-                             builder: (context, snapshot) {
-                               final isLiked = snapshot.data?.isLiked ?? false;
-                               return TactileIconButton(
-                                 icon: isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                                 color: isLiked ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.7),
-                                 padding: const EdgeInsets.all(12),
-                                 onTap: () {
-                                   ref.read(db.appDatabaseProvider).toggleAlbumLike(
-                                     widget.albumId,
-                                     !isLiked,
-                                     name: albumName,
-                                     artistName: artistName,
-                                     imageUrl: imageUrl,
-                                   );
-                                 },
-                               );
-                             }
-                           ),
-                          TactileIconButton(
-                            icon: Icons.download_for_offline_outlined,
-                            color: colorScheme.onSurface.withValues(alpha: 0.7),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final statusAsync = ref.watch(favoritesStatusProvider((FavoriteType.album, widget.albumId)));
+                          final isLiked = statusAsync.value ?? false;
+                          
+                          return TactileIconButton(
+                            icon: isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                            color: isLiked ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.7),
                             padding: const EdgeInsets.all(12),
-                            onTap: () {},
-                          ),
+                            onTap: () {
+                              ref.read(favoritesControllerProvider.notifier).toggleAlbumLike(
+                                widget.albumId,
+                                albumName,
+                                artistName,
+                                imageUrl,
+                                isLiked,
+                              );
+                            },
+                          );
+                        },
+                      ),
                           TactileIconButton(
                             icon: Icons.more_vert_rounded,
                             color: colorScheme.onSurface.withValues(alpha: 0.7),
@@ -442,10 +437,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                             size: 26,
                             padding: const EdgeInsets.all(12),
                             onTap: tracks.isNotEmpty
-                                ? () {
-                                    final shuffled = [...tracks]..shuffle();
-                                    ref.read(playerProvider.notifier).playTrack(shuffled[0], queue: shuffled);
-                                  }
+                                ? () => ref.read(playerProvider.notifier).shuffleAndPlay(tracks)
                                 : null,
                           ),
                           const SizedBox(width: 12),

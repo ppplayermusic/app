@@ -100,6 +100,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               final title = state.uri.queryParameters['title'] ?? 'Radio';
               final imageUrl = state.uri.queryParameters['imageUrl'] ?? '';
               final subtitle = state.uri.queryParameters['subtitle'];
+              final artistId = state.uri.queryParameters['artistId'];
+              final artistName = state.uri.queryParameters['artistName'];
               
               final extra = state.extra as Map<String, dynamic>?;
               final color1 = extra?['color1'] as Color?;
@@ -111,6 +113,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 title: title,
                 imageUrl: imageUrl,
                 subtitle: subtitle,
+                artistId: artistId,
+                artistName: artistName,
                 color1: color1,
                 color2: color2,
               );

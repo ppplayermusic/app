@@ -10,7 +10,7 @@ import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
-import '../../core/db/app_database.dart' as db;
+import '../../core/services/favorites_provider.dart';
 
 final _artistProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -287,19 +287,20 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             Expanded(
                               child: Row(
                                 children: [
-                                  StreamBuilder<db.Artist?>(
-                                    stream: ref.watch(db.appDatabaseProvider).watchArtist(widget.artistId),
-                                    builder: (context, snapshot) {
-                                      final isFollowed = snapshot.data?.isFollowed ?? false;
+                                  Consumer(
+                                    builder: (context, ref, _) {
+                                      final statusAsync = ref.watch(favoritesStatusProvider((FavoriteType.artist, widget.artistId)));
+                                      final isFollowed = statusAsync.value ?? false;
+                                      
                                       return TactileTap(
                                         onTap: () {
                                           final imgs = (artist['images'] as List?) ?? [];
                                           final artistImageUrl = imgs.isNotEmpty ? imgs[0]['url'] as String : '';
-                                          ref.read(db.appDatabaseProvider).toggleArtistFollow(
+                                          ref.read(favoritesControllerProvider.notifier).toggleArtistFollow(
                                             widget.artistId,
-                                            !isFollowed,
-                                            name: artistName,
-                                            imageUrl: artistImageUrl,
+                                            artistName,
+                                            artistImageUrl,
+                                            isFollowed,
                                           );
                                         },
                                         child: AnimatedContainer(

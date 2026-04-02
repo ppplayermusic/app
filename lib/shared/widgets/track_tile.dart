@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
-import '../../core/player/player_provider.dart';
 import '../../core/db/app_database.dart' as db;
+import '../../core/services/favorites_provider.dart';
 import '../../core/models/track.dart' as model;
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -94,24 +94,29 @@ class TrackTile extends ConsumerWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TactileIconButton(
-                  icon: track.isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: track.isFavorite
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                  size: 20,
-                  onTap: () {
-                    ref.read(playerProvider.notifier).toggleFavorite(track);
+                Consumer(
+                  builder: (context, ref, child) {
+                    final isFav = ref.watch(favoritesStatusProvider((FavoriteType.track, track.spotifyId))).value ?? track.isFavorite;
+                    return TactileIconButton(
+                      icon: isFav ? Icons.favorite : Icons.favorite_border,
+                      color: isFav
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                      size: 20,
+                      onTap: () {
+                        ref.read(favoritesControllerProvider.notifier).toggleTrackFavorite(track, isFav);
+                      },
+                    ).animate(target: isFav ? 1 : 0).scale(
+                      begin: const Offset(1, 1),
+                      end: const Offset(1.2, 1.2),
+                      duration: 200.ms,
+                      curve: Curves.easeOutBack,
+                    ).then().scale(
+                      begin: const Offset(1.2, 1.2),
+                      end: const Offset(1, 1),
+                      duration: 150.ms,
+                    );
                   },
-                ).animate(target: track.isFavorite ? 1 : 0).scale(
-                  begin: const Offset(1, 1),
-                  end: const Offset(1.2, 1.2),
-                  duration: 200.ms,
-                  curve: Curves.easeOutBack,
-                ).then().scale(
-                  begin: const Offset(1.2, 1.2),
-                  end: const Offset(1, 1),
-                  duration: 150.ms,
                 ),
                 trailing ??
                     TactileIconButton(
@@ -148,15 +153,31 @@ class TrackTile extends ConsumerWidget {
             child: SafeArea(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(2),
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
+                  ListTile(
+                    leading:
+                        Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    title: Text('Start Radio',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      final encodedTitle = Uri.encodeComponent(track.name);
+                      final encodedImage = Uri.encodeComponent(track.albumImage ?? '');
+                      final encodedArtistName = Uri.encodeComponent(track.artistName);
+                      
+                      context.push(
+                        '/radio/track/${track.spotifyId}?title=$encodedTitle&imageUrl=$encodedImage&artistId=${track.artistId}&artistName=$encodedArtistName',
+                      );
+                    },
                   ),
                   ListTile(
                     leading:

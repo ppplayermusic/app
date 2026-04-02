@@ -118,6 +118,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
     await playTrack(track, queue: tracks);
   }
 
+  Future<void> shuffleAndPlay(List<Track> tracks) async {
+    if (tracks.isEmpty) return;
+    
+    final shuffled = [...tracks]..shuffle();
+    state = state.copyWith(isShuffled: true);
+    await playTrack(shuffled.first, queue: shuffled);
+  }
+
   Future<void> playPlaylist(int playlistId) async {
     final tracks = await _db.getPlaylistTracks(playlistId);
     if (tracks.isEmpty) return;
@@ -340,7 +348,19 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
   Future<void> toggleFavorite(Track track) async {
     final newValue = !track.isFavorite;
-    await _db.toggleFavorite(track.spotifyId, newValue);
+    
+    // Ensure track exists in DB with the new favorite status
+    await _db.upsertTrack(db.TracksCompanion(
+      spotifyId: Value(track.spotifyId),
+      name: Value(track.name),
+      artistId: Value(track.artistId),
+      artistName: Value(track.artistName),
+      albumId: Value(track.albumId),
+      albumName: Value(track.albumName),
+      albumImage: Value(track.albumImage),
+      durationMs: Value(track.durationMs),
+      isFavorite: Value(newValue),
+    ));
 
     // Update state if the favorited track is in the queue
     final newQueue = state.queue.map((t) {
