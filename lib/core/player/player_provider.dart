@@ -219,7 +219,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
   Future<void> retryLoad() async {
     final track = state.currentTrack;
     if (track == null) return;
-    await _controller.play(track.toPlaybackTrack());
+    // Delegate to the full validated playTrack flow. This ensures:
+    //  - YoutubeIdValidator is applied (null/invalid ID → fresh resolution)
+    //  - _playGeneration is incremented (stale retry cannot overwrite a newer selection)
+    //  - loadError is cleared before the attempt
+    // Do NOT call _controller.play() directly here — that bypasses validation.
+    await playTrack(track, queue: state.playbackQueue.tracks);
   }
 
   void pause() => _controller.pause();
