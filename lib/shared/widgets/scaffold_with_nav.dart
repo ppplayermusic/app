@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart' as mobile;
+import 'package:pp_playback_engine/pp_playback_engine.dart';
+import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
-import '../../core/player/youtube_player_service.dart';
 import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
@@ -26,7 +25,9 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
 
   @override
   Widget build(BuildContext context) {
-    final playerService = ref.watch(youtubePlayerServiceProvider);
+    final playbackEngine = ref.watch(playbackControllerProvider);
+    final playbackStatusAsync = ref.watch(playbackStatusProvider);
+    final playbackStatus = playbackStatusAsync.value ?? const PlaybackStatus();
     final settings = ref.watch(settingsProvider);
     final showVideo = settings.showVideo;
     final playerView = settings.playerView;
@@ -161,11 +162,10 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                             child: Stack(
                               children: [
                                 RepaintBoundary(
-                                  child: (playerService.isMobile)
-                                      ? mobile.YoutubePlayer(
-                                          controller: playerService.mobileController!,
-                                        )
-                                      : WebViewWidget(controller: playerService.desktopController!),
+                                  child: PlaybackView(
+                                    controller: playbackEngine,
+                                    status: playbackStatus,
+                                  ),
                                 ),
                                 if (playerState.loadError != null)
                                   Positioned.fill(

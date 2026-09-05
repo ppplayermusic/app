@@ -1,368 +1,290 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import '../models/track.dart';
-import 'package:ppplayer/core/services/settings_provider.dart';
-import 'package:ppplayer/core/api/spotify_client.dart';
-import '../api/youtube_resolver.dart';
-import 'package:drift/drift.dart' show Value;
-import '../db/app_database.dart' as db;
+import '../models/playback_queue.dart';
+import '../playback/playback_providers.dart';
+import '../playback/youtube_id_validator.dart';
 
 export '../models/track.dart' show Track;
-
-enum RepeatMode { none, one, all }
+export '../models/playback_queue.dart' show PlaybackQueue, RepeatMode;
 
 class PlayerState {
   const PlayerState({
-    this.queue = const [],
-    this.currentIndex = 0,
+    this.playbackQueue = const PlaybackQueue(),
     this.isPlaying = false,
-    this.repeatMode = RepeatMode.none,
-    this.isShuffled = false,
     this.videoId,
     this.isLoadingVideo = false,
     this.loadError,
-    this.candidateIds = const [],
-    this.candidateIndex = 0,
     this.position = Duration.zero,
     this.duration = Duration.zero,
   });
 
-  final List<Track> queue;
-  final int currentIndex;
+  final PlaybackQueue playbackQueue;
   final bool isPlaying;
-  final RepeatMode repeatMode;
-  final bool isShuffled;
   final String? videoId;
   final bool isLoadingVideo;
   final String? loadError;
-  final List<String> candidateIds;
-  final int candidateIndex;
   final Duration position;
   final Duration duration;
 
-  Track? get currentTrack =>
-      queue.isNotEmpty && currentIndex < queue.length
-          ? queue[currentIndex]
-          : null;
+  // Shortcuts to avoid breaking UI that expects these on state
+  List<Track> get queue => playbackQueue.tracks;
+  int get currentIndex => playbackQueue.currentIndex;
+  RepeatMode get repeatMode => playbackQueue.repeatMode;
+  bool get isShuffled => playbackQueue.isShuffled;
+  Track? get currentTrack => playbackQueue.currentTrack;
 
   PlayerState copyWith({
-    List<Track>? queue,
-    int? currentIndex,
+    PlaybackQueue? playbackQueue,
     bool? isPlaying,
-    RepeatMode? repeatMode,
-    bool? isShuffled,
-    String? videoId,
+    Object? videoId = _sentinel,
     bool? isLoadingVideo,
-    String? loadError,
-    List<String>? candidateIds,
-    int? candidateIndex,
+    Object? loadError = _sentinel,
     Duration? position,
     Duration? duration,
-  }) =>
-      PlayerState(
-        queue: queue ?? this.queue,
-        currentIndex: currentIndex ?? this.currentIndex,
-        isPlaying: isPlaying ?? this.isPlaying,
-        repeatMode: repeatMode ?? this.repeatMode,
-        isShuffled: isShuffled ?? this.isShuffled,
-        videoId: videoId ?? this.videoId,
-        isLoadingVideo: isLoadingVideo ?? this.isLoadingVideo,
-        loadError: loadError ?? this.loadError,
-        candidateIds: candidateIds ?? this.candidateIds,
-        candidateIndex: candidateIndex ?? this.candidateIndex,
-        position: position ?? this.position,
-        duration: duration ?? this.duration,
-      );
+    bool clearLoadError = false,
+  }) {
+    return PlayerState(
+      playbackQueue: playbackQueue ?? this.playbackQueue,
+      isPlaying: isPlaying ?? this.isPlaying,
+      videoId: identical(videoId, _sentinel) ? this.videoId : videoId as String?,
+      isLoadingVideo: isLoadingVideo ?? this.isLoadingVideo,
+      loadError: clearLoadError ? null : (identical(loadError, _sentinel) ? this.loadError : loadError as String?),
+      position: position ?? this.position,
+      duration: duration ?? this.duration,
+    );
+  }
 }
 
-class PlayerNotifier extends Notifier<PlayerState> {
-  @override
-  PlayerState build() => const PlayerState();
+const Object _sentinel = Object();
 
-  YoutubeResolver get _resolver => ref.read(youtubeResolverProvider);
-  db.AppDatabase get _db => ref.read(db.appDatabaseProvider);
+class PlayerNotifier extends Notifier<PlayerState> {
+  int _playGeneration = 0;
+  bool _skipDebounce = false;
+
+  @override
+  PlayerState build() {
+    // Listen to the playback engine's status and sync it to our state
+    ref.listen(playbackStatusProvider, (previous, next) {
+      next.whenData((status) {
+        if (status.state == PlaybackState.ended) {
+          if (!_skipDebounce) {
+            _skipDebounce = true;
+            skipNext();
+            Future.delayed(const Duration(milliseconds: 1000), () => _skipDebounce = false);
+          }
+        }
+        _syncFromStatus(status);
+      });
+    });
+
+    return const PlayerState();
+  }
+
+  void _syncFromStatus(PlaybackStatus status) {
+    state = state.copyWith(
+      isPlaying: status.isPlaying,
+      isLoadingVideo: status.state == PlaybackState.preparing || status.state == PlaybackState.buffering,
+      loadError: status.error,
+      videoId: status.activeVideoId,
+      position: status.position,
+      duration: status.duration,
+    );
+  }
+
+  // Removed direct service getter to use ref.read inside methods
+  PlaybackController get _controller => ref.read(playbackControllerProvider);
 
   Future<void> playTrack(Track track, {List<Track>? queue}) async {
-    final idx = queue?.indexOf(track) ?? 0;
+    _playGeneration++;
+    final myGen = _playGeneration;
+
+    final timestamp = DateTime.now().microsecondsSinceEpoch;
+    
+    // Ensure every track in the upcoming queue has a unique occurrence ID
+    final q = (queue ?? [track]).asMap().entries.map((e) {
+      final t = e.value;
+      if (t.queueItemId != null) return t; // Already has ID
+      return t.copyWith(queueItemId: '${t.spotifyId}_${timestamp}_${e.key}');
+    }).toList();
+
+    final targetTrack = q.firstWhere((t) => t.spotifyId == track.spotifyId && t.name == track.name);
+    final idx = q.indexOf(targetTrack);
+
+    debugPrint('PlayerNotifier: Playing track ${track.name}');
+
     state = state.copyWith(
-      queue: queue ?? [track],
-      currentIndex: idx < 0 ? 0 : idx,
-      isPlaying: true,
-      isLoadingVideo: true,
-      loadError: null,
-      videoId: null,
-      candidateIds: [],
-      candidateIndex: 0,
-      position: Duration.zero,
-      duration: Duration.zero,
+      playbackQueue: state.playbackQueue.copyWith(
+        tracks: q,
+        currentIndex: idx < 0 ? 0 : idx,
+      ),
+      clearLoadError: true,
     );
 
-    await _resolveVideo(track);
-    await _db.recordPlay(db.TracksCompanion(
-      spotifyId: Value(track.spotifyId),
-      name: Value(track.name),
-      artistId: Value(track.artistId),
-      artistName: Value(track.artistName),
-      albumId: Value(track.albumId),
-      albumName: Value(track.albumName),
-      albumImage: Value(track.albumImage),
-      durationMs: Value(track.durationMs),
-      lastPlayedAt: Value(DateTime.now()),
-    ));
+    Track finalTrack = targetTrack;
+    
+    // Resolve YouTube ID if missing or invalid
+    final currentYtId = finalTrack.youtubeVideoId;
+    final needsResolution = !YoutubeIdValidator.isValid(
+      currentYtId, 
+      spotifyId: finalTrack.spotifyId
+    );
+
+    if (needsResolution) {
+      state = state.copyWith(isLoadingVideo: true);
+      try {
+        final service = ref.read(playbackServiceProvider);
+        final candidates = await service.resolveCandidates(finalTrack, null);
+        
+        if (myGen != _playGeneration) return;
+
+        if (candidates.isNotEmpty) {
+          final resolvedId = candidates.first;
+          if (YoutubeIdValidator.isValid(resolvedId, spotifyId: finalTrack.spotifyId)) {
+            finalTrack = finalTrack.copyWith(youtubeVideoId: resolvedId);
+            await service.cacheYoutubeId(finalTrack.spotifyId, resolvedId);
+            
+            // Update queue with resolved track
+            final newQueue = List<Track>.from(state.playbackQueue.tracks);
+            newQueue[idx] = finalTrack;
+            state = state.copyWith(
+              playbackQueue: state.playbackQueue.copyWith(tracks: newQueue)
+            );
+          } else {
+            state = state.copyWith(
+              isLoadingVideo: false,
+              loadError: 'Resolved invalid YouTube ID: $resolvedId',
+            );
+            return;
+          }
+        } else {
+          state = state.copyWith(
+            isLoadingVideo: false,
+            loadError: 'No YouTube video found for this track',
+          );
+          return;
+        }
+      } catch (e) {
+        if (myGen != _playGeneration) return;
+        debugPrint('Failed to resolve YouTube ID for ${finalTrack.name}: $e');
+        state = state.copyWith(
+          isLoadingVideo: false,
+          loadError: 'Failed to resolve YouTube ID: $e',
+        );
+        return;
+      }
+    }
+
+    if (myGen != _playGeneration) return;
+
+    // Delegate to the new playback controller
+    await _controller.play(finalTrack.toPlaybackTrack());
+    
+    await ref.read(playbackServiceProvider).recordPlay(finalTrack);
   }
 
   Future<void> playTracks(List<Track> tracks, {int initialIndex = 0}) async {
     if (tracks.isEmpty) return;
-    final track = (initialIndex >= 0 && initialIndex < tracks.length)
-        ? tracks[initialIndex]
-        : tracks.first;
+    final track = (initialIndex >= 0 && initialIndex < tracks.length) ? tracks[initialIndex] : tracks.first;
     await playTrack(track, queue: tracks);
   }
 
   Future<void> shuffleAndPlay(List<Track> tracks) async {
     if (tracks.isEmpty) return;
-    
     final shuffled = [...tracks]..shuffle();
-    state = state.copyWith(isShuffled: true);
+    state = state.copyWith(
+      playbackQueue: state.playbackQueue.copyWith(
+        tracks: shuffled,
+        currentIndex: 0,
+        isShuffled: true,
+      ),
+    );
     await playTrack(shuffled.first, queue: shuffled);
   }
 
   Future<void> playPlaylist(int playlistId) async {
-    final tracks = await _db.getPlaylistTracks(playlistId);
-    if (tracks.isEmpty) return;
-
-    final modelTracks = tracks
-        .map((t) => Track(
-              spotifyId: t.spotifyId,
-              name: t.name,
-              artistId: t.artistId,
-              artistName: t.artistName,
-              albumId: t.albumId,
-              albumName: t.albumName,
-              albumImage: t.albumImage,
-              durationMs: t.durationMs,
-              youtubeVideoId: t.youtubeVideoId,
-              playCount: t.playCount,
-              isFavorite: t.isFavorite,
-            ))
-        .toList();
-
-    await playTracks(modelTracks);
+    final tracks = await ref.read(playbackServiceProvider).getPlaylistTracks(playlistId);
+    if (tracks.isNotEmpty) {
+      await playTracks(tracks);
+    }
   }
 
   Future<void> playRadio(String artistId) async {
-    final client = ref.read(spotifyClientProvider);
-    try {
-      final tracks = await client.getRecommendations(seedArtistId: artistId);
-      if (tracks.isNotEmpty) {
-        await playTrack(tracks.first, queue: tracks);
-      }
-    } catch (e) {
-      // Handle error
-    }
-  }
-
-  Future<void> _resolveVideo(Track track) async {
-    // Use cached video ID if available
-    if (track.youtubeVideoId != null) {
-      state = state.copyWith(
-        videoId: track.youtubeVideoId,
-        candidateIds: [track.youtubeVideoId!],
-        isLoadingVideo: false,
-        loadError: null,
-      );
-      return;
-    }
-
-    final regionCode = ref.read(settingsProvider).selectedCountry;
-    final candidates =
-        await _resolver.resolve(track.artistName, track.name, regionCode: regionCode);
-
-    if (candidates.isEmpty) {
-      state = state.copyWith(
-        isLoadingVideo: false,
-        loadError: 'No video found for this track. Click to retry.',
-      );
-      return;
-    }
-
-    // Cache the first result
-    await _db.cacheYoutubeId(track.spotifyId, candidates[0]);
-
-    state = state.copyWith(
-      candidateIds: candidates,
-      candidateIndex: 0,
-      videoId: candidates[0],
-      isLoadingVideo: false,
-      loadError: null,
-    );
-  }
-
-  /// Called by the YouTube player when a video fails — try the next candidate
-  void onVideoError() {
-    final next = state.candidateIndex + 1;
-    if (next < state.candidateIds.length) {
-      state = state.copyWith(
-        candidateIndex: next,
-        videoId: state.candidateIds[next],
-        loadError: null,
-      );
-    } else {
-      state = state.copyWith(
-        loadError: 'Failed to load video. Click to retry.',
-      );
+    final tracks = await ref.read(playbackServiceProvider).getRadioTracks(artistId);
+    if (tracks.isNotEmpty) {
+      await playTrack(tracks.first, queue: tracks);
     }
   }
 
   Future<void> retryLoad() async {
     final track = state.currentTrack;
     if (track == null) return;
-
-    state = state.copyWith(
-      loadError: null,
-      isLoadingVideo: true,
-      videoId: null,
-      candidateIds: [],
-      candidateIndex: 0,
-      position: Duration.zero,
-      duration: Duration.zero,
-    );
-
-    // Clear db cache for this track so we rescan YouTube
-    await _db.cacheYoutubeId(track.spotifyId, null);
-
-    // Refresh resolution
-    await _resolveVideo(track);
+    await _controller.play(track.toPlaybackTrack());
   }
 
-  void pause() => state = state.copyWith(isPlaying: false);
-  void resume() => state = state.copyWith(isPlaying: true);
-  void togglePlay() => state = state.copyWith(isPlaying: !state.isPlaying);
+  void pause() => _controller.pause();
+  void resume() => _controller.resume();
+  void togglePlay() {
+    if (state.isPlaying) {
+      pause();
+    } else {
+      resume();
+    }
+  }
 
   void skipNext() {
-    if (state.queue.isEmpty) return;
-
-    if (state.repeatMode == RepeatMode.one) {
-      // Just re-resolve/play the same track
-      playTrack(state.queue[state.currentIndex], queue: state.queue);
-      return;
+    final nextQueue = state.playbackQueue.next();
+    if (nextQueue.currentIndex < nextQueue.tracks.length) {
+      final track = nextQueue.tracks[nextQueue.currentIndex];
+      playTrack(track, queue: nextQueue.tracks);
     }
-
-    if (state.isShuffled && state.queue.length > 1) {
-      int nextIdx;
-      do {
-        nextIdx = (DateTime.now().millisecondsSinceEpoch % state.queue.length);
-      } while (nextIdx == state.currentIndex);
-      playTrack(state.queue[nextIdx], queue: state.queue);
-      return;
-    }
-
-    int next = state.currentIndex + 1;
-    if (next >= state.queue.length) {
-      if (state.repeatMode == RepeatMode.all) {
-        next = 0;
-      } else {
-        return; // End of queue
-      }
-    }
-    playTrack(state.queue[next], queue: state.queue);
   }
 
   void skipPrevious() {
-    if (state.queue.isEmpty) return;
-    
-    // If we are more than 3 seconds into the track, just restart it
-    if (state.position.inSeconds > 3) {
-      playTrack(state.queue[state.currentIndex], queue: state.queue);
-      return;
-    }
-
-    int prev = state.currentIndex - 1;
-    if (prev < 0) {
-      if (state.repeatMode == RepeatMode.all) {
-        prev = state.queue.length - 1;
-      } else {
-        prev = 0;
-      }
-    }
-    playTrack(state.queue[prev], queue: state.queue);
+    final prevQueue = state.playbackQueue.previous(state.position);
+    final track = prevQueue.tracks[prevQueue.currentIndex];
+    playTrack(track, queue: prevQueue.tracks);
   }
 
   void skipTo(int index) {
-    if (index >= 0 && index < state.queue.length) {
-      playTrack(state.queue[index], queue: state.queue);
+    if (index >= 0 && index < state.playbackQueue.tracks.length) {
+      playTrack(state.playbackQueue.tracks[index], queue: state.playbackQueue.tracks);
     }
   }
 
   void addToQueue(Track track) {
-    state = state.copyWith(queue: [...state.queue, track]);
+    state = state.copyWith(playbackQueue: state.playbackQueue.add(track));
   }
 
   void removeFromQueue(int index) {
-    final newQueue = [...state.queue]..removeAt(index);
-    state = state.copyWith(queue: newQueue);
+    state = state.copyWith(playbackQueue: state.playbackQueue.removeAt(index));
   }
 
-  void toggleShuffle() =>
-      state = state.copyWith(isShuffled: !state.isShuffled);
+  void toggleShuffle() {
+    state = state.copyWith(
+      playbackQueue: state.playbackQueue.copyWith(isShuffled: !state.playbackQueue.isShuffled),
+    );
+  }
 
   void reorderQueue(int oldIndex, int newIndex) {
-    if (oldIndex < newIndex) {
-      newIndex -= 1;
-    }
-    final queue = [...state.queue];
-    final item = queue.removeAt(oldIndex);
-    queue.insert(newIndex, item);
-
-    int newCurrentIndex = state.currentIndex;
-    if (state.currentIndex == oldIndex) {
-      newCurrentIndex = newIndex;
-    } else if (oldIndex < state.currentIndex && newIndex >= state.currentIndex) {
-      newCurrentIndex--;
-    } else if (oldIndex > state.currentIndex && newIndex <= state.currentIndex) {
-      newCurrentIndex++;
-    }
-
     state = state.copyWith(
-      queue: queue,
-      currentIndex: newCurrentIndex,
+      playbackQueue: state.playbackQueue.reorder(oldIndex, newIndex),
     );
   }
 
   void cycleRepeat() {
-    final next = RepeatMode.values[
-        (state.repeatMode.index + 1) % RepeatMode.values.length];
-    state = state.copyWith(repeatMode: next);
-  }
-
-  void updatePosition(Duration position, [Duration? duration]) {
+    final next = RepeatMode.values[(state.repeatMode.index + 1) % RepeatMode.values.length];
     state = state.copyWith(
-      position: position,
-      duration: (duration != null && duration != Duration.zero) ? duration : state.duration,
+      playbackQueue: state.playbackQueue.copyWith(repeatMode: next),
     );
   }
 
-  void seekTo(Duration position) {
-    // This will be listened to by YoutubePlayerService
-    state = state.copyWith(position: position);
-  }
+  void seekTo(Duration position) => _controller.seekTo(position);
 
   Future<void> toggleFavorite(Track track) async {
     final newValue = !track.isFavorite;
-    
-    // Ensure track exists in DB with the new favorite status
-    await _db.upsertTrack(db.TracksCompanion(
-      spotifyId: Value(track.spotifyId),
-      name: Value(track.name),
-      artistId: Value(track.artistId),
-      artistName: Value(track.artistName),
-      albumId: Value(track.albumId),
-      albumName: Value(track.albumName),
-      albumImage: Value(track.albumImage),
-      durationMs: Value(track.durationMs),
-      isFavorite: Value(newValue),
-    ));
+    await ref.read(playbackServiceProvider).toggleFavorite(track, newValue);
 
-    // Update state if the favorited track is in the queue
     final newQueue = state.queue.map((t) {
       if (t.spotifyId == track.spotifyId) {
         return t.copyWith(isFavorite: newValue);
@@ -370,30 +292,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
       return t;
     }).toList();
 
-    state = state.copyWith(queue: newQueue);
+    state = state.copyWith(
+      playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
+    );
   }
 }
 
-final recentlyPlayedProvider = FutureProvider<List<Track>>((ref) async {
-  final database = ref.watch(db.appDatabaseProvider);
-  final tracks = await database.getRecentlyPlayed(limit: 6);
-  return tracks
-      .map((t) => Track(
-            spotifyId: t.spotifyId,
-            name: t.name,
-            artistId: t.artistId,
-            artistName: t.artistName,
-            albumId: t.albumId,
-            albumName: t.albumName,
-            albumImage: t.albumImage,
-            durationMs: t.durationMs,
-            youtubeVideoId: t.youtubeVideoId,
-            playCount: t.playCount,
-            isFavorite: t.isFavorite,
-          ))
-      .toList();
-});
-
-final playerProvider = NotifierProvider<PlayerNotifier, PlayerState>(
-  PlayerNotifier.new,
-);
+final playerProvider = NotifierProvider<PlayerNotifier, PlayerState>(PlayerNotifier.new);

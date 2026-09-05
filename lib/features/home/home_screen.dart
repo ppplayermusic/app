@@ -5,11 +5,12 @@ import '../../shared/widgets/pp_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
+import '../../core/playback/playback_service.dart';
 import '../../shared/widgets/banner_ad_widget.dart';
 import '../../shared/widgets/promotion_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../shared/widgets/adaptive_blur.dart';
 import '../../core/services/ad_service.dart';
-import 'dart:ui' show ImageFilter;
 import '../../core/providers/genre_providers.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../core/theme/app_theme.dart';
@@ -241,16 +242,6 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final newReleases = ref.watch(newReleasesProvider);
-    final recentlyPlayed = ref.watch(recentlyPlayedProvider);
-    final popularAlbums = ref.watch(marketPopularAlbumsProvider);
-    final featuredPlaylists = ref.watch(featuredPlaylistsProvider);
-    final popularTracks = ref.watch(popularTracksProvider);
-    final popularArtists = ref.watch(popularArtistsProvider);
-    final madeForYouMixes = ref.watch(madeForYouMixesProvider);
-    final suggestedStations = ref.watch(suggestedStationsProvider);
-    final genres = ref.watch(browseCategoriesProvider);
-
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -267,11 +258,12 @@ class HomeScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SectionWrapper<Track>(
+                  StaggeredHomeSection<Track>(
                     title: 'Jump Back In',
-                    asyncValue: recentlyPlayed,
+                    provider: recentlyPlayedProvider,
+                    delay: 0.seconds,
                     topPadding: 24,
-                    builder: (tracks) => GridView.builder(
+                    builder: (context, ref, tracks) => GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -286,22 +278,16 @@ class HomeScreen extends ConsumerWidget {
                         return _HistoryCard(
                           track: track,
                           onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
-                        ).animate().fadeIn(delay: (400 + (index * 50)).ms).scale(begin: const Offset(0.9, 0.9));
+                        );
                       },
-                    ),
-                    loadingWidget: const SectionShimmer(
-                      isGrid: true,
-                      count: 6,
-                      height: 180,
-                      spacing: 12,
-                      childAspectRatio: 3,
                     ),
                   ),
                   const SizedBox(height: 32),
-                  SectionWrapper<Map<String, dynamic>>(
+                  StaggeredHomeSection<Map<String, dynamic>>(
                     title: 'Popular Artists',
-                    asyncValue: popularArtists,
-                    builder: (artists) => SizedBox(
+                    provider: popularArtistsProvider,
+                    delay: 500.ms,
+                    builder: (context, ref, artists) => SizedBox(
                       height: 170,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -313,17 +299,17 @@ class HomeScreen extends ConsumerWidget {
                             name: artist['name'],
                             imageUrl: imageUrl,
                             onTap: () => context.push('/artist/${artist['id']}'),
-                          ).animate().fadeIn(delay: (650 + (index * 100)).ms).scale(begin: const Offset(0.8, 0.8));
+                          ).animate().fadeIn(delay: (100 + (index * 100)).ms).scale(begin: const Offset(0.8, 0.8));
                         },
                       ),
                     ),
-                    loadingWidget: const SectionShimmer(height: 170),
                   ),
                   const SizedBox(height: 32),
-                  SectionWrapper<Map<String, dynamic>>(
+                  StaggeredHomeSection<Map<String, dynamic>>(
                     title: 'Made For You',
-                    asyncValue: madeForYouMixes,
-                    builder: (mixes) => SizedBox(
+                    provider: madeForYouMixesProvider,
+                    delay: 1.seconds,
+                    builder: (context, ref, mixes) => SizedBox(
                       height: 230,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -350,17 +336,17 @@ class HomeScreen extends ConsumerWidget {
                                 'color2': mix['color2'],
                               },
                             ),
-                          ).animate(delay: (700 + index * 100).ms).fadeIn().scale(begin: const Offset(0.8, 0.8));
+                          ).animate(delay: (index * 100).ms).fadeIn().scale(begin: const Offset(0.8, 0.8));
                         },
                       ),
                     ),
-                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
-                  SectionWrapper<Map<String, dynamic>>(
+                  StaggeredHomeSection<Map<String, dynamic>>(
                     title: 'Suggested Stations',
-                    asyncValue: suggestedStations,
-                    builder: (radios) => SizedBox(
+                    provider: suggestedStationsProvider,
+                    delay: 1.5.seconds,
+                    builder: (context, ref, radios) => SizedBox(
                       height: 230,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -379,27 +365,27 @@ class HomeScreen extends ConsumerWidget {
                                 },
                               ).toString(),
                             ),
-                          ).animate().fadeIn(delay: (900 + index * 100).ms).scale(begin: const Offset(0.9, 0.9));
+                          ).animate().fadeIn(delay: (index * 100).ms).scale(begin: const Offset(0.9, 0.9));
                         },
                       ),
                     ),
-                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
-                  SectionWrapper<Map<String, dynamic>>(
+                  StaggeredHomeSection<Map<String, dynamic>>(
                     title: 'Popular Albums',
-                    asyncValue: popularAlbums,
-                    builder: (albums) => _HorizontalList(
+                    provider: marketPopularAlbumsProvider,
+                    delay: 2.seconds,
+                    builder: (context, ref, albums) => _HorizontalList(
                       items: albums,
                       onTap: (item) => context.push("/album/${item['id']}"),
-                    ).animate().fadeIn(delay: 1100.ms).slideY(begin: 0.1),
-                    loadingWidget: const SectionShimmer(height: 230),
+                    ).animate().fadeIn().slideY(begin: 0.1),
                   ),
                   const SizedBox(height: 32),
-                  SectionWrapper<Map<String, dynamic>>(
+                  StaggeredHomeSection<Map<String, dynamic>>(
                     title: 'Popular Genres',
-                    asyncValue: genres,
-                    builder: (items) => SizedBox(
+                    provider: browseCategoriesProvider,
+                    delay: 2.5.seconds,
+                    builder: (context, ref, items) => SizedBox(
                       height: 140,
                       child: GridView.builder(
                         scrollDirection: Axis.horizontal,
@@ -424,29 +410,30 @@ class HomeScreen extends ConsumerWidget {
                                 queryParameters: {'name': name},
                               ).toString(),
                             ),
-                          ).animate().fadeIn(delay: (1300 + index * 50).ms).scale(begin: const Offset(0.9, 0.9));
+                          ).animate().fadeIn(delay: (index * 50).ms).scale(begin: const Offset(0.9, 0.9));
                         },
                       ),
                     ),
-                    loadingWidget: const SectionShimmer(height: 140),
+                    loadingWidget: const SectionShimmer(height: 140, childAspectRatio: 0.45, isGrid: true, count: 6),
                   ),
                   const SizedBox(height: 32),
                   const BannerAdWidget(),
                   const SizedBox(height: 32),
-                  SectionWrapper<Map<String, dynamic>>(
+                  StaggeredHomeSection<Map<String, dynamic>>(
                     title: 'New Releases',
-                    asyncValue: newReleases,
-                    builder: (items) => _HorizontalList(
+                    provider: newReleasesProvider,
+                    delay: 3.seconds,
+                    builder: (context, ref, items) => _HorizontalList(
                       items: items,
                       onTap: (item) => context.push("/album/${item['id']}"),
-                    ).animate().fadeIn(delay: 1500.ms).slideY(begin: 0.1),
-                    loadingWidget: const SectionShimmer(height: 230),
+                    ).animate().fadeIn().slideY(begin: 0.1),
                   ),
                   const SizedBox(height: 32),
-                  SectionWrapper<Map<String, dynamic>>(
+                  StaggeredHomeSection<Map<String, dynamic>>(
                     title: 'Featured Playlists',
-                    asyncValue: featuredPlaylists,
-                    builder: (items) => _HorizontalList(
+                    provider: featuredPlaylistsProvider,
+                    delay: 3.5.seconds,
+                    builder: (context, ref, items) => _HorizontalList(
                       items: items,
                       onTap: (item) => context.push(
                         Uri(
@@ -454,14 +441,14 @@ class HomeScreen extends ConsumerWidget {
                           queryParameters: {'name': item['name']},
                         ).toString(),
                       ),
-                    ).animate().fadeIn(delay: 1700.ms).slideY(begin: 0.1),
-                    loadingWidget: const SectionShimmer(height: 230),
+                    ),
                   ),
                   const SizedBox(height: 32),
-                  SectionWrapper<Track>(
+                  StaggeredHomeSection<Track>(
                     title: 'Popular Tracks',
-                    asyncValue: popularTracks,
-                    builder: (tracks) => SizedBox(
+                    provider: popularTracksProvider,
+                    delay: 4.seconds,
+                    builder: (context, ref, tracks) => SizedBox(
                       height: 230,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -475,10 +462,12 @@ class HomeScreen extends ConsumerWidget {
                               imageUrl: promo['image'],
                               ctaText: promo['cta']!,
                               type: PromotionType.horizontal,
-                            ).animate().fadeIn(delay: (1900 + index * 100).ms).scale(begin: const Offset(0.9, 0.9));
+                            ).animate().fadeIn(delay: (index * 100).ms).scale(begin: const Offset(0.9, 0.9));
                           }
                           
                           final trackIndex = index > 4 ? index - 1 : index;
+                          if (trackIndex >= tracks.length) return const SizedBox.shrink();
+                          
                           final track = tracks[trackIndex];
                           return _AlbumCard(
                             title: track.name,
@@ -486,11 +475,10 @@ class HomeScreen extends ConsumerWidget {
                             imageUrl: track.albumImage ?? '',
                             onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
                             artistId: track.artistId,
-                          ).animate().fadeIn(delay: (1900 + index * 100).ms).slideY(begin: 0.1);
+                          ).animate().fadeIn(delay: (index * 100).ms).slideY(begin: 0.1);
                         },
                       ),
                     ),
-                    loadingWidget: const SectionShimmer(height: 230),
                   ),
                   const SizedBox(height: 32),
                 ],
@@ -668,87 +656,86 @@ class _HistoryCard extends StatelessWidget {
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.98,
-      child: ClipRRect(
+      child: AdaptiveBlur(
+        sigmaX: 10,
+        sigmaY: 10,
         borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            height: 56,
-            decoration: BoxDecoration(
-              color: colorScheme.onSurface.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: colorScheme.onSurface.withValues(alpha: 0.08),
-                width: 0.5,
+        child: Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: colorScheme.onSurface.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: colorScheme.onSurface.withValues(alpha: 0.08),
+              width: 0.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.scrim.withValues(alpha: 0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: colorScheme.scrim.withValues(alpha: 0.2),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Row(
-              children: [
-                AspectRatio(
-                  aspectRatio: 1,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      PPImage(
-                        imageUrl: track.albumImage ?? '',
-                        fit: BoxFit.cover,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              colorScheme.onSurface.withValues(alpha: 0.1),
-                              Colors.transparent,
-                            ],
-                          ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Row(
+            children: [
+              AspectRatio(
+                aspectRatio: 1,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    PPImage(
+                      imageUrl: track.albumImage ?? '',
+                      fit: BoxFit.cover,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            colorScheme.onSurface.withValues(alpha: 0.1),
+                            Colors.transparent,
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        track.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 13,
-                          letterSpacing: -0.2,
-                        ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      track.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 13,
+                        letterSpacing: -0.2,
                       ),
-                      const SizedBox(height: 1),
-                      Text(
-                        track.artistName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: colorScheme.onSurface.withValues(alpha: 0.5),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      track.artistName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-              ],
-            ),
+              ),
+              const SizedBox(width: 8),
+            ],
           ),
         ),
       ),
@@ -987,23 +974,23 @@ class _RadioCard extends StatelessWidget {
             ),
             // Glassmorphic Layer
             Positioned.fill(
-              child: ClipRRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: colorScheme.onSurface.withValues(alpha: 0.1),
-                        width: 0.5,
-                      ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          colorScheme.scrim.withValues(alpha: 0.8),
-                        ],
-                      ),
+              child: AdaptiveBlur(
+                sigmaX: 8,
+                sigmaY: 8,
+                borderRadius: BorderRadius.circular(24),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: colorScheme.onSurface.withValues(alpha: 0.1),
+                      width: 0.5,
+                    ),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        colorScheme.scrim.withValues(alpha: 0.8),
+                      ],
                     ),
                   ),
                 ),
@@ -1152,9 +1139,10 @@ class _MixCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Glass Layer
-                  BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                  AdaptiveBlur(
+                    sigmaX: 12,
+                    sigmaY: 12,
+                    borderRadius: BorderRadius.circular(28),
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
@@ -1257,23 +1245,18 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
           ),
         ),
         
-        // Glassmorphic Overlay
-        ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 20 * (1 - progress),
-              sigmaY: 20 * (1 - progress),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    colorScheme.surface.withValues(alpha: 0.2 + (0.6 * progress)),
-                    colorScheme.surface.withValues(alpha: 0.8 + (0.2 * progress)),
-                  ],
-                ),
+        AdaptiveBlur(
+          sigmaX: 20 * (1 - progress),
+          sigmaY: 20 * (1 - progress),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  colorScheme.surface.withValues(alpha: 0.2 + (0.6 * progress)),
+                  colorScheme.surface.withValues(alpha: 0.8 + (0.2 * progress)),
+                ],
               ),
             ),
           ),
@@ -1283,9 +1266,12 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+            child: SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
                 if (progress < 0.5)
                   Opacity(
                     opacity: (1 - progress * 2).clamp(0.0, 1.0),
@@ -1352,6 +1338,7 @@ class _HomeHero extends SliverPersistentHeaderDelegate {
                   ),
               ],
             ),
+          ),
           ),
         ),
 
@@ -1446,4 +1433,108 @@ class _MeshPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _MeshPainter oldDelegate) => oldDelegate.primaryColor != primaryColor;
+}
+
+class StaggeredHomeSection<T> extends ConsumerStatefulWidget {
+  const StaggeredHomeSection({
+    super.key,
+    required this.title,
+    required this.provider,
+    required this.builder,
+    this.delay = Duration.zero,
+    this.topPadding = 0,
+    this.loadingWidget,
+  });
+
+  final String title;
+  final FutureProvider<List<T>> provider;
+  final Widget Function(BuildContext context, WidgetRef ref, List<T> data) builder;
+  final Duration delay;
+  final double topPadding;
+  final Widget? loadingWidget;
+
+  @override
+  ConsumerState<StaggeredHomeSection<T>> createState() => _StaggeredHomeSectionState<T>();
+}
+
+class _StaggeredHomeSectionState<T> extends ConsumerState<StaggeredHomeSection<T>> {
+  bool _shouldLoad = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.delay == Duration.zero) {
+      _shouldLoad = true;
+    } else {
+      Future.delayed(widget.delay, () {
+        if (mounted) {
+          setState(() {
+            _shouldLoad = true;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_shouldLoad) {
+      return Padding(
+        padding: EdgeInsets.only(top: widget.topPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _StaggeredHeader(title: widget.title),
+            const SizedBox(height: 16),
+            widget.loadingWidget ?? const SectionShimmer(height: 200),
+          ],
+        ),
+      );
+    }
+
+    final asyncValue = ref.watch(widget.provider);
+
+    return SectionWrapper<T>(
+      title: widget.title,
+      asyncValue: asyncValue,
+      topPadding: widget.topPadding,
+      builder: (data) => widget.builder(context, ref, data),
+      loadingWidget: widget.loadingWidget,
+      onRetry: () => ref.invalidate(widget.provider),
+    );
+  }
+}
+
+class _StaggeredHeader extends StatelessWidget {
+  final String title;
+  const _StaggeredHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 24,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              color: Theme.of(context).colorScheme.onSurface,
+              letterSpacing: -0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

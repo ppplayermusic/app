@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/track.dart';
@@ -12,6 +13,7 @@ class SpotifyClient {
   final String market;
   String? _accessToken;
   DateTime? _tokenExpiry;
+  Future<void>? _pendingTokenRequest;
 
   static const _baseUrl = 'https://api.spotify.com/v1';
   static const _tokenUrl = 'https://accounts.spotify.com/api/token';
@@ -21,14 +23,30 @@ class SpotifyClient {
 
   // --- Auth: Client Credentials flow (no user login needed) ---
   Future<void> _ensureToken() async {
+    // 1. Check if we already have a valid token
     if (_accessToken != null &&
         _tokenExpiry != null &&
         DateTime.now().isBefore(_tokenExpiry!)) {
       return;
     }
 
-    final credentials =
-        base64Encode(utf8.encode('$_clientId:$_clientSecret'));
+    // 2. If a request is already in progress, wait for it
+    if (_pendingTokenRequest != null) {
+      await _pendingTokenRequest;
+      return;
+    }
+
+    // 3. Start a new request and store the future
+    _pendingTokenRequest = _performTokenRequest();
+    try {
+      await _pendingTokenRequest;
+    } finally {
+      _pendingTokenRequest = null;
+    }
+  }
+
+  Future<void> _performTokenRequest() async {
+    final credentials = base64Encode(utf8.encode('$_clientId:$_clientSecret'));
     final response = await _dio.post(
       _tokenUrl,
       data: 'grant_type=client_credentials',
@@ -344,12 +362,16 @@ class SpotifyClient {
 final spotifyClientProvider = Provider<SpotifyClient>((ref) {
   final market = ref.watch(selectedCountryProvider);
   final dio = Dio();
-  dio.interceptors.add(LogInterceptor(
-    requestHeader: true,
-    requestBody: true,
-    responseHeader: false,
-    responseBody: true,
-    error: true,
-  ));
+  
+  if (kDebugMode) {
+    dio.interceptors.add(LogInterceptor(
+      requestHeader: true,
+      requestBody: false, // Security: redact credentials
+      responseHeader: false,
+      responseBody: false, // Security: redact tokens
+      error: true,
+    ));
+  }
+  
   return SpotifyClient(dio, market: market);
 });

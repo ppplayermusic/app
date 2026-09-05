@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +8,7 @@ import '../../core/db/app_database.dart' as db;
 import '../../core/services/favorites_provider.dart';
 import '../../core/models/track.dart' as model;
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../shared/widgets/adaptive_blur.dart';
 
 class TrackTile extends ConsumerWidget {
   const TrackTile({
@@ -149,73 +149,72 @@ class TrackTile extends ConsumerWidget {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
         ),
-        child: ClipRRect(
+        child: AdaptiveBlur(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(8),
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
+          sigmaX: 20,
+          sigmaY: 20,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                ListTile(
+                  leading:
+                      Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  title: Text('Start Radio',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    final encodedTitle = Uri.encodeComponent(track.name);
+                    final encodedImage = Uri.encodeComponent(track.albumImage ?? '');
+                    final encodedArtistName = Uri.encodeComponent(track.artistName);
+                    
+                    context.push(
+                      '/radio/track/${track.spotifyId}?title=$encodedTitle&imageUrl=$encodedImage&artistId=${track.artistId}&artistName=$encodedArtistName',
+                    );
+                  },
+                ),
+                ListTile(
+                  leading:
+                      Icon(Icons.playlist_add, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  title: Text('Add to Playlist',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    TrackTile.showPlaylistPicker(context, ref, track);
+                  },
+                ),
+                ListTile(
+                  leading:
+                      Icon(Icons.person_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  title: Text('Go to Artist',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    context.push('/artist/${track.artistId}');
+                  },
+                ),
+                if (track.albumId != null)
                   ListTile(
-                    leading:
-                        Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    title: Text('Start Radio',
+                    leading: Icon(Icons.album_outlined,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    title: Text('Go to Album',
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                     onTap: () {
                       Navigator.of(context).pop();
-                      final encodedTitle = Uri.encodeComponent(track.name);
-                      final encodedImage = Uri.encodeComponent(track.albumImage ?? '');
-                      final encodedArtistName = Uri.encodeComponent(track.artistName);
-                      
-                      context.push(
-                        '/radio/track/${track.spotifyId}?title=$encodedTitle&imageUrl=$encodedImage&artistId=${track.artistId}&artistName=$encodedArtistName',
-                      );
+                      context.push('/album/${track.albumId}');
                     },
                   ),
-                  ListTile(
-                    leading:
-                        Icon(Icons.playlist_add, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    title: Text('Add to Playlist',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      TrackTile.showPlaylistPicker(context, ref, track);
-                    },
-                  ),
-                  ListTile(
-                    leading:
-                        Icon(Icons.person_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    title: Text('Go to Artist',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      context.push('/artist/${track.artistId}');
-                    },
-                  ),
-                  if (track.albumId != null)
-                    ListTile(
-                      leading: Icon(Icons.album_outlined,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      title: Text('Go to Album',
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        context.push('/album/${track.albumId}');
-                      },
-                    ),
-                  const SizedBox(height: 8),
-                ],
-              ),
+                const SizedBox(height: 8),
+              ],
             ),
           ),
         ),
@@ -242,97 +241,96 @@ class TrackTile extends ConsumerWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
             border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
           ),
-          child: ClipRRect(
+          child: AdaptiveBlur(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Consumer(
-                builder: (context, ref, child) =>
-                    FutureBuilder<List<db.Playlist>>(
-                  future: database.getPlaylists(),
-                  builder: (context, snap) {
-                    final playlists = snap.data ?? [];
-                    return SafeArea(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(8),
-                            width: 40,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                              borderRadius: BorderRadius.circular(2),
+            sigmaX: 20,
+            sigmaY: 20,
+            child: Consumer(
+              builder: (context, ref, child) =>
+                  FutureBuilder<List<db.Playlist>>(
+                future: database.getPlaylists(),
+                builder: (context, snap) {
+                  final playlists = snap.data ?? [];
+                  return SafeArea(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.all(8),
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Text(
+                            'Add to Playlist',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
+                        ),
+                        ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
+                          ),
+                          title: Text('Create New Playlist',
+                              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            _showCreatePlaylistDialog(
+                                context, database, track);
+                          },
+                        ),
+                        Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
+                        if (playlists.isEmpty)
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.all(32),
                             child: Text(
-                              'Add to Playlist',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                              'No playlists yet.',
+                              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
                             ),
                           ),
-                          ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                              child: Icon(Icons.add, color: Theme.of(context).colorScheme.onSurface),
-                            ),
-                            title: Text('Create New Playlist',
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              _showCreatePlaylistDialog(
-                                  context, database, track);
-                            },
-                          ),
-                          Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
-                          if (playlists.isEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(32),
-                              child: Text(
-                                'No playlists yet.',
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-                              ),
-                            ),
-                          Flexible(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: playlists.length,
-                              itemBuilder: (context, i) => ListTile(
-                                leading: Icon(Icons.playlist_play,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant),
-                                title: Text(playlists[i].name,
-                                    style:
-                                        TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                                onTap: () async {
-                                  await database.addToPlaylist(
-                                      playlists[i].id, track.spotifyId);
-                                  if (context.mounted) Navigator.of(context).pop();
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor:
-                                            Theme.of(context).colorScheme.surfaceContainerHighest,
-                                        content: Text(
-                                            'Added to ${playlists[i].name}',
-                                            style: TextStyle(
-                                                color: Theme.of(context).colorScheme.onSurface)),
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
+                        Flexible(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: playlists.length,
+                            itemBuilder: (context, i) => ListTile(
+                              leading: Icon(Icons.playlist_play,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              title: Text(playlists[i].name,
+                                  style:
+                                      TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                              onTap: () async {
+                                await database.addToPlaylist(
+                                    playlists[i].id, track.spotifyId);
+                                if (context.mounted) Navigator.of(context).pop();
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                                      content: Text(
+                                          'Added to ${playlists[i].name}',
+                                          style: TextStyle(
+                                              color: Theme.of(context).colorScheme.onSurface)),
+                                    ),
+                                  );
+                                }
+                              },
                             ),
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ),

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +9,7 @@ import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
+import '../../shared/widgets/adaptive_blur.dart';
 
 final _albumProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -101,40 +101,39 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                         ),
                 ),
                 title: _isSearching
-                    ? ClipRRect(
+                    ? AdaptiveBlur(
+                        sigmaX: 10,
+                        sigmaY: 10,
                         borderRadius: BorderRadius.circular(12),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Container(
-                            height: 42,
-                            decoration: BoxDecoration(
-                              color: colorScheme.onSurface.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: colorScheme.onSurface.withValues(alpha: 0.1),
-                                width: 0.5,
+                        child: Container(
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: colorScheme.onSurface.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: colorScheme.onSurface.withValues(alpha: 0.1),
+                              width: 0.5,
+                            ),
+                          ),
+                          child: TextField(
+                            controller: _searchController,
+                            autofocus: true,
+                            decoration: InputDecoration(
+                              hintText: 'Search in album...',
+                              prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withValues(alpha: 0.3), size: 20),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                              hintStyle: TextStyle(
+                                color: colorScheme.onSurface.withValues(alpha: 0.3),
+                                fontSize: 14,
                               ),
                             ),
-                            child: TextField(
-                              controller: _searchController,
-                              autofocus: true,
-                              decoration: InputDecoration(
-                                hintText: 'Search in album...',
-                                prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withValues(alpha: 0.3), size: 20),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                                hintStyle: TextStyle(
-                                  color: colorScheme.onSurface.withValues(alpha: 0.3),
-                                  fontSize: 14,
-                                ),
-                              ),
-                              style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
-                              onChanged: (value) {
-                                setState(() {
-                                  _searchQuery = value.toLowerCase();
-                                });
-                              },
-                            ),
+                            style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
+                            onChanged: (value) {
+                              setState(() {
+                                _searchQuery = value.toLowerCase();
+                              });
+                            },
                           ),
                         ),
                       ).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.95, 0.95))
@@ -179,25 +178,24 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                       expandedTitleScale: 1.0,
                       titlePadding: EdgeInsets.zero,
                       title: isCollapsed && !_isSearching
-                          ? ClipRect(
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                                child: Container(
-                                  width: double.infinity,
-                                  height: kToolbarHeight + topPadding,
-                                  padding: EdgeInsets.only(top: topPadding),
-                                  color: colorScheme.surface.withValues(alpha: 0.6),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    albumName,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 17,
-                                      letterSpacing: -0.5,
-                                      color: colorScheme.onSurface,
-                                    ),
-                                  ).animate().fadeIn(duration: 200.ms),
-                                ),
+                          ? AdaptiveBlur(
+                              sigmaX: 20,
+                              sigmaY: 20,
+                              child: Container(
+                                width: double.infinity,
+                                height: kToolbarHeight + topPadding,
+                                padding: EdgeInsets.only(top: topPadding),
+                                color: colorScheme.surface.withValues(alpha: 0.6),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  albumName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 17,
+                                    letterSpacing: -0.5,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ).animate().fadeIn(duration: 200.ms),
                               ),
                             )
                           : null,
@@ -283,55 +281,54 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                       ),
                                     ],
                                   ),
-                                  child: ClipRRect(
+                                  child: AdaptiveBlur(
+                                    sigmaX: 16,
+                                    sigmaY: 16,
                                     borderRadius: BorderRadius.circular(24),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                                        decoration: BoxDecoration(
-                                          color: colorScheme.surface.withValues(alpha: 0.3),
-                                          borderRadius: BorderRadius.circular(24),
-                                          border: Border.all(
-                                            color: colorScheme.onSurface.withValues(alpha: 0.15),
-                                            width: 0.5,
-                                          ),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.surface.withValues(alpha: 0.3),
+                                        borderRadius: BorderRadius.circular(24),
+                                        border: Border.all(
+                                          color: colorScheme.onSurface.withValues(alpha: 0.15),
+                                          width: 0.5,
                                         ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              'ALBUM',
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface.withValues(alpha: 0.5),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w900,
-                                                letterSpacing: 4.0,
-                                              ),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'ALBUM',
+                                            style: TextStyle(
+                                              color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w900,
+                                              letterSpacing: 4.0,
                                             ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              albumName,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface,
-                                                fontSize: 48,
-                                                fontWeight: FontWeight.w900,
-                                                letterSpacing: -2.5,
-                                                height: 1.0,
-                                                shadows: [
-                                                  Shadow(
-                                                    color: colorScheme.shadow.withValues(alpha: 0.45),
-                                                    blurRadius: 30,
-                                                    offset: Offset(0, 15),
-                                                  ),
-                                                ],
-                                              ),
-                                            ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
-                                          ],
-                                        ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            albumName,
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: colorScheme.onSurface,
+                                              fontSize: 48,
+                                              fontWeight: FontWeight.w900,
+                                              letterSpacing: -2.5,
+                                              height: 1.0,
+                                              shadows: [
+                                                Shadow(
+                                                  color: colorScheme.shadow.withValues(alpha: 0.45),
+                                                  blurRadius: 30,
+                                                  offset: Offset(0, 15),
+                                                ),
+                                              ],
+                                            ),
+                                          ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -470,55 +467,54 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                   delegate: SliverChildBuilderDelegate(
                     (_, i) {
                       final track = filteredTracks[i];
-                      return ClipRRect(
+                      return AdaptiveBlur(
+                        sigmaX: 10,
+                        sigmaY: 10,
                         borderRadius: BorderRadius.circular(16),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            decoration: BoxDecoration(
-                              color: colorScheme.onSurface.withValues(alpha: 0.03),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: colorScheme.onSurface.withValues(alpha: 0.05),
-                                width: 0.5,
-                              ),
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  colorScheme.onSurface.withValues(alpha: 0.05),
-                                  colorScheme.onSurface.withValues(alpha: 0.01),
-                                ],
-                              ),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            color: colorScheme.onSurface.withValues(alpha: 0.03),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: colorScheme.onSurface.withValues(alpha: 0.05),
+                              width: 0.5,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 28,
-                                    child: Text(
-                                      '${i + 1}',
-                                      style: TextStyle(
-                                        color: colorScheme.onSurface.withValues(alpha: 0.2),
-                                        fontSize: 12,
-                                        fontFamily: 'monospace',
-                                        fontWeight: FontWeight.w900,
-                                      ),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                colorScheme.onSurface.withValues(alpha: 0.05),
+                                colorScheme.onSurface.withValues(alpha: 0.01),
+                              ],
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 28,
+                                  child: Text(
+                                    '${i + 1}',
+                                    style: TextStyle(
+                                      color: colorScheme.onSurface.withValues(alpha: 0.2),
+                                      fontSize: 12,
+                                      fontFamily: 'monospace',
+                                      fontWeight: FontWeight.w900,
                                     ),
                                   ),
-                                  Expanded(
-                                    child: TrackTile(
-                                      track: track,
-                                      showImage: false,
-                                      onTap: () => ref
-                                          .read(playerProvider.notifier)
-                                          .playTrack(track, queue: filteredTracks),
-                                    ),
+                                ),
+                                Expanded(
+                                  child: TrackTile(
+                                    track: track,
+                                    showImage: false,
+                                    onTap: () => ref
+                                        .read(playerProvider.notifier)
+                                        .playTrack(track, queue: filteredTracks),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

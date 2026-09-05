@@ -6,10 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Service to manage Google Mobile Ads.
 class AdService {
   AdService() {
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-      MobileAds.instance.initialize();
-    }
+    // Defer Ad initialization to reduce startup pressure on Android.
+    _initializationFuture = Future.delayed(const Duration(seconds: 15), () async {
+      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+        return MobileAds.instance.initialize();
+      }
+      return InitializationStatus({});
+    });
   }
+
+  late final Future<InitializationStatus> _initializationFuture;
+  Future<InitializationStatus> get initialization => _initializationFuture;
 
   /// Get the banner ad unit ID based on the platform.
   /// These are test IDs from Google.

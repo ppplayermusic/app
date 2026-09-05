@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,53 +17,79 @@ class YoutubeResolver {
   String get _searchMethod => (dotenv.env['YOUTUBE_SEARCH_METHOD'] ?? 'api').toLowerCase();
 
   Future<List<String>> resolve(String artistName, String trackName, {String? regionCode}) async {
+    List<String> rawCandidates = [];
     if (_searchMethod == 'scraping') {
-      return _viaScraping(artistName, trackName);
+      rawCandidates = await _viaScraping(artistName, trackName);
+    } else {
+      rawCandidates = await _viaApi(artistName, trackName, regionCode: regionCode);
     }
-    return _viaApi(artistName, trackName, regionCode: regionCode);
+
+    // Harden candidates: YouTube IDs must be exactly 11 chars
+    return rawCandidates.where((id) => id.length == 11 && !id.contains('http')).toList();
   }
 
   Future<List<String>> _viaApi(String artistName, String trackName, {String? regionCode}) async {
-    try {
-      final q = '${artistName.toLowerCase()} ${trackName.toLowerCase()} official audio';
-      final response = await _dio.get(
-        _searchUrl,
-        queryParameters: {
-          'q': q,
-          'key': _apiKey,
-          'part': 'snippet',
-          'fields': 'items(id(videoId),snippet(title))',
-          'maxResults': 5,
-          'type': 'video',
-          'videoEmbeddable': 'true',
-          'videoSyndicated': 'true',
-          if (regionCode != null) 'regionCode': regionCode,
-        },
-      );
+    final results = <String>[];
+    final queries = [
+      '$artistName $trackName official audio',
+      '$artistName $trackName official music video',
+      '$artistName $trackName audio',
+      '$artistName $trackName lyric video',
+      '$artistName $trackName',
+    ];
 
-      final items = (response.data['items'] as List?) ?? [];
-
-      // Filter out full-album / playlist results (same logic as PHP backend)
-      final barWords = ['full album', 'album playlist'];
-      final sorted = items.where((item) {
-        final title =
-            ((item['snippet']?['title'] as String?) ?? '').toLowerCase();
-        return !barWords.any((w) => title.contains(w));
-      }).toList();
-
-      return sorted
-          .map<String>((item) => item['id']['videoId'] as String)
-          .where((id) => id.isNotEmpty)
-          .toList();
-    } catch (_) {
-      return [];
+    for (final q in queries) {
+      try {
+        final batch = await _searchYoutubeApi(q, regionCode);
+        for (final id in batch) {
+          if (!results.contains(id)) {
+            results.add(id);
+          }
+        }
+        // If we have plenty of candidates, stop searching to save quota
+        if (results.length >= 10) break;
+      } catch (e) {
+        debugPrint('YoutubeResolver: API error for query "$q": $e');
+      }
     }
+
+    return results;
+  }
+
+  Future<List<String>> _searchYoutubeApi(String query, String? regionCode) async {
+    final response = await _dio.get(
+      _searchUrl,
+      queryParameters: {
+        'q': query,
+        'key': _apiKey,
+        'part': 'snippet',
+        'fields': 'items(id(videoId),snippet(title))',
+        'maxResults': 15,
+        'type': 'video',
+        'videoEmbeddable': 'true',
+        'videoSyndicated': 'true',
+        if (regionCode != null) 'regionCode': regionCode,
+      },
+    );
+
+    final items = (response.data['items'] as List?) ?? [];
+    final barWords = ['full album', 'album playlist', 'complete album'];
+    
+    final filtered = items.where((item) {
+      final title = ((item['snippet']?['title'] as String?) ?? '').toLowerCase();
+      return !barWords.any((w) => title.contains(w));
+    }).toList();
+
+    return filtered
+        .map<String>((item) => item['id']['videoId'] as String)
+        .where((id) => id.isNotEmpty)
+        .toList();
   }
 
   Future<List<String>> _viaScraping(String artistName, String trackName) async {
     try {
-      // Adding "-vevo" to filter out official channels which usually block embedding.
-      final query = Uri.encodeComponent('$artistName $trackName lyrics -vevo');
+      // Use a broad search query to find the best match; we rely on candidate rotation later.
+      final query = Uri.encodeComponent('$artistName $trackName');
       final response = await _dio.get(
         'https://www.youtube.com/results?search_query=$query',
         options: Options(
@@ -75,6 +102,19 @@ class YoutubeResolver {
       );
 
       final html = response.data.toString();
+      
+      // Offload heavy JSON parsing and traversal to a background isolate to prevent UI jank.
+      return await compute(_parseYoutubeHtml, html);
+    } catch (e) {
+      debugPrint('YoutubeResolver: Scraping error: $e');
+      return [];
+    }
+  }
+
+  /// Internal parser for YouTube's initial data HTML blob.
+  /// Runs in a background isolate.
+  static List<String> _parseYoutubeHtml(String html) {
+    try {
       final match = RegExp(r'ytInitialData\s*=\s*(\{.*?\});').firstMatch(html);
       if (match != null) {
         final jsonStr = match.group(1)!;
@@ -98,12 +138,15 @@ class YoutubeResolver {
             .toList();
       }
     } catch (e) {
-      return [];
+      // Silently fail in isolate, main thread will handle the empty list.
     }
     return [];
   }
 }
 
 final youtubeResolverProvider = Provider<YoutubeResolver>((ref) {
-  return YoutubeResolver(Dio());
+  return YoutubeResolver(Dio(BaseOptions(
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 15),
+  )));
 });

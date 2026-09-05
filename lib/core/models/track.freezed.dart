@@ -32,6 +32,7 @@ mixin _$Track {
   String? get youtubeVideoId => throw _privateConstructorUsedError;
   int get playCount => throw _privateConstructorUsedError;
   bool get isFavorite => throw _privateConstructorUsedError;
+  String? get queueItemId => throw _privateConstructorUsedError;
 
   /// Serializes this Track to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -59,6 +60,7 @@ abstract class $TrackCopyWith<$Res> {
     String? youtubeVideoId,
     int playCount,
     bool isFavorite,
+    String? queueItemId,
   });
 }
 
@@ -88,6 +90,7 @@ class _$TrackCopyWithImpl<$Res, $Val extends Track>
     Object? youtubeVideoId = freezed,
     Object? playCount = null,
     Object? isFavorite = null,
+    Object? queueItemId = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -146,6 +149,11 @@ class _$TrackCopyWithImpl<$Res, $Val extends Track>
                     ? _value.isFavorite
                     : isFavorite // ignore: cast_nullable_to_non_nullable
                         as bool,
+            queueItemId:
+                freezed == queueItemId
+                    ? _value.queueItemId
+                    : queueItemId // ignore: cast_nullable_to_non_nullable
+                        as String?,
           )
           as $Val,
     );
@@ -172,6 +180,7 @@ abstract class _$$TrackImplCopyWith<$Res> implements $TrackCopyWith<$Res> {
     String? youtubeVideoId,
     int playCount,
     bool isFavorite,
+    String? queueItemId,
   });
 }
 
@@ -200,6 +209,7 @@ class __$$TrackImplCopyWithImpl<$Res>
     Object? youtubeVideoId = freezed,
     Object? playCount = null,
     Object? isFavorite = null,
+    Object? queueItemId = freezed,
   }) {
     return _then(
       _$TrackImpl(
@@ -258,6 +268,11 @@ class __$$TrackImplCopyWithImpl<$Res>
                 ? _value.isFavorite
                 : isFavorite // ignore: cast_nullable_to_non_nullable
                     as bool,
+        queueItemId:
+            freezed == queueItemId
+                ? _value.queueItemId
+                : queueItemId // ignore: cast_nullable_to_non_nullable
+                    as String?,
       ),
     );
   }
@@ -278,6 +293,7 @@ class _$TrackImpl implements _Track {
     this.youtubeVideoId,
     this.playCount = 0,
     this.isFavorite = false,
+    this.queueItemId,
   });
 
   factory _$TrackImpl.fromJson(Map<String, dynamic> json) =>
@@ -307,10 +323,12 @@ class _$TrackImpl implements _Track {
   @override
   @JsonKey()
   final bool isFavorite;
+  @override
+  final String? queueItemId;
 
   @override
   String toString() {
-    return 'Track(spotifyId: $spotifyId, name: $name, artistId: $artistId, artistName: $artistName, albumId: $albumId, albumName: $albumName, albumImage: $albumImage, durationMs: $durationMs, youtubeVideoId: $youtubeVideoId, playCount: $playCount, isFavorite: $isFavorite)';
+    return 'Track(spotifyId: $spotifyId, name: $name, artistId: $artistId, artistName: $artistName, albumId: $albumId, albumName: $albumName, albumImage: $albumImage, durationMs: $durationMs, youtubeVideoId: $youtubeVideoId, playCount: $playCount, isFavorite: $isFavorite, queueItemId: $queueItemId)';
   }
 
   @override
@@ -337,7 +355,9 @@ class _$TrackImpl implements _Track {
             (identical(other.playCount, playCount) ||
                 other.playCount == playCount) &&
             (identical(other.isFavorite, isFavorite) ||
-                other.isFavorite == isFavorite));
+                other.isFavorite == isFavorite) &&
+            (identical(other.queueItemId, queueItemId) ||
+                other.queueItemId == queueItemId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -355,6 +375,7 @@ class _$TrackImpl implements _Track {
     youtubeVideoId,
     playCount,
     isFavorite,
+    queueItemId,
   );
 
   /// Create a copy of Track
@@ -384,6 +405,7 @@ abstract class _Track implements Track {
     final String? youtubeVideoId,
     final int playCount,
     final bool isFavorite,
+    final String? queueItemId,
   }) = _$TrackImpl;
 
   factory _Track.fromJson(Map<String, dynamic> json) = _$TrackImpl.fromJson;
@@ -410,6 +432,8 @@ abstract class _Track implements Track {
   int get playCount;
   @override
   bool get isFavorite;
+  @override
+  String? get queueItemId;
 
   /// Create a copy of Track
   /// with the given fields replaced by the non-null parameter values.

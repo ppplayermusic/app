@@ -1,14 +1,16 @@
-import 'dart:ui';
+import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../shared/widgets/adaptive_blur.dart';
 import '../../core/db/app_database.dart' as db;
 
 String _formatDuration(Duration d) {
@@ -25,17 +27,15 @@ class PlayerScreen extends ConsumerStatefulWidget {
 }
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
-  final GlobalKey _videoKey = GlobalKey();
+  final GlobalKey _videoSlotKey = GlobalKey(debugLabel: 'player_video_slot');
 
   @override
   void initState() {
     super.initState();
-    // Proactively update layout after mounting
     _scheduleLayoutUpdates();
   }
 
   void _scheduleLayoutUpdates() {
-    // Schedule multiple updates to catch layout settling during animations
     for (var ms in [0, 50, 100, 250, 500, 800]) {
       Future.delayed(Duration(milliseconds: ms), () {
         if (mounted) _updateVideoLayout('scheduled_$ms');
@@ -45,7 +45,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
   void _updateVideoLayout([String label = 'manual']) {
     if (!mounted) return;
-    final RenderBox? box = _videoKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? box = _videoSlotKey.currentContext?.findRenderObject() as RenderBox?;
     if (box != null) {
       final position = box.localToGlobal(Offset.zero);
       ref.read(videoLayoutProvider.notifier).updateLayout(box.size, position, label: label);
@@ -77,45 +77,42 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final isQueueView = settings.playerView == PlayerView.queue;
     final isVideoView = settings.playerView == PlayerView.video;
     final colorScheme = Theme.of(context).colorScheme;
+    final isPowerSaver = settings.performanceMode == PerformanceMode.powerSaver;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
-          // Background blurred image (Ambient Ambient Motion)
           Positioned.fill(
-            child: CachedNetworkImage(
-              imageUrl: track.albumImage ?? '',
-              fit: BoxFit.cover,
-              errorWidget: (context, url, error) => const SizedBox.shrink(),
-            )
-            .animate(onPlay: (controller) => controller.repeat(reverse: true))
-            .scale(begin: const Offset(1.1, 1.1), end: const Offset(1.5, 1.5), duration: 25.seconds, curve: Curves.easeInOutSine)
-            .move(begin: const Offset(-60, -30), end: const Offset(60, 30), duration: 22.seconds, curve: Curves.easeInOutSine)
-            .blur(begin: const Offset(80, 80), end: const Offset(120, 120), duration: 25.seconds, curve: Curves.easeInOutSine),
+            child: RepaintBoundary(
+              child: CachedNetworkImage(
+                imageUrl: track.albumImage ?? '',
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) => const SizedBox.shrink(),
+              )
+              .animate(onPlay: (controller) => isPowerSaver ? null : controller.repeat(reverse: true))
+              .scale(begin: const Offset(1.1, 1.1), end: const Offset(1.5, 1.5), duration: 25.seconds, curve: Curves.easeInOutSine)
+              .move(begin: const Offset(-60, -30), end: const Offset(60, 30), duration: 22.seconds, curve: Curves.easeInOutSine)
+              .blur(begin: const Offset(80, 80), end: isPowerSaver ? const Offset(80, 80) : const Offset(120, 120), duration: 25.seconds, curve: Curves.easeInOutSine),
+            ),
           ),
-          // Deep Cinematic Blur Layer
           Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      colorScheme.surface.withValues(alpha: 0.3),
-                      colorScheme.surface.withValues(alpha: 0.6),
-                      colorScheme.surface.withValues(alpha: 0.8),
-                      colorScheme.surface.withValues(alpha: 0.95),
-                    ],
-                    stops: const [0.0, 0.3, 0.7, 1.0],
-                  ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorScheme.surface.withValues(alpha: 0.4),
+                    colorScheme.surface.withValues(alpha: 0.7),
+                    colorScheme.surface.withValues(alpha: 0.85),
+                    colorScheme.surface.withValues(alpha: 0.98),
+                  ],
+                  stops: const [0.0, 0.3, 0.7, 1.0],
                 ),
               ),
             ),
           ),
-          // Additional Ambient "Breathe" Layer (Dynamic Glow)
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -129,11 +126,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 ),
               ),
             )
-            .animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .animate(onPlay: (controller) => isPowerSaver ? null : controller.repeat(reverse: true))
             .fadeIn(duration: 4.seconds, curve: Curves.easeInOutSine)
             .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.4, 1.4), duration: 10.seconds, curve: Curves.easeInOutSine),
           ),
-          // Subtle Noise Overlay (Editorial Feel)
           Positioned.fill(
             child: Opacity(
               opacity: 0.03,
@@ -145,11 +141,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
             ),
           ),
 
-          // Main Content
           SafeArea(
             child: Column(
               children: [
-                // Header Toggles
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                   child: Row(
@@ -161,44 +155,36 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                         onTap: () => context.pop(),
                       ),
                       const Spacer(),
-                      ClipRRect(
+                      AdaptiveBlur(
+                        sigmaX: 12,
+                        sigmaY: 12,
                         borderRadius: BorderRadius.circular(28),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: colorScheme.onSurface.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(28),
-                              border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.12), width: 0.5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: colorScheme.shadow.withValues(alpha: 0.3),
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _ToggleTab(
-                                  label: 'VIDEO',
-                                  isActive: isVideoView,
-                                  onTap: () => ref.read(settingsProvider.notifier).setPlayerView(PlayerView.video),
-                                ),
-                                _ToggleTab(
-                                  label: 'ARTWORK',
-                                  isActive: settings.playerView == PlayerView.artwork,
-                                  onTap: () => ref.read(settingsProvider.notifier).setPlayerView(PlayerView.artwork),
-                                ),
-                                _ToggleTab(
-                                  label: 'QUEUE',
-                                  isActive: isQueueView,
-                                  onTap: () => ref.read(settingsProvider.notifier).setPlayerView(PlayerView.queue),
-                                ),
-                              ],
-                            ),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: colorScheme.onSurface.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(28),
+                            border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.12), width: 0.5),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _ToggleTab(
+                                label: 'VIDEO',
+                                isActive: isVideoView,
+                                onTap: () => ref.read(settingsProvider.notifier).setPlayerView(PlayerView.video),
+                              ),
+                              _ToggleTab(
+                                label: 'ARTWORK',
+                                isActive: settings.playerView == PlayerView.artwork,
+                                onTap: () => ref.read(settingsProvider.notifier).setPlayerView(PlayerView.artwork),
+                              ),
+                              _ToggleTab(
+                                label: 'QUEUE',
+                                isActive: isQueueView,
+                                onTap: () => ref.read(settingsProvider.notifier).setPlayerView(PlayerView.queue),
+                              ),
+                            ],
                           ),
                         ),
                       )
@@ -214,12 +200,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                               TrackTile.showPlaylistPicker(context, ref, track);
                               break;
                             case 'go_to_artist':
-                              context.pop(); // Close player
+                              context.pop();
                               context.push('/artist/${track.artistId}');
                               break;
                             case 'go_to_album':
                               if (track.albumId != null) {
-                                context.pop(); // Close player
+                                context.pop();
                                 context.push('/album/${track.albumId}');
                               }
                               break;
@@ -235,13 +221,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                   ),
                 ),
 
-                // Content Area
                 Expanded(
                   child: isQueueView
                       ? _QueueView(playerState: playerState)
                       : Column(
                           children: [
-                            // Video/Artwork area
                             Expanded(
                               flex: 3,
                               child: Padding(
@@ -252,17 +236,51 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                     child: AspectRatio(
                                       aspectRatio: 16 / 9,
                                       child: isVideoView
-                                          ? LayoutBuilder(
-                                              builder: (context, constraints) {
-                                                // Trigger layout updates whenever the container's constraints change
-                                                WidgetsBinding.instance.addPostFrameCallback((_) => _updateVideoLayout('layout_builder'));
+                                          ? Consumer(
+                                              builder: (context, ref, child) {
+                                                final status = ref.watch(playbackStatusProvider).asData?.value;
+                                                final hasVideo = status?.hasVideo ?? false;
+
+                                                if (!hasVideo && status != null && status.state != PlaybackState.preparing) {
+                                                  // Fallback to artwork if the resolved stream is audio-only
+                                                  return Stack(
+                                                    fit: StackFit.expand,
+                                                    children: [
+                                                      _VinylArtwork(
+                                                        imageUrl: playerState.currentTrack?.albumImage ?? '',
+                                                        isPlaying: playerState.isPlaying,
+                                                      ),
+                                                      Positioned(
+                                                        bottom: 12,
+                                                        right: 12,
+                                                        child: Container(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                          decoration: BoxDecoration(
+                                                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                          child: Text(
+                                                            'AUDIO ONLY',
+                                                            style: TextStyle(
+                                                              fontSize: 10,
+                                                              fontWeight: FontWeight.w900,
+                                                              color: Theme.of(context).colorScheme.primary,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }
+
                                                 return Container(
-                                                  key: _videoKey,
+                                                  key: _videoSlotKey,
                                                   decoration: BoxDecoration(
-                                                    color: colorScheme.surface, // Themed background for video container
+                                                    color: Colors.black,
                                                     borderRadius: BorderRadius.circular(24),
                                                   ),
                                                 );
+
                                               },
                                             )
                                           : _VinylArtwork(
@@ -277,190 +295,176 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                 ),
                               ),
                             ),
-                            // Control Deck (Glassmorphic Card)
                             Padding(
                               padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(36),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-                                  child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 28),
-                            decoration: BoxDecoration(
-                                      color: colorScheme.surfaceContainerLow.withValues(alpha: 0.15),
-                                      borderRadius: BorderRadius.circular(36),
-                                      border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.08), width: 0.5),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: colorScheme.scrim.withValues(alpha: 0.4),
-                                          blurRadius: 30,
-                                          offset: const Offset(0, 15),
-                                        ),
-                                        BoxShadow(
-                                          color: colorScheme.onSurface.withValues(alpha: 0.03),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, -2),
-                                          spreadRadius: -2,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        // Premium Highlight Line
-                                        Container(
-                                          width: 40,
-                                          height: 4,
-                                          margin: const EdgeInsets.only(bottom: 20),
-                                          decoration: BoxDecoration(
-                                            color: colorScheme.onSurface.withValues(alpha: 0.1),
-                                            borderRadius: BorderRadius.circular(2),
+                                child: RepaintBoundary(
+                                  child: AdaptiveBlur(
+                                    sigmaX: 20,
+                                    sigmaY: 20,
+                                    borderRadius: BorderRadius.circular(36),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 28),
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.surfaceContainerLow.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(36),
+                                        border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.08), width: 0.5),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            width: 40,
+                                            height: 4,
+                                            margin: const EdgeInsets.only(bottom: 20),
+                                            decoration: BoxDecoration(
+                                              color: colorScheme.onSurface.withValues(alpha: 0.1),
+                                              borderRadius: BorderRadius.circular(2),
+                                            ),
                                           ),
-                                        ),
-                                        // Track Info
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                        Text(
+                                                          playerState.currentTrack?.name ?? 'Not Playing',
+                                                          style: TextStyle(
+                                                            fontSize: 26,
+                                                            fontWeight: FontWeight.w900,
+                                                            color: colorScheme.onSurface,
+                                                            letterSpacing: -1.2,
+                                                            height: 1.1,
+                                                          ),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
+                                                        )
+                                                        .animate()
+                                                        .fadeIn(duration: 500.ms, delay: 200.ms)
+                                                        .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
+                                                      const SizedBox(height: 2),
                                                       Text(
-                                                        playerState.currentTrack?.name ?? 'Not Playing',
+                                                        playerState.currentTrack?.artistName.toUpperCase() ?? 'UNKNOWN ARTIST',
                                                         style: TextStyle(
-                                                          fontSize: 26,
-                                                          fontWeight: FontWeight.w900,
-                                                          color: colorScheme.onSurface,
-                                                          letterSpacing: -1.2,
-                                                          height: 1.1,
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w800,
+                                                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
+                                                          letterSpacing: 2.0,
                                                         ),
                                                         maxLines: 1,
                                                         overflow: TextOverflow.ellipsis,
                                                       )
-                                                      .animate()
-                                                      .fadeIn(duration: 500.ms, delay: 200.ms)
-                                                      .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
-                                                    const SizedBox(height: 2),
-                                                    Text(
-                                                      playerState.currentTrack?.artistName.toUpperCase() ?? 'UNKNOWN ARTIST',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.w800,
-                                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
-                                                        letterSpacing: 2.0,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    )
-                                                      .animate()
-                                                      .fadeIn(duration: 500.ms, delay: 300.ms)
-                                                      .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
-                                                  ],
+                                                        .animate()
+                                                        .fadeIn(duration: 500.ms, delay: 300.ms)
+                                                        .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              if (playerState.currentTrack != null)
-                                              StreamBuilder<bool>(
-                                                stream: ref.watch(db.appDatabaseProvider).watchTrackFavorite(playerState.currentTrack!.spotifyId),
-                                                initialData: playerState.currentTrack!.isFavorite,
-                                                builder: (context, snapshot) {
-                                                  final isFav = snapshot.data ?? playerState.currentTrack!.isFavorite;
-                                                  return TactileIconButton(
-                                                    icon: isFav ? Icons.favorite : Icons.favorite_border,
-                                                    color: isFav ? colorScheme.primary : colorScheme.onSurface,
-                                                    onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!.copyWith(isFavorite: isFav)),
-                                                  ).animate(target: isFav ? 1 : 0).scale(
-                                                    begin: const Offset(1, 1),
-                                                    end: const Offset(1.1, 1.1),
-                                                    duration: 200.ms,
-                                                    curve: Curves.easeOutBack,
-                                                  ).then().scale(
-                                                    begin: const Offset(1.1, 1.1),
-                                                    end: const Offset(1, 1),
-                                                    duration: 150.ms,
-                                                  );
-                                                },
-                                              ),
-                                            ],
+                                                if (playerState.currentTrack != null)
+                                                StreamBuilder<bool>(
+                                                  stream: ref.watch(db.appDatabaseProvider).watchTrackFavorite(playerState.currentTrack!.spotifyId),
+                                                  initialData: playerState.currentTrack!.isFavorite,
+                                                  builder: (context, snapshot) {
+                                                    final isFav = snapshot.data ?? playerState.currentTrack!.isFavorite;
+                                                    return TactileIconButton(
+                                                      icon: isFav ? Icons.favorite : Icons.favorite_border,
+                                                      color: isFav ? colorScheme.primary : colorScheme.onSurface,
+                                                      onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!.copyWith(isFavorite: isFav)),
+                                                    ).animate(target: isFav ? 1 : 0).scale(
+                                                      begin: const Offset(1, 1),
+                                                      end: const Offset(1.1, 1.1),
+                                                      duration: 200.ms,
+                                                      curve: Curves.easeOutBack,
+                                                    ).then().scale(
+                                                      begin: const Offset(1.1, 1.1),
+                                                      end: const Offset(1, 1),
+                                                      duration: 150.ms,
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        // Progress Slider
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                          child: Column(
-                                            children: [
-                                              SliderTheme(
-                                                data: SliderTheme.of(context).copyWith(
-                                                  trackHeight: 4,
-                                                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 5),
-                                                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
-                                                  activeTrackColor: colorScheme.primary,
-                                                  inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.05),
-                                                  thumbColor: colorScheme.onSurface,
-                                                  trackShape: const RoundedRectSliderTrackShape(),
+                                          const SizedBox(height: 16),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                            child: Column(
+                                              children: [
+                                                SliderTheme(
+                                                  data: SliderTheme.of(context).copyWith(
+                                                    trackHeight: 4,
+                                                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 5),
+                                                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
+                                                    activeTrackColor: colorScheme.primary,
+                                                    inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.05),
+                                                    thumbColor: colorScheme.onSurface,
+                                                    trackShape: const RoundedRectSliderTrackShape(),
+                                                  ),
+                                                  child: Slider(
+                                                    value: playerState.position.inSeconds.toDouble(),
+                                                    max: playerState.duration.inSeconds > 0
+                                                        ? playerState.duration.inSeconds.toDouble()
+                                                        : 1.0,
+                                                    onChanged: (v) => playerNotifier.seekTo(Duration(seconds: v.toInt())),
+                                                  ),
                                                 ),
-                                                child: Slider(
-                                                  value: playerState.position.inSeconds.toDouble(),
-                                                  max: playerState.duration.inSeconds > 0
-                                                      ? playerState.duration.inSeconds.toDouble()
-                                                      : 1.0,
-                                                  onChanged: (v) => playerNotifier.seekTo(Duration(seconds: v.toInt())),
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(_formatDuration(playerState.position),
+                                                          style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+                                                      Text(_formatDuration(playerState.duration),
+                                                          style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(_formatDuration(playerState.position),
-                                                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
-                                                    Text(_formatDuration(playerState.duration),
-                                                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        // Interaction Controls
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              TactileIconButton(
-                                                icon: Icons.shuffle,
-                                                color: playerState.isShuffled ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.5),
-                                                onTap: playerNotifier.toggleShuffle,
-                                              ),
-                                              TactileIconButton(
-                                                icon: Icons.skip_previous,
-                                                size: 32,
-                                                color: colorScheme.onSurface,
-                                                onTap: playerNotifier.skipPrevious,
-                                              ),
-                                              TactilePlayerPlayPauseButton(
-                                                isPlaying: playerState.isPlaying,
-                                                onTap: playerNotifier.togglePlay,
-                                              ),
-                                              TactileIconButton(
-                                                icon: Icons.skip_next,
-                                                size: 32,
-                                                color: colorScheme.onSurface,
-                                                onTap: playerNotifier.skipNext,
-                                              ),
-                                              TactileIconButton(
-                                                icon: playerState.repeatMode == RepeatMode.none ? Icons.repeat : Icons.repeat_one,
-                                                color: playerState.repeatMode != RepeatMode.none
-                                                    ? colorScheme.primary
-                                                    : colorScheme.onSurface.withValues(alpha: 0.5),
-                                                onTap: playerNotifier.cycleRepeat,
-                                              ),
-                                            ],
+                                          const SizedBox(height: 12),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                TactileIconButton(
+                                                  icon: Icons.shuffle,
+                                                  color: playerState.isShuffled ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.5),
+                                                  onTap: playerNotifier.toggleShuffle,
+                                                ),
+                                                TactileIconButton(
+                                                  icon: Icons.skip_previous,
+                                                  size: 32,
+                                                  color: colorScheme.onSurface,
+                                                  onTap: playerNotifier.skipPrevious,
+                                                ),
+                                                TactilePlayerPlayPauseButton(
+                                                  isPlaying: playerState.isPlaying,
+                                                  onTap: playerNotifier.togglePlay,
+                                                ),
+                                                TactileIconButton(
+                                                  icon: Icons.skip_next,
+                                                  size: 32,
+                                                  color: colorScheme.onSurface,
+                                                  onTap: playerNotifier.skipNext,
+                                                ),
+                                                TactileIconButton(
+                                                  icon: playerState.repeatMode == RepeatMode.none ? Icons.repeat : Icons.repeat_one,
+                                                  color: playerState.repeatMode != RepeatMode.none
+                                                      ? colorScheme.primary
+                                                      : colorScheme.onSurface.withValues(alpha: 0.5),
+                                                  onTap: playerNotifier.cycleRepeat,
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -538,23 +542,24 @@ class _QueueView extends StatelessWidget {
         },
         child: child,
       ),
-      onReorder: (oldIndex, newIndex) {
+      onReorderItem: (oldIndex, newIndex) {
         ProviderScope.containerOf(context).read(playerProvider.notifier).reorderQueue(oldIndex, newIndex);
       },
       itemBuilder: (context, i) {
         final t = playerState.queue[i];
         final isCurrent = playerState.currentIndex == i;
         final colorScheme = Theme.of(context).colorScheme;
-        return Padding(
-          key: ValueKey(t.spotifyId),
-          padding: const EdgeInsets.only(bottom: 12.0),
-          child: TactileTap(
-            onTap: () => ProviderScope.containerOf(context).read(playerProvider.notifier).skipTo(i),
-            scaleDown: 0.98,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        return KeyedSubtree(
+          key: ValueKey(t.queueItemId ?? t.spotifyId),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: TactileTap(
+              onTap: () => ProviderScope.containerOf(context).read(playerProvider.notifier).skipTo(i),
+              scaleDown: 0.98,
+              child: AdaptiveBlur(
+                sigmaX: 15,
+                sigmaY: 15,
+                borderRadius: BorderRadius.circular(24),
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -653,7 +658,7 @@ class _QueueView extends StatelessWidget {
             ),
           )
           .animate()
-          .fadeIn(duration: 400.ms, delay: (i * 50).ms)
+          .fadeIn(duration: 400.ms)
           .slideX(begin: 0.1, duration: 400.ms, curve: Curves.easeOutCubic),
         );
       },

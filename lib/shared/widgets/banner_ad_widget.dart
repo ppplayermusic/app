@@ -22,15 +22,23 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
     _loadAd();
   }
 
-  void _loadAd() {
+  Future<void> _loadAd() async {
     if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
 
     final adService = ref.read(adServiceProvider);
+    
+    // Wait for the deferred initialization to complete.
+    await adService.initialization;
+    
+    if (!mounted) return;
+
     _bannerAd = adService.createBannerAd(
       onAdLoaded: (ad) {
-        setState(() {
-          _isLoaded = true;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoaded = true;
+          });
+        }
       },
       onAdFailedToLoad: (ad, error) {
         ad.dispose();

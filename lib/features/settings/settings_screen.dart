@@ -95,13 +95,21 @@ class SettingsScreen extends ConsumerWidget {
                     .fadeIn(duration: 400.ms)
                     .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
+                TactileSwitchTile(
+                  title: 'Low Data Mode',
+                  subtitle: 'Force audio-only streams to save data',
+                  icon: Icons.data_usage_rounded,
+                  value: settings.lowDataMode,
+                  onChanged: (v) => ref.read(settingsProvider.notifier).toggleLowDataMode(),
+                ).animate(delay: 450.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 12),
                 TactileSettingTile(
                   title: 'Clear Recently Played',
                   subtitle: 'Permanently remove listening history',
                   icon: Icons.history_rounded,
                   color: colorScheme.error.withValues(alpha: 0.8),
                   onTap: () => _showClearHistoryConfirm(context, ref),
-                ).animate(delay: 450.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                ).animate(delay: 500.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 32),
                 _buildSectionHeader(context, 'About')
                     .animate(delay: 600.ms)

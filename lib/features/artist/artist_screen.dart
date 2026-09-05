@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'dart:ui';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
+import '../../shared/widgets/adaptive_blur.dart';
 import '../../core/services/favorites_provider.dart';
 
 final _artistProvider =
@@ -127,26 +127,25 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                       centerTitle: true,
                       expandedTitleScale: 1.0,
                       titlePadding: EdgeInsets.zero,
-                      title: isCollapsed
-                          ? ClipRect(
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                                child: Container(
-                                  width: double.infinity,
-                                  height: kToolbarHeight + topPadding,
-                                  padding: EdgeInsets.only(top: topPadding),
-                                  color: colorScheme.surface.withValues(alpha: 0.6),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    artistName,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 17,
-                                      letterSpacing: -0.5,
-                                      color: colorScheme.onSurface,
-                                    ),
-                                  ).animate().fadeIn(duration: 200.ms),
-                                ),
+                      title: isCollapsed && !_isSearching
+                          ? AdaptiveBlur(
+                              sigmaX: 20,
+                              sigmaY: 20,
+                              child: Container(
+                                width: double.infinity,
+                                height: kToolbarHeight + topPadding,
+                                padding: EdgeInsets.only(top: topPadding),
+                                color: colorScheme.surface.withValues(alpha: 0.6),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  artistName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 17,
+                                    letterSpacing: -0.5,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ).animate().fadeIn(duration: 200.ms),
                               ),
                             )
                           : null,
@@ -202,55 +201,54 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                       ),
                                     ],
                                   ),
-                                  child: ClipRRect(
+                                  child: AdaptiveBlur(
+                                    sigmaX: 16,
+                                    sigmaY: 16,
                                     borderRadius: BorderRadius.circular(24),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                                        decoration: BoxDecoration(
-                                          color: colorScheme.surface.withValues(alpha: 0.3),
-                                          borderRadius: BorderRadius.circular(24),
-                                          border: Border.all(
-                                            color: colorScheme.onSurface.withValues(alpha: 0.15),
-                                            width: 0.5,
-                                          ),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.surface.withValues(alpha: 0.3),
+                                        borderRadius: BorderRadius.circular(24),
+                                        border: Border.all(
+                                          color: colorScheme.onSurface.withValues(alpha: 0.15),
+                                          width: 0.5,
                                         ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              'ARTIST',
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface.withValues(alpha: 0.5),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w900,
-                                                letterSpacing: 4.0,
-                                              ),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'ARTIST',
+                                            style: TextStyle(
+                                              color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w900,
+                                              letterSpacing: 4.0,
                                             ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              artistName,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface,
-                                                fontSize: 48,
-                                                fontWeight: FontWeight.w900,
-                                                letterSpacing: -2.5,
-                                                height: 1.0,
-                                                shadows: [
-                                                  Shadow(
-                                                    color: colorScheme.surface.withValues(alpha: 0.45),
-                                                    blurRadius: 30,
-                                                    offset: const Offset(0, 15),
-                                                  ),
-                                                ],
-                                              ),
-                                            ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
-                                          ],
-                                        ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            artistName,
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: colorScheme.onSurface,
+                                              fontSize: 48,
+                                              fontWeight: FontWeight.w900,
+                                              letterSpacing: -2.5,
+                                              height: 1.0,
+                                              shadows: [
+                                                Shadow(
+                                                  color: colorScheme.surface.withValues(alpha: 0.45),
+                                                  blurRadius: 30,
+                                                  offset: const Offset(0, 15),
+                                                ),
+                                              ],
+                                            ),
+                                          ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -393,10 +391,9 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                   asyncValue: tracksAsync,
                   builder: (items) {
                     var tracks = items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
-                    
-                    if (_searchQuery.isNotEmpty) {
-                      tracks = tracks.where((t) => t.name.toLowerCase().contains(_searchQuery)).toList();
-                    }
+                    final filteredTracks = _searchQuery.isEmpty 
+                        ? tracks 
+                        : tracks.where((t) => t.name.toLowerCase().contains(_searchQuery)).toList();
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,38 +401,44 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                         if (_isSearching)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.onSurface.withValues(alpha: 0.05),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1), width: 0.5),
-                                  ),
-                                  child: TextField(
-                                    controller: _searchController,
-                                    style: TextStyle(color: colorScheme.onSurface, fontSize: 15),
-                                    cursorColor: colorScheme.primary,
-                                    decoration: InputDecoration(
-                                      hintText: 'Search popular songs...',
-                                      hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.3)),
-                                      border: InputBorder.none,
-                                      icon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withValues(alpha: 0.3), size: 22),
-                                    ),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _searchQuery = value.toLowerCase();
-                                      });
-                                    },
+                            child: AdaptiveBlur(
+                              sigmaX: 10,
+                              sigmaY: 10,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                height: 42,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.onSurface.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: colorScheme.onSurface.withValues(alpha: 0.1),
+                                    width: 0.5,
                                   ),
                                 ),
+                                child: TextField(
+                                  controller: _searchController,
+                                  autofocus: true,
+                                  decoration: InputDecoration(
+                                    hintText: 'Search popular songs...',
+                                    prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withValues(alpha: 0.3), size: 20),
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                                    hintStyle: TextStyle(
+                                      color: colorScheme.onSurface.withValues(alpha: 0.3),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _searchQuery = value.toLowerCase();
+                                    });
+                                  },
+                                ),
                               ),
-                            ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0),
+                            ).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.95, 0.95)),
                           ),
-                        if (tracks.isEmpty && _searchQuery.isNotEmpty)
+                        if (filteredTracks.isEmpty && _searchQuery.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.all(64.0),
                             child: Center(
@@ -457,50 +460,49 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Column(
                               children: [
-                                for (int i = 0; i < tracks.length; i++) ...[
-                                  ClipRRect(
+                                for (int i = 0; i < filteredTracks.length; i++) ...[
+                                  AdaptiveBlur(
+                                    sigmaX: 10,
+                                    sigmaY: 10,
                                     borderRadius: BorderRadius.circular(16),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                      child: Container(
-                                        margin: const EdgeInsets.only(bottom: 8),
-                                        decoration: BoxDecoration(
-                                          color: colorScheme.onSurface.withValues(alpha: 0.03),
-                                          borderRadius: BorderRadius.circular(16),
-                                          border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.05), width: 0.5),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              colorScheme.onSurface.withValues(alpha: 0.05),
-                                              colorScheme.onSurface.withValues(alpha: 0.01),
-                                            ],
-                                          ),
+                                    child: Container(
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.onSurface.withValues(alpha: 0.03),
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.05), width: 0.5),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            colorScheme.onSurface.withValues(alpha: 0.05),
+                                            colorScheme.onSurface.withValues(alpha: 0.01),
+                                          ],
                                         ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                          child: Row(
-                                            children: [
-                                              SizedBox(
-                                                width: 28,
-                                                child: Text(
-                                                  '${i + 1}',
-                                                  style: TextStyle(
-                                                    color: colorScheme.onSurface.withValues(alpha: 0.2),
-                                                    fontSize: 12,
-                                                    fontFamily: 'monospace',
-                                                    fontWeight: FontWeight.w900,
-                                                  ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 28,
+                                              child: Text(
+                                                '${i + 1}',
+                                                style: TextStyle(
+                                                  color: colorScheme.onSurface.withValues(alpha: 0.2),
+                                                  fontSize: 12,
+                                                  fontFamily: 'monospace',
+                                                  fontWeight: FontWeight.w900,
                                                 ),
                                               ),
-                                              Expanded(
-                                                child: TrackTile(
-                                                  track: tracks[i],
-                                                  onTap: () => ref.read(playerProvider.notifier).playTrack(tracks[i], queue: tracks),
-                                                ),
+                                            ),
+                                            Expanded(
+                                              child: TrackTile(
+                                                track: filteredTracks[i],
+                                                onTap: () => ref.read(playerProvider.notifier).playTrack(filteredTracks[i], queue: filteredTracks),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),

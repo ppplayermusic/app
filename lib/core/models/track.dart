@@ -17,6 +17,7 @@ class Track with _$Track {
     String? youtubeVideoId,
     @Default(0) int playCount,
     @Default(false) bool isFavorite,
+    String? queueItemId, // Unique ID for queue instances
   }) = _Track;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'dart:ui';
 import '../../core/db/app_database.dart' as db;
 import '../../core/models/track.dart' as model;
 import '../../shared/widgets/playlist_cover.dart';
@@ -10,6 +9,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
+import '../../shared/widgets/adaptive_blur.dart';
 
 
 enum LibraryFilter { all, playlists, artists, albums, stations }
@@ -187,12 +187,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     children: [
                       if (isCollapsed)
                         Positioned.fill(
-                          child: ClipRRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                              child: Container(
-                                color: theme.colorScheme.surface.withValues(alpha: 0.5),
-                              ),
+                          child: AdaptiveBlur(
+                            sigmaX: 15,
+                            sigmaY: 15,
+                            child: Container(
+                              color: theme.colorScheme.surface.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -1444,23 +1443,23 @@ class _RadioCard extends ConsumerWidget {
                         Positioned(
                           right: 12,
                           bottom: 12,
-                              child: ClipOval(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.radio_rounded,
-                                      color: Theme.of(context).colorScheme.primary,
-                                      size: 16,
-                                    ),
-                                  ),
-                                ),
+                          child: AdaptiveBlur(
+                            sigmaX: 8,
+                            sigmaY: 8,
+                            borderRadius: BorderRadius.circular(100),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                                shape: BoxShape.circle,
                               ),
+                              child: Icon(
+                                Icons.radio_rounded,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 16,
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),

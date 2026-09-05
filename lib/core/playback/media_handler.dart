@@ -1,6 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'player_provider.dart';
+import '../player/player_provider.dart';
 
 /// An [AudioHandler] that bridges the Flutter player state with the system media controls.
 /// It doesn't play audio itself (the WebView does), but it reports the state to the OS.

@@ -10,6 +10,7 @@ class SectionWrapper<T> extends StatelessWidget {
   final Widget Function(List<T> data) builder;
   final Widget? loadingWidget;
   final Widget? errorWidget;
+  final VoidCallback? onRetry;
   final double topPadding;
   final double bottomPadding;
   final Widget Function(String title)? headerBuilder;
@@ -21,6 +22,7 @@ class SectionWrapper<T> extends StatelessWidget {
     required this.builder,
     this.loadingWidget,
     this.errorWidget,
+    this.onRetry,
     this.topPadding = 32.0,
     this.bottomPadding = 0.0,
     this.headerBuilder,
@@ -53,7 +55,90 @@ class SectionWrapper<T> extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: ShimmerPlaceholder(height: 120),
           ),
-      error: (e, _) => errorWidget ?? const SizedBox.shrink(),
+      error: (e, _) =>
+          errorWidget ??
+          _SectionErrorWidget(
+            title: title,
+            topPadding: topPadding,
+            onRetry: onRetry,
+          ),
+    );
+  }
+}
+
+/// A subtle error state shown when a section's data fetch fails.
+class _SectionErrorWidget extends StatelessWidget {
+  final String title;
+  final double topPadding;
+  final VoidCallback? onRetry;
+
+  const _SectionErrorWidget({
+    required this.title,
+    required this.topPadding,
+    this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: EdgeInsets.only(top: topPadding, left: 20, right: 20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: colorScheme.outline.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.wifi_off_rounded,
+              size: 18,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    'Could not load this section.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(width: 8),
+              TextButton(
+                onPressed: onRetry,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  foregroundColor: colorScheme.primary,
+                ),
+                child: const Text('Retry', style: TextStyle(fontSize: 13)),
+              ),
+            ],
+          ],
+        ),
+      ).animate().fadeIn(duration: 300.ms),
     );
   }
 }
@@ -97,3 +182,4 @@ class _DefaultHeader extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -11,6 +10,7 @@ import '../../shared/widgets/playlist_cover.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
 import '../../core/api/spotify_client.dart';
+import '../../shared/widgets/adaptive_blur.dart';
 import 'package:drift/drift.dart' show Value;
 
 class PlaylistDetailScreen extends ConsumerStatefulWidget {
@@ -238,23 +238,22 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             final isCollapsed = constraints.maxHeight <= kToolbarHeight + 80;
 
             if (isCollapsed) {
-              return ClipRRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                  child: Container(
-                    height: kToolbarHeight + 40,
-                    alignment: Alignment.bottomCenter,
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      playlist.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 18,
-                        letterSpacing: -0.5,
-                        color: colorScheme.onSurface,
-                      ),
-                    ).animate().fadeIn(duration: 200.ms),
-                  ),
+              return AdaptiveBlur(
+                sigmaX: 15,
+                sigmaY: 15,
+                child: Container(
+                  height: kToolbarHeight + 40,
+                  alignment: Alignment.bottomCenter,
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    playlist.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      letterSpacing: -0.5,
+                      color: colorScheme.onSurface,
+                    ),
+                  ).animate().fadeIn(duration: 200.ms),
                 ),
               );
             }
@@ -596,7 +595,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
           );
         },
         itemCount: modelTracks.length,
-        onReorder: (oldIndex, newIndex) =>
+        onReorderItem: (oldIndex, newIndex) =>
             _onReorder(oldIndex, newIndex, modelTracks.map((t) => allTracks.firstWhere((at) => at.spotifyId == t.spotifyId)).toList()),
       ),
       const SliverToBoxAdapter(child: SizedBox(height: 120)),

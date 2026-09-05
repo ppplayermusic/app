@@ -52,12 +52,12 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
   """
 
   private func schedulePatchScan() {
-    patchTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] timer in
+    patchTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
       guard let self = self else { timer.invalidate(); return }
       if self.injectPatches(into: self.contentView) {
-        timer.invalidate()
-        self.patchTimer = nil
-        NSLog("[ppplayer] Visibility patch injected into WKWebView(s).")
+        // Do not invalidate the timer. The Flutter app may destroy and recreate
+        // the WKWebView (e.g. when PlaybackView is unmounted and remounted).
+        // We must continuously ensure any new WKWebViews are patched.
       }
     }
   }

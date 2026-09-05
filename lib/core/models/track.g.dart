@@ -18,6 +18,7 @@ _$TrackImpl _$$TrackImplFromJson(Map<String, dynamic> json) => _$TrackImpl(
   youtubeVideoId: json['youtubeVideoId'] as String?,
   playCount: (json['playCount'] as num?)?.toInt() ?? 0,
   isFavorite: json['isFavorite'] as bool? ?? false,
+  queueItemId: json['queueItemId'] as String?,
 );
 
 Map<String, dynamic> _$$TrackImplToJson(_$TrackImpl instance) =>
@@ -33,4 +34,5 @@ Map<String, dynamic> _$$TrackImplToJson(_$TrackImpl instance) =>
       'youtubeVideoId': instance.youtubeVideoId,
       'playCount': instance.playCount,
       'isFavorite': instance.isFavorite,
+      'queueItemId': instance.queueItemId,
     };

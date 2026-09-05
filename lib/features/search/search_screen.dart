@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +13,7 @@ import '../../core/services/ad_service.dart';
 import '../../core/providers/genre_providers.dart';
 import '../home/genre_details_screen.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
+import '../../shared/widgets/adaptive_blur.dart';
 
 final _searchQueryProvider = StateProvider<String>((ref) => '');
 
@@ -59,12 +59,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
       appBar: AppBar(
         elevation: 0,
         backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
-        flexibleSpace: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-            child: Container(
-              color: colorScheme.surface.withValues(alpha: 0.2),
-            ),
+        flexibleSpace: AdaptiveBlur(
+          sigmaX: 25,
+          sigmaY: 25,
+          child: Container(
+            color: colorScheme.surface.withValues(alpha: 0.2),
           ),
         ),
         title: Container(
@@ -303,53 +302,52 @@ class _CategoryCard extends StatelessWidget {
             ),
           ],
         ),
-        child: ClipRRect(
+        child: AdaptiveBlur(
+          sigmaX: 20,
+          sigmaY: 20,
           borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Stack(
-              children: [
-                if (imageUrl.isNotEmpty)
-                  Positioned(
-                    bottom: -15,
-                    right: -15,
-                    child: Transform.rotate(
-                      angle: 0.3,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.scrim.withValues(alpha: 0.3),
-                            blurRadius: 20,
-                          ),
-                        ],
-                      ),
-                      child: CachedNetworkImage(
-                          imageUrl: imageUrl,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
+          child: Stack(
+            children: [
+              if (imageUrl.isNotEmpty)
+                Positioned(
+                  bottom: -15,
+                  right: -15,
+                  child: Transform.rotate(
+                    angle: 0.3,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.scrim.withValues(alpha: 0.3),
+                          blurRadius: 20,
                         ),
+                      ],
+                    ),
+                    child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      name,
-                      style: TextStyle(
-                        color: colorScheme.onPrimary, // Standard for vibrant cards, semantic value below
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
-                        shadows: [
-                          Shadow(color: colorScheme.scrim.withValues(alpha: 0.3), offset: const Offset(0, 1), blurRadius: 4),
-                        ],
-                      ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    name,
+                    style: TextStyle(
+                      color: colorScheme.onPrimary, // Standard for vibrant cards, semantic value below
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                      shadows: [
+                        Shadow(color: colorScheme.scrim.withValues(alpha: 0.3), offset: const Offset(0, 1), blurRadius: 4),
+                      ],
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       ),
