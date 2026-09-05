@@ -5,27 +5,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <script>
-        window.onerror = function(msg, url, line, col, error) {
-            if (window.NativeLog) {
-                window.NativeLog.postMessage("JS ERROR: " + msg + " at " + line + ":" + col);
-            }
-        };
-        const origConsoleError = console.error;
-        console.error = function() {
-            if (window.NativeLog) {
-                window.NativeLog.postMessage("JS CONSOLE ERROR: " + Array.from(arguments).join(" "));
-            }
-            origConsoleError.apply(console, arguments);
-        };
-        const origConsoleLog = console.log;
-        console.log = function() {
-            if (window.NativeLog) {
-                window.NativeLog.postMessage("JS CONSOLE LOG: " + Array.from(arguments).join(" "));
-            }
-            origConsoleLog.apply(console, arguments);
-        };
-    </script>
     <style>
       html {
         width: 100%;
@@ -67,56 +46,22 @@
       var firstScriptTag = document.getElementsByTagName("script")[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-
-      if (window.NativeLog) {
-          window.NativeLog.postMessage("Before onYouTubeIframeAPIReady definition!");
-      }
-
       var platform = "<<platform>>";
       var host = "<<host>>";
       var player;
       var timerId;
 
       function onYouTubeIframeAPIReady() {
-        if (window.NativeLog) window.NativeLog.postMessage("[YT] API loaded");
-        if (window.NativeLog) window.NativeLog.postMessage("[YT] Creating player");
         var pv = <<playerVars>>;
-        if (window.NativeLog) {
-          window.NativeLog.postMessage("[YT] Config:");
-          window.NativeLog.postMessage("[YT] host=" + host);
-          window.NativeLog.postMessage("[YT] playerVars=" + JSON.stringify(pv));
-          window.NativeLog.postMessage("[YT] playerVars.origin=" + pv.origin);
-          window.NativeLog.postMessage("[YT] playerVars.autoplay=" + pv.autoplay);
-          window.NativeLog.postMessage("[YT] playerVars.playsinline=" + pv.playsinline);
-          window.NativeLog.postMessage("[YT] playerVars.enablejsapi=" + pv.enablejsapi);
-          window.NativeLog.postMessage("[YT] playerVars.controls=" + pv.controls);
-          
-          window.NativeLog.postMessage("[YT] WKWebView URL=" + window.location.href);
-          window.NativeLog.postMessage("[YT] WKWebView baseURL=" + document.baseURI);
-          window.NativeLog.postMessage("[YT] document.location.href=" + document.location.href);
-          window.NativeLog.postMessage("[YT] document.location.origin=" + document.location.origin);
-          window.NativeLog.postMessage("[YT] userAgent=" + navigator.userAgent);
-          window.NativeLog.postMessage("[YT] referrer=" + document.referrer);
-        }
         player = new YT.Player("<<playerId>>", {
           host: host,
           playerVars: pv,
           events: {
             onReady: function (event) {
-              if (window.NativeLog) window.NativeLog.postMessage("[YT] onReady entered");
-              try {
-                if (window.NativeLog) window.NativeLog.postMessage("[YT] fullscreen handler entered");
-                handleFullScreenForMobilePlatform();
-                if (window.NativeLog) window.NativeLog.postMessage("[YT] fullscreen handler completed");
-              } catch(e) {
-                if (window.NativeLog) window.NativeLog.postMessage("Fullscreen error: " + e);
-              }
-              if (window.NativeLog) window.NativeLog.postMessage("[YT] sending Ready");
+              handleFullScreenForMobilePlatform();
               sendMessage('Ready', event);
-              if (window.NativeLog) window.NativeLog.postMessage("[YT] Ready sent");
             },
             onStateChange: function (event) {
-              if (window.NativeLog) window.NativeLog.postMessage("[YT] StateChange=" + event.data);
               clearTimeout(timerId);
               sendMessage('StateChange', event.data);
               if (event.data == 1) {
@@ -140,24 +85,13 @@
               sendMessage('ApiChange', event.data);
             },
             onError: function (event) {
-              if (window.NativeLog) window.NativeLog.postMessage("[YT] PlayerError=" + event.data);
               sendMessage('PlayerError', event.data);
             },
             onAutoplayBlocked: function (event) {
-              if (window.NativeLog) window.NativeLog.postMessage("[YT] AutoplayBlocked");
               sendMessage('AutoplayBlocked', event.data);
             },
           },
         });
-        if (window.NativeLog) window.NativeLog.postMessage("[YT] Player object created");
-        setTimeout(function () {
-          var iframe = document.querySelector('.embed-container iframe');
-          if (window.NativeLog && iframe) {
-            window.NativeLog.postMessage("[YT] iframe.src=" + iframe.src);
-            window.NativeLog.postMessage("[YT] iframe.allow=" + iframe.getAttribute("allow"));
-            window.NativeLog.postMessage("[YT] iframe.allowFullscreen=" + iframe.allowFullscreen);
-          }
-        }, 500);
         if (player && typeof player.setSize === 'function') {
           player.setSize(window.innerWidth, window.innerHeight);
         }
@@ -169,11 +103,6 @@
 
           if(data.function){
             var rawFunction = data.function.replaceAll('<<quote>>', '"');
-            if (rawFunction.includes('loadVideoById')) {
-              if (window.NativeLog) window.NativeLog.postMessage("[YT] loadVideoById=" + rawFunction);
-            } else if (rawFunction.includes('playVideo')) {
-              if (window.NativeLog) window.NativeLog.postMessage("[YT] playVideo");
-            }
             var result = eval(rawFunction);
 
             if(data.key) {
@@ -240,12 +169,9 @@
       }
 
       function handleFullScreenForMobilePlatform() {
-        // Disabled cross-origin DOM access to prevent SecurityError which aborts onReady.
-        // Fullscreen should be handled via the API or allowed via allowfullscreen attribute.
-      }
-
-      if (window.NativeLog) {
-          window.NativeLog.postMessage("player.html parsed and running!");
+        // Cross-origin DOM access intentionally removed to prevent SecurityError
+        // which would abort onReady before the bridge handshake completes.
+        // Fullscreen is handled via the allowfullscreen attribute on the iframe.
       }
     </script>
   </body>
