@@ -14,11 +14,30 @@ import '../../core/providers/genre_providers.dart';
 import '../home/genre_details_screen.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
-import '../../core/providers/search_provider.dart';
+import 'package:ppplayer/core/providers/recent_searches_provider.dart';
+import 'package:ppplayer/core/providers/search_provider.dart';
 
 final _searchResultsProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, query) async {
   if (query.isEmpty) return {};
+  
+  bool didDispose = false;
+  ref.onDispose(() => didDispose = true);
+  
+  // Debounce for 800ms to avoid spamming the API and to only save actual searches
+  await Future.delayed(const Duration(milliseconds: 800));
+  
+  if (didDispose) {
+    // If the query changed within 800ms, this provider gets disposed and rebuilt.
+    // We throw to cancel the current request.
+    throw Exception('Cancelled'); 
+  }
+  
+  // Automatically save to recent searches since the user paused typing
+  if (query.trim().isNotEmpty) {
+    ref.read(recentSearchesProvider.notifier).addSearch(query);
+  }
+
   return ref.read(spotifyClientProvider).search(query);
 });
 
@@ -54,6 +73,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     final results = ref.watch(_searchResultsProvider(query));
     final colorScheme = Theme.of(context).colorScheme;
     final isDesktop = MediaQuery.sizeOf(context).width >= 600;
+
+    ref.listen(searchQueryProvider, (prev, next) {
+      if (_ctrl.text != next) {
+        _ctrl.text = next;
+        _ctrl.selection = TextSelection.fromPosition(TextPosition(offset: next.length));
+      }
+    });
 
     final searchTabs = TabBar(
       controller: _tabCtrl,
@@ -155,6 +181,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
             onChanged: (val) {
               ref.read(searchQueryProvider.notifier).state = val;
             },
+            onSubmitted: (val) {
+              if (val.trim().isNotEmpty) {
+                ref.read(recentSearchesProvider.notifier).addSearch(val);
+              }
+            },
           ),
         ),
         bottom: query.isEmpty
@@ -202,13 +233,59 @@ class _EmptySearch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesAsync = ref.watch(browseCategoriesProvider);
+    final recentSearches = ref.watch(recentSearchesProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
     return CustomScrollView(
       slivers: [
+        if (recentSearches.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+              child: Text(
+                'Recent searches',
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.8,
+                ),
+              ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 36,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                scrollDirection: Axis.horizontal,
+                itemCount: recentSearches.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final query = recentSearches[index];
+                  return InputChip(
+                    label: Text(query, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurface)),
+                    onPressed: () {
+                      ref.read(searchQueryProvider.notifier).state = query;
+                    },
+                    onDeleted: () {
+                      ref.read(recentSearchesProvider.notifier).removeSearch(query);
+                    },
+                    deleteIconColor: colorScheme.onSurfaceVariant,
+                    backgroundColor: colorScheme.surfaceContainerHighest,
+                    side: BorderSide.none,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+            padding: EdgeInsets.fromLTRB(16, recentSearches.isNotEmpty ? 32 : 24, 16, 16),
             child: Text(
               'Browse all',
               style: TextStyle(

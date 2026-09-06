@@ -9,6 +9,7 @@ import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
 import '../../core/providers/search_provider.dart';
+import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
 class ScaffoldWithNav extends ConsumerStatefulWidget {
@@ -1170,6 +1171,7 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
     ref.listen(searchQueryProvider, (prev, next) {
       if (_ctrl.text != next) {
         _ctrl.text = next;
+        _ctrl.selection = TextSelection.fromPosition(TextPosition(offset: next.length));
       }
     });
 
@@ -1208,6 +1210,11 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
                           },
                           onChanged: (val) {
                             ref.read(searchQueryProvider.notifier).state = val;
+                          },
+                          onSubmitted: (val) {
+                            if (val.trim().isNotEmpty) {
+                              ref.read(recentSearchesProvider.notifier).addSearch(val);
+                            }
                           },
                           style: TextStyle(
                             color: colorScheme.onSurface,
