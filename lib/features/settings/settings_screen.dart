@@ -280,19 +280,21 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: TactileTap(
-                  onTap: () async {
-                    await ref.read(db.appDatabaseProvider).clearHistory();
-                    if (context.mounted) Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 54,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: colorScheme.error,
-                      borderRadius: BorderRadius.circular(16),
+                child: Consumer(
+                  builder: (context, ref, _) => TactileTap(
+                    onTap: () async {
+                      await ref.read(db.appDatabaseProvider).clearHistory();
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: colorScheme.error,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text('Clear All', style: TextStyle(color: colorScheme.onError, fontWeight: FontWeight.bold)),
                     ),
-                    child: Text('Clear All', style: TextStyle(color: colorScheme.onError, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ),
