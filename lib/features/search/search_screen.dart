@@ -55,6 +55,35 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     final colorScheme = Theme.of(context).colorScheme;
     final isDesktop = MediaQuery.sizeOf(context).width >= 600;
 
+    final searchTabs = TabBar(
+      controller: _tabCtrl,
+      indicator: UnderlineTabIndicator(
+        borderSide: BorderSide(color: colorScheme.primary, width: 3),
+        insets: const EdgeInsets.symmetric(horizontal: 16),
+      ),
+      indicatorSize: TabBarIndicatorSize.tab,
+      labelColor: colorScheme.onSurface,
+      unselectedLabelColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+      labelStyle: const TextStyle(
+        fontWeight: FontWeight.w900,
+        fontSize: 13,
+        letterSpacing: 1.0,
+      ),
+      unselectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.w800,
+        fontSize: 13,
+        letterSpacing: 1.0,
+      ),
+      dividerColor: Colors.transparent,
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+      tabs: const [
+        Tab(text: 'TRACKS'),
+        Tab(text: 'ARTISTS'),
+        Tab(text: 'ALBUMS'),
+      ],
+    );
+
     return Scaffold(
       appBar: isDesktop ? null : AppBar(
         elevation: 0,
@@ -131,53 +160,37 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
             ? null
             : PreferredSize(
                 preferredSize: const Size.fromHeight(48),
-                child: TabBar(
-                  controller: _tabCtrl,
-                  indicator: UnderlineTabIndicator(
-                    borderSide: BorderSide(color: colorScheme.primary, width: 3),
-                    insets: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  labelColor: colorScheme.onSurface,
-                  unselectedLabelColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 13,
-                    letterSpacing: 1.0,
-                  ),
-                  unselectedLabelStyle: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 13,
-                    letterSpacing: 1.0,
-                  ),
-                  dividerColor: Colors.transparent,
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  labelPadding: const EdgeInsets.symmetric(horizontal: 8),
-                  tabs: const [
-                    Tab(text: 'TRACKS'),
-                    Tab(text: 'ARTISTS'),
-                    Tab(text: 'ALBUMS'),
-                  ],
-                ),
+                child: searchTabs,
               ),
       ),
       body: query.isEmpty
           ? _EmptySearch()
-          : results.when(
-              loading: () => const CustomScrollView(
-                slivers: [
-                   SliverSectionShimmer(count: 12, isGrid: false),
-                ],
-              ),
-              error: (e, _) => Center(child: Text('Error: $e')),
-              data: (data) => TabBarView(
-                controller: _tabCtrl,
-                children: [
-                  _TrackResults(data['tracks']?['items'] ?? []),
-                  _ArtistResults(data['artists']?['items'] ?? []),
-                  _AlbumResults(data['albums']?['items'] ?? []),
-                ],
-              ),
+          : Column(
+              children: [
+                if (isDesktop)
+                  SizedBox(
+                    height: 48,
+                    child: searchTabs,
+                  ),
+                Expanded(
+                  child: results.when(
+                    loading: () => const CustomScrollView(
+                      slivers: [
+                         SliverSectionShimmer(count: 12, isGrid: false),
+                      ],
+                    ),
+                    error: (e, _) => Center(child: Text('Error: $e')),
+                    data: (data) => TabBarView(
+                      controller: _tabCtrl,
+                      children: [
+                        _TrackResults(data['tracks']?['items'] ?? []),
+                        _ArtistResults(data['artists']?['items'] ?? []),
+                        _AlbumResults(data['albums']?['items'] ?? []),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
     );
   }
