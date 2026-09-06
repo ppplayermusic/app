@@ -224,8 +224,8 @@ class _EmptySearch extends ConsumerWidget {
           data: (categories) => SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
                 childAspectRatio: 1.6,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
@@ -524,8 +524,8 @@ class _AlbumResults extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.all(16),
           sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 180,
               childAspectRatio: 0.72,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
@@ -623,8 +623,8 @@ class _PlaylistResults extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.all(16),
           sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 180,
               childAspectRatio: 0.72,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
