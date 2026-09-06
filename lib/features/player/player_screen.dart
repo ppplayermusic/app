@@ -527,6 +527,7 @@ class _QueueView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ReorderableListView.builder(
+      buildDefaultDragHandles: false,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: playerState.queue.length,
       proxyDecorator: (child, index, animation) => AnimatedBuilder(

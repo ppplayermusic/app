@@ -7,6 +7,7 @@ import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
+import '../../shared/widgets/animated_equalizer.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
@@ -493,7 +494,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                                 SizedBox(
                                                   width: 48,
                                                   child: isActive
-                                                      ? Center(child: Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary))
+                                                      ? Center(child: AnimatedEqualizer(color: colorScheme.primary))
                                                       : Text(
                                                           '${i + 1}',
                                                           textAlign: TextAlign.center,

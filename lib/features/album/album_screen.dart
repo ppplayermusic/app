@@ -10,6 +10,7 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
 import '../../shared/widgets/adaptive_blur.dart';
+import '../../shared/widgets/animated_equalizer.dart';
 
 final _albumProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -502,7 +503,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                     SizedBox(
                                       width: 48,
                                       child: isActive
-                                          ? Center(child: Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary))
+                                          ? Center(child: AnimatedEqualizer(color: colorScheme.primary))
                                           : Text(
                                               '${i + 1}',
                                               textAlign: TextAlign.center,

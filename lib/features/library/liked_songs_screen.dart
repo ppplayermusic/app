@@ -6,6 +6,7 @@ import 'dart:ui';
 import '../../core/db/app_database.dart' as db;
 import '../../core/models/track.dart' as model;
 import '../../core/player/player_provider.dart';
+import '../../shared/widgets/animated_equalizer.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
@@ -430,7 +431,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                                 SizedBox(
                                   width: 48,
                                   child: isActive
-                                      ? Center(child: Icon(Icons.equalizer_rounded, size: 16, color: Theme.of(context).colorScheme.primary))
+                                      ? Center(child: AnimatedEqualizer(color: Theme.of(context).colorScheme.primary))
                                       : Text(
                                           '${i + 1}',
                                           textAlign: TextAlign.center,

@@ -11,6 +11,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
 import '../../core/api/spotify_client.dart';
 import '../../shared/widgets/adaptive_blur.dart';
+import '../../shared/widgets/animated_equalizer.dart';
 import 'package:drift/drift.dart' show Value;
 
 class PlaylistDetailScreen extends ConsumerStatefulWidget {
@@ -577,7 +578,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                       SizedBox(
                         width: 48,
                         child: isActive
-                            ? Center(child: Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary))
+                            ? Center(child: AnimatedEqualizer(color: colorScheme.primary))
                             : Text(
                                 '${index + 1}',
                                 textAlign: TextAlign.center,
