@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:pp_playback_engine/pp_playback_engine.dart';
 import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
-
 class ScaffoldWithNav extends ConsumerStatefulWidget {
-  const ScaffoldWithNav({super.key, required this.child, required this.location});
+  const ScaffoldWithNav({
+    super.key,
+    required this.child,
+    required this.location,
+  });
   final Widget child;
   final String location;
 
@@ -59,7 +61,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     // ---------------------------------------------------------------
     const double kMinW = 160;
     const double kMinH = 90;
-    const double kPeek  = 2.0; // px kept inside window to avoid JS suspension
+    const double kPeek = 2.0; // px kept inside window to avoid JS suspension
 
     return Scaffold(
       body: SafeArea(
@@ -75,11 +77,13 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                   bool showShadow;
 
                   if (isPlayerScreen) {
-                    if (isVideoView && videoLayout.isVisible && videoLayout.isReady) {
+                    if (isVideoView &&
+                        videoLayout.isVisible &&
+                        videoLayout.isReady) {
                       // Initial values (will be refined by globalToLocal in the Builder below)
                       renderW = videoLayout.size.width;
                       renderH = videoLayout.size.height;
-                      renderTop = 0; 
+                      renderTop = 0;
                       renderLeft = 0;
                       renderRadius = 24;
                       showShadow = false;
@@ -120,128 +124,198 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                       widget.child,
                       // Always-mounted WebView — never removed or hidden via Opacity.
                       // Audio plays uninterrupted on all tabs and when minimized.
-                      Builder(builder: (context) {
-                        double finalTop = renderTop;
-                        double finalLeft = renderLeft;
+                      Builder(
+                        builder: (context) {
+                          double finalTop = renderTop;
+                          double finalLeft = renderLeft;
 
-                        // Precise alignment for the video slot in PlayerScreen
-                        if (isPlayerScreen && isVideoView && videoLayout.isVisible && videoLayout.isReady) {
-                          final RenderBox? stackBox = _stackKey.currentContext?.findRenderObject() as RenderBox?;
-                          if (stackBox != null) {
-                            // globalToLocal is the gold standard for syncing separate widget trees.
-                            // It automatically handles SafeArea, TabBars, and parent offsets.
-                            final localPos = stackBox.globalToLocal(videoLayout.position);
-                            finalTop = localPos.dy;
-                            finalLeft = localPos.dx;
+                          // Precise alignment for the video slot in PlayerScreen
+                          if (isPlayerScreen &&
+                              isVideoView &&
+                              videoLayout.isVisible &&
+                              videoLayout.isReady) {
+                            final RenderBox? stackBox =
+                                _stackKey.currentContext?.findRenderObject()
+                                    as RenderBox?;
+                            if (stackBox != null) {
+                              // globalToLocal is the gold standard for syncing separate widget trees.
+                              // It automatically handles SafeArea, TabBars, and parent offsets.
+                              final localPos = stackBox.globalToLocal(
+                                videoLayout.position,
+                              );
+                              finalTop = localPos.dy;
+                              finalLeft = localPos.dx;
+                            }
                           }
-                        }
 
-                        return AnimatedPositioned(
-                          duration: const Duration(milliseconds: 120),
-                          curve: Curves.easeOutQuart,
-                          top: finalTop,
-                          left: finalLeft,
-                          width: renderW,
-                          height: renderH,
-                          child: AnimatedContainer(
+                          return AnimatedPositioned(
                             duration: const Duration(milliseconds: 120),
                             curve: Curves.easeOutQuart,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius: BorderRadius.circular(renderRadius),
-                              boxShadow: [
-                                if (showShadow)
-                                  BoxShadow(
-                                    color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 6),
-                                  ),
-                              ],
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: Stack(
-                              children: [
-                                RepaintBoundary(
-                                  child: PlaybackView(
-                                    controller: playbackEngine,
-                                    status: playbackStatus,
-                                  ),
+                            top: finalTop,
+                            left: finalLeft,
+                            width: renderW,
+                            height: renderH,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 120),
+                              curve: Curves.easeOutQuart,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(
+                                  renderRadius,
                                 ),
-                                if (playerState.loadError != null)
-                                  Positioned.fill(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(renderRadius),
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                        child: Container(
-                                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.error_outline_rounded,
-                                                color: Theme.of(context).colorScheme.error,
-                                                size: renderH * 0.25,
-                                              ),
-                                              const SizedBox(height: 12),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                                child: Text(
-                                                  playerState.loadError!,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: Theme.of(context).colorScheme.onSurface,
-                                                    fontSize: renderH * 0.08 < 12 ? 12 : renderH * 0.08,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                boxShadow: [
+                                  if (showShadow)
+                                    BoxShadow(
+                                      color: Theme.of(context).colorScheme.scrim
+                                          .withValues(alpha: 0.5),
+                                      blurRadius: 15,
+                                      offset: const Offset(0, 6),
+                                    ),
+                                ],
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Stack(
+                                children: [
+                                  RepaintBoundary(
+                                    child: PlaybackView(
+                                      controller: playbackEngine,
+                                      status: playbackStatus,
+                                    ),
+                                  ),
+                                  if (playerState.loadError != null)
+                                    Positioned.fill(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          renderRadius,
+                                        ),
+                                        child: BackdropFilter(
+                                          filter: ImageFilter.blur(
+                                            sigmaX: 10,
+                                            sigmaY: 10,
+                                          ),
+                                          child: Container(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface
+                                                .withValues(alpha: 0.7),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.error_outline_rounded,
+                                                  color:
+                                                      Theme.of(
+                                                        context,
+                                                      ).colorScheme.error,
+                                                  size: renderH * 0.25,
                                                 ),
-                                              ),
-                                              const SizedBox(height: 16),
-                                              TactileTap(
-                                                onTap: () => ref.read(playerProvider.notifier).retryLoad(),
-                                                child: Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                                                  decoration: BoxDecoration(
-                                                    color: Theme.of(context).colorScheme.primary,
-                                                    borderRadius: BorderRadius.circular(20),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                                                        blurRadius: 10,
-                                                        offset: const Offset(0, 4),
+                                                const SizedBox(height: 12),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 16,
                                                       ),
-                                                    ],
+                                                  child: Text(
+                                                    playerState.loadError!,
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      color:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .onSurface,
+                                                      fontSize:
+                                                          renderH * 0.08 < 12
+                                                              ? 12
+                                                              : renderH * 0.08,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      const Icon(Icons.refresh_rounded, color: Colors.white, size: 20),
-                                                      const SizedBox(width: 8),
-                                                      const Text(
-                                                        'Retry',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 14,
+                                                ),
+                                                const SizedBox(height: 16),
+                                                TactileTap(
+                                                  onTap:
+                                                      () =>
+                                                          ref
+                                                              .read(
+                                                                playerProvider
+                                                                    .notifier,
+                                                              )
+                                                              .retryLoad(),
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 24,
+                                                          vertical: 10,
                                                         ),
-                                                      ),
-                                                    ],
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          Theme.of(
+                                                            context,
+                                                          ).colorScheme.primary,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20,
+                                                          ),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Theme.of(
+                                                                context,
+                                                              )
+                                                              .colorScheme
+                                                              .primary
+                                                              .withValues(
+                                                                alpha: 0.3,
+                                                              ),
+                                                          blurRadius: 10,
+                                                          offset: const Offset(
+                                                            0,
+                                                            4,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.refresh_rounded,
+                                                          color: Colors.white,
+                                                          size: 20,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
+                                                        const Text(
+                                                          'Retry',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        },
+                      ),
                     ],
                   );
                 },
@@ -250,15 +324,13 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
           ],
         ),
       ),
-      bottomNavigationBar: isPlayerScreen 
-        ? null 
-        : const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _MiniPlayerBar(),
-              _BottomNavBar(),
-            ],
-          ),
+      bottomNavigationBar:
+          isPlayerScreen
+              ? null
+              : const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [_MiniPlayerBar(), _BottomNavBar()],
+              ),
     );
   }
 }
@@ -301,32 +373,32 @@ class _BottomNavBar extends StatelessWidget {
               ),
             ],
           ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _NavBarItem(
-            icon: Icons.home_outlined,
-            activeIcon: Icons.home,
-            label: 'Home',
-            isSelected: currentIndex == 0,
-            onTap: () => context.go('/home'),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _NavBarItem(
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home,
+                label: 'Home',
+                isSelected: currentIndex == 0,
+                onTap: () => context.go('/home'),
+              ),
+              _NavBarItem(
+                icon: Icons.search_outlined,
+                activeIcon: Icons.search,
+                label: 'Search',
+                isSelected: currentIndex == 1,
+                onTap: () => context.go('/search'),
+              ),
+              _NavBarItem(
+                icon: Icons.library_music_outlined,
+                activeIcon: Icons.library_music,
+                label: 'Library',
+                isSelected: currentIndex == 2,
+                onTap: () => context.go('/library'),
+              ),
+            ],
           ),
-          _NavBarItem(
-            icon: Icons.search_outlined,
-            activeIcon: Icons.search,
-            label: 'Search',
-            isSelected: currentIndex == 1,
-            onTap: () => context.go('/search'),
-          ),
-          _NavBarItem(
-            icon: Icons.library_music_outlined,
-            activeIcon: Icons.library_music,
-            label: 'Library',
-            isSelected: currentIndex == 2,
-            onTap: () => context.go('/library'),
-          ),
-        ],
-      ),
         ),
       ),
     );
@@ -351,8 +423,11 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final color = isSelected ? colorScheme.onSurface : colorScheme.onSurface.withValues(alpha: 0.5);
-    
+    final color =
+        isSelected
+            ? colorScheme.onSurface
+            : colorScheme.onSurface.withValues(alpha: 0.5);
+
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.85, // More pronounced tactile feedback for nav items
@@ -362,11 +437,7 @@ class _NavBarItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              isSelected ? activeIcon : icon,
-              color: color,
-              size: 26,
-            ),
+            Icon(isSelected ? activeIcon : icon, color: color, size: 26),
             const SizedBox(height: 4),
             Text(
               label,
@@ -396,9 +467,10 @@ class _MiniPlayerBar extends ConsumerWidget {
 
     if (track == null) return const SizedBox.shrink();
 
-    final progress = playerState.duration.inSeconds > 0
-        ? playerState.position.inSeconds / playerState.duration.inSeconds
-        : 0.0;
+    final progress =
+        playerState.duration.inSeconds > 0
+            ? playerState.position.inSeconds / playerState.duration.inSeconds
+            : 0.0;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
@@ -441,7 +513,9 @@ class _MiniPlayerBar extends ConsumerWidget {
                             color: colorScheme.primary,
                             boxShadow: [
                               BoxShadow(
-                                color: colorScheme.primary.withValues(alpha: 0.3),
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.3,
+                                ),
                                 blurRadius: 4,
                                 spreadRadius: 1,
                               ),
@@ -496,8 +570,11 @@ class _MiniPlayerBar extends ConsumerWidget {
                             Text(
                               track.artistName,
                               style: TextStyle(
-                                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                                  fontSize: 11),
+                                color: colorScheme.onSurfaceVariant.withValues(
+                                  alpha: 0.6,
+                                ),
+                                fontSize: 11,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -506,26 +583,41 @@ class _MiniPlayerBar extends ConsumerWidget {
                       ),
                       TactileIconButton(
                         icon: Icons.skip_previous,
-                        onTap: () => ref.read(playerProvider.notifier).skipPrevious(),
+                        onTap:
+                            () =>
+                                ref
+                                    .read(playerProvider.notifier)
+                                    .skipPrevious(),
                         size: 24,
                       ),
                       TactileIconButton(
-                        icon: playerState.isPlaying ? Icons.pause : Icons.play_arrow,
-                        onTap: () =>
-                            ref.read(playerProvider.notifier).togglePlay(),
+                        icon:
+                            playerState.isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                        onTap:
+                            () =>
+                                ref.read(playerProvider.notifier).togglePlay(),
                         size: 28,
                       ),
                       TactileIconButton(
                         icon: Icons.skip_next,
-                        onTap: () => ref.read(playerProvider.notifier).skipNext(),
+                        onTap:
+                            () => ref.read(playerProvider.notifier).skipNext(),
                         size: 24,
                       ),
                       const SizedBox(width: 4),
                       TactileIconButton(
                         icon: showVideo ? Icons.videocam : Icons.videocam_off,
-                        onTap: () => ref.read(settingsProvider.notifier).toggleVideo(),
+                        onTap:
+                            () =>
+                                ref
+                                    .read(settingsProvider.notifier)
+                                    .toggleVideo(),
                         size: 18,
-                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.4,
+                        ),
                       ),
                     ],
                   ),

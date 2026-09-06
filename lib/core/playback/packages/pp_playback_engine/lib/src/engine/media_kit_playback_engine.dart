@@ -154,6 +154,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
           ),
         );
 
+      // ignore: invalid_use_of_internal_member
       _youtubeController!.webViewController.addJavaScriptChannel('NativeLog', onMessageReceived: (msg) {
         debugPrint('MediaKitPlaybackEngine: [NativeLog] ${msg.message}');
       });
@@ -224,12 +225,16 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
       try {
         if (_youtubeController != null) {
+          // ignore: invalid_use_of_internal_member
           final html = await _youtubeController!.webViewController.runJavaScriptReturningResult('document.documentElement.outerHTML');
+          // ignore: invalid_use_of_internal_member
           final loc = await _youtubeController!.webViewController.runJavaScriptReturningResult('window.location.href');
           debugPrint('MediaKitPlaybackEngine: [DOM] loc: $loc, html length: ${html.toString().length}, content start: ${html.toString().substring(0, html.toString().length > 100 ? 100 : html.toString().length)}');
           try {
             File('/Users/veneno/Projects/Apps/ppplayer/generated_player.html').writeAsStringSync(html.toString());
-          } catch(e) {}
+          } catch(e) {
+            // Ignore file write errors.
+          }
         }
       } catch (e) {
         debugPrint('MediaKitPlaybackEngine: [DOM ERROR] $e');
@@ -385,3 +390,4 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _eventController.close();
   }
 }
+

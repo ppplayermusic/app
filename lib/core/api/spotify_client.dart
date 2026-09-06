@@ -224,7 +224,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']['items'] as List?) ?? [];
-    return items.whereType<Map<String, dynamic>>().toList();
+    return _filterAndSanitizeItems(items);
   }
 
   Future<List<Track>> getPlaylistTracks(String playlistId, {int limit = 20}) async {
@@ -239,7 +239,7 @@ class SpotifyClient {
     final items = (response.data['items'] as List?) ?? [];
     return items.map((j) {
       final map = (j as Map<String, dynamic>)['track'] as Map<String, dynamic>;
-      return Track.fromSpotify(map);
+      return Track.fromSpotify(_sanitizeData(map));
     }).toList();
   }
 
@@ -253,7 +253,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['categories']['items'] as List?) ?? [];
-    return items.whereType<Map<String, dynamic>>().toList();
+    return _filterAndSanitizeItems(items);
   }
 
   Future<List<Map<String, dynamic>>> getCategoryPlaylists(String categoryId, {int limit = 20}) async {
@@ -266,7 +266,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']['items'] as List?) ?? [];
-    return items.whereType<Map<String, dynamic>>().toList();
+    return _filterAndSanitizeItems(items);
   }
 
   Future<List<Track>> getPopularTracks({int limit = 12}) async {
@@ -338,7 +338,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']?['items'] as List?) ?? [];
-    return items.whereType<Map<String, dynamic>>().toList();
+    return _filterAndSanitizeItems(items);
   }
 
   Future<List<String>> getAvailableGenreSeeds() async {
@@ -356,6 +356,29 @@ class SpotifyClient {
         'r-n-b', 'country', 'metal', 'funk', 'soul', 'reggae'
       ];
     }
+  }
+
+  List<Map<String, dynamic>> _filterAndSanitizeItems(List<dynamic> items) {
+    return items.whereType<Map<String, dynamic>>().where((item) {
+      final name = (item['name'] as String?)?.toLowerCase() ?? '';
+      return !name.contains('spotify sessions') && !name.contains('spotify singles');
+    }).map(_sanitizeData).toList();
+  }
+
+  Map<String, dynamic> _sanitizeData(Map<String, dynamic> data) {
+    final sanitized = Map<String, dynamic>.from(data);
+    
+    if (sanitized['name'] is String) {
+      sanitized['name'] = (sanitized['name'] as String).replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer');
+    }
+    if (sanitized['description'] is String) {
+      sanitized['description'] = (sanitized['description'] as String).replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer');
+    }
+    if (sanitized['message'] is String) {
+      sanitized['message'] = (sanitized['message'] as String).replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer');
+    }
+    
+    return sanitized;
   }
 }
 

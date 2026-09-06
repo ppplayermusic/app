@@ -4,7 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
+
 import 'package:url_launcher/url_launcher.dart' as uri_launcher;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -104,7 +104,6 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
   final YoutubePlayerParams params;
 
   /// The [WebViewController] that drives the player
-  @internal
   late final WebViewController webViewController;
 
   late final YoutubePlayerEventHandler _eventHandler;
@@ -247,7 +246,7 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
 
   /// Loads the player with default [params].
   @internal
-  Future<void> init() async { print("YoutubePlayerController: init() start");
+  Future<void> init() async { debugPrint("YoutubePlayerController: init() start");
     await load(
       params: params,
       baseUrl: kIsWeb ? Uri.base.origin : params.origin,
@@ -265,7 +264,7 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     String? baseUrl,
     String id = 'player',
   }) async {
-    print("YoutubePlayerController: load() start");
+    debugPrint("YoutubePlayerController: load() start");
     final platform = kIsWeb ? 'web' : defaultTargetPlatform.name.toLowerCase();
     final playerData = {
       'playerId': id,
@@ -276,7 +275,7 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     };
 
     String generatedHtml = await _buildPlayerHTML(playerData);
-    print("YoutubePlayerController: generatedHtml length = ${generatedHtml.length}");
+    debugPrint("YoutubePlayerController: generatedHtml length = ${generatedHtml.length}");
     await webViewController.loadHtmlString(
       generatedHtml,
       baseUrl: baseUrl,
@@ -685,7 +684,7 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
         (m) => data[m.group(1)] ?? m.group(0)!,
       );
     } catch (e, stack) {
-      print("ERROR IN _buildPlayerHTML: $e\\n$stack");
+      debugPrint("ERROR IN _buildPlayerHTML: $e\\n$stack");
       rethrow;
     }
   }

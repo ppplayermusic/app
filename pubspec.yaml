@@ -68,6 +68,7 @@ flutter:
   assets:
     - .env
     - assets/
+    - assets/images/
     - assets/images/mix_covers/
 
 flutter_native_splash:

@@ -360,7 +360,7 @@ class _PlaylistList extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     if (playlists.isEmpty) return const SizedBox.shrink();
     return SizedBox(
-      height: 220,
+      height: 240,
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,

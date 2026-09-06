@@ -21,14 +21,17 @@ class FakePlaybackService extends PlaybackService {
   FakePlaybackService({
     List<String> candidates = const [],
     Exception? throwError,
-  })  : _candidates = candidates,
-        _throwError = throwError,
-        super(_FakeRef());
+  }) : _candidates = candidates,
+       _throwError = throwError,
+       super(_FakeRef());
 
   @override
-  Future<List<String>> resolveCandidates(Track track, String? regionCode) async {
+  Future<List<String>> resolveCandidates(
+    Track track,
+    String? regionCode,
+  ) async {
     resolveCallCount++;
-    if (_throwError != null) throw _throwError!;
+    if (_throwError != null) throw _throwError;
     return _candidates;
   }
 
@@ -148,69 +151,81 @@ void main() {
       expect(container.read(playerProvider).loadError, isNull);
     });
 
-    test('Case A-retry: retryLoad with null ID → re-resolves and plays valid ID', () async {
-      const resolvedId = 'abcdefghijk';
-      final service = FakePlaybackService(candidates: [resolvedId]);
-      final controller = FakePlaybackController();
-      
-      // Use a container with a failing service first
-      final emptyService = FakePlaybackService(candidates: []);
-      final container = makeContainer(service: emptyService, controller: controller);
-      addTearDown(container.dispose);
-      
-      final notifier = container.read(playerProvider.notifier);
-      await notifier.playTrack(trackWith(youtubeVideoId: null));
-      expect(container.read(playerProvider).loadError, isNotNull);
-      expect(controller.playedIds, isEmpty);
+    test(
+      'Case A-retry: retryLoad with null ID → re-resolves and plays valid ID',
+      () async {
+        const resolvedId = 'abcdefghijk';
+        final service = FakePlaybackService(candidates: [resolvedId]);
+        final controller = FakePlaybackController();
 
-      // Now override with the working service to simulate successful retry
-      final retryContainer = ProviderContainer(
-        overrides: [
-          playbackServiceProvider.overrideWithValue(service),
-          playbackControllerProvider.overrideWithValue(controller),
-          playerProvider.overrideWith(() => notifier),
-        ]
-      );
-      addTearDown(retryContainer.dispose);
-      
-      // Call retryLoad on the same notifier but inside the new container?
-      // Actually Riverpod doesn't easily let us hot-swap overrides like this for tests without updating.
-      // Simpler: Just test that retryLoad() correctly delegates to playTrack() which we proved re-resolves.
-      // Since retryLoad is just `await playTrack(track, queue: state.playbackQueue.tracks);` now, 
-      // we can just test that calling retryLoad with a track lacking an ID calls resolveCandidates.
-    });
+        // Use a container with a failing service first
+        final emptyService = FakePlaybackService(candidates: []);
+        final container = makeContainer(
+          service: emptyService,
+          controller: controller,
+        );
+        addTearDown(container.dispose);
+
+        final notifier = container.read(playerProvider.notifier);
+        await notifier.playTrack(trackWith(youtubeVideoId: null));
+        expect(container.read(playerProvider).loadError, isNotNull);
+        expect(controller.playedIds, isEmpty);
+
+        // Now override with the working service to simulate successful retry
+        final retryContainer = ProviderContainer(
+          overrides: [
+            playbackServiceProvider.overrideWithValue(service),
+            playbackControllerProvider.overrideWithValue(controller),
+            playerProvider.overrideWith(() => notifier),
+          ],
+        );
+        addTearDown(retryContainer.dispose);
+
+        // Call retryLoad on the same notifier but inside the new container?
+        // Actually Riverpod doesn't easily let us hot-swap overrides like this for tests without updating.
+        // Simpler: Just test that retryLoad() correctly delegates to playTrack() which we proved re-resolves.
+        // Since retryLoad is just `await playTrack(track, queue: state.playbackQueue.tracks);` now,
+        // we can just test that calling retryLoad with a track lacking an ID calls resolveCandidates.
+      },
+    );
 
     // ------------------------------------------------------------------
     // Case B — Invalid YouTube ID (Spotify-shaped): must re-resolve.
     // ------------------------------------------------------------------
-    test('Case B: invalid cached ID → resolves fresh, invalid never reaches engine', () async {
-      const resolvedId = 'validYtId11';
-      final invalidIds = [
-        '4iV5W9uYedL', // 11 chars but matches spotifyId
-        'short',
-        'https://youtube.com/watch?v=abc',
-        'invalid chars!',
-      ];
+    test(
+      'Case B: invalid cached ID → resolves fresh, invalid never reaches engine',
+      () async {
+        const resolvedId = 'validYtId11';
+        final invalidIds = [
+          '4iV5W9uYedL', // 11 chars but matches spotifyId
+          'short',
+          'https://youtube.com/watch?v=abc',
+          'invalid chars!',
+        ];
 
-      for (final badId in invalidIds) {
-        final spotifyId = badId.length == 11 ? badId : 'spotifyAAA';
-        final service = FakePlaybackService(candidates: [resolvedId]);
-        final controller = FakePlaybackController();
-        final container = makeContainer(service: service, controller: controller);
-        addTearDown(container.dispose);
+        for (final badId in invalidIds) {
+          final spotifyId = badId.length == 11 ? badId : 'spotifyAAA';
+          final service = FakePlaybackService(candidates: [resolvedId]);
+          final controller = FakePlaybackController();
+          final container = makeContainer(
+            service: service,
+            controller: controller,
+          );
+          addTearDown(container.dispose);
 
-        final notifier = container.read(playerProvider.notifier);
-        await notifier.playTrack(
-          trackWith(youtubeVideoId: badId, spotifyId: spotifyId),
-        );
+          final notifier = container.read(playerProvider.notifier);
+          await notifier.playTrack(
+            trackWith(youtubeVideoId: badId, spotifyId: spotifyId),
+          );
 
-        expect(
-          controller.playedIds.contains(badId),
-          isFalse,
-          reason: 'Invalid ID "$badId" must never reach the engine',
-        );
-      }
-    });
+          expect(
+            controller.playedIds.contains(badId),
+            isFalse,
+            reason: 'Invalid ID "$badId" must never reach the engine',
+          );
+        }
+      },
+    );
 
     // ------------------------------------------------------------------
     // Case C — Resolver returns empty list.
@@ -225,14 +240,19 @@ void main() {
       await notifier.playTrack(trackWith(youtubeVideoId: null));
 
       expect(controller.playedIds, isEmpty);
-      expect(container.read(playerProvider).loadError, contains('No YouTube video found'));
+      expect(
+        container.read(playerProvider).loadError,
+        contains('No YouTube video found'),
+      );
     });
 
     // ------------------------------------------------------------------
     // Case D — Resolver throws.
     // ------------------------------------------------------------------
     test('Case D: resolver throws → no engine call, error set', () async {
-      final service = FakePlaybackService(throwError: Exception('network error'));
+      final service = FakePlaybackService(
+        throwError: Exception('network error'),
+      );
       final controller = FakePlaybackController();
       final container = makeContainer(service: service, controller: controller);
       addTearDown(container.dispose);
@@ -241,7 +261,10 @@ void main() {
       await notifier.playTrack(trackWith(youtubeVideoId: null));
 
       expect(controller.playedIds, isEmpty);
-      expect(container.read(playerProvider).loadError, contains('Failed to resolve'));
+      expect(
+        container.read(playerProvider).loadError,
+        contains('Failed to resolve'),
+      );
     });
 
     // ------------------------------------------------------------------
@@ -255,17 +278,24 @@ void main() {
       final serviceA = _DelayedFakeService(completerA, [idB]);
       final controller = FakePlaybackController();
 
-      final container = makeContainer(service: serviceA, controller: controller);
+      final container = makeContainer(
+        service: serviceA,
+        controller: controller,
+      );
       addTearDown(container.dispose);
-      
+
       final notifier = container.read(playerProvider.notifier);
 
       // Start play A (will block)
-      final futureA = notifier.playTrack(trackWith(youtubeVideoId: null, spotifyId: 'spotifyAAA'));
-      
+      final futureA = notifier.playTrack(
+        trackWith(youtubeVideoId: null, spotifyId: 'spotifyAAA'),
+      );
+
       // Start play B (will resolve instantly in our mock)
-      await notifier.playTrack(trackWith(youtubeVideoId: idB, spotifyId: 'spotifyBBB'));
-      
+      await notifier.playTrack(
+        trackWith(youtubeVideoId: idB, spotifyId: 'spotifyBBB'),
+      );
+
       // Unblock A
       completerA.complete([idA]);
       await futureA;
@@ -286,7 +316,8 @@ class _DelayedFakeService extends PlaybackService {
   final List<String> _instantFallback;
   int calls = 0;
 
-  _DelayedFakeService(this._completer, this._instantFallback) : super(_FakeRef());
+  _DelayedFakeService(this._completer, this._instantFallback)
+    : super(_FakeRef());
 
   @override
   Future<List<String>> resolveCandidates(Track track, String? regionCode) {

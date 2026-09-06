@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -111,7 +112,19 @@ class PpPlayerApp extends ConsumerWidget {
       title: 'PPPLAYER',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark(primaryColor: themeColor),
+      scrollBehavior: const AppScrollBehavior(),
       routerConfig: router,
     );
   }
+}
+
+class AppScrollBehavior extends MaterialScrollBehavior {
+  const AppScrollBehavior();
+
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+      };
 }
