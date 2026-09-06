@@ -269,14 +269,7 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']['items'] as List?) ?? [];
-    print("CATEGORY PLAYLISTS RAW ITEMS:");
-    for (var item in items) {
-      if (item is Map) {
-        print("Item: id=${item['id']}, name=${item['name']}");
-      } else {
-        print("Item is not Map: $item");
-      }
-    }
+
     return _filterAndSanitizeItems(items);
   }
 
