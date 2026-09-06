@@ -28,6 +28,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
   MediaKitPlaybackEngine();
 
+  // ignore: unused_element
   void _ensureMediaKitInitialized() {
     if (_player != null) return;
     
