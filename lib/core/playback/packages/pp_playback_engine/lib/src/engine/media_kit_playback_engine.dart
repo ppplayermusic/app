@@ -11,8 +11,8 @@ import '../models/playback_track.dart';
 import 'playback_controller.dart';
 
 class MediaKitPlaybackEngine implements PlaybackController {
-  final Player _player = Player();
-  late final VideoController _videoController;
+  Player? _player;
+  VideoController? _videoController;
   yt.YoutubePlayerController? _youtubeController;
 
   int _playGeneration = 0;
@@ -26,28 +26,33 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
   PlaybackStatus _currentStatus = const PlaybackStatus();
 
-  MediaKitPlaybackEngine() {
-    _videoController = VideoController(_player);
+  MediaKitPlaybackEngine();
 
-    _player.stream.position.listen((pos) {
+  void _ensureMediaKitInitialized() {
+    if (_player != null) return;
+    
+    _player = Player();
+    _videoController = VideoController(_player!);
+
+    _player!.stream.position.listen((pos) {
       if (!_currentStatus.isIFrameMode) {
         _updateStatus(_currentStatus.copyWith(position: pos));
       }
     });
 
-    _player.stream.duration.listen((dur) {
+    _player!.stream.duration.listen((dur) {
       if (!_currentStatus.isIFrameMode) {
         _updateStatus(_currentStatus.copyWith(duration: dur));
       }
     });
 
-    _player.stream.buffer.listen((buf) {
+    _player!.stream.buffer.listen((buf) {
       if (!_currentStatus.isIFrameMode) {
         _updateStatus(_currentStatus.copyWith(buffered: buf));
       }
     });
 
-    _player.stream.playing.listen((playing) {
+    _player!.stream.playing.listen((playing) {
       if (!_currentStatus.isIFrameMode) {
         _updateStatus(_currentStatus.copyWith(
           state: playing ? PlaybackState.playing : PlaybackState.paused,
@@ -55,7 +60,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
       }
     });
 
-    _player.stream.error.listen((err) {
+    _player!.stream.error.listen((err) {
       if (!_currentStatus.isIFrameMode) {
         _updateStatus(_currentStatus.copyWith(
           state: PlaybackState.error,
@@ -64,13 +69,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
       }
     });
 
-    _player.stream.completed.listen((completed) {
+    _player!.stream.completed.listen((completed) {
       if (completed && !_currentStatus.isIFrameMode) {
         _updateStatus(_currentStatus.copyWith(state: PlaybackState.ended));
       }
     });
 
-    _player.stream.buffering.listen((buffering) {
+    _player!.stream.buffering.listen((buffering) {
       if (!_currentStatus.isIFrameMode) {
         _updateStatus(_currentStatus.copyWith(
           state: buffering ? PlaybackState.buffering : _currentStatus.state,
@@ -89,7 +94,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
   PlaybackStatus get currentStatus => _currentStatus;
 
   @override
-  VideoController get renderer => _videoController;
+  dynamic get renderer => _videoController;
 
   @override
   yt.YoutubePlayerController? get youtubeController => _youtubeController;
@@ -279,7 +284,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_currentStatus.isIFrameMode) {
       await _youtubeController?.pauseVideo();
     } else {
-      await _player.pause();
+      await _player?.pause();
     }
   }
 
@@ -289,7 +294,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_currentStatus.isIFrameMode) {
       await _youtubeController?.playVideo();
     } else {
-      await _player.play();
+      await _player?.play();
     }
   }
 
@@ -299,7 +304,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
       await _youtubeController?.pauseVideo();
       // We keep the controller alive to avoid recreating the platform view
     } else {
-      await _player.stop();
+      await _player?.stop();
     }
     _updateStatus(_currentStatus.copyWith(
       state: PlaybackState.idle, 
@@ -313,7 +318,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_currentStatus.isIFrameMode) {
       await _youtubeController?.seekTo(seconds: position.inSeconds.toDouble());
     } else {
-      await _player.seek(position);
+      await _player?.seek(position);
     }
   }
 
@@ -322,7 +327,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_currentStatus.isIFrameMode) {
       // youtube_player_iframe volume control is limited
     } else {
-      await _player.setVolume(volume * 100);
+      await _player?.setVolume(volume * 100);
     }
     _updateStatus(_currentStatus.copyWith(volume: volume));
   }
@@ -332,7 +337,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_currentStatus.isIFrameMode) {
       await _youtubeController?.setPlaybackRate(speed);
     } else {
-      await _player.setRate(speed);
+      await _player?.setRate(speed);
     }
   }
 
@@ -382,7 +387,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
   @override
   void dispose() {
-    _player.dispose();
+    _player?.dispose();
     _watchdogTimer?.cancel();
     _iframePositionTimer?.cancel();
     _youtubeController?.close();

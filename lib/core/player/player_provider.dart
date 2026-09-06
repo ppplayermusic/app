@@ -17,6 +17,7 @@ class PlayerState {
     this.loadError,
     this.position = Duration.zero,
     this.duration = Duration.zero,
+    this.volume = 1.0,
   });
 
   final PlaybackQueue playbackQueue;
@@ -26,6 +27,7 @@ class PlayerState {
   final String? loadError;
   final Duration position;
   final Duration duration;
+  final double volume;
 
   // Shortcuts to avoid breaking UI that expects these on state
   List<Track> get queue => playbackQueue.tracks;
@@ -42,6 +44,7 @@ class PlayerState {
     Object? loadError = _sentinel,
     Duration? position,
     Duration? duration,
+    double? volume,
     bool clearLoadError = false,
   }) {
     return PlayerState(
@@ -52,6 +55,7 @@ class PlayerState {
       loadError: clearLoadError ? null : (identical(loadError, _sentinel) ? this.loadError : loadError as String?),
       position: position ?? this.position,
       duration: duration ?? this.duration,
+      volume: volume ?? this.volume,
     );
   }
 }
@@ -277,11 +281,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
     );
   }
 
-  void cycleRepeat() {
-    final next = RepeatMode.values[(state.repeatMode.index + 1) % RepeatMode.values.length];
-    state = state.copyWith(
-      playbackQueue: state.playbackQueue.copyWith(repeatMode: next),
-    );
+  Future<void> cycleRepeat() async {
+    final nextMode = RepeatMode.values[(state.repeatMode.index + 1) % RepeatMode.values.length];
+    state = state.copyWith(playbackQueue: state.playbackQueue.copyWith(repeatMode: nextMode));
+  }
+
+  Future<void> setVolume(double volume) async {
+    state = state.copyWith(volume: volume);
+    await _controller.setVolume(volume);
   }
 
   void seekTo(Duration position) => _controller.seekTo(position);

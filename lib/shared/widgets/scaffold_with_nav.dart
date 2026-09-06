@@ -1148,6 +1148,33 @@ class _DesktopPlayerBar extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        // Volume control
+                        Icon(
+                          playerState.volume == 0 ? Icons.volume_off : (playerState.volume < 0.5 ? Icons.volume_down : Icons.volume_up),
+                          size: 20,
+                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                        ),
+                        SizedBox(
+                          width: 80,
+                          child: SliderTheme(
+                            data: SliderThemeData(
+                              trackHeight: 4,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                              overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                              activeTrackColor: colorScheme.primary,
+                              inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.2),
+                              thumbColor: colorScheme.primary,
+                              overlayColor: colorScheme.primary.withValues(alpha: 0.2),
+                            ),
+                            child: Slider(
+                              value: playerState.volume,
+                              min: 0.0,
+                              max: 1.0,
+                              onChanged: (val) => ref.read(playerProvider.notifier).setVolume(val),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         TactileIconButton(
                           icon: showVideo ? Icons.videocam : Icons.videocam_off,
                           onTap: () => ref.read(settingsProvider.notifier).toggleVideo(),
