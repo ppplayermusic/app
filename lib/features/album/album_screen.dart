@@ -496,15 +496,16 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                               final isActive = currentTrackId == track.spotifyId;
 
                               return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
                                 child: Row(
                                   children: [
                                     SizedBox(
-                                      width: 28,
+                                      width: 48,
                                       child: isActive
-                                          ? Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary)
+                                          ? Center(child: Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary))
                                           : Text(
                                               '${i + 1}',
+                                              textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 color: colorScheme.onSurface.withValues(alpha: 0.2),
                                                 fontSize: 12,

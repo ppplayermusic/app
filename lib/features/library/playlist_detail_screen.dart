@@ -566,7 +566,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             key: ValueKey(track.spotifyId),
             index: index,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
               child: Consumer(
                 builder: (context, ref, child) {
                   final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
@@ -575,11 +575,12 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                   return Row(
                     children: [
                       SizedBox(
-                        width: 24,
+                        width: 48,
                         child: isActive
-                            ? Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary)
+                            ? Center(child: Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary))
                             : Text(
                                 '${index + 1}',
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: colorScheme.onSurfaceVariant,
                                   fontSize: 12,

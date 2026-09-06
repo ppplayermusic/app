@@ -419,7 +419,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                       final track = tracks[i];
                       return Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 2),
+                            horizontal: 24, vertical: 2),
                         child: Consumer(
                           builder: (context, ref, child) {
                             final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
@@ -428,11 +428,12 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                             return Row(
                                 children: [
                                 SizedBox(
-                                  width: 32,
+                                  width: 48,
                                   child: isActive
-                                      ? Icon(Icons.equalizer_rounded, size: 16, color: Theme.of(context).colorScheme.primary)
+                                      ? Center(child: Icon(Icons.equalizer_rounded, size: 16, color: Theme.of(context).colorScheme.primary))
                                       : Text(
                                           '${i + 1}',
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                                             fontSize: 13,
