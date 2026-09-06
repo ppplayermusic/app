@@ -11,6 +11,7 @@ import '../../core/services/settings_provider.dart';
 import '../../core/providers/search_provider.dart';
 import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../core/db/app_database.dart' as db;
 
 class ScaffoldWithNav extends ConsumerStatefulWidget {
   const ScaffoldWithNav({
@@ -684,6 +685,7 @@ class _DesktopSidebar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final location = GoRouterState.of(context).uri.path;
+    final database = ref.watch(db.appDatabaseProvider);
     final currentIndex = switch (location) {
       String s when s.startsWith('/home') => 0,
       String s when s.startsWith('/search') => 1,
@@ -798,8 +800,32 @@ class _DesktopSidebar extends ConsumerWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Create Playlist not implemented yet')),
+                          final nameController = TextEditingController();
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('New Playlist'),
+                              content: TextField(
+                                controller: nameController,
+                                decoration: const InputDecoration(hintText: 'Playlist Name'),
+                                autofocus: true,
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    if (nameController.text.isNotEmpty) {
+                                      await database.createPlaylist(nameController.text);
+                                      if (context.mounted) Navigator.of(context).pop();
+                                    }
+                                  },
+                                  child: const Text('Create'),
+                                ),
+                              ],
+                            ),
                           );
                         },
                         borderRadius: BorderRadius.circular(4),
@@ -811,30 +837,35 @@ class _DesktopSidebar extends ConsumerWidget {
                     ],
                   ),
                 ),
-                _MockPlaylistItem(
-                  title: 'Chill Vibes',
-                  subtitle: '42 songs',
-                  imageUrl: 'https://i.scdn.co/image/ab67706c0000da840cebf731420d91244e83c742',
-                ),
-                _MockPlaylistItem(
-                  title: 'Workout',
-                  subtitle: '87 songs',
-                  imageUrl: 'https://i.scdn.co/image/ab67706c0000da84e319cb8cff62a5dc4cc8b4b4',
-                ),
-                _MockPlaylistItem(
-                  title: 'Brazilian',
-                  subtitle: '56 songs',
-                  imageUrl: 'https://i.scdn.co/image/ab67706c0000da8490a2a19b6ba1ba7c07b0ecda',
-                ),
-                _MockPlaylistItem(
-                  title: 'Focus',
-                  subtitle: '38 songs',
-                  imageUrl: 'https://i.scdn.co/image/ab67706f00000002ca5a7517156021292e5663a6',
-                ),
-                _MockPlaylistItem(
-                  title: 'Discover',
-                  subtitle: '72 songs',
-                  imageUrl: 'https://i.scdn.co/image/ab67706f000000021c322ee5ec64b97d1b312db6',
+                StreamBuilder<List<db.Playlist>>(
+                  stream: database.watchPlaylists(),
+                  builder: (context, snap) {
+                    final playlists = snap.data ?? [];
+                    if (playlists.isEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        child: Text(
+                          'No playlists yet.',
+                          style: TextStyle(
+                            color: colorScheme.onSurface.withValues(alpha: 0.3),
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    }
+                    return Column(
+                      children: playlists.map((p) {
+                        return _MockPlaylistItem(
+                          title: p.name,
+                          subtitle: 'Playlist',
+                          imageUrl: p.imageUrl ?? 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(p.name)}&background=random',
+                          onTap: () {
+                            context.push('/playlist/${p.id}');
+                          },
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
                 const SizedBox(height: 32),
               ],
@@ -910,11 +941,13 @@ class _MockPlaylistItem extends StatelessWidget {
   final String title;
   final String subtitle;
   final String imageUrl;
+  final VoidCallback? onTap;
 
   const _MockPlaylistItem({
     required this.title,
     required this.subtitle,
     required this.imageUrl,
+    this.onTap,
   });
 
   @override
@@ -922,7 +955,7 @@ class _MockPlaylistItem extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     
     return InkWell(
-      onTap: () => context.go('/library'),
+      onTap: onTap ?? () => context.go('/library'),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Row(

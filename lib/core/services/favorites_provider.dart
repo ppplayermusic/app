@@ -51,8 +51,8 @@ class FavoritesController extends AutoDisposeNotifier<void> {
     await _db.toggleArtistFollow(id, !isCurrentlyFollowed, name: name, imageUrl: imageUrl);
   }
 
-  Future<void> toggleAlbumLike(String id, String name, String artistName, String? imageUrl, bool isCurrentlyLiked) async {
-    await _db.toggleAlbumLike(id, !isCurrentlyLiked, name: name, artistName: artistName, imageUrl: imageUrl);
+  Future<void> toggleAlbumLike(String id, String name, String artistId, String artistName, String? imageUrl, bool isCurrentlyLiked) async {
+    await _db.toggleAlbumLike(id, !isCurrentlyLiked, name: name, artistId: artistId, artistName: artistName, imageUrl: imageUrl);
   }
 
   Future<void> togglePlaylistLike(String id, String name, String? imageUrl, bool isCurrentlyLiked) async {

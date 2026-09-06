@@ -567,29 +567,39 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             index: index,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 24,
-                    child: Text(
-                      '${index + 1}',
-                      style: TextStyle(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
+                  final isActive = currentTrackId == track.spotifyId;
+                  
+                  return Row(
+                    children: [
+                      SizedBox(
+                        width: 24,
+                        child: isActive
+                            ? Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary)
+                            : Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: TrackTile(
-                      track: track,
-                      onTap: () => ref.read(playerProvider.notifier).playTrack(
-                            track,
-                            queue: modelTracks,
-                          ),
-                    ),
-                  ),
-                ],
+                      Expanded(
+                        child: TrackTile(
+                          track: track,
+                          isActive: isActive,
+                          onTap: () => ref.read(playerProvider.notifier).playTrack(
+                                track,
+                                queue: modelTracks,
+                              ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ).animate().fadeIn(delay: (index * 30).ms).slideX(begin: 0.05),
           );

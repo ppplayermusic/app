@@ -247,11 +247,12 @@ class AppDatabase extends _$AppDatabase {
   Future<void> upsertAlbum(AlbumsCompanion entry) =>
       into(albums).insertOnConflictUpdate(entry);
 
-  Future<void> toggleAlbumLike(String spotifyId, bool value, {String? name, String? artistName, String? imageUrl}) async {
+  Future<void> toggleAlbumLike(String spotifyId, bool value, {String? name, String? artistId, String? artistName, String? imageUrl}) async {
     final companion = AlbumsCompanion(
       spotifyId: Value(spotifyId),
       isLiked: Value(value),
       name: name != null ? Value(name) : const Value.absent(),
+      artistId: artistId != null ? Value(artistId) : const Value.absent(),
       artistName: artistName != null ? Value(artistName) : const Value.absent(),
       imageUrl: imageUrl != null ? Value(imageUrl) : const Value.absent(),
       updatedAt: Value(DateTime.now()),

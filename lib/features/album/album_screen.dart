@@ -413,6 +413,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                               ref.read(favoritesControllerProvider.notifier).toggleAlbumLike(
                                 widget.albumId,
                                 albumName,
+                                artistId ?? '',
                                 artistName,
                                 imageUrl,
                                 isLiked,
@@ -489,33 +490,43 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                               ],
                             ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 28,
-                                  child: Text(
-                                    '${i + 1}',
-                                    style: TextStyle(
-                                      color: colorScheme.onSurface.withValues(alpha: 0.2),
-                                      fontSize: 12,
-                                      fontFamily: 'monospace',
-                                      fontWeight: FontWeight.w900,
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
+                              final isActive = currentTrackId == track.spotifyId;
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 28,
+                                      child: isActive
+                                          ? Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary)
+                                          : Text(
+                                              '${i + 1}',
+                                              style: TextStyle(
+                                                color: colorScheme.onSurface.withValues(alpha: 0.2),
+                                                fontSize: 12,
+                                                fontFamily: 'monospace',
+                                                fontWeight: FontWeight.w900,
+                                              ),
+                                            ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      child: TrackTile(
+                                        track: track,
+                                        isActive: isActive,
+                                        showImage: false,
+                                        onTap: () => ref
+                                            .read(playerProvider.notifier)
+                                            .playTrack(track, queue: filteredTracks),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: TrackTile(
-                                    track: track,
-                                    showImage: false,
-                                    onTap: () => ref
-                                        .read(playerProvider.notifier)
-                                        .playTrack(track, queue: filteredTracks),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                         ),
                       )

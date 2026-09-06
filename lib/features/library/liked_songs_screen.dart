@@ -420,33 +420,43 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 2),
-                        child: Row(
-                            children: [
-                            SizedBox(
-                              width: 32,
-                              child: Text(
-                                '${i + 1}',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                  fontSize: 13,
-                                  fontFamily: 'monospace',
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -1.0,
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
+                            final isActive = currentTrackId == track.spotifyId;
+                            
+                            return Row(
+                                children: [
+                                SizedBox(
+                                  width: 32,
+                                  child: isActive
+                                      ? Icon(Icons.equalizer_rounded, size: 16, color: Theme.of(context).colorScheme.primary)
+                                      : Text(
+                                          '${i + 1}',
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                            fontSize: 13,
+                                            fontFamily: 'monospace',
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: -1.0,
+                                          ),
+                                        ),
                                 ),
-                              ),
-                            ),
-                            Expanded(
-                              child: TrackTile(
-                                track: track,
-                                onTap: () => ref
-                                    .read(playerProvider.notifier)
-                                    .playTrack(
-                                      track,
-                                      queue: tracks,
-                                    ),
-                              ),
-                            ),
-                          ],
+                                Expanded(
+                                  child: TrackTile(
+                                    track: track,
+                                    isActive: isActive,
+                                    onTap: () => ref
+                                        .read(playerProvider.notifier)
+                                        .playTrack(
+                                          track,
+                                          queue: tracks,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ).animate(delay: (i * 40).ms).fadeIn(duration: 600.ms).slideX(begin: 0.08, end: 0, curve: Curves.easeOutCubic);
                     },

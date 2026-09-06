@@ -127,12 +127,19 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                       return Padding(
                         key: ValueKey(track.spotifyId),
                         padding: const EdgeInsets.only(bottom: 12.0),
-                        child: TrackTile(
-                          track: track,
-                          onTap: () => ref.read(playerProvider.notifier).playTrack(
-                                track,
-                                queue: tracks,
-                               ),
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
+                            final isActive = currentTrackId == track.spotifyId;
+                            return TrackTile(
+                              track: track,
+                              isActive: isActive,
+                              onTap: () => ref.read(playerProvider.notifier).playTrack(
+                                    track,
+                                    queue: tracks,
+                                   ),
+                            );
+                          },
                         ),
                       ).animate().fadeIn(delay: (index * 40).ms).slideX(begin: 0.05, curve: Curves.easeOutCubic);
                     },

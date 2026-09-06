@@ -481,30 +481,40 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                           ],
                                         ),
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 28,
-                                              child: Text(
-                                                '${i + 1}',
-                                                style: TextStyle(
-                                                  color: colorScheme.onSurface.withValues(alpha: 0.2),
-                                                  fontSize: 12,
-                                                  fontFamily: 'monospace',
-                                                  fontWeight: FontWeight.w900,
+                                      child: Consumer(
+                                        builder: (context, ref, child) {
+                                          final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
+                                          final isActive = currentTrackId == filteredTracks[i].spotifyId;
+
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 28,
+                                                  child: isActive
+                                                      ? Icon(Icons.equalizer_rounded, size: 16, color: colorScheme.primary)
+                                                      : Text(
+                                                          '${i + 1}',
+                                                          style: TextStyle(
+                                                            color: colorScheme.onSurface.withValues(alpha: 0.2),
+                                                            fontSize: 12,
+                                                            fontFamily: 'monospace',
+                                                            fontWeight: FontWeight.w900,
+                                                          ),
+                                                        ),
                                                 ),
-                                              ),
+                                                Expanded(
+                                                  child: TrackTile(
+                                                    track: filteredTracks[i],
+                                                    isActive: isActive,
+                                                    onTap: () => ref.read(playerProvider.notifier).playTrack(filteredTracks[i], queue: filteredTracks),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Expanded(
-                                              child: TrackTile(
-                                                track: filteredTracks[i],
-                                                onTap: () => ref.read(playerProvider.notifier).playTrack(filteredTracks[i], queue: filteredTracks),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          );
+                                        },
                                       ),
                                     ),
                                   ).animate(delay: (i * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0),

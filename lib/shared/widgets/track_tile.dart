@@ -19,6 +19,7 @@ class TrackTile extends ConsumerWidget {
     this.showImage = true,
     this.showSubtitle = true,
     this.showMore = true,
+    this.isActive = false,
   });
 
   final model.Track track;
@@ -27,6 +28,7 @@ class TrackTile extends ConsumerWidget {
   final bool showImage;
   final bool showSubtitle;
   final bool showMore;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,7 +73,7 @@ class TrackTile extends ConsumerWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       letterSpacing: -0.2,
