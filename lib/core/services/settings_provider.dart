@@ -14,6 +14,7 @@ class SettingsState {
   final bool lowDataMode;
   final String userName;
   final int userAvatarColorIndex;
+  final String? userAvatarPath;
 
   SettingsState({
     required this.selectedCountry,
@@ -24,6 +25,7 @@ class SettingsState {
     this.lowDataMode = false,
     this.userName = '',
     this.userAvatarColorIndex = 0,
+    this.userAvatarPath,
   });
 
   SettingsState copyWith({
@@ -35,6 +37,7 @@ class SettingsState {
     bool? lowDataMode,
     String? userName,
     int? userAvatarColorIndex,
+    String? userAvatarPath,
   }) {
     return SettingsState(
       selectedCountry: selectedCountry ?? this.selectedCountry,
@@ -45,6 +48,7 @@ class SettingsState {
       lowDataMode: lowDataMode ?? this.lowDataMode,
       userName: userName ?? this.userName,
       userAvatarColorIndex: userAvatarColorIndex ?? this.userAvatarColorIndex,
+      userAvatarPath: userAvatarPath ?? this.userAvatarPath,
     );
   }
 }
@@ -69,6 +73,7 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   static const _lowDataModeKey = 'low_data_mode';
   static const _userNameKey = 'user_name';
   static const _userAvatarColorIndexKey = 'user_avatar_color_index';
+  static const _userAvatarPathKey = 'user_avatar_path';
 
   Future<void> _loadSettings() async {
     final box = await Hive.openBox(_boxName);
@@ -85,6 +90,7 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     final lowDataMode = box.get(_lowDataModeKey, defaultValue: false) as bool;
     final userName = box.get(_userNameKey, defaultValue: '') as String;
     final userAvatarColorIndex = box.get(_userAvatarColorIndexKey, defaultValue: 0) as int;
+    final userAvatarPath = box.get(_userAvatarPathKey) as String?;
 
     state = state.copyWith(
       selectedCountry: country,
@@ -97,6 +103,7 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
       lowDataMode: lowDataMode,
       userName: userName,
       userAvatarColorIndex: userAvatarColorIndex,
+      userAvatarPath: userAvatarPath,
     );
   }
 
@@ -128,6 +135,27 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     final box = await Hive.openBox(_boxName);
     await box.put(_userAvatarColorIndexKey, index);
     state = state.copyWith(userAvatarColorIndex: index);
+  }
+
+  Future<void> setUserAvatarPath(String? path) async {
+    final box = await Hive.openBox(_boxName);
+    if (path == null) {
+      await box.delete(_userAvatarPathKey);
+    } else {
+      await box.put(_userAvatarPathKey, path);
+    }
+    // create a new instance with the new path
+    state = SettingsState(
+      selectedCountry: state.selectedCountry,
+      showVideo: state.showVideo,
+      playerView: state.playerView,
+      themeIndex: state.themeIndex,
+      performanceMode: state.performanceMode,
+      lowDataMode: state.lowDataMode,
+      userName: state.userName,
+      userAvatarColorIndex: state.userAvatarColorIndex,
+      userAvatarPath: path,
+    );
   }
 
   Future<void> toggleVideo() async {

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/db/app_database.dart' as db;
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
+import '../../shared/widgets/profile_modal.dart';
 
 final availableMarketsProvider = FutureProvider<List<String>>((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -78,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
                   title: 'Edit Profile',
                   subtitle: settings.userName.isEmpty ? 'Set your name and avatar' : settings.userName,
                   icon: Icons.person_rounded,
-                  onTap: () => _showEditProfileModal(context, ref),
+                  onTap: () => showEditProfileModal(context, ref),
                 ).animate(delay: 200.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 32),
                 _buildSectionHeader(context, 'Preferences')
@@ -405,119 +407,7 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showEditProfileModal(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final settingsNotifier = ref.read(settingsProvider.notifier);
-    final settings = ref.read(settingsProvider);
-    final nameController = TextEditingController(text: settings.userName);
-    int selectedColorIndex = settings.userAvatarColorIndex;
 
-    showPremiumModal(
-      context: context,
-      title: 'Edit Profile',
-      child: StatefulBuilder(
-        builder: (context, setState) {
-          final themeColor = AppTheme.themeColors[settings.themeIndex];
-          
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'NAME',
-                style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.4),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2.2,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: 'Enter your name',
-                  filled: true,
-                  fillColor: colorScheme.onSurface.withValues(alpha: 0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: themeColor),
-                  ),
-                ),
-                style: TextStyle(color: colorScheme.onSurface),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'AVATAR COLOR',
-                style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.4),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2.2,
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 54,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: AppTheme.themeColors.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final color = AppTheme.themeColors[index];
-                    final isSelected = selectedColorIndex == index;
-                    return TactileTap(
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        setState(() => selectedColorIndex = index);
-                      },
-                      child: Container(
-                        width: 54,
-                        height: 54,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isSelected ? colorScheme.onSurface : Colors.transparent,
-                            width: 3,
-                          ),
-                          boxShadow: isSelected
-                              ? [BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 1)]
-                              : [],
-                        ),
-                        child: isSelected ? Icon(Icons.check_rounded, color: colorScheme.surface) : null,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 32),
-              TactileTap(
-                onTap: () {
-                  settingsNotifier.setUserName(nameController.text.trim());
-                  settingsNotifier.setUserAvatarColorIndex(selectedColorIndex);
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  height: 54,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: themeColor,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text('Save Changes', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
 }
 
 class _SettingsHero extends StatelessWidget {
@@ -589,6 +479,12 @@ class _SettingsHero extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: settings.userName.isNotEmpty ? avatarColor : Colors.transparent,
+                        image: settings.userAvatarPath != null && settings.userAvatarPath!.isNotEmpty
+                            ? DecorationImage(
+                                image: FileImage(File(settings.userAvatarPath!)),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
                         boxShadow: [
                           BoxShadow(
                             color: settings.userName.isNotEmpty ? avatarColor.withValues(alpha: 0.3) : themeColor.withValues(alpha: 0.3),
@@ -597,23 +493,25 @@ class _SettingsHero extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Center(
-                        child: settings.userName.isNotEmpty 
-                          ? Text(
-                              settings.userName.trim().split(RegExp(r'\s+')).map((e) => e.isNotEmpty ? e[0].toUpperCase() : '').take(2).join(),
-                              style: TextStyle(
-                                fontSize: 42,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: -1,
-                              ),
-                            )
-                          : Image.asset(
-                              'assets/logo.png',
-                              width: 80,
-                              height: 80,
-                            ),
-                      ),
+                      child: (settings.userAvatarPath != null && settings.userAvatarPath!.isNotEmpty)
+                        ? const SizedBox.shrink()
+                        : Center(
+                            child: settings.userName.isNotEmpty 
+                              ? Text(
+                                  settings.userName.trim().split(RegExp(r'\s+')).map((e) => e.isNotEmpty ? e[0].toUpperCase() : '').take(2).join(),
+                                  style: TextStyle(
+                                    fontSize: 42,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    letterSpacing: -1,
+                                  ),
+                                )
+                              : Image.asset(
+                                  'assets/logo.png',
+                                  width: 80,
+                                  height: 80,
+                                ),
+                          ),
                     ).animate(onPlay: (c) => settings.userName.isNotEmpty ? c : c.repeat())
                      .rotate(duration: 10.seconds, begin: 0, end: 1),
                   ),

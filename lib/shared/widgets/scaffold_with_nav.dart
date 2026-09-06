@@ -11,8 +11,9 @@ import '../../core/services/settings_provider.dart';
 import '../../core/providers/search_provider.dart';
 import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import 'user_avatar.dart';
 import '../../core/db/app_database.dart' as db;
-import '../../core/theme/app_theme.dart';
+
 
 class ScaffoldWithNav extends ConsumerStatefulWidget {
   const ScaffoldWithNav({
@@ -710,23 +711,10 @@ class _DesktopSidebar extends ConsumerWidget {
                 if (settings.userName.isNotEmpty) ...[
                   Hero(
                     tag: 'app_logo',
-                    child: Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        color: AppTheme.themeColors[settings.userAvatarColorIndex],
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          settings.userName.trim().split(RegExp(r'\s+')).map((e) => e.isNotEmpty ? e[0].toUpperCase() : '').take(2).join(),
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                    child: UserAvatarWidget(
+                      settings: settings,
+                      size: 28,
+                      fontSize: 10,
                     ),
                   ),
                   const SizedBox(width: 8),

@@ -15,6 +15,9 @@ import '../../core/services/ad_service.dart';
 import '../../core/providers/genre_providers.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/services/settings_provider.dart';
+import '../../shared/widgets/profile_modal.dart';
+import '../../shared/widgets/user_avatar.dart';
 
 final newReleasesProvider = FutureProvider((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -238,12 +241,41 @@ final suggestedStationsProvider = FutureProvider<List<Map<String, dynamic>>>((re
 
 
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final settings = ref.read(settingsProvider);
+      if (settings.userName.isEmpty) {
+        showEditProfileModal(context, ref, isDismissible: false);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final settings = ref.watch(settingsProvider);
+    
+    final hour = DateTime.now().hour;
+    String greeting;
+    if (hour < 12) {
+      greeting = 'Good morning';
+    } else if (hour < 17) {
+      greeting = 'Good afternoon';
+    } else {
+      greeting = 'Good evening';
+    }
+    final firstName = settings.userName.isNotEmpty ? settings.userName.split(' ').first : '';
+    final greetingText = firstName.isNotEmpty ? '$greeting, $firstName' : greeting;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -252,27 +284,41 @@ class HomeScreen extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(left: 32.0, top: 56.0, right: 32.0, bottom: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Good afternoon, Lucas',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1.5,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        greetingText,
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -1.5,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Your music is waiting.',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Your music is waiting.',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  if (settings.userName.isNotEmpty)
+                    TactileTap(
+                      onTap: () => context.push('/settings'),
+                      child: UserAvatarWidget(
+                        settings: settings,
+                        size: 48,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),

@@ -8,11 +8,12 @@ Future<T?> showPremiumModal<T>({
   required BuildContext context,
   required String title,
   required Widget child,
+  bool isDismissible = true,
 }) {
   final theme = Theme.of(context);
   return showGeneralDialog<T>(
     context: context,
-    barrierDismissible: true,
+    barrierDismissible: isDismissible,
     barrierLabel: '',
     barrierColor: theme.colorScheme.scrim.withValues(alpha: 0.6), // Standardized M3 barrier
     transitionDuration: const Duration(milliseconds: 250),
