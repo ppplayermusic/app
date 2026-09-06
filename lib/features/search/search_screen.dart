@@ -18,7 +18,7 @@ import 'package:ppplayer/core/providers/recent_searches_provider.dart';
 import 'package:ppplayer/core/providers/search_provider.dart';
 
 final _searchResultsProvider =
-    FutureProvider.family<Map<String, dynamic>, String>((ref, query) async {
+    FutureProvider.autoDispose.family<Map<String, dynamic>, String>((ref, query) async {
   if (query.isEmpty) return {};
   
   bool didDispose = false;
