@@ -58,7 +58,8 @@ class SettingsScreen extends ConsumerWidget {
               builder: (context, ref, _) {
                 final settings = ref.watch(settingsProvider);
                 final themeColor = AppTheme.themeColors[settings.themeIndex];
-                return _SettingsHero(themeColor: themeColor);
+                final avatarColor = AppTheme.themeColors[settings.userAvatarColorIndex];
+                return _SettingsHero(themeColor: themeColor, avatarColor: avatarColor, settings: settings);
               },
             ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
           ),
@@ -68,8 +69,20 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
+                _buildSectionHeader(context, 'Profile')
+                    .animate(delay: 150.ms)
+                    .fadeIn(duration: 400.ms)
+                    .slideX(begin: -0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 12),
+                TactileSettingTile(
+                  title: 'Edit Profile',
+                  subtitle: settings.userName.isEmpty ? 'Set your name and avatar' : settings.userName,
+                  icon: Icons.person_rounded,
+                  onTap: () => _showEditProfileModal(context, ref),
+                ).animate(delay: 200.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 32),
                 _buildSectionHeader(context, 'Preferences')
-                    .animate(delay: 200.ms)
+                    .animate(delay: 250.ms)
                     .fadeIn(duration: 400.ms)
                     .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
@@ -391,12 +404,128 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _showEditProfileModal(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final settingsNotifier = ref.read(settingsProvider.notifier);
+    final settings = ref.read(settingsProvider);
+    final nameController = TextEditingController(text: settings.userName);
+    int selectedColorIndex = settings.userAvatarColorIndex;
+
+    showPremiumModal(
+      context: context,
+      title: 'Edit Profile',
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          final themeColor = AppTheme.themeColors[settings.themeIndex];
+          
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'NAME',
+                style: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2.2,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'Enter your name',
+                  filled: true,
+                  fillColor: colorScheme.onSurface.withValues(alpha: 0.05),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: themeColor),
+                  ),
+                ),
+                style: TextStyle(color: colorScheme.onSurface),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'AVATAR COLOR',
+                style: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2.2,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 54,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: AppTheme.themeColors.length,
+                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final color = AppTheme.themeColors[index];
+                    final isSelected = selectedColorIndex == index;
+                    return TactileTap(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        setState(() => selectedColorIndex = index);
+                      },
+                      child: Container(
+                        width: 54,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected ? colorScheme.onSurface : Colors.transparent,
+                            width: 3,
+                          ),
+                          boxShadow: isSelected
+                              ? [BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 1)]
+                              : [],
+                        ),
+                        child: isSelected ? Icon(Icons.check_rounded, color: colorScheme.surface) : null,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
+              TactileTap(
+                onTap: () {
+                  settingsNotifier.setUserName(nameController.text.trim());
+                  settingsNotifier.setUserAvatarColorIndex(selectedColorIndex);
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 54,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: themeColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text('Save Changes', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
 }
 
 class _SettingsHero extends StatelessWidget {
   final Color themeColor;
+  final Color avatarColor;
+  final SettingsState settings;
 
-  const _SettingsHero({required this.themeColor});
+  const _SettingsHero({required this.themeColor, required this.avatarColor, required this.settings});
 
   @override
   Widget build(BuildContext context) {
@@ -455,27 +584,42 @@ class _SettingsHero extends StatelessWidget {
                     tag: 'app_logo',
                     child: Container(
                       padding: const EdgeInsets.all(24),
+                      width: 128,
+                      height: 128,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        color: settings.userName.isNotEmpty ? avatarColor : Colors.transparent,
                         boxShadow: [
                           BoxShadow(
-                            color: themeColor.withValues(alpha: 0.3),
+                            color: settings.userName.isNotEmpty ? avatarColor.withValues(alpha: 0.3) : themeColor.withValues(alpha: 0.3),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
                         ],
                       ),
-                      child: Image.asset(
-                        'assets/logo.png',
-                        width: 80,
-                        height: 80,
+                      child: Center(
+                        child: settings.userName.isNotEmpty 
+                          ? Text(
+                              settings.userName.trim().split(RegExp(r'\s+')).map((e) => e.isNotEmpty ? e[0].toUpperCase() : '').take(2).join(),
+                              style: TextStyle(
+                                fontSize: 42,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                letterSpacing: -1,
+                              ),
+                            )
+                          : Image.asset(
+                              'assets/logo.png',
+                              width: 80,
+                              height: 80,
+                            ),
                       ),
-                    ).animate(onPlay: (c) => c.repeat())
+                    ).animate(onPlay: (c) => settings.userName.isNotEmpty ? c : c.repeat())
                      .rotate(duration: 10.seconds, begin: 0, end: 1),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'PPPLAYER',
+                    settings.userName.isNotEmpty ? settings.userName.toUpperCase() : 'PPPLAYER',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
@@ -484,7 +628,7 @@ class _SettingsHero extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'PRO EXPERIENCE ACTIVE',
+                    settings.userName.isNotEmpty ? 'PRO ACCOUNT' : 'PRO EXPERIENCE ACTIVE',
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,

@@ -12,6 +12,8 @@ class SettingsState {
   final int themeIndex;
   final PerformanceMode performanceMode;
   final bool lowDataMode;
+  final String userName;
+  final int userAvatarColorIndex;
 
   SettingsState({
     required this.selectedCountry,
@@ -20,6 +22,8 @@ class SettingsState {
     this.themeIndex = 0,
     this.performanceMode = PerformanceMode.balanced,
     this.lowDataMode = false,
+    this.userName = '',
+    this.userAvatarColorIndex = 0,
   });
 
   SettingsState copyWith({
@@ -29,6 +33,8 @@ class SettingsState {
     int? themeIndex,
     PerformanceMode? performanceMode,
     bool? lowDataMode,
+    String? userName,
+    int? userAvatarColorIndex,
   }) {
     return SettingsState(
       selectedCountry: selectedCountry ?? this.selectedCountry,
@@ -37,6 +43,8 @@ class SettingsState {
       themeIndex: themeIndex ?? this.themeIndex,
       performanceMode: performanceMode ?? this.performanceMode,
       lowDataMode: lowDataMode ?? this.lowDataMode,
+      userName: userName ?? this.userName,
+      userAvatarColorIndex: userAvatarColorIndex ?? this.userAvatarColorIndex,
     );
   }
 }
@@ -59,6 +67,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   static const _themeIndexKey = 'theme_index';
   static const _performanceModeKey = 'performance_mode';
   static const _lowDataModeKey = 'low_data_mode';
+  static const _userNameKey = 'user_name';
+  static const _userAvatarColorIndexKey = 'user_avatar_color_index';
 
   Future<void> _loadSettings() async {
     final box = await Hive.openBox(_boxName);
@@ -73,6 +83,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
         ? PerformanceMode.balanced
         : PerformanceMode.high;
     final lowDataMode = box.get(_lowDataModeKey, defaultValue: false) as bool;
+    final userName = box.get(_userNameKey, defaultValue: '') as String;
+    final userAvatarColorIndex = box.get(_userAvatarColorIndexKey, defaultValue: 0) as int;
 
     state = state.copyWith(
       selectedCountry: country,
@@ -83,6 +95,8 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
           ? defaultMode 
           : PerformanceMode.values[performanceModeIndex.clamp(0, PerformanceMode.values.length - 1)],
       lowDataMode: lowDataMode,
+      userName: userName,
+      userAvatarColorIndex: userAvatarColorIndex,
     );
   }
 
@@ -102,6 +116,18 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     final box = await Hive.openBox(_boxName);
     await box.put(_themeIndexKey, index);
     state = state.copyWith(themeIndex: index);
+  }
+
+  Future<void> setUserName(String name) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put(_userNameKey, name);
+    state = state.copyWith(userName: name);
+  }
+
+  Future<void> setUserAvatarColorIndex(int index) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put(_userAvatarColorIndexKey, index);
+    state = state.copyWith(userAvatarColorIndex: index);
   }
 
   Future<void> toggleVideo() async {

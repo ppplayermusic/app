@@ -183,6 +183,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     // Delegate to the new playback controller
     await _controller.play(finalTrack.toPlaybackTrack());
+    _controller.setVolume(state.volume); // Apply current volume
     
     await ref.read(playbackServiceProvider).recordPlay(finalTrack);
   }

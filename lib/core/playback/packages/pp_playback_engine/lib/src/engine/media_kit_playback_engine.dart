@@ -178,6 +178,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
             if (_lastPlayedGeneration != gen) {
               _lastPlayedGeneration = gen;
               debugPrint('MediaKitPlaybackEngine: [PLAY gen $gen] cued → playVideo()');
+              _youtubeController?.setVolume((_currentStatus.volume * 100).toInt());
               _youtubeController?.playVideo();
             }
             break;
@@ -185,6 +186,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
             // YouTube is ready but hasn't started. Try to play.
             if (_lastPlayedGeneration != gen) {
               _lastPlayedGeneration = gen;
+              _youtubeController?.setVolume((_currentStatus.volume * 100).toInt());
               _youtubeController?.playVideo();
             }
             break;
@@ -326,7 +328,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
   @override
   Future<void> setVolume(double volume) async {
     if (_currentStatus.isIFrameMode) {
-      // youtube_player_iframe volume control is limited
+      await _youtubeController?.setVolume((volume * 100).toInt());
     } else {
       await _player?.setVolume(volume * 100);
     }

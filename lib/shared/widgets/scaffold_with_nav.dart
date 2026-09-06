@@ -12,6 +12,7 @@ import '../../core/providers/search_provider.dart';
 import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/db/app_database.dart' as db;
+import '../../core/theme/app_theme.dart';
 
 class ScaffoldWithNav extends ConsumerStatefulWidget {
   const ScaffoldWithNav({
@@ -686,6 +687,7 @@ class _DesktopSidebar extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final location = GoRouterState.of(context).uri.path;
     final database = ref.watch(db.appDatabaseProvider);
+    final settings = ref.watch(settingsProvider);
     final currentIndex = switch (location) {
       String s when s.startsWith('/home') => 0,
       String s when s.startsWith('/search') => 1,
@@ -705,21 +707,59 @@ class _DesktopSidebar extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               children: [
-                Hero(
-                  tag: 'app_logo',
-                  child: Image.asset('assets/logo.png', height: 28),
-                ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                 .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 2000.ms, curve: Curves.easeInOut),
-                const SizedBox(width: 8),
-                Text(
-                  'PPPlayer',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                    color: colorScheme.onSurface,
+                if (settings.userName.isNotEmpty) ...[
+                  Hero(
+                    tag: 'app_logo',
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: AppTheme.themeColors[settings.userAvatarColorIndex],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          settings.userName.trim().split(RegExp(r'\s+')).map((e) => e.isNotEmpty ? e[0].toUpperCase() : '').take(2).join(),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      settings.userName,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                        color: colorScheme.onSurface,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ] else ...[
+                  Hero(
+                    tag: 'app_logo',
+                    child: Image.asset('assets/logo.png', height: 28),
+                  ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                   .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 2000.ms, curve: Curves.easeInOut),
+                  const SizedBox(width: 8),
+                  Text(
+                    'PPPlayer',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
