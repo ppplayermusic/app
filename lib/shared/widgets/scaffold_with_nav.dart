@@ -8,6 +8,7 @@ import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
+import '../../core/providers/search_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
 class ScaffoldWithNav extends ConsumerStatefulWidget {
@@ -385,7 +386,7 @@ class _BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final location = GoRouterState.of(context).matchedLocation;
+    final location = GoRouterState.of(context).uri.path;
     final currentIndex = switch (location) {
       String s when s.startsWith('/home') => 0,
       String s when s.startsWith('/search') => 1,
@@ -681,7 +682,7 @@ class _DesktopSidebar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final location = GoRouterState.of(context).matchedLocation;
+    final location = GoRouterState.of(context).uri.path;
     final currentIndex = switch (location) {
       String s when s.startsWith('/home') => 0,
       String s when s.startsWith('/search') => 1,
@@ -1141,11 +1142,37 @@ class _DesktopPlayerBar extends ConsumerWidget {
   }
 }
 
-class _DesktopTopBar extends StatelessWidget {
+class _DesktopTopBar extends ConsumerStatefulWidget {
   const _DesktopTopBar();
 
   @override
+  ConsumerState<_DesktopTopBar> createState() => _DesktopTopBarState();
+}
+
+class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
+  late final TextEditingController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = TextEditingController(text: ref.read(searchQueryProvider));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Keep controller in sync if provider changes from elsewhere
+    ref.listen(searchQueryProvider, (prev, next) {
+      if (_ctrl.text != next) {
+        _ctrl.text = next;
+      }
+    });
+
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       height: 80,
@@ -1166,16 +1193,44 @@ class _DesktopTopBar extends StatelessWidget {
                       color: colorScheme.onSurface.withValues(alpha: 0.1),
                     ),
                   ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      const SizedBox(width: 16),
                       Icon(Icons.search, color: colorScheme.onSurface.withValues(alpha: 0.5), size: 20),
                       const SizedBox(width: 12),
-                      Text(
-                        'Search music, artists, albums...',
-                        style: TextStyle(
-                          color: colorScheme.onSurface.withValues(alpha: 0.5),
-                          fontSize: 14,
+                      Expanded(
+                        child: TextField(
+                          controller: _ctrl,
+                          onTap: () {
+                            if (GoRouterState.of(context).uri.path != '/search') {
+                              context.go('/search');
+                            }
+                          },
+                          onChanged: (val) {
+                            ref.read(searchQueryProvider.notifier).state = val;
+                          },
+                          style: TextStyle(
+                            color: colorScheme.onSurface,
+                            fontSize: 14,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Search music, artists, albums...',
+                            hintStyle: TextStyle(
+                              color: colorScheme.onSurface.withValues(alpha: 0.5),
+                              fontSize: 14,
+                            ),
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            filled: false,
+                            hoverColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          cursorColor: colorScheme.primary,
                         ),
                       ),
                     ],

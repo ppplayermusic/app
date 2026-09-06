@@ -14,8 +14,7 @@ import '../../core/providers/genre_providers.dart';
 import '../home/genre_details_screen.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
-
-final _searchQueryProvider = StateProvider<String>((ref) => '');
+import '../../core/providers/search_provider.dart';
 
 final _searchResultsProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, query) async {
@@ -51,12 +50,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
 
   @override
   Widget build(BuildContext context) {
-    final query = ref.watch(_searchQueryProvider);
+    final query = ref.watch(searchQueryProvider);
     final results = ref.watch(_searchResultsProvider(query));
     final colorScheme = Theme.of(context).colorScheme;
+    final isDesktop = MediaQuery.sizeOf(context).width >= 600;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: isDesktop ? null : AppBar(
         elevation: 0,
         backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
         flexibleSpace: AdaptiveBlur(
@@ -112,7 +112,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                     icon: Icons.close_rounded,
                     onTap: () {
                       _ctrl.clear();
-                      ref.read(_searchQueryProvider.notifier).state = '';
+                      ref.read(searchQueryProvider.notifier).state = '';
                       setState(() {});
                     },
                     size: 20,
@@ -122,13 +122,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 13),
             ),
-            onChanged: (v) {
-              setState(() {});
-              Future.delayed(const Duration(milliseconds: 400), () {
-                if (_ctrl.text == v) {
-                  ref.read(_searchQueryProvider.notifier).state = v;
-                }
-              });
+            onChanged: (val) {
+              ref.read(searchQueryProvider.notifier).state = val;
             },
           ),
         ),
