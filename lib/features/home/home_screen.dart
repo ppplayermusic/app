@@ -264,21 +264,27 @@ class HomeScreen extends ConsumerWidget {
                     provider: recentlyPlayedProvider,
                     delay: 0.seconds,
                     topPadding: 24,
-                    builder: (context, ref, tracks) => GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 3,
-                      ),
-                      itemCount: tracks.length.clamp(0, 6),
-                      itemBuilder: (context, index) {
-                        final track = tracks[index];
-                        return _HistoryCard(
-                          track: track,
-                          onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
+                    builder: (context, ref, tracks) => LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isDesktop = constraints.maxWidth >= 600;
+                        final crossAxisCount = isDesktop ? (constraints.maxWidth / 250).floor().clamp(2, 4) : 2;
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: isDesktop ? 4 : 3,
+                          ),
+                          itemCount: tracks.length.clamp(0, isDesktop ? 8 : 6),
+                          itemBuilder: (context, index) {
+                            final track = tracks[index];
+                            return _HistoryCard(
+                              track: track,
+                              onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
+                            );
+                          },
                         );
                       },
                     ),
@@ -386,34 +392,69 @@ class HomeScreen extends ConsumerWidget {
                     title: 'Popular Genres',
                     provider: browseCategoriesProvider,
                     delay: 2.5.seconds,
-                    builder: (context, ref, items) => SizedBox(
-                      height: 140,
-                      child: GridView.builder(
-                        scrollDirection: Axis.horizontal,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.45,
-                        ),
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          final category = items[index];
-                          final id = category['id'] as String;
-                          final name = category['name'] as String;
-                          final imageUrl = (category['icons'] as List?)?.firstOrNull?['url'] ?? '';
-                          return _GenreCard(
-                            name: name,
-                            imageUrl: imageUrl,
-                            onTap: () => context.push(
-                              Uri(
-                                path: '/genre/$id',
-                                queryParameters: {'name': name},
-                              ).toString(),
+                    builder: (context, ref, items) => LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth >= 600) {
+                          final crossAxisCount = (constraints.maxWidth / 160).floor().clamp(2, 6);
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 2.5,
                             ),
-                          ).animate().fadeIn(delay: (index * 50).ms).scale(begin: const Offset(0.9, 0.9));
-                        },
-                      ),
+                            itemCount: items.length.clamp(0, 12),
+                            itemBuilder: (context, index) {
+                              final category = items[index];
+                              final id = category['id'] as String;
+                              final name = category['name'] as String;
+                              final imageUrl = (category['icons'] as List?)?.firstOrNull?['url'] ?? '';
+                              return _GenreCard(
+                                name: name,
+                                imageUrl: imageUrl,
+                                onTap: () => context.push(
+                                  Uri(
+                                    path: '/genre/$id',
+                                    queryParameters: {'name': name},
+                                  ).toString(),
+                                ),
+                              ).animate().fadeIn(delay: (index * 50).ms).scale(begin: const Offset(0.9, 0.9));
+                            },
+                          );
+                        } else {
+                          return SizedBox(
+                            height: 140,
+                            child: GridView.builder(
+                              scrollDirection: Axis.horizontal,
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 0.45,
+                              ),
+                              itemCount: items.length,
+                              itemBuilder: (context, index) {
+                                final category = items[index];
+                                final id = category['id'] as String;
+                                final name = category['name'] as String;
+                                final imageUrl = (category['icons'] as List?)?.firstOrNull?['url'] ?? '';
+                                return _GenreCard(
+                                  name: name,
+                                  imageUrl: imageUrl,
+                                  onTap: () => context.push(
+                                    Uri(
+                                      path: '/genre/$id',
+                                      queryParameters: {'name': name},
+                                    ).toString(),
+                                  ),
+                                ).animate().fadeIn(delay: (index * 50).ms).scale(begin: const Offset(0.9, 0.9));
+                              },
+                            ),
+                          );
+                        }
+                      },
                     ),
                     loadingWidget: const SectionShimmer(height: 140, childAspectRatio: 0.45, isGrid: true, count: 6),
                   ),
@@ -501,44 +542,82 @@ class _HorizontalList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SizedBox(
-      height: 230,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length + 1,
-        itemBuilder: (context, index) {
-          if (index == 3) {
-            final promo = ref.read(adServiceProvider).getPromoData()[1];
-            return PromotionTile(
-              title: promo['title']!,
-              subtitle: promo['subtitle']!,
-              imageUrl: promo['image'],
-              ctaText: promo['cta']!,
-              type: PromotionType.horizontal,
-            );
-          }
-          
-          final itemIndex = index > 3 ? index - 1 : index;
-          if (itemIndex >= items.length) return const SizedBox.shrink();
-          
-          final item = items[itemIndex];
-          final rawImages = (item['images'] as List?) ?? [];
-          final images = rawImages.map((i) => i['url'] as String).toList();
-          final imageUrl = images.firstOrNull ?? '';
-          final artists = (item['artists'] as List?) ?? [];
-          final artistName = artists.isNotEmpty ? artists[0]['name'] : (item['publisher'] ?? '');
-          final artistId = artists.isNotEmpty ? artists[0]['id'] : null;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= 600) {
+          final crossAxisCount = (constraints.maxWidth / 172).floor().clamp(2, 8);
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 24,
+              childAspectRatio: 0.75,
+            ),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              final rawImages = (item['images'] as List?) ?? [];
+              final images = rawImages.map((i) => i['url'] as String).toList();
+              final imageUrl = images.firstOrNull ?? '';
+              final artists = (item['artists'] as List?) ?? [];
+              final artistName = artists.isNotEmpty ? artists[0]['name'] : (item['publisher'] ?? '');
+              final artistId = artists.isNotEmpty ? artists[0]['id'] : null;
 
-          return _AlbumCard(
-            title: item['name'],
-            subtitle: artistName,
-            imageUrl: imageUrl,
-            images: images,
-            onTap: () => onTap(item),
-            artistId: artistId,
+              return _AlbumCard(
+                title: item['name'],
+                subtitle: artistName,
+                imageUrl: imageUrl,
+                images: images,
+                onTap: () => onTap(item),
+                artistId: artistId,
+                isGridItem: true,
+              );
+            },
           );
-        },
-      ),
+        } else {
+          return SizedBox(
+            height: 230,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: items.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 3) {
+                  final promo = ref.read(adServiceProvider).getPromoData()[1];
+                  return PromotionTile(
+                    title: promo['title']!,
+                    subtitle: promo['subtitle']!,
+                    imageUrl: promo['image'],
+                    ctaText: promo['cta']!,
+                    type: PromotionType.horizontal,
+                  );
+                }
+                
+                final itemIndex = index > 3 ? index - 1 : index;
+                if (itemIndex >= items.length) return const SizedBox.shrink();
+                
+                final item = items[itemIndex];
+                final rawImages = (item['images'] as List?) ?? [];
+                final images = rawImages.map((i) => i['url'] as String).toList();
+                final imageUrl = images.firstOrNull ?? '';
+                final artists = (item['artists'] as List?) ?? [];
+                final artistName = artists.isNotEmpty ? artists[0]['name'] : (item['publisher'] ?? '');
+                final artistId = artists.isNotEmpty ? artists[0]['id'] : null;
+
+                return _AlbumCard(
+                  title: item['name'],
+                  subtitle: artistName,
+                  imageUrl: imageUrl,
+                  images: images,
+                  onTap: () => onTap(item),
+                  artistId: artistId,
+                );
+              },
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -755,6 +834,7 @@ class _AlbumCard extends StatelessWidget {
     this.images,
     required this.onTap,
     this.artistId,
+    this.isGridItem = false,
   });
 
   final String title;
@@ -763,6 +843,7 @@ class _AlbumCard extends StatelessWidget {
   final List<String>? images;
   final VoidCallback onTap;
   final String? artistId;
+  final bool isGridItem;
 
   @override
   Widget build(BuildContext context) {
@@ -772,14 +853,14 @@ class _AlbumCard extends StatelessWidget {
     if (images != null && images!.length > 1) {
       imageWidget = PlaylistCover(
         images: images!,
-        size: 156,
+        size: isGridItem ? double.infinity : 156,
         borderRadius: 20,
       );
     } else {
       imageWidget = PPImage(
         imageUrl: images?.firstOrNull ?? imageUrl ?? '',
-        width: 156,
-        height: 156,
+        width: isGridItem ? double.infinity : 156,
+        height: isGridItem ? double.infinity : 156,
         fit: BoxFit.cover,
       );
     }
@@ -788,12 +869,14 @@ class _AlbumCard extends StatelessWidget {
       onTap: onTap,
       scaleDown: 0.95,
       child: Container(
-        width: 156,
-        margin: const EdgeInsets.only(right: 16),
+        width: isGridItem ? null : 156,
+        margin: isGridItem ? EdgeInsets.zero : const EdgeInsets.only(right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            AspectRatio(
+              aspectRatio: 1,
+              child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -806,30 +889,35 @@ class _AlbumCard extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Stack(
-                  children: [
-                    imageWidget,
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colorScheme.onSurface.withValues(alpha: 0.1),
-                            width: 0.5,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              colorScheme.scrim.withValues(alpha: 0.3),
-                            ],
+                child: HoverPlayOverlay(
+                  onPlay: onTap,
+                  size: 40,
+                  child: Stack(
+                    children: [
+                      imageWidget,
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: colorScheme.onSurface.withValues(alpha: 0.1),
+                              width: 0.5,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                colorScheme.scrim.withValues(alpha: 0.3),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              ),
               ),
             ),
             const SizedBox(height: 14),
@@ -903,9 +991,15 @@ class _ArtistCircle extends StatelessWidget {
                 ),
               ),
               child: ClipOval(
-                child: PPImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
+                child: HoverPlayOverlay(
+                  onPlay: onTap,
+                  size: 40,
+                  child: PPImage(
+                    imageUrl: imageUrl,
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
@@ -983,9 +1077,12 @@ class _RadioCard extends StatelessWidget {
           ],
         ),
         clipBehavior: Clip.antiAlias,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
+        child: HoverPlayOverlay(
+          onPlay: onTap,
+          size: 44,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
             PPImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
@@ -1082,21 +1179,8 @@ class _RadioCard extends StatelessWidget {
                 ],
               ),
             ),
-            // Play indicator overlay
-            Positioned(
-              bottom: 14,
-              right: 14,
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: colorScheme.onSurface.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.2)),
-                ),
-                child: Icon(Icons.play_arrow_rounded, size: 20, color: colorScheme.onSurface),
-              ),
-            ),
           ],
+          ),
         ),
       ),
     );
@@ -1154,9 +1238,12 @@ class _MixCard extends StatelessWidget {
                 ],
               ),
               clipBehavior: Clip.antiAlias,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
+              child: HoverPlayOverlay(
+                onPlay: onTap,
+                size: 44,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
                   AdaptiveBlur(
                     sigmaX: 12,
                     sigmaY: 12,
@@ -1224,6 +1311,7 @@ class _MixCard extends StatelessWidget {
                     ),
                   ),
                 ],
+                ),
               ),
             ),
             const SizedBox(height: 14),

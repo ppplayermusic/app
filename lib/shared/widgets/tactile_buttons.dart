@@ -312,3 +312,52 @@ class _TactileTapState extends State<TactileTap> {
     );
   }
 }
+
+/// A wrapper that detects mouse hover and displays a play button overlay.
+class HoverPlayOverlay extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onPlay;
+  final double size;
+
+  const HoverPlayOverlay({
+    super.key,
+    required this.child,
+    this.onPlay,
+    this.size = 48,
+  });
+
+  @override
+  State<HoverPlayOverlay> createState() => _HoverPlayOverlayState();
+}
+
+class _HoverPlayOverlayState extends State<HoverPlayOverlay> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: [
+          widget.child,
+          if (widget.onPlay != null)
+            Positioned(
+              right: 8,
+              bottom: 8,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _isHovered ? 1.0 : 0.0,
+                curve: Curves.easeOut,
+                child: TactileActionPlayButton(
+                  onTap: widget.onPlay,
+                  size: widget.size,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

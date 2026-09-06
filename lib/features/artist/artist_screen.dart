@@ -11,6 +11,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../core/services/favorites_provider.dart';
+import '../../shared/widgets/playlist_cover.dart';
 
 final _artistProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -681,7 +682,27 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                       itemBuilder: (context, i) {
                         final playlist = playlists[i];
                         final pImgs = (playlist['images'] as List?) ?? [];
-                        final pImgUrl = pImgs.isNotEmpty ? pImgs[0]['url'] as String : '';
+                        final images = pImgs.map((i) => i['url'] as String).toList();
+                        final pImgUrl = images.isNotEmpty ? images[0] : '';
+                        
+                        Widget imageWidget;
+                        if (images.length > 1) {
+                          imageWidget = PlaylistCover(
+                            images: images,
+                            size: 170,
+                            borderRadius: 20,
+                          );
+                        } else {
+                          imageWidget = CachedNetworkImage(
+                            imageUrl: pImgUrl,
+                            width: 170,
+                            height: 170,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => const ShimmerPlaceholder(
+                              borderRadius: 20,
+                            ),
+                          );
+                        }
 
                         return TactileTap(
                           onTap: () {
@@ -712,15 +733,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                     child: Stack(
                                       children: [
-                                          CachedNetworkImage(
-                                            imageUrl: pImgUrl,
-                                            width: 170,
-                                            height: 170,
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) => const ShimmerPlaceholder(
-                                              borderRadius: 20,
-                                            ),
-                                          ),
+                                          imageWidget,
                                         Positioned(
                                           bottom: 8,
                                           right: 8,

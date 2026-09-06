@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../shared/widgets/pp_image.dart';
+import '../../shared/widgets/playlist_cover.dart';
 
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
@@ -368,9 +369,24 @@ class _PlaylistList extends StatelessWidget {
         itemCount: playlists.length,
         itemBuilder: (context, index) {
           final playlist = playlists[index];
-          final imageUrl =
-              ((playlist['images'] as List?)?.firstOrNull?['url'] as String?) ??
-                  '';
+          final rawImages = (playlist['images'] as List?) ?? [];
+          final images = rawImages.map((i) => i['url'] as String).toList();
+          final imageUrl = images.firstOrNull ?? '';
+          
+          Widget imageWidget;
+          if (images.length > 1) {
+            imageWidget = PlaylistCover(
+              images: images,
+              size: double.infinity,
+              borderRadius: 12,
+            );
+          } else {
+            imageWidget = PPImage(
+              imageUrl: imageUrl,
+              fit: BoxFit.cover,
+            );
+          }
+
           return TactileTap(
             onTap: () => context.push('/playlist/remote/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}'),
             scaleDown: 0.95,
@@ -395,10 +411,7 @@ class _PlaylistList extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: PPImage(
-                          imageUrl: imageUrl,
-                          fit: BoxFit.cover,
-                        ),
+                        child: imageWidget,
                       ),
                     ),
                   ),

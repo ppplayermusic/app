@@ -226,28 +226,8 @@ class SpotifyClient {
     final rawItems = (response.data['playlists']['items'] as List?) ?? [];
     final items = _filterAndSanitizeItems(rawItems);
     
-    // Replace the Spotify branded cover with a composite 4-track cover
-    final enrichedItems = await Future.wait(items.map((playlist) async {
-      try {
-        final playlistId = playlist['id'] as String;
-        // Fetch up to 4 tracks to create a collage cover
-        final tracks = await getPlaylistTracks(playlistId, limit: 3);
-        final trackImages = tracks
-            .map((t) => t.albumImage)
-            .whereType<String>()
-            .take(3)
-            .toList();
-            
-        if (trackImages.isNotEmpty) {
-          playlist['images'] = trackImages.map((url) => {'url': url}).toList();
-        }
-      } catch (_) {
-        // Fallback to original image
-      }
-      return playlist;
-    }));
-
-    return enrichedItems;
+    // Replace the Spotify branded cover with a composite 3-track cover for Spotify-owned playlists
+    return _enrichPlaylistsWithCollage(items);
   }
 
   Future<List<Track>> getPlaylistTracks(String playlistId, {int limit = 20}) async {
@@ -369,7 +349,8 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']?['items'] as List?) ?? [];
-    return _filterAndSanitizeItems(items);
+    final sanitizedItems = _filterAndSanitizeItems(items);
+    return _enrichPlaylistsWithCollage(sanitizedItems);
   }
 
   Future<List<String>> getAvailableGenreSeeds() async {
@@ -415,6 +396,31 @@ class SpotifyClient {
     }
     
     return sanitized;
+  }
+
+  Future<List<Map<String, dynamic>>> _enrichPlaylistsWithCollage(List<Map<String, dynamic>> playlists) async {
+    return await Future.wait(playlists.map((playlist) async {
+      try {
+        final ownerId = playlist['owner']?['id'] as String?;
+        if (ownerId == 'spotify') {
+          final playlistId = playlist['id'] as String;
+          // Fetch up to 3 tracks to create a collage cover
+          final tracks = await getPlaylistTracks(playlistId, limit: 3);
+          final trackImages = tracks
+              .map((t) => t.albumImage)
+              .whereType<String>()
+              .take(3)
+              .toList();
+              
+          if (trackImages.isNotEmpty) {
+            playlist['images'] = trackImages.map((url) => {'url': url}).toList();
+          }
+        }
+      } catch (_) {
+        // Fallback to original image
+      }
+      return playlist;
+    }));
   }
 }
 
