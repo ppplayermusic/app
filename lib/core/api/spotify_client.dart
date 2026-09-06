@@ -74,7 +74,7 @@ class SpotifyClient {
       '$_baseUrl/search',
       queryParameters: {
         'q': query,
-        'type': 'track,artist,album',
+        'type': 'track,artist,album,playlist',
         'limit': limit,
         'market': market,
       },

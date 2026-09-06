@@ -38,7 +38,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
   void initState() {
     super.initState();
     _ctrl = TextEditingController();
-    _tabCtrl = TabController(length: 3, vsync: this);
+    _tabCtrl = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -81,6 +81,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
         Tab(text: 'TRACKS'),
         Tab(text: 'ARTISTS'),
         Tab(text: 'ALBUMS'),
+        Tab(text: 'PLAYLISTS'),
       ],
     );
 
@@ -186,6 +187,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                         _TrackResults(data['tracks']?['items'] ?? []),
                         _ArtistResults(data['artists']?['items'] ?? []),
                         _AlbumResults(data['albums']?['items'] ?? []),
+                        _PlaylistResults(data['playlists']?['items'] ?? []),
                       ],
                     ),
                   ),
@@ -591,6 +593,108 @@ class _AlbumResults extends StatelessWidget {
                     ],
                   ),
                 ).animate(delay: (100 + i % 10 * 50).ms).fadeIn(duration: 600.ms).slideY(begin: 0.1, duration: 600.ms, curve: Curves.easeOutCubic);
+              },
+              childCount: items.length,
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 100)),
+      ],
+    );
+  }
+}
+
+class _PlaylistResults extends StatelessWidget {
+  const _PlaylistResults(this.items);
+  final List<dynamic> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (items.isEmpty) return const Center(child: Text('No playlists found'));
+    return CustomScrollView(
+      slivers: [
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: BannerAdWidget(),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.72,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (_, i) {
+                final playlist = items[i] as Map<String, dynamic>;
+                final images = (playlist['images'] as List?) ?? [];
+                final imageUrl = images.isNotEmpty ? images[0]['url'] as String : '';
+                final ownerName = playlist['owner'] != null ? playlist['owner']['display_name'] : '';
+
+                return TactileTap(
+                  onTap: () {
+                    final encodedName = Uri.encodeComponent(playlist['name'] as String);
+                    context.push('/playlist/remote/${playlist['id']}?name=$encodedName');
+                  },
+                  scaleDown: 0.95,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.scrim.withValues(alpha: 0.5),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: imageUrl.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(color: colorScheme.surfaceContainerHighest),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        playlist['name'] as String,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: colorScheme.onSurface,
+                          fontSize: 15,
+                          letterSpacing: -0.4,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        ownerName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
               childCount: items.length,
             ),
