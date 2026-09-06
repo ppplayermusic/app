@@ -223,8 +223,31 @@ class SpotifyClient {
       },
       options: Options(headers: await _authHeaders()),
     );
-    final items = (response.data['playlists']['items'] as List?) ?? [];
-    return _filterAndSanitizeItems(items);
+    final rawItems = (response.data['playlists']['items'] as List?) ?? [];
+    final items = _filterAndSanitizeItems(rawItems);
+    
+    // Replace the Spotify branded cover with a composite 4-track cover
+    final enrichedItems = await Future.wait(items.map((playlist) async {
+      try {
+        final playlistId = playlist['id'] as String;
+        // Fetch up to 4 tracks to create a collage cover
+        final tracks = await getPlaylistTracks(playlistId, limit: 3);
+        final trackImages = tracks
+            .map((t) => t.albumImage)
+            .whereType<String>()
+            .take(3)
+            .toList();
+            
+        if (trackImages.isNotEmpty) {
+          playlist['images'] = trackImages.map((url) => {'url': url}).toList();
+        }
+      } catch (_) {
+        // Fallback to original image
+      }
+      return playlist;
+    }));
+
+    return enrichedItems;
   }
 
   Future<List<Track>> getPlaylistTracks(String playlistId, {int limit = 20}) async {
@@ -266,6 +289,14 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['playlists']['items'] as List?) ?? [];
+    print("CATEGORY PLAYLISTS RAW ITEMS:");
+    for (var item in items) {
+      if (item is Map) {
+        print("Item: id=${item['id']}, name=${item['name']}");
+      } else {
+        print("Item is not Map: $item");
+      }
+    }
     return _filterAndSanitizeItems(items);
   }
 
@@ -360,7 +391,12 @@ class SpotifyClient {
 
   List<Map<String, dynamic>> _filterAndSanitizeItems(List<dynamic> items) {
     return items.whereType<Map<String, dynamic>>().where((item) {
+      final id = item['id'];
       final name = (item['name'] as String?)?.toLowerCase() ?? '';
+      
+      // Filter out invalid items (like null placeholders from Spotify API)
+      if (id == null || name.trim().isEmpty) return false;
+      
       return !name.contains('spotify sessions') && !name.contains('spotify singles');
     }).map(_sanitizeData).toList();
   }

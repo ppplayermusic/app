@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/pp_image.dart';
+import '../../shared/widgets/playlist_cover.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
@@ -521,7 +522,9 @@ class _HorizontalList extends ConsumerWidget {
           if (itemIndex >= items.length) return const SizedBox.shrink();
           
           final item = items[itemIndex];
-          final imageUrl = (item['images'] as List?)?.firstOrNull?['url'] ?? '';
+          final rawImages = (item['images'] as List?) ?? [];
+          final images = rawImages.map((i) => i['url'] as String).toList();
+          final imageUrl = images.firstOrNull ?? '';
           final artists = (item['artists'] as List?) ?? [];
           final artistName = artists.isNotEmpty ? artists[0]['name'] : (item['publisher'] ?? '');
           final artistId = artists.isNotEmpty ? artists[0]['id'] : null;
@@ -530,6 +533,7 @@ class _HorizontalList extends ConsumerWidget {
             title: item['name'],
             subtitle: artistName,
             imageUrl: imageUrl,
+            images: images,
             onTap: () => onTap(item),
             artistId: artistId,
           );
@@ -747,20 +751,39 @@ class _AlbumCard extends StatelessWidget {
   const _AlbumCard({
     required this.title,
     required this.subtitle,
-    required this.imageUrl,
+    this.imageUrl,
+    this.images,
     required this.onTap,
     this.artistId,
   });
 
   final String title;
   final String subtitle;
-  final String imageUrl;
+  final String? imageUrl;
+  final List<String>? images;
   final VoidCallback onTap;
   final String? artistId;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    
+    Widget imageWidget;
+    if (images != null && images!.length > 1) {
+      imageWidget = PlaylistCover(
+        images: images!,
+        size: 156,
+        borderRadius: 20,
+      );
+    } else {
+      imageWidget = PPImage(
+        imageUrl: images?.firstOrNull ?? imageUrl ?? '',
+        width: 156,
+        height: 156,
+        fit: BoxFit.cover,
+      );
+    }
+
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.95,
@@ -785,12 +808,7 @@ class _AlbumCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   children: [
-                    PPImage(
-                      imageUrl: imageUrl,
-                      width: 156,
-                      height: 156,
-                      fit: BoxFit.cover,
-                    ),
+                    imageWidget,
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
