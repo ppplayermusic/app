@@ -392,7 +392,7 @@ class _BottomNavBar extends StatelessWidget {
       String s when s.startsWith('/home') => 0,
       String s when s.startsWith('/search') => 1,
       String s when s.startsWith('/library') => 2,
-      _ => 0,
+      _ => -1,
     };
 
     return ClipRect(
@@ -688,7 +688,7 @@ class _DesktopSidebar extends ConsumerWidget {
       String s when s.startsWith('/home') => 0,
       String s when s.startsWith('/search') => 1,
       String s when s.startsWith('/library') => 2,
-      _ => 0,
+      _ => -1,
     };
 
     return Container(
@@ -764,14 +764,14 @@ class _DesktopSidebar extends ConsumerWidget {
                   icon: Icons.favorite_border,
                   activeIcon: Icons.favorite,
                   label: 'Favorites',
-                  isSelected: false,
+                  isSelected: location.startsWith('/liked-songs'),
                   onTap: () => context.push('/liked-songs'),
                 ),
                 _SidebarItem(
                   icon: Icons.history,
                   activeIcon: Icons.history,
                   label: 'Recently Played',
-                  isSelected: false,
+                  isSelected: location.startsWith('/recently-played'),
                   onTap: () => context.push('/recently-played'),
                 ),
                 _SidebarItem(
