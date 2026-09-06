@@ -249,9 +249,33 @@ class HomeScreen extends ConsumerWidget {
       backgroundColor: colorScheme.surface,
       body: CustomScrollView(
         slivers: [
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _HomeHero(),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 32.0, top: 56.0, right: 32.0, bottom: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Good afternoon, Lucas',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -1.5,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Your music is waiting.',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -260,33 +284,26 @@ class HomeScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   StaggeredHomeSection<Track>(
-                    title: 'Jump Back In',
+                    title: 'Continue Listening',
                     provider: recentlyPlayedProvider,
                     delay: 0.seconds,
                     topPadding: 24,
-                    builder: (context, ref, tracks) => LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isDesktop = constraints.maxWidth >= 600;
-                        final crossAxisCount = isDesktop ? (constraints.maxWidth / 250).floor().clamp(2, 4) : 2;
-                        return GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: isDesktop ? 4 : 3,
-                          ),
-                          itemCount: tracks.length.clamp(0, isDesktop ? 8 : 6),
-                          itemBuilder: (context, index) {
-                            final track = tracks[index];
-                            return _HistoryCard(
+                    builder: (context, ref, tracks) => SizedBox(
+                      height: 220,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: tracks.length.clamp(0, 10),
+                        itemBuilder: (context, index) {
+                          final track = tracks[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: _HistoryCard(
                               track: track,
                               onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
-                            );
-                          },
-                        );
-                      },
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -317,7 +334,7 @@ class HomeScreen extends ConsumerWidget {
                     provider: madeForYouMixesProvider,
                     delay: 1.seconds,
                     builder: (context, ref, mixes) => SizedBox(
-                      height: 230,
+                      height: 160,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: mixes.length,
@@ -728,40 +745,39 @@ class _GenreCard extends StatelessWidget {
   }
 }
 
-class _HistoryCard extends StatelessWidget {
+class _HistoryCard extends StatefulWidget {
   const _HistoryCard({required this.track, required this.onTap});
   final Track track;
   final VoidCallback onTap;
 
   @override
+  State<_HistoryCard> createState() => _HistoryCardState();
+}
+
+class _HistoryCardState extends State<_HistoryCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return TactileTap(
-      onTap: onTap,
-      scaleDown: 0.98,
-      child: AdaptiveBlur(
-        sigmaX: 10,
-        sigmaY: 10,
-        borderRadius: BorderRadius.circular(16),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: TactileTap(
+        onTap: widget.onTap,
+        scaleDown: 0.98,
         child: Container(
-          height: 56,
+          width: 160,
           decoration: BoxDecoration(
-            color: colorScheme.onSurface.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(16),
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: _isHovered ? 0.3 : 0.1),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: colorScheme.onSurface.withValues(alpha: 0.08),
-              width: 0.5,
+              color: colorScheme.onSurface.withValues(alpha: 0.05),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: colorScheme.scrim.withValues(alpha: 0.2),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
           clipBehavior: Clip.antiAlias,
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AspectRatio(
                 aspectRatio: 1,
@@ -769,55 +785,53 @@ class _HistoryCard extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     PPImage(
-                      imageUrl: track.albumImage ?? '',
+                      imageUrl: widget.track.albumImage ?? '',
                       fit: BoxFit.cover,
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            colorScheme.onSurface.withValues(alpha: 0.1),
-                            Colors.transparent,
-                          ],
+                    if (_isHovered)
+                      Positioned.fill(
+                        child: Container(
+                          color: Colors.black.withValues(alpha: 0.4),
+                          child: const Center(
+                            child: Icon(Icons.play_circle_fill, size: 48, color: Colors.white),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      track.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 13,
-                        letterSpacing: -0.2,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.track.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                          color: colorScheme.onSurface,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      track.artistName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withValues(alpha: 0.5),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.track.artistName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
             ],
           ),
         ),
@@ -1187,7 +1201,7 @@ class _RadioCard extends StatelessWidget {
   }
 }
 
-class _MixCard extends StatelessWidget {
+class _MixCard extends StatefulWidget {
   final String title;
   final String subtitle;
   final String imageUrl;
@@ -1205,341 +1219,126 @@ class _MixCard extends StatelessWidget {
   });
 
   @override
+  State<_MixCard> createState() => _MixCardState();
+}
+
+class _MixCardState extends State<_MixCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return TactileTap(
-      onTap: onTap,
-      scaleDown: 0.96,
-      child: Container(
-        width: 160,
-        margin: const EdgeInsets.only(right: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 160,
-              height: 160,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    color1.withValues(alpha: 0.9),
-                    color2.withValues(alpha: 0.9),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: TactileTap(
+        onTap: widget.onTap,
+        scaleDown: 0.98,
+        child: Container(
+          width: 280,
+          margin: const EdgeInsets.only(right: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                widget.color1,
+                widget.color2,
+              ],
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Abstract background silhouette based on image if available
+              if (widget.imageUrl.isNotEmpty)
+                Positioned(
+                  bottom: -20,
+                  right: -20,
+                  child: Opacity(
+                    opacity: 0.15,
+                    child: Image.network(
+                      widget.imageUrl,
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                      color: Colors.black,
+                      colorBlendMode: BlendMode.srcATop,
+                    ),
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title.replaceAll(' ', '\n'),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
+                        height: 1.1,
+                        letterSpacing: -1,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      widget.subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: color2.withValues(alpha: 0.4),
-                    blurRadius: 25,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
               ),
-              clipBehavior: Clip.antiAlias,
-              child: HoverPlayOverlay(
-                onPlay: onTap,
-                size: 44,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                  AdaptiveBlur(
-                    sigmaX: 12,
-                    sigmaY: 12,
-                    borderRadius: BorderRadius.circular(28),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: colorScheme.onSurface.withValues(alpha: 0.15),
-                          width: 0.5,
-                        ),
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                    ),
-                  ),
-                  if (imageUrl.isNotEmpty)
-                    Positioned(
-                      bottom: -15,
-                      right: -15,
-                      child: Transform.rotate(
-                        angle: 0.15,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorScheme.scrim.withValues(alpha: 0.4),
-                                blurRadius: 20,
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: PPImage(
-                              imageUrl: imageUrl,
-                              width: 110,
-                              height: 110,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        title.replaceAll(' ', '\n'),
-                        style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                          height: 0.9,
-                          letterSpacing: -1.2,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 18,
-                    right: 18,
-                    child: Icon(
-                      Icons.auto_awesome, 
-                      color: colorScheme.onSurface.withValues(alpha: 0.6), 
-                      size: 22,
-                    ),
-                  ),
-                ],
+              Positioned(
+                top: 16,
+                right: 16,
+                child: Icon(
+                  Icons.auto_awesome, 
+                  color: Colors.white.withValues(alpha: 0.8), 
+                  size: 20,
                 ),
               ),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              subtitle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: colorScheme.onSurface.withValues(alpha: 0.4),
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                height: 1.3,
-              ),
-            ),
-          ],
+              if (_isHovered)
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(Icons.play_arrow, size: 28, color: Colors.white),
+                  ),
+                )
+              else
+                Positioned(
+                  bottom: -15,
+                  right: -15,
+                  child: Transform.rotate(
+                    angle: 0.2,
+                    child: Opacity(
+                      opacity: 0.15,
+                      child: Icon(Icons.play_circle_fill, size: 100, color: Colors.white),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _HomeHero extends SliverPersistentHeaderDelegate {
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final progress = shrinkOffset / maxExtent;
-    final titleOpacity = progress.clamp(0.0, 1.0);
-
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // Animated Mesh Background
-        Container(
-          color: colorScheme.surface,
-          child: CustomPaint(
-            painter: _MeshPainter(primaryColor: colorScheme.primary),
-          ),
-        ),
-        
-        AdaptiveBlur(
-          sigmaX: 20 * (1 - progress),
-          sigmaY: 20 * (1 - progress),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  colorScheme.surface.withValues(alpha: 0.2 + (0.6 * progress)),
-                  colorScheme.surface.withValues(alpha: 0.8 + (0.2 * progress)),
-                ],
-              ),
-            ),
-          ),
-        ),
-
-        // Brand & Content
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                if (progress < 0.5)
-                  Opacity(
-                    opacity: (1 - progress * 2).clamp(0.0, 1.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                                blurRadius: 40,
-                                spreadRadius: 5,
-                              ),
-                            ],
-                          ),
-                          child: Hero(
-                            tag: 'app_logo',
-                            child: Image.asset(
-                              'assets/logo.png',
-                              width: 64,
-                              height: 64,
-                              errorBuilder: (context, error, stackTrace) => Container(color: colorScheme.surfaceContainer),
-                            ),
-                          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                           .scale(begin: const Offset(1,1), end: const Offset(1.1, 1.1), duration: 2000.ms, curve: Curves.easeInOut),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Good morning',
-                          style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -2.0,
-                            color: colorScheme.onSurface,
-                            height: 0.9,
-                            shadows: [
-                              Shadow(
-                                color: colorScheme.scrim.withValues(alpha: 0.3),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: 40,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
-                                blurRadius: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          ),
-        ),
-
-        // Collapsed Title (Floating effect)
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: SafeArea(
-            child: Container(
-              height: 60,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  if (progress > 0.5)
-                    Hero(
-                      tag: 'app_logo',
-                      child: Image.asset(
-                        'assets/logo.png',
-                        height: 32,
-                      ),
-                    ).animate().fadeIn().scale(),
-                  const SizedBox(width: 12),
-                  if (progress > 0.5)
-                    Opacity(
-                      opacity: titleOpacity,
-                      child: Text(
-                        'PPPLAYER',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 4,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                  const Spacer(),
-                  TactileIconButton(
-                    icon: Icons.history,
-                    backgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: () => context.push('/recently-played'),
-                  ),
-                  const SizedBox(width: 10),
-                  TactileIconButton(
-                    icon: Icons.settings,
-                    backgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: () => context.push('/settings'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  double get maxExtent => 280;
-
-  @override
-  double get minExtent => 110;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
-}
-
-class _MeshPainter extends CustomPainter {
-  final Color primaryColor;
-  _MeshPainter({required this.primaryColor});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
-
-    // Primary Brand Blob
-    paint.color = primaryColor.withValues(alpha: 0.15);
-    canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.2), 120, paint);
-
-    // Dynamic Secondary Blob (derived from theme)
-    final secondaryColor = Color.lerp(primaryColor, primaryColor.withValues(alpha: 0.8), 0.2) ?? primaryColor;
-    paint.color = secondaryColor.withValues(alpha: 0.1);
-    canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.8), 90, paint);
-    
-    // Dynamic Tertiary Blob (derived from theme)
-    final tertiaryColor = Color.lerp(primaryColor, primaryColor.withValues(alpha: 0.6), 0.2) ?? primaryColor;
-    paint.color = tertiaryColor.withValues(alpha: 0.08);
-    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.5), 100, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _MeshPainter oldDelegate) => oldDelegate.primaryColor != primaryColor;
-}
 
 class StaggeredHomeSection<T> extends ConsumerStatefulWidget {
   const StaggeredHomeSection({
@@ -1622,21 +1421,30 @@ class _StaggeredHeader extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 4,
+            width: 3,
             height: 24,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(2),
+              color: const Color(0xFFE50914), // Red vertical line
+              borderRadius: BorderRadius.circular(1.5),
             ),
           ),
           const SizedBox(width: 12),
           Text(
             title,
             style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w900,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: -0.5,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            'See all >',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],

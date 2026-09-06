@@ -3,6 +3,7 @@ import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
@@ -75,12 +76,37 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                 if (isDesktop && !isPlayerScreen)
                   const _DesktopSidebar(),
                 Expanded(
-                  child: Column(
+                  child: Stack(
                     children: [
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            final stackHeight = constraints.maxHeight;
+                      // Gradient Background & Animated Mesh
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          width: 800,
+                          height: 600,
+                          decoration: BoxDecoration(
+                            gradient: RadialGradient(
+                              center: const Alignment(0.8, -0.8),
+                              radius: 1.5,
+                              colors: [
+                                const Color(0xFF4A1010).withValues(alpha: 0.5), // Dark red
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                          child: CustomPaint(
+                            painter: _MeshPainter(primaryColor: Theme.of(context).colorScheme.primary),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          if (isDesktop && !isPlayerScreen) const _DesktopTopBar(),
+                          Expanded(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final stackHeight = constraints.maxHeight;
 
                             double renderW, renderH, renderTop, renderLeft, renderRadius;
                             bool showShadow;
@@ -332,10 +358,12 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
+        ),
+      ),
           bottomNavigationBar:
               isPlayerScreen
                   ? null
@@ -663,44 +691,152 @@ class _DesktopSidebar extends ConsumerWidget {
 
     return Container(
       width: 240,
-      color: colorScheme.surface.withValues(alpha: 0.5),
+      color: colorScheme.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Text(
-              'PPPLAYER',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -1,
-                color: colorScheme.onSurface,
-              ),
+            child: Row(
+              children: [
+                Hero(
+                  tag: 'app_logo',
+                  child: Image.asset('assets/logo.png', height: 28),
+                ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                 .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 2000.ms, curve: Curves.easeInOut),
+                const SizedBox(width: 8),
+                Text(
+                  'PPPlayer',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 40),
-          _SidebarItem(
-            icon: Icons.home_outlined,
-            activeIcon: Icons.home,
-            label: 'Home',
-            isSelected: currentIndex == 0,
-            onTap: () => context.go('/home'),
-          ),
-          _SidebarItem(
-            icon: Icons.search_outlined,
-            activeIcon: Icons.search,
-            label: 'Search',
-            isSelected: currentIndex == 1,
-            onTap: () => context.go('/search'),
-          ),
-          _SidebarItem(
-            icon: Icons.library_music_outlined,
-            activeIcon: Icons.library_music,
-            label: 'Library',
-            isSelected: currentIndex == 2,
-            onTap: () => context.go('/library'),
+          const SizedBox(height: 32),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _SidebarItem(
+                  icon: Icons.home_outlined,
+                  activeIcon: Icons.home,
+                  label: 'Home',
+                  isSelected: currentIndex == 0,
+                  onTap: () => context.go('/home'),
+                ),
+                _SidebarItem(
+                  icon: Icons.search_outlined,
+                  activeIcon: Icons.search,
+                  label: 'Search',
+                  isSelected: currentIndex == 1,
+                  onTap: () => context.go('/search'),
+                ),
+                _SidebarItem(
+                  icon: Icons.library_music_outlined,
+                  activeIcon: Icons.library_music,
+                  label: 'Library',
+                  isSelected: currentIndex == 2,
+                  onTap: () => context.go('/library'),
+                ),
+                const SizedBox(height: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Text(
+                    'YOUR MUSIC',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1,
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ),
+                _SidebarItem(
+                  icon: Icons.favorite_border,
+                  activeIcon: Icons.favorite,
+                  label: 'Favorites',
+                  isSelected: false,
+                  onTap: () => context.push('/liked-songs'),
+                ),
+                _SidebarItem(
+                  icon: Icons.history,
+                  activeIcon: Icons.history,
+                  label: 'Recently Played',
+                  isSelected: false,
+                  onTap: () => context.push('/recently-played'),
+                ),
+                _SidebarItem(
+                  icon: Icons.queue_music,
+                  activeIcon: Icons.queue_music,
+                  label: 'Playlists',
+                  isSelected: false,
+                  onTap: () => context.go('/library'),
+                ),
+                const SizedBox(height: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'PLAYLISTS',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1,
+                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Create Playlist not implemented yet')),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(4),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Icon(Icons.add, size: 16, color: colorScheme.onSurface.withValues(alpha: 0.5)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _MockPlaylistItem(
+                  title: 'Chill Vibes',
+                  subtitle: '42 songs',
+                  imageUrl: 'https://i.scdn.co/image/ab67706c0000da840cebf731420d91244e83c742',
+                ),
+                _MockPlaylistItem(
+                  title: 'Workout',
+                  subtitle: '87 songs',
+                  imageUrl: 'https://i.scdn.co/image/ab67706c0000da84e319cb8cff62a5dc4cc8b4b4',
+                ),
+                _MockPlaylistItem(
+                  title: 'Brazilian',
+                  subtitle: '56 songs',
+                  imageUrl: 'https://i.scdn.co/image/ab67706c0000da8490a2a19b6ba1ba7c07b0ecda',
+                ),
+                _MockPlaylistItem(
+                  title: 'Focus',
+                  subtitle: '38 songs',
+                  imageUrl: 'https://i.scdn.co/image/ab67706f00000002ca5a7517156021292e5663a6',
+                ),
+                _MockPlaylistItem(
+                  title: 'Discover',
+                  subtitle: '72 songs',
+                  imageUrl: 'https://i.scdn.co/image/ab67706f000000021c322ee5ec64b97d1b312db6',
+                ),
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ],
       ),
@@ -726,30 +862,109 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final color = isSelected ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.7);
+    final color = isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.7);
 
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(
-              color: isSelected ? colorScheme.primary : Colors.transparent,
-              width: 3,
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            gradient: isSelected
+                ? LinearGradient(
+                    colors: [
+                      colorScheme.primary,
+                      const Color(0xFF8B0000), // Darker red gradient for active item
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  )
+                : null,
+          ),
+          child: Row(
+            children: [
+              Icon(isSelected ? activeIcon : icon, color: color, size: 20),
+              const SizedBox(width: 16),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 14,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _MockPlaylistItem extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String imageUrl;
+
+  const _MockPlaylistItem({
+    required this.title,
+    required this.subtitle,
+    required this.imageUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return InkWell(
+      onTap: () => context.go('/library'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Row(
           children: [
-            Icon(isSelected ? activeIcon : icon, color: color, size: 24),
-            const SizedBox(width: 16),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 14,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.network(
+                imageUrl,
+                width: 32,
+                height: 32,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  width: 32,
+                  height: 32,
+                  color: colorScheme.surfaceContainerHighest,
+                  child: Icon(Icons.music_note, size: 16, color: colorScheme.onSurfaceVariant),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onSurface.withValues(alpha: 0.9),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ),
           ],
@@ -924,4 +1139,109 @@ class _DesktopPlayerBar extends ConsumerWidget {
       ),
     );
   }
+}
+
+class _DesktopTopBar extends StatelessWidget {
+  const _DesktopTopBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      height: 80,
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Row(
+        children: [
+          // Search Bar
+          Expanded(
+            child: Row(
+              children: [
+                Container(
+                  width: 320,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: colorScheme.onSurface.withValues(alpha: 0.1),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      Icon(Icons.search, color: colorScheme.onSurface.withValues(alpha: 0.5), size: 20),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Search music, artists, albums...',
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Action Buttons
+          TactileIconButton(
+            icon: Icons.history,
+            onTap: () => context.push('/recently-played'),
+            size: 24,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
+          ),
+          const SizedBox(width: 16),
+          TactileIconButton(
+            icon: Icons.settings_outlined,
+            onTap: () => context.push('/settings'),
+            size: 24,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
+          ),
+          const SizedBox(width: 16),
+          // Profile Avatar
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colorScheme.primary.withValues(alpha: 0.2),
+              image: const DecorationImage(
+                image: NetworkImage('https://i.pravatar.cc/100?img=11'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MeshPainter extends CustomPainter {
+  final Color primaryColor;
+  _MeshPainter({required this.primaryColor});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
+
+    // Primary Brand Blob
+    paint.color = primaryColor.withValues(alpha: 0.15);
+    canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.2), 120, paint);
+
+    // Dynamic Secondary Blob (derived from theme)
+    final secondaryColor = Color.lerp(primaryColor, primaryColor.withValues(alpha: 0.8), 0.2) ?? primaryColor;
+    paint.color = secondaryColor.withValues(alpha: 0.1);
+    canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.8), 90, paint);
+    
+    // Dynamic Tertiary Blob (derived from theme)
+    final tertiaryColor = Color.lerp(primaryColor, primaryColor.withValues(alpha: 0.6), 0.2) ?? primaryColor;
+    paint.color = tertiaryColor.withValues(alpha: 0.08);
+    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.5), 100, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _MeshPainter oldDelegate) => oldDelegate.primaryColor != primaryColor;
 }
