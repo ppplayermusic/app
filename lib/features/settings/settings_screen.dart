@@ -478,46 +478,28 @@ class _SettingsHero extends StatelessWidget {
                       height: 128,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: settings.userName.isNotEmpty ? avatarColor : Colors.transparent,
-                        image: settings.userAvatarPath != null && settings.userAvatarPath!.isNotEmpty
-                            ? DecorationImage(
-                                image: FileImage(File(settings.userAvatarPath!)),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
+                        color: Colors.transparent,
                         boxShadow: [
                           BoxShadow(
-                            color: settings.userName.isNotEmpty ? avatarColor.withValues(alpha: 0.3) : themeColor.withValues(alpha: 0.3),
+                            color: themeColor.withValues(alpha: 0.3),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
                         ],
                       ),
-                      child: (settings.userAvatarPath != null && settings.userAvatarPath!.isNotEmpty)
-                        ? const SizedBox.shrink()
-                        : Center(
-                            child: settings.userName.isNotEmpty 
-                              ? Text(
-                                  settings.userName.trim().split(RegExp(r'\s+')).map((e) => e.isNotEmpty ? e[0].toUpperCase() : '').take(2).join(),
-                                  style: TextStyle(
-                                    fontSize: 42,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.white,
-                                    letterSpacing: -1,
-                                  ),
-                                )
-                              : Image.asset(
-                                  'assets/logo.png',
-                                  width: 80,
-                                  height: 80,
-                                ),
-                          ),
-                    ).animate(onPlay: (c) => settings.userName.isNotEmpty ? c : c.repeat())
+                      child: Center(
+                        child: Image.asset(
+                          'assets/logo.png',
+                          width: 80,
+                          height: 80,
+                        ),
+                      ),
+                    ).animate(onPlay: (c) => c.repeat())
                      .rotate(duration: 10.seconds, begin: 0, end: 1),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    settings.userName.isNotEmpty ? settings.userName.toUpperCase() : 'PPPLAYER',
+                    'PPPLAYER',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
@@ -526,7 +508,7 @@ class _SettingsHero extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    settings.userName.isNotEmpty ? 'PRO ACCOUNT' : 'PRO EXPERIENCE ACTIVE',
+                    'PRO EXPERIENCE ACTIVE',
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,

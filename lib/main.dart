@@ -16,6 +16,7 @@ import 'core/db/app_database.dart';
 import 'core/playback/media_handler.dart';
 import 'core/services/settings_provider.dart';
 import 'core/playback/media_sync_service.dart';
+import 'core/services/dock_menu_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Global access to the provider container for the [AudioHandler].
@@ -90,6 +91,11 @@ void main() async {
 
   // Initialize background media sync service
   globalContainer.read(mediaSyncServiceProvider);
+  
+  // Initialize native dock menu service for macOS
+  if (!kIsWeb && Platform.isMacOS) {
+    globalContainer.read(dockMenuServiceProvider);
+  }
 
   runApp(
     UncontrolledProviderScope(

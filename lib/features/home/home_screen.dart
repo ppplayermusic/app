@@ -310,15 +310,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ],
                   ),
-                  if (settings.userName.isNotEmpty)
-                    TactileTap(
-                      onTap: () => context.push('/settings'),
-                      child: UserAvatarWidget(
-                        settings: settings,
-                        size: 48,
-                        fontSize: 16,
-                      ),
-                    ),
                 ],
               ),
             ),

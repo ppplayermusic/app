@@ -12,6 +12,7 @@ import '../../core/providers/search_provider.dart';
 import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import 'user_avatar.dart';
+import 'profile_modal.dart';
 import '../../core/db/app_database.dart' as db;
 
 
@@ -708,30 +709,6 @@ class _DesktopSidebar extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               children: [
-                if (settings.userName.isNotEmpty) ...[
-                  Hero(
-                    tag: 'app_logo',
-                    child: UserAvatarWidget(
-                      settings: settings,
-                      size: 28,
-                      fontSize: 10,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      settings.userName,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
-                        color: colorScheme.onSurface,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ] else ...[
                   Hero(
                     tag: 'app_logo',
                     child: Image.asset('assets/logo.png', height: 28),
@@ -747,7 +724,6 @@ class _DesktopSidebar extends ConsumerWidget {
                       color: colorScheme.onSurface,
                     ),
                   ),
-                ],
               ],
             ),
           ),
@@ -1263,6 +1239,7 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
       }
     });
 
+    final settings = ref.watch(settingsProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       height: 80,
@@ -1351,18 +1328,18 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
           ),
           const SizedBox(width: 16),
           // Profile Avatar
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colorScheme.primary.withValues(alpha: 0.2),
-              image: const DecorationImage(
-                image: NetworkImage('https://i.pravatar.cc/100?img=11'),
-                fit: BoxFit.cover,
+          if (settings.userName.isNotEmpty)
+            TactileTap(
+              onTap: () => showEditProfileModal(context, ref),
+              child: Hero(
+                tag: 'settings_hero',
+                child: UserAvatarWidget(
+                  settings: settings,
+                  size: 32,
+                  fontSize: 12,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
