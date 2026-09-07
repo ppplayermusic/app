@@ -57,100 +57,75 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
   final client = ref.watch(spotifyClientProvider);
   final artists = await ref.watch(popularArtistsProvider.future);
   final genres = await ref.watch(browseCategoriesProvider.future);
-  
-  // Get valid recommendation seeds to ensure mixes aren't empty
   final validSeeds = await client.getAvailableGenreSeeds();
-  
   final mixes = <Map<String, dynamic>>[];
-  
-  // Daily Mix 1: Top artist focus
+
   if (artists.isNotEmpty) {
     mixes.add({
       'type': 'artist',
       'id': artists[0]['id'],
-      'name': 'Daily Mix 1',
-      'subtitle': '${artists[0]['name']} and more',
-      'imageUrl': (artists[0]['images'] as List?)?.firstOrNull?['url'] ?? '',
       'title': 'Daily Mix 1',
+      'subtitle': 'Your favorites\nand new discoveries',
+      'imageAsset': 'assets/images/mix_covers/daily_mix_1.jpg',
       'color1': AppTheme.themeColors[0],
       'color2': AppTheme.themeColors[1],
     });
   }
-  
-  // Daily Mix 2: Hip hop focus
+
   if (artists.length > 2) {
     mixes.add({
       'type': 'artist',
       'id': artists[1]['id'],
-      'name': 'Daily Mix 2',
-      'subtitle': '${artists[1]['name']}, ${artists[2]['name']} and more',
-      'imageUrl': (artists[1]['images'] as List?)?.firstOrNull?['url'] ?? '',
       'title': 'Daily Mix 2',
+      'subtitle': 'Your favorites\nand new discoveries',
+      'imageAsset': 'assets/images/mix_covers/daily_mix_2.jpg',
       'color1': AppTheme.themeColors[2],
       'color2': AppTheme.themeColors[3],
     });
   }
 
-  // Discover Weekly
   String discoverSeed = 'pop';
-  String discoverImageUrl = 'asset:assets/images/mix_covers/discover_weekly.png';
-  
   for (final genre in genres) {
     final id = genre['id'] as String;
-    if (validSeeds.contains(id)) {
-      discoverSeed = id;
-      // We still try to use the genre icon if available from Spotify, but default to our asset
-      final iconUrl = (genre['icons'] as List?)?.firstOrNull?['url'];
-      if (iconUrl != null) {
-        discoverImageUrl = iconUrl;
-      }
-      break;
-    }
+    if (validSeeds.contains(id)) { discoverSeed = id; break; }
   }
 
   mixes.add({
     'type': 'genre',
     'id': discoverSeed,
-    'name': 'Discover Weekly',
-    'subtitle': 'New music based on your favorite genres.',
-    'imageUrl': discoverImageUrl,
     'title': 'Discover Weekly',
+    'subtitle': 'Made for you',
+    'imageAsset': 'assets/images/mix_covers/discover_weekly.jpg',
     'color1': AppTheme.themeColors[4],
     'color2': AppTheme.themeColors[5],
   });
 
-  // Release Radar
   mixes.add({
     'type': 'genre',
     'id': 'new-release',
-    'name': 'Release Radar',
-    'subtitle': 'Catch up on the latest releases.',
-    'imageUrl': 'asset:assets/images/mix_covers/discover_weekly.png',
     'title': 'Release Radar',
+    'subtitle': 'New music\njust for you',
+    'imageAsset': 'assets/images/mix_covers/release_radar.jpg',
     'color1': AppTheme.themeColors[6],
     'color2': AppTheme.themeColors[7],
   });
 
-  // Mood Mix: Chill focus
   mixes.add({
     'type': 'genre',
     'id': 'chill',
-    'name': 'Chill Mix',
-    'subtitle': 'Vibey, relaxing tracks picked for you.',
-    'imageUrl': 'asset:assets/images/mix_covers/chill_mix.png',
     'title': 'Chill Mix',
+    'subtitle': 'Relax and unwind',
+    'imageAsset': 'assets/images/mix_covers/chill_mix.jpg',
     'color1': AppTheme.themeColors[8],
     'color2': AppTheme.themeColors[9],
   });
 
-  // Energy Mix: Focus/Study
   mixes.add({
     'type': 'genre',
     'id': 'study',
-    'name': 'Focus Mix',
-    'subtitle': 'Music to help you concentrate.',
-    'imageUrl': 'asset:assets/images/mix_covers/focus_mix.png',
     'title': 'Focus Mix',
+    'subtitle': 'Deep focus\nand productivity',
+    'imageAsset': 'assets/images/mix_covers/focus_mix.jpg',
     'color1': AppTheme.themeColors[10],
     'color2': AppTheme.themeColors[11],
   });
@@ -370,7 +345,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     provider: madeForYouMixesProvider,
                     delay: 1.seconds,
                     builder: (context, ref, mixes) => SizedBox(
-                      height: 160,
+                      height: 138,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: mixes.length,
@@ -379,7 +354,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           return _MixCard(
                             title: mix['title'],
                             subtitle: mix['subtitle'],
-                            imageUrl: mix['imageUrl'],
+                            imageAsset: mix['imageAsset'] as String,
                             color1: mix['color1'] as Color,
                             color2: mix['color2'] as Color,
                             onTap: () => context.push(
@@ -387,7 +362,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 path: '/radio/${mix['type']}/${mix['id']}',
                                 queryParameters: {
                                   'title': mix['title'],
-                                  'imageUrl': mix['imageUrl'],
+                                  'imageUrl': mix['imageUrl'] ?? mix['imageAsset'] ?? '',
                                   'subtitle': mix['subtitle'] ?? '',
                                 },
                               ).toString(),
@@ -1240,7 +1215,7 @@ class _RadioCard extends StatelessWidget {
 class _MixCard extends StatefulWidget {
   final String title;
   final String subtitle;
-  final String imageUrl;
+  final String imageAsset;
   final Color color1;
   final Color color2;
   final VoidCallback onTap;
@@ -1248,7 +1223,7 @@ class _MixCard extends StatefulWidget {
   const _MixCard({
     required this.title,
     required this.subtitle,
-    required this.imageUrl,
+    required this.imageAsset,
     required this.color1,
     required this.color2,
     required this.onTap,
@@ -1261,119 +1236,220 @@ class _MixCard extends StatefulWidget {
 class _MixCardState extends State<_MixCard> {
   bool _isHovered = false;
 
+  String get _formattedTitle {
+    if (widget.title.contains('\n')) return widget.title;
+    if (widget.title.startsWith('Daily Mix ')) {
+      return 'Daily Mix\n${widget.title.substring(10)}';
+    }
+    final spaceIndex = widget.title.indexOf(' ');
+    if (spaceIndex != -1) {
+      return '${widget.title.substring(0, spaceIndex)}\n${widget.title.substring(spaceIndex + 1)}';
+    }
+    return widget.title;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: TactileTap(
-        onTap: widget.onTap,
-        scaleDown: 0.98,
-        child: Container(
-          width: 280,
-          margin: const EdgeInsets.only(right: 16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                widget.color1,
-                widget.color2,
-              ],
-            ),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Abstract background silhouette based on image if available
-              if (widget.imageUrl.isNotEmpty)
-                Positioned(
-                  bottom: -20,
-                  right: -20,
-                  child: Opacity(
-                    opacity: 0.15,
-                    child: Image.network(
-                      widget.imageUrl,
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
-                      color: Colors.black,
-                      colorBlendMode: BlendMode.srcATop,
-                    ),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedScale(
+        scale: _isHovered ? 1.03 : 1.0,
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
+        child: TactileTap(
+          onTap: widget.onTap,
+          scaleDown: 0.97,
+          child: Semantics(
+            label: '${widget.title}, ${widget.subtitle}',
+            button: true,
+            child: Container(
+              width: 190,
+              margin: const EdgeInsets.only(right: 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: _isHovered
+                        ? widget.color1.withValues(alpha: 0.45)
+                        : Colors.black.withValues(alpha: 0.25),
+                    blurRadius: _isHovered ? 18 : 8,
+                    offset: Offset(0, _isHovered ? 4 : 2),
                   ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Text(
-                      widget.title.replaceAll(' ', '\n'),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w900,
-                        height: 1.1,
-                        letterSpacing: -1,
+                    // 1. High-resolution atmospheric artwork
+                    Image.asset(
+                      widget.imageAsset,
+                      fit: BoxFit.cover,
+                    ),
+
+                    // 2. Soft horizontal scrim for text legibility
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.45),
+                              Colors.black.withValues(alpha: 0.15),
+                              Colors.transparent,
+                            ],
+                            stops: const [0.0, 0.45, 0.85],
+                          ),
+                        ),
                       ),
                     ),
-                    const Spacer(),
-                    Text(
-                      widget.subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+
+                    // 3. Soft bottom scrim for subtitle legibility
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.40),
+                              Colors.transparent,
+                            ],
+                            stops: const [0.0, 0.55],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // 4. Subtle brightness sheen on hover
+                    AnimatedOpacity(
+                      opacity: _isHovered ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 180),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.10),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // 5. Razor-sharp vector typography
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _formattedTitle,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              height: 1.15,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            widget.subtitle,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.85),
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w500,
+                              height: 1.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // 6. Sparkle icon top-right
+                    Positioned(
+                      top: 11,
+                      right: 12,
+                      child: Icon(
+                        Icons.auto_awesome,
+                        color: Colors.white.withValues(alpha: 0.75),
+                        size: 14,
+                      ),
+                    ),
+
+                    // 7. Subtle bottom-right PPPlayer logo badge in rest state
+                    Positioned(
+                      bottom: 9,
+                      right: 9,
+                      child: AnimatedOpacity(
+                        opacity: _isHovered ? 0.0 : 1.0,
+                        duration: const Duration(milliseconds: 150),
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.28),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Image.asset(
+                              'assets/logo.png',
+                              width: 13,
+                              height: 13,
+                              color: Colors.white.withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // 8. Hover play button with glowing PPPlayer red accent
+                    Positioned(
+                      bottom: 7,
+                      right: 7,
+                      child: AnimatedOpacity(
+                        opacity: _isHovered ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 180),
+                        child: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE50914),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFE50914).withValues(alpha: 0.6),
+                                blurRadius: 10,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.play_arrow_rounded,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              Positioned(
-                top: 16,
-                right: 16,
-                child: Icon(
-                  Icons.auto_awesome, 
-                  color: Colors.white.withValues(alpha: 0.8), 
-                  size: 20,
-                ),
-              ),
-              if (_isHovered)
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: const Icon(Icons.play_arrow, size: 28, color: Colors.white),
-                  ),
-                )
-              else
-                Positioned(
-                  bottom: -15,
-                  right: -15,
-                  child: Transform.rotate(
-                    angle: 0.2,
-                    child: Opacity(
-                      opacity: 0.15,
-                      child: Icon(Icons.play_circle_fill, size: 100, color: Colors.white),
-                    ),
-                  ),
-                ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
 
 
 class StaggeredHomeSection<T> extends ConsumerStatefulWidget {
