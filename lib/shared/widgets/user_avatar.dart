@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../core/services/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
@@ -17,13 +18,13 @@ class UserAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (settings.userAvatarPath != null && settings.userAvatarPath!.isNotEmpty) {
+    if (settings.userAvatarBase64 != null && settings.userAvatarBase64!.isNotEmpty) {
       return SizedBox(
         width: size,
         height: size,
         child: ClipOval(
-          child: Image.file(
-            File(settings.userAvatarPath!),
+          child: Image.memory(
+            base64Decode(settings.userAvatarBase64!),
             fit: BoxFit.cover,
           ),
         ),

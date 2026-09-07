@@ -249,21 +249,21 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final settings = ref.read(settingsProvider);
-      if (settings.userName.isEmpty) {
-        showEditProfileModal(context, ref, isDismissible: false);
-      }
-    });
-  }
+  bool _hasCheckedProfile = false;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final settings = ref.watch(settingsProvider);
+    
+    if (!_hasCheckedProfile && settings.isLoaded) {
+      _hasCheckedProfile = true;
+      if (settings.userName.isEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showEditProfileModal(context, ref, isDismissible: false);
+        });
+      }
+    }
     
     final hour = DateTime.now().hour;
     String greeting;

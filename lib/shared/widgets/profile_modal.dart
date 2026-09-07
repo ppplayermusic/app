@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,7 +15,7 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
   final settings = ref.read(settingsProvider);
   final nameController = TextEditingController(text: settings.userName);
   int selectedColorIndex = settings.userAvatarColorIndex;
-  String? selectedAvatarPath = settings.userAvatarPath;
+  String? selectedAvatarBase64 = settings.userAvatarBase64;
 
   showPremiumModal(
     context: context,
@@ -37,14 +38,14 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
                     decoration: BoxDecoration(
                       color: AppTheme.themeColors[selectedColorIndex],
                       shape: BoxShape.circle,
-                      image: selectedAvatarPath != null && selectedAvatarPath!.isNotEmpty
+                      image: selectedAvatarBase64 != null && selectedAvatarBase64!.isNotEmpty
                           ? DecorationImage(
-                              image: FileImage(File(selectedAvatarPath!)),
+                              image: MemoryImage(base64Decode(selectedAvatarBase64!)),
                               fit: BoxFit.cover,
                             )
                           : null,
                     ),
-                    child: selectedAvatarPath == null || selectedAvatarPath!.isEmpty
+                    child: selectedAvatarBase64 == null || selectedAvatarBase64!.isEmpty
                         ? const Center(
                             child: Icon(Icons.person, size: 40, color: Colors.white),
                           )
@@ -58,8 +59,10 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
                         final picker = ImagePicker();
                         final image = await picker.pickImage(source: ImageSource.gallery);
                         if (image != null) {
+                          final bytes = await image.readAsBytes();
+                          final base64String = base64Encode(bytes);
                           setState(() {
-                            selectedAvatarPath = image.path;
+                            selectedAvatarBase64 = base64String;
                           });
                         }
                       },
@@ -156,7 +159,7 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
                 if (name.isNotEmpty) {
                   settingsNotifier.setUserName(name);
                   settingsNotifier.setUserAvatarColorIndex(selectedColorIndex);
-                  settingsNotifier.setUserAvatarPath(selectedAvatarPath);
+                  settingsNotifier.setUserAvatarBase64(selectedAvatarBase64);
                   Navigator.pop(context);
                 }
               },
