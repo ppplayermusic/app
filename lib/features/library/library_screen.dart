@@ -16,7 +16,12 @@ enum LibraryFilter { all, playlists, artists, albums, stations }
 enum LibrarySort { recent, alphabetical }
 
 class LibraryScreen extends ConsumerStatefulWidget {
-  const LibraryScreen({super.key});
+  const LibraryScreen({
+    super.key,
+    this.initialFilter = LibraryFilter.all,
+  });
+
+  final LibraryFilter initialFilter;
 
   static void showCreatePlaylistDialog(BuildContext context, db.AppDatabase database) {
     final ctrl = TextEditingController();
@@ -113,8 +118,22 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  LibraryFilter _selectedFilter = LibraryFilter.all;
+  late LibraryFilter _selectedFilter;
   LibrarySort _selectedSort = LibrarySort.recent;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFilter = widget.initialFilter;
+  }
+
+  @override
+  void didUpdateWidget(LibraryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialFilter != widget.initialFilter) {
+      _selectedFilter = widget.initialFilter;
+    }
+  }
 
   void _onFilterSelected(LibraryFilter filter) {
     setState(() {

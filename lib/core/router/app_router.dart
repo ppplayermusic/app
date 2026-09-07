@@ -43,8 +43,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/library',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: LibraryScreen()),
+            pageBuilder: (context, state) {
+              final filterStr = state.uri.queryParameters['filter'];
+              final filter = filterStr == 'playlists' 
+                ? LibraryFilter.playlists 
+                : LibraryFilter.all;
+              return NoTransitionPage(child: LibraryScreen(initialFilter: filter));
+            },
           ),
           GoRoute(
             path: '/artist/:id',
