@@ -186,21 +186,18 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
   @override
   void initState() {
     super.initState();
+    // One-time Brand Ignition transition on Play (650ms forward, 250ms reverse on Pause)
     _transitionController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 360),
+      duration: const Duration(milliseconds: 650),
+      reverseDuration: const Duration(milliseconds: 250),
       value: widget.isPlaying ? 1.0 : 0.0,
     );
 
-    // 8.0-second accelerating spin-up loop:
-    // 0.00 - 0.15: Rest & gentle start (1.2s)
-    // 0.15 - 0.45: Spin slow -> accelerating to high speed (2.4s)
-    // 0.45 - 0.70: High speed "turns on" Google Material 360° perimeter line & center morphs to pause (2.0s)
-    // 0.70 - 0.85: Circle completes, closes, and contracts inward (1.2s)
-    // 0.85 - 1.00: Logo re-emerges & smoothly decelerates to rest (1.2s)
+    // Continuous 3.6-second living Material 3 Expressive undulation during playback
     _loopController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 8000),
+      duration: const Duration(milliseconds: 3600),
     );
 
     if (widget.isPlaying) {
@@ -213,11 +210,11 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
     super.didUpdateWidget(oldWidget);
     if (widget.isPlaying != oldWidget.isPlaying) {
       if (widget.isPlaying) {
-        _transitionController.forward();
+        _transitionController.forward(from: 0.0);
         _loopController.repeat();
       } else {
         _transitionController.reverse();
-        _loopController.animateTo(0.0, duration: const Duration(milliseconds: 250));
+        _loopController.stop();
       }
     }
   }
@@ -252,6 +249,7 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
       animation: Listenable.merge([_transitionController, _loopController]),
       builder: (context, _) {
         final transition = _transitionController.value;
+        final isReversing = _transitionController.status == AnimationStatus.reverse;
         final loop = _loopController.value;
 
         double logoOpacity = 0.0;
@@ -259,82 +257,92 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
         double logoScale = 1.0;
 
         double pauseOpacity = 0.0;
-        double pauseScale = 1.0;
+        double pauseMorphProgress = 0.0;
 
         double lineSweepAngle = 0.0; // 0 -> 2*pi
         double lineOpacity = 0.0;
         double morphProgress = 0.0; // 0 -> 1
-        double lineContractProgress = 0.0; // 0 -> 1
+        double lineContractProgress = 0.0;
 
-        if (loop < 0.15) {
-          // Phase 1: Rest & gentle initial creep (0% - 15%)
-          final p = loop / 0.15;
-          logoOpacity = 1.0;
-          // Very gentle slow initial movement
-          logoAngle = p * (math.pi / 8);
-          logoScale = 1.0 + (0.02 * math.sin(p * math.pi));
-          pauseOpacity = 0.0;
-          lineOpacity = 0.0;
-          morphProgress = 0.0;
-        } else if (loop < 0.45) {
-          // Phase 2: Accelerating spin-up ("spinning slow and increasing speed") (15% - 45%)
-          final p = (loop - 0.15) / 0.30;
-          // Ease-in quadratic curve: begins slow, accelerates rapidly to high angular velocity!
-          final accel = Curves.easeInCubic.transform(p);
-          logoOpacity = 1.0;
-          // Spins through 2 full rotations, accelerating smoothly
-          logoAngle = (math.pi / 8) + (accel * 4 * math.pi);
-          logoScale = 1.0 + (0.08 * accel); // Slight expansion from centrifugal speed
-          pauseOpacity = 0.0;
-          lineOpacity = 0.0;
-          morphProgress = 0.0;
-        } else if (loop < 0.70) {
-          // Phase 3: At peak speed, the spin "turns on" the Material 3 Expressive morphing line (45% - 70%)
-          final p = (loop - 0.45) / 0.25;
-          final easeSweep = Curves.fastOutSlowIn.transform(p);
+        double pointOpacity = 0.0;
+        double pointScale = 1.0;
+        double spiralProgress = 0.0;
+        double spiralTrailFade = 0.0;
 
-          lineOpacity = 1.0;
-          lineSweepAngle = easeSweep * 2 * math.pi;
-          lineContractProgress = 0.0;
-          morphProgress = p;
+        double pulseRadius = 0.0;
+        double pulseOpacity = 0.0;
 
-          // In the center, spinning logo smoothly transforms into the springy Pause shape:
-          final morphP = (p * 2.2).clamp(0.0, 1.0);
-          final morphEase = Curves.easeInOutCubic.transform(morphP);
-          logoOpacity = (1.0 - morphEase);
-          logoAngle = (math.pi / 8) + (4 * math.pi) + (p * 2 * math.pi); // Continues gliding
-          pauseOpacity = morphEase;
-          pauseScale = 0.86 + (0.14 * Curves.easeOutBack.transform(morphP));
-        } else if (loop < 0.85) {
-          // Phase 4: Full shape completes 360°, closes, and contracts inward (70% - 85%)
-          final p = (loop - 0.70) / 0.15;
-          final easeContract = Curves.easeInOutCubic.transform(p);
-
+        if (isReversing) {
+          // Instant direct reverse to Play without logo interruption
+          pauseOpacity = transition;
+          pauseMorphProgress = transition;
+          lineOpacity = transition;
           lineSweepAngle = 2 * math.pi;
-          lineContractProgress = easeContract;
-          lineOpacity = 1.0 - easeContract;
-          morphProgress = 1.0;
+          morphProgress = loop;
+          logoOpacity = 0.0;
+        } else if (transition >= 0.999) {
+          // Steady Playing State: Permanent, stable Pause bars & living M3 perimeter line
+          pauseOpacity = 1.0;
+          pauseMorphProgress = 1.0;
+          lineOpacity = 1.0;
+          lineSweepAngle = 2 * math.pi;
+          morphProgress = loop;
+          logoOpacity = 0.0;
+          pointOpacity = 0.0;
+        } else if (transition > 0.001) {
+          // One-Time "Brand Ignition" Burst (0.0 -> 1.0)
+          final p = transition;
 
-          // Center pause shape dissolves out as energy collapses:
-          pauseOpacity = 1.0 - easeContract;
-          pauseScale = 1.0 - (0.08 * easeContract);
+          if (p < 0.20) {
+            // Step 1: Play fades out, PPPlayer Logo blooms in
+            final subP = p / 0.20;
+            logoOpacity = subP;
+            logoScale = Curves.easeOutBack.transform(subP).clamp(0.0, 1.15);
+            logoAngle = 0.0;
+            pauseOpacity = 0.0;
+            lineOpacity = 0.0;
+          } else if (p < 0.60) {
+            // Step 2: PPPlayer Logo accelerating 360° spin & collapse into singularity
+            final spinP = (p - 0.20) / 0.40;
+            final accel = Curves.easeInOutCubic.transform(spinP);
+            logoAngle = accel * 2 * math.pi;
 
-          // PPPlayer logo emerges from the center energy:
-          logoOpacity = easeContract;
-          logoScale = 0.86 + (0.14 * easeContract);
-          logoAngle = 0.0;
-        } else {
-          // Phase 5: PPPlayer Logo re-emerges & smoothly decelerates to rest (85% - 100%)
-          final p = (loop - 0.85) / 0.15;
-          final decel = Curves.easeOutCubic.transform(p);
+            if (spinP < 0.50) {
+              logoOpacity = 1.0;
+              logoScale = 1.0 + (0.06 * accel);
+              pointOpacity = 0.0;
+            } else {
+              final collapse = (spinP - 0.50) / 0.50;
+              logoOpacity = (1.0 - collapse).clamp(0.0, 1.0);
+              logoScale = (1.0 - Curves.easeInOutCubic.transform(collapse)).clamp(0.01, 1.0);
+              pointOpacity = Curves.easeInQuad.transform(collapse);
+              pointScale = Curves.easeOutBack.transform(collapse).clamp(0.0, 1.4);
 
-          logoOpacity = 1.0;
-          logoScale = 0.86 + (0.14 * Curves.easeOutBack.transform(p));
-          // Smooth final deceleration to 0
-          logoAngle = (1.0 - decel) * (math.pi / 6);
-          pauseOpacity = 0.0;
-          lineOpacity = 0.0;
-          morphProgress = 0.0;
+              // Soft acoustic kinetic shockwave at the singularity collapse instant
+              if (collapse >= 0.35) {
+                final pulseP = (collapse - 0.35) / 0.65;
+                pulseRadius = pulseP * (widget.size * 0.44);
+                pulseOpacity = (1.0 - pulseP) * 0.40;
+              }
+            }
+          } else {
+            // Step 3: Singularity splits into permanent Pause bars & shoots energy to rim
+            final splitP = (p - 0.60) / 0.40;
+            logoOpacity = 0.0;
+            pauseOpacity = 1.0;
+            pauseMorphProgress = Curves.easeOutBack.transform(splitP).clamp(0.0, 1.0);
+
+            pointOpacity = (1.0 - splitP).clamp(0.0, 1.0);
+            pointScale = 1.0 - (0.5 * splitP);
+
+            // Archimedean spiral shoots to 12 o'clock and dissolves into perimeter sweep
+            spiralProgress = Curves.easeOutCubic.transform(splitP);
+            spiralTrailFade = (1.0 - splitP * 0.7).clamp(0.0, 1.0);
+
+            lineOpacity = splitP;
+            lineSweepAngle = splitP * 2 * math.pi;
+            morphProgress = splitP;
+          }
         }
 
         // Base container background:
@@ -356,7 +364,7 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
             alignment: Alignment.center,
             fit: StackFit.expand,
             children: [
-              // Fluid Morph Painter (Draws the base container and the Material 3 Expressive morphing line)
+              // Fluid Morph Painter (Draws base container, morphing line, pause bars, and energy point)
               CustomPaint(
                 size: Size(widget.size, widget.size),
                 painter: _MaterialSpinLinePainter(
@@ -367,18 +375,29 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
                   lineSweepAngle: lineSweepAngle,
                   morphProgress: morphProgress,
                   lineContractProgress: lineContractProgress,
+                  pointOpacity: pointOpacity * transition,
+                  pointScale: pointScale,
+                  spiralProgress: spiralProgress,
+                  spiralTrailFade: spiralTrailFade * transition,
+                  pauseOpacity: pauseOpacity * transition,
+                  pauseMorphProgress: pauseMorphProgress,
+                  pulseRadius: pulseRadius,
+                  pulseOpacity: pulseOpacity * transition,
                 ),
               ),
 
-              // Center Content: Paused Play Icon / Spinning Logo / Morphing Pause
+              // Center Content: Paused Play Icon / Ignition PPPlayer Logo
               Center(
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     // 1. Paused State: Solid play icon
-                    if (transition < 0.99)
+                    if (transition < 0.22 || isReversing)
                       Opacity(
-                        opacity: (1.0 - transition).clamp(0.0, 1.0),
+                        opacity: (isReversing
+                                ? (1.0 - transition)
+                                : (transition < 0.20 ? (1.0 - transition / 0.20) : 0.0))
+                            .clamp(0.0, 1.0),
                         child: Transform.scale(
                           scale: 1.0 - (0.15 * transition),
                           child: Padding(
@@ -392,10 +411,10 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
                         ),
                       ),
 
-                    // 2. Playing State: Spinning & Accelerating PPPlayer Logo
-                    if (transition > 0.01 && logoOpacity > 0.01)
+                    // 2. Ignition State: Spinning PPPlayer Logo
+                    if (logoOpacity > 0.01)
                       Opacity(
-                        opacity: (logoOpacity * transition).clamp(0.0, 1.0),
+                        opacity: logoOpacity.clamp(0.0, 1.0),
                         child: Transform.scale(
                           scale: logoScale,
                           child: Transform.rotate(
@@ -409,25 +428,11 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
                           ),
                         ),
                       ),
-
-                    // 3. Playing State: Transformed Pause Glyph
-                    if (transition > 0.01 && pauseOpacity > 0.01)
-                      Opacity(
-                        opacity: (pauseOpacity * transition).clamp(0.0, 1.0),
-                        child: Transform.scale(
-                          scale: pauseScale,
-                          child: Icon(
-                            Icons.pause_rounded,
-                            size: iconSize * 0.95,
-                            color: primaryThemeColor,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),
 
-              // Hover Overlay: Immediate Pause Affordance
+              // Hover Overlay: Subtle Accent Glow
               if (transition > 0.5)
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 160),
@@ -435,18 +440,11 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
                   curve: Curves.easeOut,
                   child: Center(
                     child: Container(
-                      width: widget.size * 0.76,
-                      height: widget.size * 0.76,
+                      width: widget.size * 0.88,
+                      height: widget.size * 0.88,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.black.withValues(alpha: 0.60),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.pause_rounded,
-                          size: iconSize * 0.90,
-                          color: Colors.white,
-                        ),
+                        color: primaryThemeColor.withValues(alpha: 0.12),
                       ),
                     ),
                   ),
@@ -486,10 +484,11 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
 
 /// Custom painter that executes Material 3 Expressive dynamic shape morphing:
 /// - Base smooth circular disc
-/// - Faint 360° M3 organic morphing track (clover -> squircle -> fluid wave)
-/// - Active traveling line flexing and morphing elastically along the lobes
-/// - Glowing leading comet head with radial soft blur
-/// - Elastic inward contraction
+/// - Fluid M3 organic morphing track (clover -> squircle -> fluid wave) with luminous filament glow
+/// - Active traveling line with radiant leading comet head and soft blur halo
+/// - Liquid mercury pause bars that separate with an organic droplet meniscus (metaball bridge)
+/// - Acoustic shockwave ripple with soft gaussian atmospheric diffusion
+/// - Curved Archimedean spiral vortex launch with smooth vapor trail dissolution
 class _MaterialSpinLinePainter extends CustomPainter {
   final double transition;
   final Color backgroundColor;
@@ -498,6 +497,14 @@ class _MaterialSpinLinePainter extends CustomPainter {
   final double lineSweepAngle; // 0.0 -> 2*pi
   final double morphProgress; // 0.0 -> 1.0 (clover -> squircle -> fluid wave -> circle)
   final double lineContractProgress; // 0.0 -> 1.0
+  final double pointOpacity; // 0.0 -> 1.0
+  final double pointScale;
+  final double spiralProgress; // 0.0 -> 1.0 (vortex spiral trajectory)
+  final double spiralTrailFade; // 0.0 -> 1.0 (vapor trail dissolution into rim)
+  final double pauseOpacity; // 0.0 -> 1.0
+  final double pauseMorphProgress; // 0.0 -> 1.0 (magnetic capsule split with liquid bridge)
+  final double pulseRadius;
+  final double pulseOpacity;
 
   _MaterialSpinLinePainter({
     required this.transition,
@@ -507,6 +514,14 @@ class _MaterialSpinLinePainter extends CustomPainter {
     required this.lineSweepAngle,
     required this.morphProgress,
     required this.lineContractProgress,
+    required this.pointOpacity,
+    required this.pointScale,
+    required this.spiralProgress,
+    required this.spiralTrailFade,
+    required this.pauseOpacity,
+    required this.pauseMorphProgress,
+    required this.pulseRadius,
+    required this.pulseOpacity,
   });
 
   /// Computes the dynamic Material 3 Expressive morphing radius at any given angle theta.
@@ -557,51 +572,201 @@ class _MaterialSpinLinePainter extends CustomPainter {
       canvas.drawCircle(center, discRadius, basePaint);
     }
 
-    // 2. Draw Material 3 Expressive Dynamic Morphing Line (only while active)
-    if (lineOpacity > 0.01 && lineSweepAngle > 0.01) {
-      const startAngle = -math.pi / 2;
-        final strokePaint = Paint()
-          ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round
-          ..strokeWidth = 2.8;
+    // 2. Draw Kinetic Energy Shockwave Ripple (soft acoustic atmospheric glow)
+    if (pulseOpacity > 0.01 && pulseRadius > 0.0) {
+      final pulsePaint = Paint()
+        ..color = color.withValues(alpha: (pulseOpacity * transition).clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.2
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
+      canvas.drawCircle(center, pulseRadius, pulsePaint);
 
-        final linePath = Path();
-        final lineSamples = (80 * (lineSweepAngle / (2 * math.pi))).clamp(8, 120).toInt();
-        for (int i = 0; i <= lineSamples; i++) {
-          final fraction = i / lineSamples;
-          final theta = startAngle + lineSweepAngle * fraction;
-          final r = _computeRadius(theta: theta, baseRadius: baseRadius);
-          final x = center.dx + r * math.cos(theta);
-          final y = center.dy + r * math.sin(theta);
-          if (i == 0) {
-            linePath.moveTo(x, y);
-          } else {
-            linePath.lineTo(x, y);
-          }
-        }
-        canvas.drawPath(linePath, strokePaint);
+      final pulseCorePaint = Paint()
+        ..color = color.withValues(alpha: (pulseOpacity * transition * 0.6).clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0;
+      canvas.drawCircle(center, pulseRadius, pulseCorePaint);
+    }
 
-        // Glowing leading tip with soft radial aura
-        if (lineSweepAngle < (2 * math.pi - 0.04) && lineContractProgress < 0.05) {
-          final headAngle = startAngle + lineSweepAngle;
-          final headR = _computeRadius(theta: headAngle, baseRadius: baseRadius);
-          final tipX = center.dx + headR * math.cos(headAngle);
-          final tipY = center.dy + headR * math.sin(headAngle);
+    // 3. Draw Center Material Pause Bars (magnetic split/fusion with liquid droplet meniscus)
+    if (pauseOpacity > 0.01) {
+      final barWidth = size.width * 0.082;
+      final barHeight = size.width * 0.30;
+      final maxSpread = size.width * 0.105;
+      final cornerRadius = Radius.circular(barWidth / 2);
 
-          final tipPaint = Paint()
-            ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
-            ..style = PaintingStyle.fill;
-          canvas.drawCircle(Offset(tipX, tipY), 2.8, tipPaint);
+      final currentSpread = maxSpread * pauseMorphProgress.clamp(0.0, 1.2);
+      final currentHeight = barHeight * (0.35 + 0.65 * pauseMorphProgress.clamp(0.0, 1.0));
 
-          final tipGlow = Paint()
-            ..color = color.withValues(alpha: 0.55 * lineOpacity.clamp(0.0, 1.0))
-            ..style = PaintingStyle.fill
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
-          canvas.drawCircle(Offset(tipX, tipY), 4.8, tipGlow);
-        }
+      final barPaint = Paint()
+        ..color = color.withValues(alpha: (pauseOpacity * transition).clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill;
+
+      // Left bar
+      final leftRect = Rect.fromCenter(
+        center: Offset(center.dx - currentSpread, center.dy),
+        width: barWidth,
+        height: currentHeight,
+      );
+      canvas.drawRRect(RRect.fromRectAndRadius(leftRect, cornerRadius), barPaint);
+
+      // Right bar
+      final rightRect = Rect.fromCenter(
+        center: Offset(center.dx + currentSpread, center.dy),
+        width: barWidth,
+        height: currentHeight,
+      );
+      canvas.drawRRect(RRect.fromRectAndRadius(rightRect, cornerRadius), barPaint);
+
+      // Liquid Droplet Meniscus (Metaball connective bridge while splitting or fusing)
+      final spreadRatio = (currentSpread / maxSpread).clamp(0.0, 1.2);
+      if (spreadRatio < 0.70) {
+        final bridgeStrength = (1.0 - (spreadRatio / 0.70)).clamp(0.0, 1.0);
+        final bridgeHeight = barHeight * 0.36 * math.pow(bridgeStrength, 1.4);
+        final bridgeWidth = (currentSpread * 2.2).clamp(barWidth, maxSpread * 1.8);
+        final bridgeRect = Rect.fromCenter(
+          center: center,
+          width: bridgeWidth,
+          height: bridgeHeight,
+        );
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(bridgeRect, Radius.circular(bridgeHeight / 2)),
+          barPaint,
+        );
       }
     }
+
+    // 4. Draw Material 3 Expressive Dynamic Morphing Line (with luminous filament glow)
+    if (lineOpacity > 0.01 && lineSweepAngle > 0.01) {
+      const startAngle = -math.pi / 2;
+
+      final linePath = Path();
+      final lineSamples = (90 * (lineSweepAngle / (2 * math.pi))).clamp(10, 140).toInt();
+      for (int i = 0; i <= lineSamples; i++) {
+        final fraction = i / lineSamples;
+        final theta = startAngle + lineSweepAngle * fraction;
+        final r = _computeRadius(theta: theta, baseRadius: baseRadius);
+        final x = center.dx + r * math.cos(theta);
+        final y = center.dy + r * math.sin(theta);
+        if (i == 0) {
+          linePath.moveTo(x, y);
+        } else {
+          linePath.lineTo(x, y);
+        }
+      }
+
+      // Luminous ambient filament glow
+      final glowPaint = Paint()
+        ..color = color.withValues(alpha: (0.35 * lineOpacity).clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 4.8
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.5);
+      canvas.drawPath(linePath, glowPaint);
+
+      // Sharp central filament line
+      final strokePaint = Paint()
+        ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 2.8;
+      canvas.drawPath(linePath, strokePaint);
+
+      // Radiant traveling bead aura along the contour
+      double headAngle;
+      if (lineSweepAngle < (2 * math.pi - 0.04)) {
+        headAngle = startAngle + lineSweepAngle;
+      } else {
+        // Continuous orbit during steady playback
+        headAngle = startAngle + (morphProgress * 2 * math.pi);
+      }
+      final headR = _computeRadius(theta: headAngle, baseRadius: baseRadius);
+      final tipX = center.dx + headR * math.cos(headAngle);
+      final tipY = center.dy + headR * math.sin(headAngle);
+
+      final tipGlow = Paint()
+        ..color = color.withValues(alpha: (0.65 * lineOpacity).clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
+      canvas.drawCircle(Offset(tipX, tipY), 5.2, tipGlow);
+
+      final tipPaint = Paint()
+        ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(Offset(tipX, tipY), 3.0, tipPaint);
+    }
+
+    // 5. Draw Radiant Energy Point & Curved Spiral Vortex Launch Trajectory
+    final effectivePointOpacity = pointOpacity.clamp(0.0, 1.0);
+    final effectiveSpiralFade = (spiralTrailFade * transition).clamp(0.0, 1.0);
+
+    // Luminous curved spiral launch vapor trail (dissolves gracefully into perimeter)
+    if (effectiveSpiralFade > 0.01 && spiralProgress > 0.01) {
+      final spiralPath = Path();
+      const steps = 24;
+      for (int i = 0; i <= steps; i++) {
+        final frac = (i / steps) * spiralProgress;
+        final a = -math.pi / 2 - (1.0 - frac) * (0.85 * math.pi);
+        final r = frac * baseRadius;
+        final sx = center.dx + r * math.cos(a);
+        final sy = center.dy + r * math.sin(a);
+        if (i == 0) {
+          spiralPath.moveTo(sx, sy);
+        } else {
+          spiralPath.lineTo(sx, sy);
+        }
+      }
+
+      // Soft vapor glow
+      final trailGlow = Paint()
+        ..color = color.withValues(alpha: (0.30 * effectiveSpiralFade).clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 4.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
+      canvas.drawPath(spiralPath, trailGlow);
+
+      // Core vapor filament
+      final trailPaint = Paint()
+        ..color = color.withValues(alpha: (0.65 * effectiveSpiralFade).clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 2.4;
+      canvas.drawPath(spiralPath, trailPaint);
+    }
+
+    // Central / travelling radiant energy singularity
+    if (effectivePointOpacity > 0.01) {
+      Offset pointCenter;
+      if (spiralProgress > 0.001 && spiralProgress < 0.999) {
+        final spiralAngle = -math.pi / 2 - (1.0 - spiralProgress) * (0.85 * math.pi);
+        final spiralRadius = spiralProgress * baseRadius;
+        pointCenter = Offset(
+          center.dx + spiralRadius * math.cos(spiralAngle),
+          center.dy + spiralRadius * math.sin(spiralAngle),
+        );
+      } else if (spiralProgress >= 0.999) {
+        pointCenter = Offset(center.dx, center.dy - baseRadius);
+      } else {
+        pointCenter = center;
+      }
+
+      final pointRadius = 3.4 * pointScale;
+
+      // Radiant glowing aura
+      final pointGlow = Paint()
+        ..color = color.withValues(alpha: (0.70 * effectivePointOpacity).clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.5);
+      canvas.drawCircle(pointCenter, pointRadius * 2.4, pointGlow);
+
+      // Solid central core
+      final pointPaint = Paint()
+        ..color = color.withValues(alpha: effectivePointOpacity.clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(pointCenter, pointRadius, pointPaint);
+    }
+  }
 
   @override
   bool shouldRepaint(covariant _MaterialSpinLinePainter oldDelegate) {
@@ -611,7 +776,15 @@ class _MaterialSpinLinePainter extends CustomPainter {
         oldDelegate.lineOpacity != lineOpacity ||
         oldDelegate.lineSweepAngle != lineSweepAngle ||
         oldDelegate.morphProgress != morphProgress ||
-        oldDelegate.lineContractProgress != lineContractProgress;
+        oldDelegate.lineContractProgress != lineContractProgress ||
+        oldDelegate.pointOpacity != pointOpacity ||
+        oldDelegate.pointScale != pointScale ||
+        oldDelegate.spiralProgress != spiralProgress ||
+        oldDelegate.spiralTrailFade != spiralTrailFade ||
+        oldDelegate.pauseOpacity != pauseOpacity ||
+        oldDelegate.pauseMorphProgress != pauseMorphProgress ||
+        oldDelegate.pulseRadius != pulseRadius ||
+        oldDelegate.pulseOpacity != pulseOpacity;
   }
 }
 
