@@ -8,6 +8,7 @@ import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../shared/widgets/animated_equalizer.dart';
 import '../../core/services/favorites_provider.dart';
 
 final radioTracksProvider = FutureProvider.family<List<Track>, ({String type, String id})>((ref, arg) async {
@@ -429,33 +430,64 @@ class RadioDetailsScreen extends ConsumerWidget {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final track = tracks[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 32,
-                                child: Text(
-                                  (index + 1).toString().padLeft(2, '0'),
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface.withValues(alpha: 0.2),
-                                    fontSize: 13,
-                                    fontFamily: 'monospace',
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: -0.5,
+                        return Consumer(
+                          builder: (context, ref, child) {
+                            final currentTrack = ref.watch(playerProvider.select((s) => s.currentTrack));
+                            final isActive = currentTrack != null &&
+                                ((currentTrack.spotifyId.isNotEmpty && currentTrack.spotifyId == track.spotifyId) ||
+                                 (currentTrack.name.toLowerCase() == track.name.toLowerCase() &&
+                                  currentTrack.artistName.toLowerCase() == track.artistName.toLowerCase()));
+
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: isActive
+                                    ? colorScheme.primary.withValues(alpha: 0.10)
+                                    : Colors.transparent,
+                                border: Border.all(
+                                  color: isActive
+                                      ? colorScheme.primary.withValues(alpha: 0.35)
+                                      : Colors.transparent,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 32,
+                                    child: isActive
+                                        ? Center(
+                                            child: AnimatedEqualizer(
+                                              color: colorScheme.primary,
+                                            ),
+                                          )
+                                        : Text(
+                                            (index + 1).toString().padLeft(2, '0'),
+                                            style: TextStyle(
+                                              color: colorScheme.onSurface.withValues(alpha: 0.2),
+                                              fontSize: 13,
+                                              fontFamily: 'monospace',
+                                              fontWeight: FontWeight.w900,
+                                              letterSpacing: -0.5,
+                                            ),
+                                          ),
                                   ),
-                                ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: TrackTile(
+                                      track: track,
+                                      isActive: isActive,
+                                      showMore: false,
+                                      onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: TrackTile(
-                                  track: track,
-                                  showMore: false,
-                                  onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         ).animate(delay: (200 + index * 40).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
                       },
                       childCount: tracks.length,
