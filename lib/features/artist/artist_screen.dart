@@ -7,7 +7,6 @@ import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
-import '../../shared/widgets/animated_equalizer.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
@@ -463,62 +462,10 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                             child: Column(
                               children: [
                                 for (int i = 0; i < filteredTracks.length; i++) ...[
-                                  AdaptiveBlur(
-                                    sigmaX: 10,
-                                    sigmaY: 10,
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Container(
-                                      margin: const EdgeInsets.only(bottom: 8),
-                                      decoration: BoxDecoration(
-                                        color: colorScheme.onSurface.withValues(alpha: 0.03),
-                                        borderRadius: BorderRadius.circular(16),
-                                        border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.05), width: 0.5),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            colorScheme.onSurface.withValues(alpha: 0.05),
-                                            colorScheme.onSurface.withValues(alpha: 0.01),
-                                          ],
-                                        ),
-                                      ),
-                                      child: Consumer(
-                                        builder: (context, ref, child) {
-                                          final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
-                                          final isActive = currentTrackId == filteredTracks[i].spotifyId;
-
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-                                            child: Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: 48,
-                                                  child: isActive
-                                                      ? Center(child: AnimatedEqualizer(color: colorScheme.primary))
-                                                      : Text(
-                                                          '${i + 1}',
-                                                          textAlign: TextAlign.center,
-                                                          style: TextStyle(
-                                                            color: colorScheme.onSurface.withValues(alpha: 0.2),
-                                                            fontSize: 12,
-                                                            fontFamily: 'monospace',
-                                                            fontWeight: FontWeight.w900,
-                                                          ),
-                                                        ),
-                                                ),
-                                                Expanded(
-                                                  child: TrackTile(
-                                                    track: filteredTracks[i],
-                                                    isActive: isActive,
-                                                    onTap: () => ref.read(playerProvider.notifier).playTrack(filteredTracks[i], queue: filteredTracks),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
+                                  TrackTile(
+                                    index: i + 1,
+                                    track: filteredTracks[i],
+                                    onTap: () => ref.read(playerProvider.notifier).playTrack(filteredTracks[i], queue: filteredTracks),
                                   ).animate(delay: (i * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0),
                                 ],
                               ],

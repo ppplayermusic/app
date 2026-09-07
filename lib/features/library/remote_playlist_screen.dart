@@ -394,36 +394,15 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final track = filteredTracks[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 2),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 32,
-                              child: Text(
-                                '${index + 1}',
-                                style: TextStyle(
-                                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                                  fontSize: 14,
-                                  fontFamily: 'monospace',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
+                      return TrackTile(
+                        index: index + 1,
+                        track: track,
+                        onTap: () => ref
+                            .read(playerProvider.notifier)
+                            .playTrack(
+                              track,
+                              queue: filteredTracks,
                             ),
-                            Expanded(
-                              child: TrackTile(
-                                track: track,
-                                onTap: () => ref
-                                    .read(playerProvider.notifier)
-                                    .playTrack(
-                                      track,
-                                      queue: filteredTracks,
-                                    ),
-                              ),
-                            ),
-                          ],
-                        ),
                       )
                           .animate(delay: (index * 30).ms)
                           .fadeIn(duration: 400.ms)

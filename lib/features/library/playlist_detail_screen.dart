@@ -11,7 +11,6 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
 import '../../core/api/spotify_client.dart';
 import '../../shared/widgets/adaptive_blur.dart';
-import '../../shared/widgets/animated_equalizer.dart';
 import 'package:drift/drift.dart' show Value;
 
 class PlaylistDetailScreen extends ConsumerStatefulWidget {
@@ -566,43 +565,13 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
           return ReorderableDelayedDragStartListener(
             key: ValueKey(track.spotifyId),
             index: index,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-              child: Consumer(
-                builder: (context, ref, child) {
-                  final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
-                  final isActive = currentTrackId == track.spotifyId;
-                  
-                  return Row(
-                    children: [
-                      SizedBox(
-                        width: 48,
-                        child: isActive
-                            ? Center(child: AnimatedEqualizer(color: colorScheme.primary))
-                            : Text(
-                                '${index + 1}',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: colorScheme.onSurfaceVariant,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                      ),
-                      Expanded(
-                        child: TrackTile(
-                          track: track,
-                          isActive: isActive,
-                          onTap: () => ref.read(playerProvider.notifier).playTrack(
-                                track,
-                                queue: modelTracks,
-                              ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
+            child: TrackTile(
+              index: index + 1,
+              track: track,
+              onTap: () => ref.read(playerProvider.notifier).playTrack(
+                    track,
+                    queue: modelTracks,
+                  ),
             ).animate().fadeIn(delay: (index * 30).ms).slideX(begin: 0.05),
           );
         },

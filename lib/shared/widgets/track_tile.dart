@@ -10,136 +10,39 @@ import '../../core/models/track.dart' as model;
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/artists_links.dart';
+import '../../core/player/player_provider.dart';
+import '../../shared/widgets/animated_equalizer.dart';
 
-class TrackTile extends ConsumerWidget {
+class TrackTile extends ConsumerStatefulWidget {
   const TrackTile({
     super.key,
     required this.track,
     required this.onTap,
+    this.index,
     this.trailing,
     this.showImage = true,
     this.showSubtitle = true,
     this.showMore = true,
-    this.isActive = false,
+    this.isActive,
+    this.margin,
+    this.padding,
   });
 
   final model.Track track;
   final VoidCallback onTap;
+  final int? index;
   final Widget? trailing;
   final bool showImage;
   final bool showSubtitle;
   final bool showMore;
-  final bool isActive;
+  final bool? isActive;
+  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? padding;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return TactileTap(
-      onTap: onTap,
-      scaleDown: 0.98,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-        child: Row(
-          children: [
-            if (showImage) ...[
-              const SizedBox(width: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: track.albumImage != null
-                    ? CachedNetworkImage(
-                        imageUrl: track.albumImage!,
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                            width: 48, height: 48, color: Theme.of(context).colorScheme.surfaceContainerHighest),
-                        errorWidget: (context, url, error) =>
-                            Icon(Icons.music_note, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      )
-                    : Container(
-                        width: 48,
-                        height: 48,
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                        child: Icon(Icons.music_note,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      ),
-              ),
-              const SizedBox(width: 16),
-            ],
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    track.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                  if (showSubtitle) ...[
-                    const SizedBox(height: 4),
-                    ArtistsLinks(
-                      track: track,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Consumer(
-                  builder: (context, ref, child) {
-                    final isFav = ref.watch(favoritesStatusProvider((FavoriteType.track, track.spotifyId))).value ?? track.isFavorite;
-                    return TactileIconButton(
-                      icon: isFav ? Icons.favorite : Icons.favorite_border,
-                      color: isFav
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                      size: 20,
-                      onTap: () {
-                        ref.read(favoritesControllerProvider.notifier).toggleTrackFavorite(track, isFav);
-                      },
-                    ).animate(target: isFav ? 1 : 0).scale(
-                      begin: const Offset(1, 1),
-                      end: const Offset(1.2, 1.2),
-                      duration: 200.ms,
-                      curve: Curves.easeOutBack,
-                    ).then().scale(
-                      begin: const Offset(1.2, 1.2),
-                      end: const Offset(1, 1),
-                      duration: 150.ms,
-                    );
-                  },
-                ),
-                if (showMore)
-                  trailing ??
-                      TactileIconButton(
-                        icon: Icons.more_vert,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-                        size: 20,
-                        onTap: () {
-                          _showMoreMenu(context, ref);
-                        },
-                      ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  ConsumerState<TrackTile> createState() => _TrackTileState();
 
-  void _showMoreMenu(BuildContext context, WidgetRef ref) {
+  static void showMoreMenu(BuildContext context, WidgetRef ref, model.Track track) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -418,6 +321,196 @@ class TrackTile extends ConsumerWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TrackTileState extends ConsumerState<TrackTile> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final currentTrack = ref.watch(playerProvider.select((s) => s.currentTrack));
+    final effectiveIsActive = widget.isActive ??
+        (currentTrack != null &&
+            ((currentTrack.spotifyId.isNotEmpty && currentTrack.spotifyId == widget.track.spotifyId) ||
+             (currentTrack.name.toLowerCase() == widget.track.name.toLowerCase() &&
+              currentTrack.artistName.toLowerCase() == widget.track.artistName.toLowerCase())));
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: TactileTap(
+        onTap: widget.onTap,
+        scaleDown: 0.98,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          margin: widget.margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+          padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: effectiveIsActive
+                ? colorScheme.primary.withValues(alpha: 0.10)
+                : (_isHovered
+                    ? colorScheme.onSurface.withValues(alpha: 0.04)
+                    : Colors.transparent),
+            border: Border.all(
+              color: effectiveIsActive
+                  ? colorScheme.primary.withValues(alpha: 0.35)
+                  : (_isHovered
+                      ? colorScheme.onSurface.withValues(alpha: 0.06)
+                      : Colors.transparent),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              if (widget.index != null) ...[
+                SizedBox(
+                  width: 32,
+                  child: effectiveIsActive
+                      ? Center(
+                          child: AnimatedEqualizer(
+                            color: colorScheme.primary,
+                          ),
+                        )
+                      : Text(
+                          widget.index.toString().padLeft(2, '0'),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: colorScheme.onSurface.withValues(alpha: 0.22),
+                            fontSize: 13,
+                            fontFamily: 'monospace',
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                ),
+                const SizedBox(width: 8),
+              ],
+              if (widget.showImage) ...[
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: widget.track.albumImage != null
+                          ? CachedNetworkImage(
+                              imageUrl: widget.track.albumImage!,
+                              width: 46,
+                              height: 46,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                width: 46,
+                                height: 46,
+                                color: colorScheme.surfaceContainerHighest,
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                width: 46,
+                                height: 46,
+                                color: colorScheme.surfaceContainerHighest,
+                                child: Icon(Icons.music_note, color: colorScheme.onSurfaceVariant),
+                              ),
+                            )
+                          : Container(
+                              width: 46,
+                              height: 46,
+                              color: colorScheme.surfaceContainerHighest,
+                              child: Icon(Icons.music_note, color: colorScheme.onSurfaceVariant),
+                            ),
+                    ),
+                    if (widget.index == null && effectiveIsActive)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.55),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Center(
+                            child: AnimatedEqualizer(color: colorScheme.primary),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 14),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.track.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: effectiveIsActive ? colorScheme.primary : colorScheme.onSurface,
+                        fontSize: 15,
+                        fontWeight: effectiveIsActive ? FontWeight.w600 : FontWeight.w500,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    if (widget.showSubtitle) ...[
+                      const SizedBox(height: 3),
+                      ArtistsLinks(
+                        track: widget.track,
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final isFav = ref.watch(favoritesStatusProvider((FavoriteType.track, widget.track.spotifyId))).value ?? widget.track.isFavorite;
+                      return TactileIconButton(
+                        icon: isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                        size: 20,
+                        onTap: () {
+                          ref.read(favoritesControllerProvider.notifier).toggleTrackFavorite(widget.track, isFav);
+                        },
+                      ).animate(target: isFav ? 1 : 0).scale(
+                        begin: const Offset(1, 1),
+                        end: const Offset(1.2, 1.2),
+                        duration: 200.ms,
+                        curve: Curves.easeOutBack,
+                      ).then().scale(
+                        begin: const Offset(1.2, 1.2),
+                        end: const Offset(1, 1),
+                        duration: 150.ms,
+                      );
+                    },
+                  ),
+                  if (widget.showMore)
+                    widget.trailing ??
+                        TactileIconButton(
+                          icon: Icons.more_vert,
+                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                          size: 20,
+                          onTap: () {
+                            TrackTile.showMoreMenu(context, ref, widget.track);
+                          },
+                        ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

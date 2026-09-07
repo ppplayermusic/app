@@ -240,10 +240,19 @@ class SpotifyClient {
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['items'] as List?) ?? [];
-    return items.map((j) {
-      final map = (j as Map<String, dynamic>)['track'] as Map<String, dynamic>;
-      return Track.fromSpotify(_sanitizeData(map));
-    }).toList();
+    final tracks = <Track>[];
+    for (final j in items) {
+      if (j is! Map<String, dynamic>) continue;
+      final trackData = j['track'];
+      if (trackData is! Map<String, dynamic>) continue;
+      if (trackData['id'] == null || trackData['name'] == null) continue;
+      try {
+        tracks.add(Track.fromSpotify(_sanitizeData(Map<String, dynamic>.from(trackData))));
+      } catch (e) {
+        debugPrint('SpotifyClient: Skipped invalid track: $e');
+      }
+    }
+    return tracks;
   }
 
   Future<List<Map<String, dynamic>>> getBrowseCategories({int limit = 20}) async {

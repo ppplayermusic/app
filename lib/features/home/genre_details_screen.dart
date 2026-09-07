@@ -10,7 +10,6 @@ import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
-import '../../shared/widgets/animated_equalizer.dart';
 
 import '../../core/providers/genre_providers.dart';
 import '../../core/theme/app_theme.dart';
@@ -306,66 +305,12 @@ class GenreDetailsScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     for (int index = 0; index < tracks.length; index++) ...[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            final currentTrack = ref.watch(playerProvider.select((s) => s.currentTrack));
-                            final track = tracks[index];
-                            final isActive = currentTrack != null &&
-                                ((currentTrack.spotifyId.isNotEmpty && currentTrack.spotifyId == track.spotifyId) ||
-                                 (currentTrack.name.toLowerCase() == track.name.toLowerCase() &&
-                                  currentTrack.artistName.toLowerCase() == track.artistName.toLowerCase()));
-
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: isActive
-                                    ? colorScheme.primary.withValues(alpha: 0.10)
-                                    : Colors.transparent,
-                                border: Border.all(
-                                  color: isActive
-                                      ? colorScheme.primary.withValues(alpha: 0.35)
-                                      : Colors.transparent,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 32,
-                                    child: isActive
-                                        ? Center(
-                                            child: AnimatedEqualizer(
-                                              color: colorScheme.primary,
-                                            ),
-                                          )
-                                        : Text(
-                                            '${index + 1}',
-                                            style: TextStyle(
-                                              color: colorScheme.onSurface.withValues(alpha: 0.4),
-                                              fontSize: 13,
-                                              fontFamily: 'monospace',
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                  ),
-                                  Expanded(
-                                    child: TrackTile(
-                                      track: track,
-                                      isActive: isActive,
-                                      onTap: () => ref
-                                          .read(playerProvider.notifier)
-                                          .playTrack(track, queue: tracks),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                      TrackTile(
+                        index: index + 1,
+                        track: tracks[index],
+                        onTap: () => ref
+                            .read(playerProvider.notifier)
+                            .playTrack(tracks[index], queue: tracks),
                       ).animate().fadeIn(delay: (200 + index * 40).ms).slideX(
                           begin: 0.05, end: 0, curve: Curves.easeOutCubic),
                     ],

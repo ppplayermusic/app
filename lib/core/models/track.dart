@@ -42,16 +42,20 @@ class Track with _$Track {
   /// Build a track from Spotify API track object
   factory Track.fromSpotify(Map<String, dynamic> json) {
     final artists = (json['artists'] as List?) ?? [];
-    final album = json['album'] as Map<String, dynamic>? ?? {};
+    final album = (json['album'] as Map<String, dynamic>?) ?? {};
     final images = (album['images'] as List?) ?? [];
     return Track(
-      spotifyId: json['id'] as String,
-      name: json['name'] as String,
-      artistId: artists.isNotEmpty ? artists.map((a) => a['id'] as String).join(',') : '',
-      artistName: artists.isNotEmpty ? artists.map((a) => a['name'] as String).join(', ') : '',
-      albumId: album['id'] as String?,
-      albumName: album['name'] as String?,
-      albumImage: images.isNotEmpty ? images[0]['url'] as String? : null,
+      spotifyId: (json['id'] as String?) ?? '',
+      name: (json['name'] as String?) ?? 'Unknown Title',
+      artistId: artists.isNotEmpty
+          ? artists.map((a) => (a is Map ? a['id']?.toString() : null) ?? '').where((id) => id.isNotEmpty).join(',')
+          : '',
+      artistName: artists.isNotEmpty
+          ? artists.map((a) => (a is Map ? a['name']?.toString() : null) ?? '').where((n) => n.isNotEmpty).join(', ')
+          : 'Unknown Artist',
+      albumId: album['id']?.toString(),
+      albumName: album['name']?.toString(),
+      albumImage: images.isNotEmpty && images[0] is Map ? (images[0] as Map)['url']?.toString() : null,
       durationMs: json['duration_ms'] as int?,
     );
   }

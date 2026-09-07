@@ -6,7 +6,6 @@ import 'dart:ui';
 import '../../core/db/app_database.dart' as db;
 import '../../core/models/track.dart' as model;
 import '../../core/player/player_provider.dart';
-import '../../shared/widgets/animated_equalizer.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
@@ -418,48 +417,15 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                   delegate: SliverChildBuilderDelegate(
                     (context, i) {
                       final track = tracks[i];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 2),
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            final currentTrackId = ref.watch(playerProvider.select((s) => s.currentTrack?.spotifyId));
-                            final isActive = currentTrackId == track.spotifyId;
-                            
-                            return Row(
-                                children: [
-                                SizedBox(
-                                  width: 48,
-                                  child: isActive
-                                      ? Center(child: AnimatedEqualizer(color: Theme.of(context).colorScheme.primary))
-                                      : Text(
-                                          '${i + 1}',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                            fontSize: 13,
-                                            fontFamily: 'monospace',
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: -1.0,
-                                          ),
-                                        ),
-                                ),
-                                Expanded(
-                                  child: TrackTile(
-                                    track: track,
-                                    isActive: isActive,
-                                    onTap: () => ref
-                                        .read(playerProvider.notifier)
-                                        .playTrack(
-                                          track,
-                                          queue: tracks,
-                                        ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
+                      return TrackTile(
+                        index: i + 1,
+                        track: track,
+                        onTap: () => ref
+                            .read(playerProvider.notifier)
+                            .playTrack(
+                              track,
+                              queue: tracks,
+                            ),
                       ).animate(delay: (i * 40).ms).fadeIn(duration: 600.ms).slideX(begin: 0.08, end: 0, curve: Curves.easeOutCubic);
                     },
                     childCount: tracks.length,
