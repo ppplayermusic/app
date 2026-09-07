@@ -15,6 +15,7 @@ import 'user_avatar.dart';
 import 'profile_modal.dart';
 import '../../core/db/app_database.dart' as db;
 import 'artists_links.dart';
+import 'context_menu/content_context_menu.dart';
 class ScaffoldWithNav extends ConsumerStatefulWidget {
   const ScaffoldWithNav({
     super.key,
@@ -527,9 +528,11 @@ class _MiniPlayerBar extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-          child: TactileTap(
-            onTap: () => context.push('/player'),
-            scaleDown: 0.98,
+          child: ContentContextMenuRegion(
+            target: TrackContextTarget(track),
+            child: TactileTap(
+              onTap: () => context.push('/player'),
+              scaleDown: 0.98,
             child: Container(
               height: 64,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -675,6 +678,7 @@ class _MiniPlayerBar extends ConsumerWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
@@ -856,13 +860,22 @@ class _DesktopSidebar extends ConsumerWidget {
                     }
                     return Column(
                       children: playlists.map((p) {
-                        return _MockPlaylistItem(
-                          title: p.name,
-                          subtitle: 'Playlist',
-                          imageUrl: p.imageUrl ?? 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(p.name)}&background=random',
-                          onTap: () {
-                            context.push('/playlist/${p.id}');
-                          },
+                        return ContentContextMenuRegion(
+                          target: PlaylistContextTarget(
+                            id: '${p.id}',
+                            name: p.name,
+                            imageUrl: p.imageUrl,
+                            isLocal: true,
+                            localId: p.id,
+                          ),
+                          child: _MockPlaylistItem(
+                            title: p.name,
+                            subtitle: 'Playlist',
+                            imageUrl: p.imageUrl ?? 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(p.name)}&background=random',
+                            onTap: () {
+                              context.push('/playlist/${p.id}');
+                            },
+                          ),
                         );
                       }).toList(),
                     );
@@ -1061,41 +1074,44 @@ class _DesktopPlayerBar extends ConsumerWidget {
                   // Left: Track Info
                   Expanded(
                     flex: 1,
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: track.albumImage ?? '',
-                            width: 56,
-                            height: 56,
-                            fit: BoxFit.cover,
+                    child: ContentContextMenuRegion(
+                      target: TrackContextTarget(track),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: CachedNetworkImage(
+                              imageUrl: track.albumImage ?? '',
+                              width: 56,
+                              height: 56,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                track.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              ArtistsLinks(
-                                track: track,
-                                style: TextStyle(
-                                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
-                                  fontSize: 12,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  track.name,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 4),
+                                ArtistsLinks(
+                                  track: track,
+                                  style: TextStyle(
+                                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   

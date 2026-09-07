@@ -10,6 +10,7 @@ import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
 
 import '../../core/providers/genre_providers.dart';
 import '../../core/theme/app_theme.dart';
@@ -400,14 +401,20 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
       );
     }
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: TactileTap(
-        onTap: () => context.push(
-            '/playlist/remote/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}'),
-        scaleDown: 0.96,
+    return ContentContextMenuRegion(
+      target: PlaylistContextTarget(
+        id: playlist['id'] as String,
+        name: playlist['name'] ?? '',
+        imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
+      ),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        cursor: SystemMouseCursors.click,
+        child: TactileTap(
+          onTap: () => context.push(
+              '/playlist/remote/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}'),
+          scaleDown: 0.96,
         child: AnimatedScale(
           scale: _isHovered ? 1.04 : 1.0,
           duration: const Duration(milliseconds: 200),
@@ -478,6 +485,7 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
           ),
         ),
       ),
+    ),
     );
   }
 }

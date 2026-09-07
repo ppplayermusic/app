@@ -17,6 +17,7 @@ import '../../shared/widgets/section_wrapper.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/profile_modal.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
 
 final newReleasesProvider = FutureProvider((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -331,6 +332,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           final artist = artists[index];
                           final imageUrl = (artist['images'] as List?)?.firstOrNull?['url'] ?? '';
                           return _ArtistCircle(
+                            id: artist['id'],
                             name: artist['name'],
                             imageUrl: imageUrl,
                             onTap: () => context.push('/artist/${artist['id']}'),
@@ -357,6 +359,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             imageAsset: mix['imageAsset'] as String,
                             color1: mix['color1'] as Color,
                             color2: mix['color2'] as Color,
+                            contextTarget: RadioContextTarget(
+                              seedId: mix['id'],
+                              seedType: mix['type'] ?? 'genre',
+                              title: mix['title'],
+                              imageUrl: mix['imageUrl'] ?? mix['imageAsset'],
+                            ),
                             onTap: () => context.push(
                               Uri(
                                 path: '/radio/${mix['type']}/${mix['id']}',
@@ -391,6 +399,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           return _RadioCard(
                             title: radio['title'],
                             imageUrl: radio['imageUrl'],
+                            contextTarget: RadioContextTarget(
+                              seedId: radio['id'],
+                              seedType: radio['type'] ?? 'genre',
+                              title: radio['title'],
+                              imageUrl: radio['imageUrl'],
+                            ),
                             onTap: () => context.push(
                               Uri(
                                 path: '/radio/${radio['type']}/${radio['id']}',
@@ -505,6 +519,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     delay: 3.5.seconds,
                     builder: (context, ref, items) => _HorizontalList(
                       items: items,
+                      isPlaylist: true,
                       onTap: (item) => context.push(
                         Uri(
                           path: '/playlist/remote/${item['id']}',
@@ -543,6 +558,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             title: track.name,
                             subtitle: track.artistName,
                             imageUrl: track.albumImage ?? '',
+                            contextTarget: TrackContextTarget(track),
                             onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
                             artistId: track.artistId,
                           ).animate().fadeIn(delay: (index * 100).ms).slideY(begin: 0.1);
@@ -564,9 +580,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 }
 
 class _HorizontalList extends ConsumerWidget {
-  const _HorizontalList({required this.items, required this.onTap});
+  const _HorizontalList({
+    required this.items,
+    required this.onTap,
+    this.isPlaylist = false,
+  });
   final List<Map<String, dynamic>> items;
   final Function(Map<String, dynamic>) onTap;
+  final bool isPlaylist;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -593,11 +614,22 @@ class _HorizontalList extends ConsumerWidget {
               final artistName = artists.isNotEmpty ? artists[0]['name'] : (item['publisher'] ?? '');
               final artistId = artists.isNotEmpty ? artists[0]['id'] : null;
 
+              final target = isPlaylist
+                  ? PlaylistContextTarget(id: item['id'] as String, name: item['name'] as String, imageUrl: imageUrl)
+                  : AlbumContextTarget(
+                      id: item['id'] as String,
+                      name: item['name'] as String,
+                      artistId: artistId ?? '',
+                      artistName: artistName,
+                      imageUrl: imageUrl,
+                    );
+
               return _AlbumCard(
                 title: item['name'],
                 subtitle: artistName,
                 imageUrl: imageUrl,
                 images: images,
+                contextTarget: target,
                 onTap: () => onTap(item),
                 artistId: artistId,
                 isGridItem: true,
@@ -633,11 +665,22 @@ class _HorizontalList extends ConsumerWidget {
                 final artistName = artists.isNotEmpty ? artists[0]['name'] : (item['publisher'] ?? '');
                 final artistId = artists.isNotEmpty ? artists[0]['id'] : null;
 
+                final target = isPlaylist
+                    ? PlaylistContextTarget(id: item['id'] as String, name: item['name'] as String, imageUrl: imageUrl)
+                    : AlbumContextTarget(
+                        id: item['id'] as String,
+                        name: item['name'] as String,
+                        artistId: artistId ?? '',
+                        artistName: artistName,
+                        imageUrl: imageUrl,
+                      );
+
                 return _AlbumCard(
                   title: item['name'],
                   subtitle: artistName,
                   imageUrl: imageUrl,
                   images: images,
+                  contextTarget: target,
                   onTap: () => onTap(item),
                   artistId: artistId,
                 );
@@ -771,7 +814,7 @@ class _HistoryCardState extends State<_HistoryCard> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return MouseRegion(
+    Widget card = MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: TactileTap(
@@ -848,6 +891,11 @@ class _HistoryCardState extends State<_HistoryCard> {
         ),
       ),
     );
+
+    return ContentContextMenuRegion(
+      target: TrackContextTarget(widget.track),
+      child: card,
+    );
   }
 }
 
@@ -860,6 +908,7 @@ class _AlbumCard extends StatefulWidget {
     required this.onTap,
     this.artistId,
     this.isGridItem = false,
+    this.contextTarget,
   });
 
   final String title;
@@ -869,6 +918,7 @@ class _AlbumCard extends StatefulWidget {
   final VoidCallback onTap;
   final String? artistId;
   final bool isGridItem;
+  final ContextMenuTarget? contextTarget;
 
   @override
   State<_AlbumCard> createState() => _AlbumCardState();
@@ -897,7 +947,7 @@ class _AlbumCardState extends State<_AlbumCard> {
       );
     }
 
-    return MouseRegion(
+    Widget card = MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
@@ -999,6 +1049,14 @@ class _AlbumCardState extends State<_AlbumCard> {
         ),
       ),
     );
+
+    if (widget.contextTarget != null) {
+      card = ContentContextMenuRegion(
+        target: widget.contextTarget!,
+        child: card,
+      );
+    }
+    return card;
   }
 }
 
@@ -1007,16 +1065,18 @@ class _ArtistCircle extends StatelessWidget {
     required this.name,
     required this.imageUrl,
     required this.onTap,
+    this.id,
   });
 
   final String name;
   final String imageUrl;
   final VoidCallback onTap;
+  final String? id;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return TactileTap(
+    Widget circle = TactileTap(
       onTap: onTap,
       scaleDown: 0.92,
       child: Container(
@@ -1092,6 +1152,14 @@ class _ArtistCircle extends StatelessWidget {
         ),
       ),
     );
+
+    if (id != null) {
+      circle = ContentContextMenuRegion(
+        target: ArtistContextTarget(id: id!, name: name, imageUrl: imageUrl),
+        child: circle,
+      );
+    }
+    return circle;
   }
 }
 
@@ -1101,17 +1169,19 @@ class _RadioCard extends StatelessWidget {
   final String title;
   final String imageUrl;
   final VoidCallback onTap;
+  final RadioContextTarget? contextTarget;
 
   const _RadioCard({
     required this.title,
     required this.imageUrl,
     required this.onTap,
+    this.contextTarget,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return TactileTap(
+    Widget card = TactileTap(
       onTap: onTap,
       scaleDown: 0.95,
       child: Container(
@@ -1231,10 +1301,18 @@ class _RadioCard extends StatelessWidget {
               ),
             ),
           ],
-          ),
         ),
       ),
+    ),
     );
+
+    if (contextTarget != null) {
+      card = ContentContextMenuRegion(
+        target: contextTarget!,
+        child: card,
+      );
+    }
+    return card;
   }
 }
 
@@ -1245,6 +1323,7 @@ class _MixCard extends StatefulWidget {
   final Color color1;
   final Color color2;
   final VoidCallback onTap;
+  final RadioContextTarget? contextTarget;
 
   const _MixCard({
     required this.title,
@@ -1253,6 +1332,7 @@ class _MixCard extends StatefulWidget {
     required this.color1,
     required this.color2,
     required this.onTap,
+    this.contextTarget,
   });
 
   @override
@@ -1276,7 +1356,7 @@ class _MixCardState extends State<_MixCard> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
+    Widget card = MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
@@ -1473,6 +1553,14 @@ class _MixCardState extends State<_MixCard> {
         ),
       ),
     );
+
+    if (widget.contextTarget != null) {
+      card = ContentContextMenuRegion(
+        target: widget.contextTarget!,
+        child: card,
+      );
+    }
+    return card;
   }
 }
 

@@ -14,6 +14,7 @@ import '../../core/providers/genre_providers.dart';
 import '../home/genre_details_screen.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
 import 'package:ppplayer/core/providers/recent_searches_provider.dart';
 import 'package:ppplayer/core/providers/search_provider.dart';
 
@@ -512,68 +513,75 @@ class _ArtistResults extends ConsumerWidget {
         final images = (a['images'] as List?) ?? [];
         final imageUrl = images.isNotEmpty ? images[0]['url'] as String : '';
 
-        return TactileTap(
-          onTap: () => context.push('/artist/${a['id']}'),
-          scaleDown: 0.98,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorScheme.scrim.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+        return ContentContextMenuRegion(
+          target: ArtistContextTarget(
+            id: a['id'] as String,
+            name: a['name'] as String,
+            imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
+          ),
+          child: TactileTap(
+            onTap: () => context.push('/artist/${a['id']}'),
+            scaleDown: 0.98,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.scrim.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: imageUrl.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: imageUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (_, _) => Container(color: colorScheme.surfaceContainerHighest),
+                            )
+                          : Container(
+                              color: colorScheme.surfaceContainerHighest,
+                              child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
+                            ),
+                    ),
                   ),
-                  child: ClipOval(
-                    child: imageUrl.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (_, _) => Container(color: colorScheme.surfaceContainerHighest),
-                          )
-                        : Container(
-                            color: colorScheme.surfaceContainerHighest,
-                            child: Icon(Icons.person, color: colorScheme.onSurfaceVariant),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          a['name'] as String,
+                          style: TextStyle(
+                            color: colorScheme.onSurface,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
                           ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        a['name'] as String,
-                        style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Artist'.toUpperCase(),
-                        style: TextStyle(
-                          color: colorScheme.primary.withValues(alpha: 0.8),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.2,
+                        const SizedBox(height: 2),
+                        Text(
+                          'Artist'.toUpperCase(),
+                          style: TextStyle(
+                            color: colorScheme.primary.withValues(alpha: 0.8),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Icon(Icons.chevron_right, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 20),
-              ],
+                  Icon(Icons.chevron_right, color: colorScheme.onSurface.withValues(alpha: 0.24), size: 20),
+                ],
+              ),
             ),
           ),
         ).animate(delay: (100 + i % 10 * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
@@ -613,61 +621,70 @@ class _AlbumResults extends StatelessWidget {
                 final images = (album['images'] as List?) ?? [];
                 final imageUrl = images.isNotEmpty ? images[0]['url'] as String : '';
 
-                return TactileTap(
-                  onTap: () => context.push('/album/${album['id']}'),
-                  scaleDown: 0.95,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorScheme.scrim.withValues(alpha: 0.5),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
+                final artistName = (album['artists'] as List?)?.firstOrNull?['name'] ?? '';
+                return ContentContextMenuRegion(
+                  target: AlbumContextTarget(
+                    id: album['id'] as String,
+                    name: album['name'] as String,
+                    artistName: artistName,
+                    imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
+                  ),
+                  child: TactileTap(
+                    onTap: () => context.push('/album/${album['id']}'),
+                    scaleDown: 0.95,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colorScheme.scrim.withValues(alpha: 0.5),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: imageUrl.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: imageUrl,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(color: colorScheme.surfaceContainerHighest),
+                            ),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: imageUrl.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: imageUrl,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(color: colorScheme.surfaceContainerHighest),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          album['name'] as String,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            color: colorScheme.onSurface,
+                            fontSize: 15,
+                            letterSpacing: -0.4,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        album['name'] as String,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          color: colorScheme.onSurface,
-                          fontSize: 15,
-                          letterSpacing: -0.4,
+                        const SizedBox(height: 2),
+                        Text(
+                          artistName.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: colorScheme.primary.withValues(alpha: 0.5),
+                            letterSpacing: 0.5,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        ((album['artists'] as List?)?.firstOrNull?['name'] ?? '').toUpperCase(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          color: colorScheme.primary.withValues(alpha: 0.5),
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ).animate(delay: (100 + i % 10 * 50).ms).fadeIn(duration: 600.ms).slideY(begin: 0.1, duration: 600.ms, curve: Curves.easeOutCubic);
               },
@@ -713,65 +730,73 @@ class _PlaylistResults extends StatelessWidget {
                 final imageUrl = images.isNotEmpty ? images[0]['url'] as String : '';
                 final ownerName = playlist['owner'] != null ? playlist['owner']['display_name'] : '';
 
-                return TactileTap(
-                  onTap: () {
-                    final encodedName = Uri.encodeComponent(playlist['name'] as String);
-                    context.push('/playlist/remote/${playlist['id']}?name=$encodedName');
-                  },
-                  scaleDown: 0.95,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorScheme.scrim.withValues(alpha: 0.5),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: imageUrl.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: imageUrl,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(color: colorScheme.surfaceContainerHighest),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        playlist['name'] as String,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          color: colorScheme.onSurface,
-                          fontSize: 15,
-                          letterSpacing: -0.4,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        ownerName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                return ContentContextMenuRegion(
+                  target: PlaylistContextTarget(
+                    id: playlist['id'] as String,
+                    name: playlist['name'] as String,
+                    imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
+                    ownerName: ownerName.isNotEmpty ? ownerName : null,
                   ),
-                );
+                  child: TactileTap(
+                    onTap: () {
+                      final encodedName = Uri.encodeComponent(playlist['name'] as String);
+                      context.push('/playlist/remote/${playlist['id']}?name=$encodedName');
+                    },
+                    scaleDown: 0.95,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colorScheme.scrim.withValues(alpha: 0.5),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: imageUrl.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: imageUrl,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(color: colorScheme.surfaceContainerHighest),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          playlist['name'] as String,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            color: colorScheme.onSurface,
+                            fontSize: 15,
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          ownerName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ).animate(delay: (100 + i % 10 * 50).ms).fadeIn(duration: 600.ms).slideY(begin: 0.1, duration: 600.ms, curve: Curves.easeOutCubic);
               },
               childCount: items.length,
             ),

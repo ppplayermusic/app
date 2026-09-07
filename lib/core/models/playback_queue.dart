@@ -114,6 +114,16 @@ class PlaybackQueue {
     return copyWith(tracks: [...tracks, track.copyWith(queueItemId: uniqueId)]);
   }
 
+  PlaybackQueue insertNext(Track track) {
+    if (tracks.isEmpty) return add(track);
+    final insertIdx = (currentIndex + 1).clamp(0, tracks.length);
+    final timestamp = DateTime.now().microsecondsSinceEpoch;
+    final random = Random().nextInt(10000);
+    final uniqueId = '${track.spotifyId}_${timestamp}_$random';
+    final newTracks = [...tracks]..insert(insertIdx, track.copyWith(queueItemId: uniqueId));
+    return copyWith(tracks: newTracks);
+  }
+
   PlaybackQueue removeAt(int index) {
     if (index < 0 || index >= tracks.length) return this;
 

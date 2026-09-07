@@ -13,6 +13,7 @@ import '../../shared/widgets/adaptive_blur.dart';
 import '../../core/services/favorites_provider.dart';
 import '../../shared/widgets/playlist_cover.dart';
 import '../../shared/widgets/animated_equalizer.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
 
 final _artistProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -595,13 +596,20 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
       } catch (_) {}
     }
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: TactileTap(
-        onTap: () => context.push("/album/${album['id']}"),
-        scaleDown: 0.96,
+    return ContentContextMenuRegion(
+      target: AlbumContextTarget(
+        id: album['id'] as String,
+        name: album['name'] as String,
+        artistName: (album['artists'] as List?)?.firstOrNull?['name'] ?? '',
+        imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
+      ),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        cursor: SystemMouseCursors.click,
+        child: TactileTap(
+          onTap: () => context.push("/album/${album['id']}"),
+          scaleDown: 0.96,
         child: AnimatedScale(
           scale: _isHovered ? 1.04 : 1.0,
           duration: const Duration(milliseconds: 200),
@@ -699,6 +707,7 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
           ),
         ),
       ),
+    ),
     );
   }
 }
@@ -722,13 +731,19 @@ class _RelatedArtistCardState extends State<_RelatedArtistCard> {
     final rImgs = (artist['images'] as List?) ?? [];
     final rImgUrl = rImgs.isNotEmpty ? rImgs[0]['url'] as String : '';
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: TactileTap(
-        onTap: () => context.push("/artist/${artist['id']}"),
-        scaleDown: 0.94,
+    return ContentContextMenuRegion(
+      target: ArtistContextTarget(
+        id: artist['id'] as String,
+        name: artist['name'] as String,
+        imageUrl: rImgUrl.isNotEmpty ? rImgUrl : null,
+      ),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        cursor: SystemMouseCursors.click,
+        child: TactileTap(
+          onTap: () => context.push("/artist/${artist['id']}"),
+          scaleDown: 0.94,
         child: AnimatedScale(
           scale: _isHovered ? 1.06 : 1.0,
           duration: const Duration(milliseconds: 220),
@@ -794,6 +809,7 @@ class _RelatedArtistCardState extends State<_RelatedArtistCard> {
           ),
         ),
       ),
+    ),
     );
   }
 }
@@ -851,13 +867,19 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
     final id = playlist['id'];
     final name = playlist['name'] as String;
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: TactileTap(
-        onTap: () => context.push('/playlist/remote/$id?name=${Uri.encodeComponent(name)}'),
-        scaleDown: 0.96,
+    return ContentContextMenuRegion(
+      target: PlaylistContextTarget(
+        id: id as String,
+        name: name,
+        imageUrl: pImgUrl.isNotEmpty ? pImgUrl : null,
+      ),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        cursor: SystemMouseCursors.click,
+        child: TactileTap(
+          onTap: () => context.push('/playlist/remote/$id?name=${Uri.encodeComponent(name)}'),
+          scaleDown: 0.96,
         child: AnimatedScale(
           scale: _isHovered ? 1.03 : 1.0,
           duration: const Duration(milliseconds: 200),
@@ -944,6 +966,7 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
           ),
         ),
       ),
+    ),
     );
   }
 }

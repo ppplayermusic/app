@@ -328,6 +328,18 @@ class PlayerNotifier extends Notifier<PlayerState> {
     state = state.copyWith(playbackQueue: state.playbackQueue.add(track));
   }
 
+  void addTracksToQueue(List<Track> tracks) {
+    var q = state.playbackQueue;
+    for (final track in tracks) {
+      q = q.add(track);
+    }
+    state = state.copyWith(playbackQueue: q);
+  }
+
+  void playNext(Track track) {
+    state = state.copyWith(playbackQueue: state.playbackQueue.insertNext(track));
+  }
+
   void removeFromQueue(int index) {
     state = state.copyWith(playbackQueue: state.playbackQueue.removeAt(index));
   }

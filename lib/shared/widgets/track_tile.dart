@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
 import '../../core/db/app_database.dart' as db;
@@ -10,6 +9,7 @@ import '../../core/models/track.dart' as model;
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/artists_links.dart';
+import 'context_menu/content_context_menu.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/animated_equalizer.dart';
 
@@ -42,87 +42,14 @@ class TrackTile extends ConsumerStatefulWidget {
   @override
   ConsumerState<TrackTile> createState() => _TrackTileState();
 
-  static void showMoreMenu(BuildContext context, WidgetRef ref, model.Track track) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
-        ),
-        child: AdaptiveBlur(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          sigmaX: 20,
-          sigmaY: 20,
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                ListTile(
-                  leading:
-                      Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  title: Text('Start Radio',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    final encodedTitle = Uri.encodeComponent(track.name);
-                    final encodedImage = Uri.encodeComponent(track.albumImage ?? '');
-                    final encodedArtistName = Uri.encodeComponent(track.artistName);
-                    
-                    context.push(
-                      '/radio/track/${track.spotifyId}?title=$encodedTitle&imageUrl=$encodedImage&artistId=${track.artistId}&artistName=$encodedArtistName',
-                    );
-                  },
-                ),
-                ListTile(
-                  leading:
-                      Icon(Icons.playlist_add, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  title: Text('Add to Playlist',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    TrackTile.showPlaylistPicker(context, ref, track);
-                  },
-                ),
-                ListTile(
-                  leading:
-                      Icon(Icons.person_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  title: Text('Go to Artist',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    context.push('/artist/${track.artistId}');
-                  },
-                ),
-                if (track.albumId != null)
-                  ListTile(
-                    leading: Icon(Icons.album_outlined,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    title: Text('Go to Album',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      context.push('/album/${track.albumId}');
-                    },
-                  ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        ),
-      ),
+  static void showMoreMenu(BuildContext context, WidgetRef ref, model.Track track, [Offset? position]) {
+    final screenSize = MediaQuery.of(context).size;
+    final pos = position ?? Offset(screenSize.width / 2 - 115, screenSize.height / 2 - 150);
+    showContentContextMenu(
+      context,
+      ref,
+      position: pos,
+      target: TrackContextTarget(track),
     );
   }
 
@@ -340,7 +267,9 @@ class _TrackTileState extends ConsumerState<TrackTile> {
              (currentTrack.name.toLowerCase() == widget.track.name.toLowerCase() &&
               currentTrack.artistName.toLowerCase() == widget.track.artistName.toLowerCase())));
 
-    return MouseRegion(
+    return ContentContextMenuRegion(
+      target: TrackContextTarget(widget.track),
+      child: MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
@@ -499,13 +428,22 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                   ),
                   if (widget.showMore)
                     widget.trailing ??
-                        TactileIconButton(
-                          icon: Icons.more_vert,
-                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                          size: 20,
-                          onTap: () {
-                            TrackTile.showMoreMenu(context, ref, widget.track);
-                          },
+                        Builder(
+                          builder: (btnContext) => TactileIconButton(
+                            icon: Icons.more_vert,
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                            size: 20,
+                            onTap: () {
+                              final renderBox = btnContext.findRenderObject() as RenderBox?;
+                              final offset = renderBox?.localToGlobal(Offset.zero);
+                              TrackTile.showMoreMenu(
+                                context,
+                                ref,
+                                widget.track,
+                                offset != null ? offset + Offset(0, renderBox!.size.height) : null,
+                              );
+                            },
+                          ),
                         ),
                 ],
               ),
@@ -513,6 +451,7 @@ class _TrackTileState extends ConsumerState<TrackTile> {
           ),
         ),
       ),
+    ),
     );
   }
 }

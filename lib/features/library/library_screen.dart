@@ -10,6 +10,7 @@ import '../../shared/widgets/premium_modals.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
 
 
 enum LibraryFilter { all, playlists, artists, albums, stations }
@@ -715,59 +716,68 @@ class _PlaylistCard extends StatelessWidget {
             .take(4)
             .toList();
 
-        return TactileTap(
-          onTap: () => context.push('/playlist/${playlist.id}'),
-          onLongPress: () => _confirmDelete(context, playlist),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.4),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
+        return ContentContextMenuRegion(
+          target: PlaylistContextTarget(
+            id: '${playlist.id}',
+            name: playlist.name,
+            imageUrl: playlist.imageUrl,
+            isLocal: true,
+            localId: playlist.id,
+          ),
+          child: TactileTap(
+            onTap: () => context.push('/playlist/${playlist.id}'),
+            onLongPress: () => _confirmDelete(context, playlist),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.4),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: playlist.imageUrl != null 
+                          ? Image.network(
+                              playlist.imageUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => PlaylistCover(images: images, size: double.infinity),
+                            )
+                          : PlaylistCover(images: images, size: double.infinity),
+                    ),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: playlist.imageUrl != null 
-                        ? Image.network(
-                            playlist.imageUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => PlaylistCover(images: images, size: double.infinity),
-                          )
-                        : PlaylistCover(images: images, size: double.infinity),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  playlist.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                    letterSpacing: -0.6,
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                playlist.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16,
-                  letterSpacing: -0.6,
+                const SizedBox(height: 2),
+                Text(
+                  '${tracks.length} tracks'.toUpperCase(),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                '${tracks.length} tracks'.toUpperCase(),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -979,10 +989,16 @@ class _ArtistsSliverList extends StatelessWidget {
                     final artist = artists[i];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: TactileTap(
-                        onTap: () => context.push('/artist/${artist.spotifyId}'),
-                        child: Row(
-                          children: [
+                      child: ContentContextMenuRegion(
+                        target: ArtistContextTarget(
+                          id: artist.spotifyId,
+                          name: artist.name,
+                          imageUrl: artist.imageUrl,
+                        ),
+                        child: TactileTap(
+                          onTap: () => context.push('/artist/${artist.spotifyId}'),
+                          child: Row(
+                            children: [
                             Container(
                               width: 80,
                               height: 80,
@@ -1037,7 +1053,8 @@ class _ArtistsSliverList extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ).animate(delay: (i * 60).ms).fadeIn(duration: 500.ms).slideX(begin: 0.1, end: 0, curve: Curves.easeOutQuart);
+                    ),
+                  ).animate(delay: (i * 60).ms).fadeIn(duration: 500.ms).slideX(begin: 0.1, end: 0, curve: Curves.easeOutQuart);
                   },
                   childCount: artists.length,
                 ),
@@ -1120,11 +1137,18 @@ class _AlbumsSliverGrid extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, i) {
                     final album = albums[i];
-                    return TactileTap(
-                      onTap: () => context.push('/album/${album.spotifyId}'),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                    return ContentContextMenuRegion(
+                      target: AlbumContextTarget(
+                        id: album.spotifyId,
+                        name: album.name,
+                        artistName: album.artistName,
+                        imageUrl: album.imageUrl,
+                      ),
+                      child: TactileTap(
+                        onTap: () => context.push('/album/${album.spotifyId}'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                           AspectRatio(
                             aspectRatio: 1,
                             child: Container(
@@ -1172,7 +1196,8 @@ class _AlbumsSliverGrid extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ).animate(delay: (i * 60).ms).fadeIn(duration: 500.ms).slideY(begin: 0.15, end: 0, curve: Curves.easeOutQuart);
+                    ),
+                  ).animate(delay: (i * 60).ms).fadeIn(duration: 500.ms).slideY(begin: 0.15, end: 0, curve: Curves.easeOutQuart);
                   },
                   childCount: albums.length,
                 ),
@@ -1416,96 +1441,104 @@ class _RadioCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return TactileTap(
-      onTap: () {
-        if (radio.seedType == 'genre') {
-          context.push('/genre/${radio.seedId}?name=${Uri.encodeComponent(radio.title)}');
-        } else {
-          context.push(
-            Uri(
-              path: '/radio/${radio.seedType}/${radio.seedId}',
-              queryParameters: {
-                'title': radio.title,
-                'imageUrl': radio.imageUrl ?? '',
-              },
-            ).toString(),
-          );
-        }
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.4),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-                image: radio.imageUrl != null
-                    ? DecorationImage(
-                        image: NetworkImage(radio.imageUrl!),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-              ),
-              child: radio.imageUrl == null
-                  ? Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2), size: 40)
-                  : Stack(
-                      children: [
-                        Positioned(
-                          right: 12,
-                          bottom: 12,
-                          child: AdaptiveBlur(
-                            sigmaX: 8,
-                            sigmaY: 8,
-                            borderRadius: BorderRadius.circular(100),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.radio_rounded,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 16,
+    return ContentContextMenuRegion(
+      target: RadioContextTarget(
+        seedId: radio.seedId,
+        seedType: radio.seedType,
+        title: radio.title,
+        imageUrl: radio.imageUrl,
+      ),
+      child: TactileTap(
+        onTap: () {
+          if (radio.seedType == 'genre') {
+            context.push('/genre/${radio.seedId}?name=${Uri.encodeComponent(radio.title)}');
+          } else {
+            context.push(
+              Uri(
+                path: '/radio/${radio.seedType}/${radio.seedId}',
+                queryParameters: {
+                  'title': radio.title,
+                  'imageUrl': radio.imageUrl ?? '',
+                },
+              ).toString(),
+            );
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.4),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                  image: radio.imageUrl != null
+                      ? DecorationImage(
+                          image: NetworkImage(radio.imageUrl!),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                ),
+                child: radio.imageUrl == null
+                    ? Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2), size: 40)
+                    : Stack(
+                        children: [
+                          Positioned(
+                            right: 12,
+                            bottom: 12,
+                            child: AdaptiveBlur(
+                              sigmaX: 8,
+                              sigmaY: 8,
+                              borderRadius: BorderRadius.circular(100),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.radio_rounded,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 16,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            radio.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 16,
-              letterSpacing: -0.5,
+            const SizedBox(height: 12),
+            Text(
+              radio.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+                letterSpacing: -0.5,
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            (radio.seedType == 'genre' ? 'Genre' : 'Radio Station').toUpperCase(),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.5,
+            const SizedBox(height: 2),
+            Text(
+              (radio.seedType == 'genre' ? 'Genre' : 'Radio Station').toUpperCase(),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.5,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

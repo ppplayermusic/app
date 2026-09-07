@@ -12,6 +12,7 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/artists_links.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
 import '../../core/db/app_database.dart' as db;
 
 String _formatDuration(Duration d) {
@@ -364,28 +365,46 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                     ],
                                                   ),
                                                 ),
-                                                if (playerState.currentTrack != null)
-                                                StreamBuilder<bool>(
-                                                  stream: ref.watch(db.appDatabaseProvider).watchTrackFavorite(playerState.currentTrack!.spotifyId),
-                                                  initialData: playerState.currentTrack!.isFavorite,
-                                                  builder: (context, snapshot) {
-                                                    final isFav = snapshot.data ?? playerState.currentTrack!.isFavorite;
-                                                    return TactileIconButton(
-                                                      icon: isFav ? Icons.favorite : Icons.favorite_border,
-                                                      color: isFav ? colorScheme.primary : colorScheme.onSurface,
-                                                      onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!.copyWith(isFavorite: isFav)),
-                                                    ).animate(target: isFav ? 1 : 0).scale(
-                                                      begin: const Offset(1, 1),
-                                                      end: const Offset(1.1, 1.1),
-                                                      duration: 200.ms,
-                                                      curve: Curves.easeOutBack,
-                                                    ).then().scale(
-                                                      begin: const Offset(1.1, 1.1),
-                                                      end: const Offset(1, 1),
-                                                      duration: 150.ms,
-                                                    );
-                                                  },
-                                                ),
+                                                if (playerState.currentTrack != null) ...[
+                                                   StreamBuilder<bool>(
+                                                     stream: ref.watch(db.appDatabaseProvider).watchTrackFavorite(playerState.currentTrack!.spotifyId),
+                                                     initialData: playerState.currentTrack!.isFavorite,
+                                                     builder: (context, snapshot) {
+                                                       final isFav = snapshot.data ?? playerState.currentTrack!.isFavorite;
+                                                       return TactileIconButton(
+                                                         icon: isFav ? Icons.favorite : Icons.favorite_border,
+                                                         color: isFav ? colorScheme.primary : colorScheme.onSurface,
+                                                         onTap: () => playerNotifier.toggleFavorite(playerState.currentTrack!.copyWith(isFavorite: isFav)),
+                                                       ).animate(target: isFav ? 1 : 0).scale(
+                                                         begin: const Offset(1, 1),
+                                                         end: const Offset(1.1, 1.1),
+                                                         duration: 200.ms,
+                                                         curve: Curves.easeOutBack,
+                                                       ).then().scale(
+                                                         begin: const Offset(1.1, 1.1),
+                                                         end: const Offset(1, 1),
+                                                         duration: 150.ms,
+                                                       );
+                                                     },
+                                                   ),
+                                                   const SizedBox(width: 4),
+                                                   Builder(
+                                                     builder: (btnContext) => TactileIconButton(
+                        icon: Icons.more_horiz,
+                                                       color: colorScheme.onSurface.withValues(alpha: 0.6),
+                                                       onTap: () {
+                                                         final renderBox = btnContext.findRenderObject() as RenderBox?;
+                                                         final offset = renderBox?.localToGlobal(Offset.zero);
+                                                         showContentContextMenu(
+                                                           context,
+                                                           ref,
+                                                           position: offset != null ? offset + Offset(0, renderBox!.size.height) : Offset.zero,
+                                                           target: TrackContextTarget(playerState.currentTrack!),
+                                                         );
+                                                       },
+                                                     ),
+                                                   ),
+                                                 ],
                                               ],
                                             ),
                                           ),
@@ -555,9 +574,11 @@ class _QueueView extends StatelessWidget {
           key: ValueKey(t.queueItemId ?? t.spotifyId),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
-            child: TactileTap(
-              onTap: () => ProviderScope.containerOf(context).read(playerProvider.notifier).skipTo(i),
-              scaleDown: 0.98,
+            child: ContentContextMenuRegion(
+              target: TrackContextTarget(t, isInQueue: true, queueIndex: i),
+              child: TactileTap(
+                onTap: () => ProviderScope.containerOf(context).read(playerProvider.notifier).skipTo(i),
+                scaleDown: 0.98,
               child: AdaptiveBlur(
                 sigmaX: 15,
                 sigmaY: 15,
@@ -658,6 +679,7 @@ class _QueueView extends StatelessWidget {
                 ),
               ),
             ),
+          ),
           )
           .animate()
           .fadeIn(duration: 400.ms)
