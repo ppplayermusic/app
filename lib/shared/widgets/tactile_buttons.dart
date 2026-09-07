@@ -150,11 +150,12 @@ class _TactileIconButtonState extends State<TactileIconButton> {
 }
 
 /// A premium specialized Play/Pause button for PPPlayer.
-/// Features a living kinetic animation while playing:
-/// - Smooth 360° spin with an organic expand & shrink pulse
-/// - Subtle morph into a glowing play glyph and back to the PPPlayer logo
-/// - Borderless, dark glass container with theme-reactive ambient aura
-/// - Instant pause affordance on hover
+/// Features a continuous kinetic choreography inspired by Google Material:
+/// 1. PPPlayer logo starts spinning slowly and progressively increases speed (accelerating spin-up)
+/// 2. At peak velocity, the rotational energy "turns on" the perimeter line in the Google Material way
+/// 3. The line sweeps 360° around the perimeter with a glowing comet head, while the center morphs into the pause shape
+/// 4. The line completes the full circle, closes seamlessly, and collapses back into the center
+/// 5. The circle transforms back into the PPPlayer logo, which smoothly decelerates to rest
 class TactilePlayerPlayPauseButton extends StatefulWidget {
   final bool isPlaying;
   final VoidCallback? onTap;
@@ -187,19 +188,19 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
     super.initState();
     _transitionController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 320),
+      duration: const Duration(milliseconds: 360),
       value: widget.isPlaying ? 1.0 : 0.0,
     );
 
-    // 7.5 second rhythmic loop:
-    // 0.0 - 0.35: Spin & Expand (2.6s)
-    // 0.35 - 0.50: Morph into Play button (1.1s)
-    // 0.50 - 0.70: Play button pulse/breathe (1.5s)
-    // 0.70 - 0.85: Morph back to PPPlayer Logo (1.1s)
-    // 0.85 - 1.00: Rest & subtle micro-breathe (1.2s)
+    // 8.0-second accelerating spin-up loop:
+    // 0.00 - 0.15: Rest & gentle start (1.2s)
+    // 0.15 - 0.45: Spin slow -> accelerating to high speed (2.4s)
+    // 0.45 - 0.70: High speed "turns on" Google Material 360° perimeter line & center morphs to pause (2.0s)
+    // 0.70 - 0.85: Circle completes, closes, and contracts inward (1.2s)
+    // 0.85 - 1.00: Logo re-emerges & smoothly decelerates to rest (1.2s)
     _loopController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 7500),
+      duration: const Duration(milliseconds: 8000),
     );
 
     if (widget.isPlaying) {
@@ -240,7 +241,7 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
     final isEnabled = widget.onTap != null;
     final effectiveScale = _scale < 1.0
         ? _scale
-        : (_isHovered && isEnabled ? 1.08 : 1.0);
+        : (_isHovered && isEnabled ? 1.06 : 1.0);
 
     final primaryThemeColor = widget.activeGlowColor ?? colorScheme.primary;
 
@@ -253,194 +254,204 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
         final transition = _transitionController.value;
         final loop = _loopController.value;
 
-        double angle = 0.0;
-        double scaleMultiplier = 1.0;
-        double logoOpacity = 1.0;
-        double pauseMorphOpacity = 0.0;
-        double glowAlpha = 0.16;
+        double logoOpacity = 0.0;
+        double logoAngle = 0.0;
+        double logoScale = 1.0;
 
-        if (loop < 0.35) {
-          // Phase 1: Spin & Expand/Shrink (0% - 35%)
-          final p = loop / 0.35;
-          final spinCurve = Curves.easeInOutCubic.transform(p);
-          angle = spinCurve * 2 * math.pi;
-          final expand = math.sin(p * math.pi);
-          scaleMultiplier = 1.0 + (0.13 * expand);
+        double pauseOpacity = 0.0;
+        double pauseScale = 1.0;
+
+        double lineSweepAngle = 0.0; // 0 -> 2*pi
+        double lineOpacity = 0.0;
+        double morphProgress = 0.0; // 0 -> 1
+        double lineContractProgress = 0.0; // 0 -> 1
+
+        if (loop < 0.15) {
+          // Phase 1: Rest & gentle initial creep (0% - 15%)
+          final p = loop / 0.15;
           logoOpacity = 1.0;
-          pauseMorphOpacity = 0.0;
-          glowAlpha = 0.18 + (0.24 * expand);
-        } else if (loop < 0.48) {
-          // Phase 2: Morph into Pause button (35% - 48%)
-          final p = (loop - 0.35) / 0.13;
-          final easeP = Curves.easeInOut.transform(p);
-          angle = 0.0;
-          scaleMultiplier = 1.0 - (0.04 * math.sin(p * math.pi));
-          logoOpacity = 1.0 - easeP;
-          pauseMorphOpacity = easeP;
-          glowAlpha = 0.18;
-        } else if (loop < 0.68) {
-          // Phase 3: Pause button breathing (48% - 68%)
-          final p = (loop - 0.48) / 0.20;
-          angle = 0.0;
-          final breathe = math.sin(p * math.pi);
-          scaleMultiplier = 1.0 + (0.06 * breathe);
-          logoOpacity = 0.0;
-          pauseMorphOpacity = 1.0;
-          glowAlpha = 0.16 + (0.12 * breathe);
-        } else if (loop < 0.82) {
-          // Phase 4: Morph back to PPPlayer Logo (68% - 82%)
-          final p = (loop - 0.68) / 0.14;
-          final easeP = Curves.easeInOut.transform(p);
-          angle = 0.0;
-          scaleMultiplier = 1.0 - (0.03 * math.sin(p * math.pi));
-          logoOpacity = easeP;
-          pauseMorphOpacity = 1.0 - easeP;
-          glowAlpha = 0.18;
+          // Very gentle slow initial movement
+          logoAngle = p * (math.pi / 8);
+          logoScale = 1.0 + (0.02 * math.sin(p * math.pi));
+          pauseOpacity = 0.0;
+          lineOpacity = 0.0;
+          morphProgress = 0.0;
+        } else if (loop < 0.45) {
+          // Phase 2: Accelerating spin-up ("spinning slow and increasing speed") (15% - 45%)
+          final p = (loop - 0.15) / 0.30;
+          // Ease-in quadratic curve: begins slow, accelerates rapidly to high angular velocity!
+          final accel = Curves.easeInCubic.transform(p);
+          logoOpacity = 1.0;
+          // Spins through 2 full rotations, accelerating smoothly
+          logoAngle = (math.pi / 8) + (accel * 4 * math.pi);
+          logoScale = 1.0 + (0.08 * accel); // Slight expansion from centrifugal speed
+          pauseOpacity = 0.0;
+          lineOpacity = 0.0;
+          morphProgress = 0.0;
+        } else if (loop < 0.70) {
+          // Phase 3: At peak speed, the spin "turns on" the Material 3 Expressive morphing line (45% - 70%)
+          final p = (loop - 0.45) / 0.25;
+          final easeSweep = Curves.fastOutSlowIn.transform(p);
+
+          lineOpacity = 1.0;
+          lineSweepAngle = easeSweep * 2 * math.pi;
+          lineContractProgress = 0.0;
+          morphProgress = p;
+
+          // In the center, spinning logo smoothly transforms into the springy Pause shape:
+          final morphP = (p * 2.2).clamp(0.0, 1.0);
+          final morphEase = Curves.easeInOutCubic.transform(morphP);
+          logoOpacity = (1.0 - morphEase);
+          logoAngle = (math.pi / 8) + (4 * math.pi) + (p * 2 * math.pi); // Continues gliding
+          pauseOpacity = morphEase;
+          pauseScale = 0.86 + (0.14 * Curves.easeOutBack.transform(morphP));
+        } else if (loop < 0.85) {
+          // Phase 4: Full shape completes 360°, closes, and contracts inward (70% - 85%)
+          final p = (loop - 0.70) / 0.15;
+          final easeContract = Curves.easeInOutCubic.transform(p);
+
+          lineSweepAngle = 2 * math.pi;
+          lineContractProgress = easeContract;
+          lineOpacity = 1.0 - easeContract;
+          morphProgress = 1.0;
+
+          // Center pause shape dissolves out as energy collapses:
+          pauseOpacity = 1.0 - easeContract;
+          pauseScale = 1.0 - (0.08 * easeContract);
+
+          // PPPlayer logo emerges from the center energy:
+          logoOpacity = easeContract;
+          logoScale = 0.86 + (0.14 * easeContract);
+          logoAngle = 0.0;
         } else {
-          // Phase 5: Rest & settle before next cycle (82% - 100%)
-          final p = (loop - 0.82) / 0.18;
-          angle = 0.0;
-          scaleMultiplier = 1.0 - (0.02 * math.sin(p * math.pi));
+          // Phase 5: PPPlayer Logo re-emerges & smoothly decelerates to rest (85% - 100%)
+          final p = (loop - 0.85) / 0.15;
+          final decel = Curves.easeOutCubic.transform(p);
+
           logoOpacity = 1.0;
-          pauseMorphOpacity = 0.0;
-          glowAlpha = 0.15;
+          logoScale = 0.86 + (0.14 * Curves.easeOutBack.transform(p));
+          // Smooth final deceleration to 0
+          logoAngle = (1.0 - decel) * (math.pi / 6);
+          pauseOpacity = 0.0;
+          lineOpacity = 0.0;
+          morphProgress = 0.0;
         }
 
-        // Ambient theme glow
-        final currentGlowColor = primaryThemeColor.withValues(
-          alpha: (glowAlpha * transition).clamp(0.0, 1.0),
-        );
-        final currentGlowBlur = (widget.size * 0.22 + (widget.size * 0.20) * (scaleMultiplier - 0.95)) * transition;
-        final currentGlowSpread = (0.5 + 2.0 * (scaleMultiplier - 0.95)) * transition;
-
-        // Smooth container background:
-        // Paused: primaryThemeColor (solid & crisp)
-        // Playing: subtle dark glass tint (NO harsh grey disc, NO rigid border)
+        // Base container background:
+        // Paused: Solid primaryThemeColor circle
+        // Playing: Fully transparent (clean floating logo without disc or shadow)
         final bgColor = Color.lerp(
           primaryThemeColor,
-          Colors.black.withValues(alpha: 0.28),
+          Colors.transparent,
           transition,
         )!;
 
-        final iconSize = widget.size * 0.60;
-        final logoSize = widget.size * 0.74;
+        final iconSize = widget.size * 0.52;
+        final logoSize = widget.size * 0.60;
 
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
+        return SizedBox(
           width: widget.size,
           height: widget.size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: bgColor,
-            boxShadow: [
-              // Resting subtle depth shadow
-              BoxShadow(
-                color: colorScheme.shadow.withValues(
-                  alpha: _isHovered ? 0.40 : 0.22,
+          child: Stack(
+            alignment: Alignment.center,
+            fit: StackFit.expand,
+            children: [
+              // Fluid Morph Painter (Draws the base container and the Material 3 Expressive morphing line)
+              CustomPaint(
+                size: Size(widget.size, widget.size),
+                painter: _MaterialSpinLinePainter(
+                  transition: transition,
+                  backgroundColor: bgColor,
+                  color: primaryThemeColor,
+                  lineOpacity: lineOpacity * transition,
+                  lineSweepAngle: lineSweepAngle,
+                  morphProgress: morphProgress,
+                  lineContractProgress: lineContractProgress,
                 ),
-                blurRadius: _isHovered ? 16 : 10,
-                offset: Offset(0, _isHovered ? 5 : 3),
               ),
-              // Playing ambient theme glow (soft & borderless)
-              if (transition > 0.01)
-                BoxShadow(
-                  color: currentGlowColor,
-                  blurRadius: currentGlowBlur,
-                  spreadRadius: currentGlowSpread,
-                ),
-            ],
-          ),
-          child: ClipOval(
-            child: Stack(
-              alignment: Alignment.center,
-              fit: StackFit.expand,
-              children: [
-                // 1. Idle Paused State: Solid play icon
-                if (transition < 0.99)
-                  Opacity(
-                    opacity: (1.0 - transition).clamp(0.0, 1.0),
-                    child: Transform.scale(
-                      scale: 1.0 - (0.15 * transition),
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: widget.size * 0.04), // Optical center
-                          child: Icon(
-                            Icons.play_arrow_rounded,
-                            size: iconSize,
-                            color: colorScheme.onPrimary,
+
+              // Center Content: Paused Play Icon / Spinning Logo / Morphing Pause
+              Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // 1. Paused State: Solid play icon
+                    if (transition < 0.99)
+                      Opacity(
+                        opacity: (1.0 - transition).clamp(0.0, 1.0),
+                        child: Transform.scale(
+                          scale: 1.0 - (0.15 * transition),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: widget.size * 0.04), // Optical center
+                            child: Icon(
+                              Icons.play_arrow_rounded,
+                              size: iconSize,
+                              color: colorScheme.onPrimary,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
 
-                // 2. Playing State: Living Kinetic Logo / Pause Morph
-                if (transition > 0.01)
-                  Opacity(
-                    opacity: transition.clamp(0.0, 1.0),
-                    child: Transform.scale(
-                      scale: scaleMultiplier,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        fit: StackFit.expand,
-                        children: [
-                          // PPPlayer Logo (Spins smoothly and breathes)
-                          if (logoOpacity > 0.01)
-                            Opacity(
-                              opacity: logoOpacity.clamp(0.0, 1.0),
-                              child: Center(
-                                child: Transform.rotate(
-                                  angle: angle,
-                                  child: Image.asset(
-                                    'assets/logo.png',
-                                    width: logoSize,
-                                    height: logoSize,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ),
+                    // 2. Playing State: Spinning & Accelerating PPPlayer Logo
+                    if (transition > 0.01 && logoOpacity > 0.01)
+                      Opacity(
+                        opacity: (logoOpacity * transition).clamp(0.0, 1.0),
+                        child: Transform.scale(
+                          scale: logoScale,
+                          child: Transform.rotate(
+                            angle: logoAngle,
+                            child: Image.asset(
+                              'assets/logo.png',
+                              width: logoSize,
+                              height: logoSize,
+                              fit: BoxFit.contain,
                             ),
-
-                          // Morphing Pause Glyph
-                          if (pauseMorphOpacity > 0.01)
-                            Opacity(
-                              opacity: pauseMorphOpacity.clamp(0.0, 1.0),
-                              child: Center(
-                                child: Icon(
-                                  Icons.pause_rounded,
-                                  size: iconSize * 1.05,
-                                  color: primaryThemeColor,
-                                ),
-                              ),
-                            ),
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
 
-                // 3. Playing State Hover Overlay: Clear Pause Affordance
-                if (transition > 0.5)
-                  AnimatedOpacity(
-                    duration: const Duration(milliseconds: 160),
-                    opacity: (_isHovered && isEnabled) ? 1.0 : 0.0,
-                    curve: Curves.easeOut,
+                    // 3. Playing State: Transformed Pause Glyph
+                    if (transition > 0.01 && pauseOpacity > 0.01)
+                      Opacity(
+                        opacity: (pauseOpacity * transition).clamp(0.0, 1.0),
+                        child: Transform.scale(
+                          scale: pauseScale,
+                          child: Icon(
+                            Icons.pause_rounded,
+                            size: iconSize * 0.95,
+                            color: primaryThemeColor,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              // Hover Overlay: Immediate Pause Affordance
+              if (transition > 0.5)
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 160),
+                  opacity: (_isHovered && isEnabled) ? 1.0 : 0.0,
+                  curve: Curves.easeOut,
+                  child: Center(
                     child: Container(
+                      width: widget.size * 0.76,
+                      height: widget.size * 0.76,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.black.withValues(alpha: 0.55),
+                        color: Colors.black.withValues(alpha: 0.60),
                       ),
                       child: Center(
                         child: Icon(
                           Icons.pause_rounded,
-                          size: iconSize * 0.95,
+                          size: iconSize * 0.90,
                           color: Colors.white,
                         ),
                       ),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         );
       },
@@ -470,6 +481,137 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
         ),
       ),
     );
+  }
+}
+
+/// Custom painter that executes Material 3 Expressive dynamic shape morphing:
+/// - Base smooth circular disc
+/// - Faint 360° M3 organic morphing track (clover -> squircle -> fluid wave)
+/// - Active traveling line flexing and morphing elastically along the lobes
+/// - Glowing leading comet head with radial soft blur
+/// - Elastic inward contraction
+class _MaterialSpinLinePainter extends CustomPainter {
+  final double transition;
+  final Color backgroundColor;
+  final Color color;
+  final double lineOpacity;
+  final double lineSweepAngle; // 0.0 -> 2*pi
+  final double morphProgress; // 0.0 -> 1.0 (clover -> squircle -> fluid wave -> circle)
+  final double lineContractProgress; // 0.0 -> 1.0
+
+  _MaterialSpinLinePainter({
+    required this.transition,
+    required this.backgroundColor,
+    required this.color,
+    required this.lineOpacity,
+    required this.lineSweepAngle,
+    required this.morphProgress,
+    required this.lineContractProgress,
+  });
+
+  /// Computes the dynamic Material 3 Expressive morphing radius at any given angle theta.
+  /// Seamlessly interpolates between:
+  /// - 4-lobed expressive clover (deep pillowy lobes)
+  /// - Expressive rounded squircle (rotated 45°)
+  /// - Undulating organic fluid wave (liquid inertia)
+  /// - Settled closed perimeter
+  double _computeRadius({
+    required double theta,
+    required double baseRadius,
+  }) {
+    final rBase = baseRadius * (1.0 - 0.45 * lineContractProgress);
+
+    // Harmonic 1: 4-lobed Expressive Clover (deep, pillowy rounded petals)
+    final clover = math.cos(4 * theta);
+
+    // Harmonic 2: Expressive Squircle (45-degree rotated superellipse)
+    final squircle = math.cos(4 * theta - math.pi);
+
+    // Harmonic 3: Elastic travelling ripple / fluid undulation
+    final fluidWave = math.sin(3 * theta + morphProgress * 2 * math.pi) * 0.75 +
+        math.cos(2 * theta - morphProgress * 1.5 * math.pi) * 0.4;
+
+    // Weightings evolving across morphProgress (0.0 -> 1.0):
+    final wClover = math.max(0.0, 1.0 - (morphProgress / 0.45));
+    final wSquircle = math.sin((morphProgress * math.pi).clamp(0.0, math.pi));
+    final wFluid = math.sin((morphProgress * 1.3 * math.pi).clamp(0.0, math.pi)) * 0.85;
+
+    final deviation = (0.14 * wClover * clover) +
+        (0.12 * wSquircle * squircle) +
+        (0.09 * wFluid * fluidWave);
+
+    return rBase * (1.0 + deviation);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final discRadius = size.width / 2;
+    final baseRadius = discRadius * 0.84;
+
+    // 1. Draw base disc container only while paused or transitioning
+    if (backgroundColor.a > 0.005) {
+      final basePaint = Paint()
+        ..color = backgroundColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(center, discRadius, basePaint);
+    }
+
+    // 2. Draw Material 3 Expressive Dynamic Morphing Line (only while active)
+    if (lineOpacity > 0.01 && lineSweepAngle > 0.01) {
+      const startAngle = -math.pi / 2;
+        final strokePaint = Paint()
+          ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = 2.8;
+
+        final linePath = Path();
+        final lineSamples = (80 * (lineSweepAngle / (2 * math.pi))).clamp(8, 120).toInt();
+        for (int i = 0; i <= lineSamples; i++) {
+          final fraction = i / lineSamples;
+          final theta = startAngle + lineSweepAngle * fraction;
+          final r = _computeRadius(theta: theta, baseRadius: baseRadius);
+          final x = center.dx + r * math.cos(theta);
+          final y = center.dy + r * math.sin(theta);
+          if (i == 0) {
+            linePath.moveTo(x, y);
+          } else {
+            linePath.lineTo(x, y);
+          }
+        }
+        canvas.drawPath(linePath, strokePaint);
+
+        // Glowing leading tip with soft radial aura
+        if (lineSweepAngle < (2 * math.pi - 0.04) && lineContractProgress < 0.05) {
+          final headAngle = startAngle + lineSweepAngle;
+          final headR = _computeRadius(theta: headAngle, baseRadius: baseRadius);
+          final tipX = center.dx + headR * math.cos(headAngle);
+          final tipY = center.dy + headR * math.sin(headAngle);
+
+          final tipPaint = Paint()
+            ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
+            ..style = PaintingStyle.fill;
+          canvas.drawCircle(Offset(tipX, tipY), 2.8, tipPaint);
+
+          final tipGlow = Paint()
+            ..color = color.withValues(alpha: 0.55 * lineOpacity.clamp(0.0, 1.0))
+            ..style = PaintingStyle.fill
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
+          canvas.drawCircle(Offset(tipX, tipY), 4.8, tipGlow);
+        }
+      }
+    }
+
+  @override
+  bool shouldRepaint(covariant _MaterialSpinLinePainter oldDelegate) {
+    return oldDelegate.transition != transition ||
+        oldDelegate.backgroundColor != backgroundColor ||
+        oldDelegate.color != color ||
+        oldDelegate.lineOpacity != lineOpacity ||
+        oldDelegate.lineSweepAngle != lineSweepAngle ||
+        oldDelegate.morphProgress != morphProgress ||
+        oldDelegate.lineContractProgress != lineContractProgress;
   }
 }
 
