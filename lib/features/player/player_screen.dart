@@ -8,7 +8,6 @@ import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
-import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/artists_links.dart';
@@ -194,30 +193,23 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                       .fadeIn(duration: 600.ms, delay: 200.ms)
                       .slideY(begin: -0.2, end: 0, curve: Curves.easeOutCubic),
                       const Spacer(),
-                      PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert),
-                        onSelected: (value) {
-                          switch (value) {
-                            case 'add_to_playlist':
-                              TrackTile.showPlaylistPicker(context, ref, track);
-                              break;
-                            case 'go_to_artist':
-                              context.pop();
-                              context.push('/artist/${track.artistId}');
-                              break;
-                            case 'go_to_album':
-                              if (track.albumId != null) {
-                                context.pop();
-                                context.push('/album/${track.albumId}');
-                              }
-                              break;
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(value: 'add_to_playlist', child: Text('Add to Playlist')),
-                          const PopupMenuItem(value: 'go_to_artist', child: Text('Go to Artist')),
-                          const PopupMenuItem(value: 'go_to_album', child: Text('Go to Album')),
-                        ],
+                      Builder(
+                        builder: (btnContext) => TactileIconButton(
+                          icon: Icons.more_vert,
+                          color: colorScheme.onSurface.withValues(alpha: 0.8),
+                          hoverColor: colorScheme.primary,
+                          tooltip: 'More options',
+                          onTap: () {
+                            final renderBox = btnContext.findRenderObject() as RenderBox?;
+                            final offset = renderBox?.localToGlobal(Offset.zero);
+                            showContentContextMenu(
+                              context,
+                              ref,
+                              position: offset != null ? offset + Offset(0, renderBox!.size.height) : Offset.zero,
+                              target: TrackContextTarget(track),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -455,12 +447,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                 TactileIconButton(
                                                   icon: Icons.shuffle,
                                                   color: playerState.isShuffled ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.5),
+                                                  hoverColor: playerState.isShuffled ? colorScheme.primary : colorScheme.onSurface,
+                                                  tooltip: 'Shuffle',
                                                   onTap: playerNotifier.toggleShuffle,
                                                 ),
                                                 TactileIconButton(
                                                   icon: Icons.skip_previous,
                                                   size: 32,
                                                   color: colorScheme.onSurface,
+                                                  hoverColor: colorScheme.primary,
+                                                  tooltip: 'Previous',
                                                   onTap: playerNotifier.skipPrevious,
                                                 ),
                                                 TactilePlayerPlayPauseButton(
@@ -471,6 +467,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   icon: Icons.skip_next,
                                                   size: 32,
                                                   color: colorScheme.onSurface,
+                                                  hoverColor: colorScheme.primary,
+                                                  tooltip: 'Next',
                                                   onTap: playerNotifier.skipNext,
                                                 ),
                                                 TactileIconButton(
@@ -478,6 +476,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   color: playerState.repeatMode != RepeatMode.none
                                                       ? colorScheme.primary
                                                       : colorScheme.onSurface.withValues(alpha: 0.5),
+                                                  hoverColor: playerState.repeatMode != RepeatMode.none ? colorScheme.primary : colorScheme.onSurface,
+                                                  tooltip: playerState.repeatMode == RepeatMode.none ? 'Repeat Off' : (playerState.repeatMode == RepeatMode.one ? 'Repeat One' : 'Repeat All'),
                                                   onTap: playerNotifier.cycleRepeat,
                                                 ),
                                               ],

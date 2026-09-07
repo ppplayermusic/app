@@ -634,41 +634,36 @@ class _MiniPlayerBar extends ConsumerWidget {
                       ),
                       TactileIconButton(
                         icon: Icons.skip_previous,
-                        onTap:
-                            () =>
-                                ref
-                                    .read(playerProvider.notifier)
-                                    .skipPrevious(),
+                        onTap: () => ref.read(playerProvider.notifier).skipPrevious(),
                         size: 24,
+                        hoverColor: colorScheme.primary,
+                        tooltip: 'Previous',
                       ),
                       TactileIconButton(
-                        icon:
-                            playerState.isPlaying
-                                ? Icons.pause
-                                : Icons.play_arrow,
-                        onTap:
-                            () =>
-                                ref.read(playerProvider.notifier).togglePlay(),
+                        icon: playerState.isPlaying ? Icons.pause : Icons.play_arrow,
+                        onTap: () => ref.read(playerProvider.notifier).togglePlay(),
                         size: 28,
+                        color: colorScheme.primary,
+                        hoverColor: colorScheme.primary,
+                        tooltip: playerState.isPlaying ? 'Pause' : 'Play',
                       ),
                       TactileIconButton(
                         icon: Icons.skip_next,
-                        onTap:
-                            () => ref.read(playerProvider.notifier).skipNext(),
+                        onTap: () => ref.read(playerProvider.notifier).skipNext(),
                         size: 24,
+                        hoverColor: colorScheme.primary,
+                        tooltip: 'Next',
                       ),
                       const SizedBox(width: 4),
                       TactileIconButton(
                         icon: showVideo ? Icons.videocam : Icons.videocam_off,
-                        onTap:
-                            () =>
-                                ref
-                                    .read(settingsProvider.notifier)
-                                    .toggleVideo(),
+                        onTap: () => ref.read(settingsProvider.notifier).toggleVideo(),
                         size: 18,
                         color: colorScheme.onSurfaceVariant.withValues(
-                          alpha: 0.4,
+                          alpha: 0.6,
                         ),
+                        hoverColor: colorScheme.onSurface,
+                        tooltip: showVideo ? 'Hide Video' : 'Show Video',
                       ),
                     ],
                   ),
@@ -1054,164 +1049,289 @@ class _DesktopPlayerBar extends ConsumerWidget {
             ),
           ),
           child: Column(
-        children: [
-          // Progress bar
-          Container(
-            height: 2,
-            width: double.infinity,
-            color: colorScheme.onSurface.withValues(alpha: 0.1),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: progress.clamp(0.0, 1.0),
-              child: Container(color: colorScheme.primary),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                children: [
-                  // Left: Track Info
-                  Expanded(
-                    flex: 1,
-                    child: ContentContextMenuRegion(
-                      target: TrackContextTarget(track),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: track.albumImage ?? '',
-                              width: 56,
-                              height: 56,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  track.name,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+            children: [
+              // Interactive Hover-responsive Progress Bar
+              _DesktopProgressBar(
+                progress: progress,
+                duration: playerState.duration,
+                onSeek: (pos) => ref.read(playerProvider.notifier).seekTo(pos),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      // Left: Track Info
+                      Expanded(
+                        flex: 1,
+                        child: ContentContextMenuRegion(
+                          target: TrackContextTarget(track),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: CachedNetworkImage(
+                                  imageUrl: track.albumImage ?? '',
+                                  width: 56,
+                                  height: 56,
+                                  fit: BoxFit.cover,
                                 ),
-                                const SizedBox(height: 4),
-                                ArtistsLinks(
-                                  track: track,
-                                  style: TextStyle(
-                                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
-                                    fontSize: 12,
-                                  ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      track.name,
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    ArtistsLinks(
+                                      track: track,
+                                      style: TextStyle(
+                                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  
-                  // Center: Controls
-                  Expanded(
-                    flex: 1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TactileIconButton(
-                          icon: Icons.shuffle,
-                          onTap: () => ref.read(playerProvider.notifier).toggleShuffle(),
-                          size: 20,
-                          color: playerState.isShuffled ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                        ),
-                        const SizedBox(width: 16),
-                        TactileIconButton(
-                          icon: Icons.skip_previous,
-                          onTap: () => ref.read(playerProvider.notifier).skipPrevious(),
-                          size: 28,
-                        ),
-                        const SizedBox(width: 16),
-                        TactileIconButton(
-                          icon: playerState.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
-                          onTap: () => ref.read(playerProvider.notifier).togglePlay(),
-                          size: 48,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 16),
-                        TactileIconButton(
-                          icon: Icons.skip_next,
-                          onTap: () => ref.read(playerProvider.notifier).skipNext(),
-                          size: 28,
-                        ),
-                        const SizedBox(width: 16),
-                        TactileIconButton(
-                          icon: Icons.repeat,
-                          onTap: () => ref.read(playerProvider.notifier).cycleRepeat(),
-                          size: 20,
-                          color: playerState.repeatMode != RepeatMode.none ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  // Right: Extra controls
-                  Expanded(
-                    flex: 1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // Volume control
-                        Icon(
-                          playerState.volume == 0 ? Icons.volume_off : (playerState.volume < 0.5 ? Icons.volume_down : Icons.volume_up),
-                          size: 20,
-                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                        ),
-                        SizedBox(
-                          width: 80,
-                          child: SliderTheme(
-                            data: SliderThemeData(
-                              trackHeight: 4,
-                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                              overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-                              activeTrackColor: colorScheme.primary,
-                              inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.2),
-                              thumbColor: colorScheme.primary,
-                              overlayColor: colorScheme.primary.withValues(alpha: 0.2),
+                      
+                      // Center: Controls
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TactileIconButton(
+                              icon: Icons.shuffle,
+                              onTap: () => ref.read(playerProvider.notifier).toggleShuffle(),
+                              size: 20,
+                              color: playerState.isShuffled ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                              hoverColor: playerState.isShuffled ? colorScheme.primary : colorScheme.onSurface,
+                              tooltip: 'Shuffle',
                             ),
-                            child: Slider(
-                              value: playerState.volume,
-                              min: 0.0,
-                              max: 1.0,
+                            const SizedBox(width: 16),
+                            TactileIconButton(
+                              icon: Icons.skip_previous,
+                              onTap: () => ref.read(playerProvider.notifier).skipPrevious(),
+                              size: 28,
+                              color: colorScheme.onSurface.withValues(alpha: 0.85),
+                              hoverColor: colorScheme.primary,
+                              tooltip: 'Previous',
+                            ),
+                            const SizedBox(width: 16),
+                            TactileIconButton(
+                              icon: playerState.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                              onTap: () => ref.read(playerProvider.notifier).togglePlay(),
+                              size: 48,
+                              color: colorScheme.primary,
+                              hoverColor: colorScheme.primary,
+                              tooltip: playerState.isPlaying ? 'Pause' : 'Play',
+                            ),
+                            const SizedBox(width: 16),
+                            TactileIconButton(
+                              icon: Icons.skip_next,
+                              onTap: () => ref.read(playerProvider.notifier).skipNext(),
+                              size: 28,
+                              color: colorScheme.onSurface.withValues(alpha: 0.85),
+                              hoverColor: colorScheme.primary,
+                              tooltip: 'Next',
+                            ),
+                            const SizedBox(width: 16),
+                            TactileIconButton(
+                              icon: playerState.repeatMode == RepeatMode.one ? Icons.repeat_one : Icons.repeat,
+                              onTap: () => ref.read(playerProvider.notifier).cycleRepeat(),
+                              size: 20,
+                              color: playerState.repeatMode != RepeatMode.none ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                              hoverColor: playerState.repeatMode != RepeatMode.none ? colorScheme.primary : colorScheme.onSurface,
+                              tooltip: playerState.repeatMode == RepeatMode.one ? 'Repeat One' : (playerState.repeatMode == RepeatMode.all ? 'Repeat All' : 'Repeat Off'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Right: Extra controls
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // Volume control with mute toggle
+                            TactileIconButton(
+                              icon: playerState.volume == 0
+                                  ? Icons.volume_off
+                                  : (playerState.volume < 0.5 ? Icons.volume_down : Icons.volume_up),
+                              size: 19,
+                              padding: const EdgeInsets.all(6),
+                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                              hoverColor: colorScheme.primary,
+                              tooltip: playerState.volume == 0 ? 'Unmute' : 'Mute',
+                              onTap: () {
+                                final notifier = ref.read(playerProvider.notifier);
+                                if (playerState.volume > 0) {
+                                  notifier.setVolume(0);
+                                } else {
+                                  notifier.setVolume(0.7);
+                                }
+                              },
+                            ),
+                            _DesktopVolumeSlider(
+                              volume: playerState.volume,
                               onChanged: (val) => ref.read(playerProvider.notifier).setVolume(val),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            TactileIconButton(
+                              icon: showVideo ? Icons.videocam : Icons.videocam_off,
+                              onTap: () => ref.read(settingsProvider.notifier).toggleVideo(),
+                              size: 20,
+                              color: showVideo ? colorScheme.primary : colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                              hoverColor: colorScheme.onSurface,
+                              tooltip: showVideo ? 'Hide Video' : 'Show Video',
+                            ),
+                            const SizedBox(width: 16),
+                            TactileIconButton(
+                              icon: Icons.queue_music,
+                              onTap: () => context.push('/player'),
+                              size: 20,
+                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                              hoverColor: colorScheme.primary,
+                              tooltip: 'Queue',
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        TactileIconButton(
-                          icon: showVideo ? Icons.videocam : Icons.videocam_off,
-                          onTap: () => ref.read(settingsProvider.notifier).toggleVideo(),
-                          size: 20,
-                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                        ),
-                        const SizedBox(width: 16),
-                        TactileIconButton(
-                          icon: Icons.queue_music,
-                          onTap: () => context.push('/player'), // Desktop could eventually have a slide-out queue instead
-                          size: 20,
-                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DesktopProgressBar extends StatefulWidget {
+  final double progress;
+  final Duration duration;
+  final ValueChanged<Duration> onSeek;
+
+  const _DesktopProgressBar({
+    required this.progress,
+    required this.duration,
+    required this.onSeek,
+  });
+
+  @override
+  State<_DesktopProgressBar> createState() => _DesktopProgressBarState();
+}
+
+class _DesktopProgressBarState extends State<_DesktopProgressBar> {
+  bool _isHovered = false;
+
+  void _handleSeek(Offset localPosition, double totalWidth) {
+    if (totalWidth <= 0 || widget.duration.inMilliseconds <= 0) return;
+    final ratio = (localPosition.dx / totalWidth).clamp(0.0, 1.0);
+    final targetMs = (widget.duration.inMilliseconds * ratio).round();
+    widget.onSeek(Duration(milliseconds: targetMs));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) => setState(() => _isHovered = true),
+          onExit: (_) => setState(() => _isHovered = false),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+            onHorizontalDragUpdate: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              curve: Curves.easeOutCubic,
+              height: _isHovered ? 4.5 : 2.0,
+              width: double.infinity,
+              color: colorScheme.onSurface.withValues(alpha: _isHovered ? 0.18 : 0.10),
+              child: FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: widget.progress.clamp(0.0, 1.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    boxShadow: _isHovered
+                        ? [
+                            BoxShadow(
+                              color: colorScheme.primary.withValues(alpha: 0.45),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : null,
+                  ),
+                ),
               ),
             ),
           ),
-        ],
-      ),
+        );
+      },
+    );
+  }
+}
+
+class _DesktopVolumeSlider extends StatefulWidget {
+  final double volume;
+  final ValueChanged<double> onChanged;
+
+  const _DesktopVolumeSlider({required this.volume, required this.onChanged});
+
+  @override
+  State<_DesktopVolumeSlider> createState() => _DesktopVolumeSliderState();
+}
+
+class _DesktopVolumeSliderState extends State<_DesktopVolumeSlider> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: SizedBox(
+        width: 86,
+        child: SliderTheme(
+          data: SliderThemeData(
+            trackHeight: _isHovered ? 4.5 : 3.0,
+            thumbShape: RoundSliderThumbShape(
+              enabledThumbRadius: _isHovered ? 6.5 : 4.5,
+              elevation: _isHovered ? 2.0 : 0.0,
+            ),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+            activeTrackColor: _isHovered ? colorScheme.primary : colorScheme.primary.withValues(alpha: 0.85),
+            inactiveTrackColor: colorScheme.onSurface.withValues(alpha: _isHovered ? 0.25 : 0.15),
+            thumbColor: colorScheme.primary,
+            overlayColor: colorScheme.primary.withValues(alpha: 0.15),
+          ),
+          child: Slider(
+            value: widget.volume,
+            min: 0.0,
+            max: 1.0,
+            onChanged: widget.onChanged,
+          ),
         ),
       ),
     );

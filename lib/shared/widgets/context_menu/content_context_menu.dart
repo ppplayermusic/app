@@ -1183,8 +1183,17 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    final isCustomColor = widget.iconColor != null;
     final defaultIconColor = _isHovered ? colorScheme.onSurface : colorScheme.onSurfaceVariant;
     final iconColor = widget.iconColor ?? defaultIconColor;
+
+    final Color hoverBg = isCustomColor
+        ? widget.iconColor!.withValues(alpha: 0.12)
+        : colorScheme.onSurface.withValues(alpha: 0.08);
+
+    final Color hoverBorder = isCustomColor
+        ? widget.iconColor!.withValues(alpha: 0.22)
+        : colorScheme.outlineVariant.withValues(alpha: 0.20);
 
     return MouseRegion(
       onEnter: (event) {
@@ -1203,45 +1212,64 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
         onTap: widget.onTap,
         behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
+          duration: const Duration(milliseconds: 140),
+          curve: Curves.easeOutCubic,
           height: 38,
           decoration: BoxDecoration(
-            color: _isHovered
-                ? colorScheme.onSurface.withValues(alpha: 0.08)
-                : Colors.transparent,
+            color: _isHovered ? hoverBg : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: _isHovered ? hoverBorder : Colors.transparent,
+              width: 1.0,
+            ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(
-                widget.icon,
-                size: 19,
-                color: iconColor,
+              AnimatedScale(
+                scale: _isHovered ? 1.08 : 1.0,
+                duration: const Duration(milliseconds: 140),
+                curve: Curves.easeOutCubic,
+                child: Icon(
+                  widget.icon,
+                  size: 19,
+                  color: iconColor,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  widget.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 140),
+                  curve: Curves.easeOutCubic,
                   style: TextStyle(
                     color: _isHovered
-                        ? colorScheme.onSurface
+                        ? (isCustomColor && widget.iconColor == colorScheme.error
+                            ? colorScheme.error
+                            : colorScheme.onSurface)
                         : colorScheme.onSurface.withValues(alpha: 0.9),
                     fontSize: 13.5,
                     fontWeight: _isHovered ? FontWeight.w600 : FontWeight.w500,
                     letterSpacing: -0.2,
                   ),
+                  child: Text(
+                    widget.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
               if (widget.hasSubmenu)
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 18,
-                  color: _isHovered
-                      ? colorScheme.onSurface
-                      : colorScheme.onSurfaceVariant,
+                AnimatedSlide(
+                  offset: Offset(_isHovered ? 0.08 : 0.0, 0),
+                  duration: const Duration(milliseconds: 140),
+                  curve: Curves.easeOutCubic,
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    size: 18,
+                    color: _isHovered
+                        ? colorScheme.onSurface
+                        : colorScheme.onSurfaceVariant,
+                  ),
                 ),
             ],
           ),

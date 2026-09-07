@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// A premium icon button that provides a "squeeze" scale animation
-/// and light haptic feedback when pressed.
+/// A premium icon button that provides a "squeeze" scale animation,
+/// subtle hover feedback, and light haptic feedback when pressed.
 class TactileIconButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback? onTap;
   final double size;
   final Color? color;
+  final Color? hoverColor;
   final Color? backgroundColor;
+  final Color? hoverBackgroundColor;
   final BorderRadius? borderRadius;
   final BoxBorder? border;
   final EdgeInsets padding;
+  final bool showHoverHighlight;
+  final String? tooltip;
 
   const TactileIconButton({
     super.key,
@@ -19,10 +24,14 @@ class TactileIconButton extends StatefulWidget {
     this.onTap,
     this.size = 28,
     this.color,
+    this.hoverColor,
     this.backgroundColor,
+    this.hoverBackgroundColor,
     this.borderRadius,
     this.border,
     this.padding = const EdgeInsets.all(12.0),
+    this.showHoverHighlight = true,
+    this.tooltip,
   });
 
   @override
@@ -31,11 +40,12 @@ class TactileIconButton extends StatefulWidget {
 
 class _TactileIconButtonState extends State<TactileIconButton> {
   double _scale = 1.0;
+  bool _isHovered = false;
 
   void _handleTapDown(TapDownDetails details) {
     if (widget.onTap == null) return;
     HapticFeedback.selectionClick();
-    setState(() => _scale = 0.85);
+    setState(() => _scale = 0.88);
   }
 
   void _handleTapUp(TapUpDetails details) {
@@ -49,41 +59,97 @@ class _TactileIconButtonState extends State<TactileIconButton> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
-      onTapCancel: _handleTapCancel,
-      onTap: widget.onTap,
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOutCubic,
-        child: Opacity(
-          opacity: widget.onTap == null ? 0.3 : 1.0,
-          child: Container(
-            decoration: BoxDecoration(
-              color: widget.backgroundColor,
-              borderRadius: widget.borderRadius,
-              border: widget.border,
-            ),
-            child: Padding(
-              padding: widget.padding,
-              child: Icon(
-                widget.icon,
-                size: widget.size,
-                color: widget.color ?? colorScheme.onSurface,
+    final isEnabled = widget.onTap != null;
+
+    final effectiveScale = _scale < 1.0
+        ? _scale
+        : (_isHovered && isEnabled ? 1.06 : 1.0);
+
+    final defaultHoverColor = widget.color != null
+        ? Color.alphaBlend(colorScheme.onSurface.withValues(alpha: 0.25), widget.color!)
+        : colorScheme.onSurface;
+
+    final effectiveColor = !isEnabled
+        ? (widget.color ?? colorScheme.onSurface).withValues(alpha: 0.3)
+        : (_isHovered
+            ? (widget.hoverColor ?? defaultHoverColor)
+            : (widget.color ?? colorScheme.onSurface));
+
+    final effectiveBgColor = widget.backgroundColor != null
+        ? (_isHovered && isEnabled
+            ? (widget.hoverBackgroundColor ??
+                Color.alphaBlend(
+                    colorScheme.onSurface.withValues(alpha: 0.08),
+                    widget.backgroundColor!))
+            : widget.backgroundColor)
+        : (_isHovered && isEnabled && widget.showHoverHighlight
+            ? (widget.hoverBackgroundColor ??
+                colorScheme.onSurface.withValues(alpha: 0.08))
+            : Colors.transparent);
+
+    final effectiveRadius = widget.borderRadius ?? BorderRadius.circular(widget.size + 12);
+
+    Widget content = MouseRegion(
+      cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          scale: effectiveScale,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOutCubic,
+          child: Opacity(
+            opacity: isEnabled ? 1.0 : 0.38,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              curve: Curves.easeOutCubic,
+              decoration: BoxDecoration(
+                color: effectiveBgColor,
+                borderRadius: effectiveRadius,
+                border: widget.border,
+                boxShadow: (_isHovered && isEnabled && widget.size >= 40)
+                    ? [
+                        BoxShadow(
+                          color: (widget.color ?? colorScheme.primary).withValues(alpha: 0.30),
+                          blurRadius: 16,
+                          spreadRadius: 1,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Padding(
+                padding: widget.padding,
+                child: Icon(
+                  widget.icon,
+                  size: widget.size,
+                  color: effectiveColor,
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+
+    if (widget.tooltip != null) {
+      content = Tooltip(
+        message: widget.tooltip!,
+        waitDuration: const Duration(milliseconds: 500),
+        child: content,
+      );
+    }
+
+    return content;
   }
 }
 
 /// A premium specialized Play/Pause button for the Player screen
-/// with spring animations and haptic feedback.
+/// with spring animations, hover responsiveness, and haptic feedback.
 class TactilePlayerPlayPauseButton extends StatefulWidget {
   final bool isPlaying;
   final VoidCallback? onTap;
@@ -101,6 +167,7 @@ class TactilePlayerPlayPauseButton extends StatefulWidget {
 class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseButton> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   double _scale = 1.0;
+  bool _isHovered = false;
 
   @override
   void initState() {
@@ -133,42 +200,55 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
   void _handleTapDown(TapDownDetails details) {
     if (widget.onTap == null) return;
     HapticFeedback.mediumImpact();
-    setState(() => _scale = 0.9);
+    setState(() => _scale = 0.90);
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTapDown: _handleTapDown,
-      onTapUp: (_) => setState(() => _scale = 1.0),
-      onTapCancel: () => setState(() => _scale = 1.0),
-      onTap: widget.onTap,
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 100),
-        child: Opacity(
-          opacity: widget.onTap == null ? 0.6 : 1.0,
-          child: Container(
-            width: 76,
-            height: 76,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colorScheme.onSurface,
-              boxShadow: [
-                BoxShadow(
-                  color: colorScheme.shadow.withValues(alpha: 0.26),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
+    final isEnabled = widget.onTap != null;
+    final effectiveScale = _scale < 1.0
+        ? _scale
+        : (_isHovered && isEnabled ? 1.05 : 1.0);
+
+    return MouseRegion(
+      cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTapDown: _handleTapDown,
+        onTapUp: (_) => setState(() => _scale = 1.0),
+        onTapCancel: () => setState(() => _scale = 1.0),
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          scale: effectiveScale,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOutCubic,
+          child: Opacity(
+            opacity: isEnabled ? 1.0 : 0.6,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              curve: Curves.easeOutCubic,
+              width: 76,
+              height: 76,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colorScheme.onSurface,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withValues(alpha: _isHovered ? 0.38 : 0.26),
+                    blurRadius: _isHovered ? 22 : 15,
+                    offset: Offset(0, _isHovered ? 7 : 5),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: AnimatedIcon(
+                  icon: AnimatedIcons.play_pause,
+                  progress: _controller,
+                  size: 42,
+                  color: colorScheme.surface,
                 ),
-              ],
-            ),
-            child: Center(
-              child: AnimatedIcon(
-                icon: AnimatedIcons.play_pause,
-                progress: _controller,
-                size: 42,
-                color: colorScheme.surface,
               ),
             ),
           ),
@@ -179,7 +259,7 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
 }
 
 /// A signature green play button used in list headers (Radio, Genre, Playlist)
-/// with tactile feedback and animations.
+/// with tactile feedback, hover glow, and animations.
 class TactileActionPlayButton extends StatefulWidget {
   final VoidCallback? onTap;
   final double size;
@@ -198,43 +278,56 @@ class TactileActionPlayButton extends StatefulWidget {
 
 class _TactileActionPlayButtonState extends State<TactileActionPlayButton> {
   double _scale = 1.0;
+  bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTapDown: (_) {
-        if (widget.onTap == null) return;
-        HapticFeedback.lightImpact();
-        setState(() => _scale = 0.9);
-      },
-      onTapUp: (_) => setState(() => _scale = 1.0),
-      onTapCancel: () => setState(() => _scale = 1.0),
-      onTap: widget.onTap,
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOutBack,
-        child: Opacity(
-          opacity: widget.onTap == null ? 0.5 : 1.0,
-          child: Container(
-            width: widget.size,
-            height: widget.size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colorScheme.primary, // Dynamic Theme Color
-              boxShadow: [
-                BoxShadow(
-                  color: colorScheme.shadow.withValues(alpha: 0.45),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Icon(
-              widget.icon ?? Icons.play_arrow_rounded,
-              size: widget.size * 0.7,
-              color: colorScheme.onPrimary,
+    final isEnabled = widget.onTap != null;
+    final effectiveScale = _scale < 1.0
+        ? _scale
+        : (_isHovered && isEnabled ? 1.05 : 1.0);
+
+    return MouseRegion(
+      cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTapDown: (_) {
+          if (widget.onTap == null) return;
+          HapticFeedback.lightImpact();
+          setState(() => _scale = 0.90);
+        },
+        onTapUp: (_) => setState(() => _scale = 1.0),
+        onTapCancel: () => setState(() => _scale = 1.0),
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          scale: effectiveScale,
+          duration: const Duration(milliseconds: 140),
+          curve: Curves.easeOutBack,
+          child: Opacity(
+            opacity: isEnabled ? 1.0 : 0.5,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              curve: Curves.easeOutCubic,
+              width: widget.size,
+              height: widget.size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colorScheme.primary, // Dynamic Theme Color
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withValues(alpha: _isHovered ? 0.55 : 0.45),
+                    blurRadius: _isHovered ? 18 : 12,
+                    offset: Offset(0, _isHovered ? 8 : 6),
+                  ),
+                ],
+              ),
+              child: Icon(
+                widget.icon ?? Icons.play_arrow_rounded,
+                size: widget.size * 0.7,
+                color: colorScheme.onPrimary,
+              ),
             ),
           ),
         ),
@@ -298,18 +391,22 @@ class _TactileTapState extends State<TactileTap> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
-      onTapCancel: _handleTapCancel,
-      onTap: widget.onTap,
-      onLongPress: widget.onLongPress,
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOutCubic,
-        child: widget.child,
+    final isInteractive = widget.onTap != null || widget.onLongPress != null;
+    return MouseRegion(
+      cursor: isInteractive ? SystemMouseCursors.click : MouseCursor.defer,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        onTap: widget.onTap,
+        onLongPress: widget.onLongPress,
+        child: AnimatedScale(
+          scale: _scale,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOutCubic,
+          child: widget.child,
+        ),
       ),
     );
   }
