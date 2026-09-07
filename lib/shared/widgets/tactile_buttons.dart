@@ -183,11 +183,13 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
 class TactileActionPlayButton extends StatefulWidget {
   final VoidCallback? onTap;
   final double size;
+  final IconData? icon;
 
   const TactileActionPlayButton({
     super.key,
     this.onTap,
     this.size = 56,
+    this.icon,
   });
 
   @override
@@ -230,7 +232,7 @@ class _TactileActionPlayButtonState extends State<TactileActionPlayButton> {
               ],
             ),
             child: Icon(
-              Icons.play_arrow_rounded,
+              widget.icon ?? Icons.play_arrow_rounded,
               size: widget.size * 0.7,
               color: colorScheme.onPrimary,
             ),
@@ -318,12 +320,18 @@ class HoverPlayOverlay extends StatefulWidget {
   final Widget child;
   final VoidCallback? onPlay;
   final double size;
+  final bool? isHovered;
+  final bool isPlaying;
+  final IconData? icon;
 
   const HoverPlayOverlay({
     super.key,
     required this.child,
     this.onPlay,
     this.size = 48,
+    this.isHovered,
+    this.isPlaying = false,
+    this.icon,
   });
 
   @override
@@ -331,13 +339,16 @@ class HoverPlayOverlay extends StatefulWidget {
 }
 
 class _HoverPlayOverlayState extends State<HoverPlayOverlay> {
-  bool _isHovered = false;
+  bool _internalHovered = false;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveHover = widget.isHovered ?? _internalHovered;
+    final showButton = effectiveHover || widget.isPlaying;
+
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) => setState(() => _internalHovered = true),
+      onExit: (_) => setState(() => _internalHovered = false),
       child: Stack(
         fit: StackFit.passthrough,
         children: [
@@ -346,13 +357,22 @@ class _HoverPlayOverlayState extends State<HoverPlayOverlay> {
             Positioned(
               right: 8,
               bottom: 8,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: _isHovered ? 1.0 : 0.0,
-                curve: Curves.easeOut,
-                child: TactileActionPlayButton(
-                  onTap: widget.onPlay,
-                  size: widget.size,
+              child: IgnorePointer(
+                ignoring: !showButton,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: showButton ? 1.0 : 0.0,
+                  curve: Curves.easeOut,
+                  child: AnimatedSlide(
+                    duration: const Duration(milliseconds: 200),
+                    offset: showButton ? Offset.zero : const Offset(0, 0.25),
+                    curve: Curves.easeOutCubic,
+                    child: TactileActionPlayButton(
+                      onTap: widget.onPlay,
+                      size: widget.size,
+                      icon: widget.icon ?? (widget.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded),
+                    ),
+                  ),
                 ),
               ),
             ),

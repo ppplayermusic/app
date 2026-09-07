@@ -14,6 +14,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/providers/genre_providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/favorites_provider.dart';
+import '../../core/api/spotify_client.dart';
 
 
 final categoryColorProvider = Provider.family<Color, String>((ref, name) {
@@ -338,91 +339,144 @@ class _PlaylistList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     if (playlists.isEmpty) return const SizedBox.shrink();
     return SizedBox(
-      height: 240,
+      height: 256,
       child: ListView.builder(
+        clipBehavior: Clip.none,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         itemCount: playlists.length,
         itemBuilder: (context, index) {
-          final playlist = playlists[index];
-          final rawImages = (playlist['images'] as List?) ?? [];
-          final images = rawImages.map((i) => i['url'] as String).toList();
-          final imageUrl = images.firstOrNull ?? '';
-          
-          Widget imageWidget;
-          if (images.length > 1) {
-            imageWidget = PlaylistCover(
-              images: images,
-              size: double.infinity,
-              borderRadius: 12,
-            );
-          } else {
-            imageWidget = PPImage(
-              imageUrl: imageUrl,
-              fit: BoxFit.cover,
-            );
-          }
+          return _GenrePlaylistCard(playlist: playlists[index]);
+        },
+      ),
+    );
+  }
+}
 
-          return TactileTap(
-            onTap: () => context.push('/playlist/remote/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}'),
-            scaleDown: 0.95,
-            child: Container(
-              width: 160,
-              margin: const EdgeInsets.only(right: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.scrim.withValues(alpha: 0.4),
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
+class _GenrePlaylistCard extends ConsumerStatefulWidget {
+  final Map<String, dynamic> playlist;
+  const _GenrePlaylistCard({required this.playlist});
+
+  @override
+  ConsumerState<_GenrePlaylistCard> createState() => _GenrePlaylistCardState();
+}
+
+class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
+  bool _isHovered = false;
+
+  void _onPlay() async {
+    try {
+      final tracks = await ref
+          .read(spotifyClientProvider)
+          .getPlaylistTracks(widget.playlist['id'], limit: 50);
+      if (tracks.isNotEmpty) {
+        ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+      }
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final playlist = widget.playlist;
+    final rawImages = (playlist['images'] as List?) ?? [];
+    final images = rawImages.map((i) => i['url'] as String).toList();
+    final imageUrl = images.firstOrNull ?? '';
+
+    Widget imageWidget;
+    if (images.length > 1) {
+      imageWidget = PlaylistCover(
+        images: images,
+        size: double.infinity,
+        borderRadius: 16,
+      );
+    } else {
+      imageWidget = PPImage(
+        imageUrl: imageUrl,
+        fit: BoxFit.cover,
+      );
+    }
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: TactileTap(
+        onTap: () => context.push(
+            '/playlist/remote/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}'),
+        scaleDown: 0.96,
+        child: AnimatedScale(
+          scale: _isHovered ? 1.04 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            width: 160,
+            margin: const EdgeInsets.only(right: 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _isHovered
+                              ? colorScheme.primary.withValues(alpha: 0.35)
+                              : colorScheme.scrim.withValues(alpha: 0.4),
+                          blurRadius: _isHovered ? 26 : 15,
+                          spreadRadius: _isHovered ? 2 : 0,
+                          offset: Offset(0, _isHovered ? 12 : 8),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: HoverPlayOverlay(
+                        onPlay: _onPlay,
+                        isHovered: _isHovered,
+                        size: 42,
                         child: imageWidget,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
+                ),
+                const SizedBox(height: 12),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 150),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14,
+                    color: _isHovered ? colorScheme.primary : colorScheme.onSurface,
+                    letterSpacing: -0.3,
+                  ),
+                  child: Text(
                     playlist['name'] ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 14,
-                      color: colorScheme.onSurface,
-                      letterSpacing: -0.3,
-                    ),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    playlist['description'] ?? '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colorScheme.onSurface.withValues(alpha: 0.4),
-                      height: 1.2,
-                    ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  playlist['description'] ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                    height: 1.2,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

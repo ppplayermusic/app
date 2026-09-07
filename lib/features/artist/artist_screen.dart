@@ -12,6 +12,7 @@ import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../core/services/favorites_provider.dart';
 import '../../shared/widgets/playlist_cover.dart';
+import '../../shared/widgets/animated_equalizer.dart';
 
 final _artistProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
@@ -482,73 +483,18 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                   title: 'ALBUMS',
                   asyncValue: albumsAsync,
                   builder: (items) => SizedBox(
-                    height: 250,
+                    height: 256,
                     child: ListView.builder(
+                      clipBehavior: Clip.none,
                       scrollDirection: Axis.horizontal,
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: items.length,
                       itemBuilder: (context, i) {
-                        final album = items[i] as Map<String, dynamic>;
-                        final imgs = (album['images'] as List?) ?? [];
-                        final imageUrl = imgs.isNotEmpty ? imgs[0]['url'] as String : '';
-
-                        return TactileTap(
-                          onTap: () => context.push("/album/${album['id']}"),
-                          scaleDown: 0.98,
-                          child: Container(
-                            width: 160,
-                            margin: const EdgeInsets.only(right: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: colorScheme.shadow.withValues(alpha: 0.3),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 10),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: CachedNetworkImage(
-                                      imageUrl: imageUrl,
-                                      height: 160,
-                                      width: 160,
-                                      fit: BoxFit.cover,
-                                      placeholder: (_, _) => Container(color: colorScheme.surfaceContainerHighest),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  album['name'] as String,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    color: colorScheme.onSurface,
-                                    fontSize: 14,
-                                    letterSpacing: -0.2,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  album['release_date']?.toString().substring(0, 4) ?? '',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: colorScheme.onSurface.withValues(alpha: 0.3),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ).animate(delay: (i * 100).ms).fadeIn(duration: 500.ms).scale(begin: const Offset(0.9, 0.9));
+                        return _ArtistAlbumCard(album: items[i] as Map<String, dynamic>)
+                            .animate(delay: (i * 70).ms)
+                            .fadeIn(duration: 500.ms)
+                            .scale(begin: const Offset(0.95, 0.95));
                       },
                     ),
                   ),
@@ -560,67 +506,18 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                   title: 'FANS ALSO LIKE',
                   asyncValue: relatedAsync,
                   builder: (artists) => SizedBox(
-                    height: 190,
+                    height: 200,
                     child: ListView.builder(
+                      clipBehavior: Clip.none,
                       scrollDirection: Axis.horizontal,
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: artists.length,
                       itemBuilder: (context, i) {
-                        final rArtist = artists[i];
-                        final rImgs = (rArtist['images'] as List?) ?? [];
-                        final rImgUrl = rImgs.isNotEmpty ? rImgs[0]['url'] as String : '';
-
-                        return TactileTap(
-                          onTap: () => context.push("/artist/${rArtist['id']}"),
-                          scaleDown: 0.92,
-                          child: Container(
-                            width: 140,
-                            margin: const EdgeInsets.only(right: 16),
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 130,
-                                  height: 130,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: colorScheme.shadow.withValues(alpha: 0.5),
-                                        blurRadius: 30,
-                                        spreadRadius: -10,
-                                        offset: const Offset(0, 15),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipOval(
-                                    child: CachedNetworkImage(
-                                      imageUrl: rImgUrl,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) => Container(
-                                        color: colorScheme.onSurface.withValues(alpha: 0.05),
-                                        child: Icon(Icons.person, color: colorScheme.onSurface.withValues(alpha: 0.1)),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  rArtist['name'] as String,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 13,
-                                    letterSpacing: -0.2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ).animate(delay: (i * 80).ms).fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutBack);
+                        return _RelatedArtistCard(artist: artists[i])
+                            .animate(delay: (i * 60).ms)
+                            .fadeIn(duration: 500.ms)
+                            .slideY(begin: 0.1, end: 0, curve: Curves.easeOutBack);
                       },
                     ),
                   ),
@@ -632,109 +529,18 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                   title: 'FEATURING ${artistName.toUpperCase()}',
                   asyncValue: playlistsAsync,
                   builder: (playlists) => SizedBox(
-                    height: 250,
+                    height: 265,
                     child: ListView.builder(
+                      clipBehavior: Clip.none,
                       scrollDirection: Axis.horizontal,
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: playlists.length,
                       itemBuilder: (context, i) {
-                        final playlist = playlists[i];
-                        final pImgs = (playlist['images'] as List?) ?? [];
-                        final images = pImgs.map((i) => i['url'] as String).toList();
-                        final pImgUrl = images.isNotEmpty ? images[0] : '';
-                        
-                        Widget imageWidget;
-                        if (images.length > 1) {
-                          imageWidget = PlaylistCover(
-                            images: images,
-                            size: 170,
-                            borderRadius: 20,
-                          );
-                        } else {
-                          imageWidget = CachedNetworkImage(
-                            imageUrl: pImgUrl,
-                            width: 170,
-                            height: 170,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => const ShimmerPlaceholder(
-                              borderRadius: 20,
-                            ),
-                          );
-                        }
-
-                        return TactileTap(
-                          onTap: () {
-                            final id = playlist['id'];
-                            final name = playlist['name'] as String;
-                            context.push('/playlist/remote/$id?name=${Uri.encodeComponent(name)}');
-                          },
-                          scaleDown: 0.96,
-                          child: Container(
-                            width: 170,
-                            margin: const EdgeInsets.only(right: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: colorScheme.shadow.withValues(alpha: 0.4),
-                                        blurRadius: 25,
-                                        spreadRadius: -5,
-                                        offset: const Offset(0, 15),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: Stack(
-                                      children: [
-                                          imageWidget,
-                                        Positioned(
-                                          bottom: 8,
-                                          right: 8,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(6),
-                                            decoration: BoxDecoration(
-                                              color: colorScheme.surface.withValues(alpha: 0.6),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(Icons.playlist_play_rounded, color: colorScheme.onSurface, size: 14),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  playlist['name'] as String,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 14,
-                                    letterSpacing: -0.2,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Playlist • ${playlist['tracks']?['total'] ?? 0} tracks',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: colorScheme.onSurface.withValues(alpha: 0.4),
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ).animate(delay: (i * 100).ms).fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic);
+                        return _ArtistPlaylistCard(playlist: playlists[i])
+                            .animate(delay: (i * 80).ms)
+                            .fadeIn(duration: 600.ms)
+                            .scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic);
                       },
                     ),
                   ),
@@ -750,6 +556,394 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
   }
 }
 
+class _ArtistAlbumCard extends ConsumerStatefulWidget {
+  final Map<String, dynamic> album;
 
+  const _ArtistAlbumCard({required this.album});
 
+  @override
+  ConsumerState<_ArtistAlbumCard> createState() => _ArtistAlbumCardState();
+}
 
+class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final album = widget.album;
+    final imgs = (album['images'] as List?) ?? [];
+    final imageUrl = imgs.isNotEmpty ? imgs[0]['url'] as String : '';
+
+    final playerState = ref.watch(playerProvider);
+    final currentTrack = playerState.currentTrack;
+    final isCurrentAlbum = currentTrack?.albumId != null && currentTrack?.albumId == album['id'];
+    final isPlaying = isCurrentAlbum && playerState.isPlaying;
+
+    void onPlayTap() async {
+      if (isCurrentAlbum) {
+        ref.read(playerProvider.notifier).togglePlay();
+        return;
+      }
+      try {
+        final albumData = await ref.read(spotifyClientProvider).getAlbum(album['id']);
+        final tracksRaw = albumData['tracks']?['items'] as List? ?? [];
+        final tracks = tracksRaw.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
+        if (tracks.isNotEmpty) {
+          ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+        }
+      } catch (_) {}
+    }
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: TactileTap(
+        onTap: () => context.push("/album/${album['id']}"),
+        scaleDown: 0.96,
+        child: AnimatedScale(
+          scale: _isHovered ? 1.04 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            width: 160,
+            margin: const EdgeInsets.only(right: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOutCubic,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isCurrentAlbum
+                          ? colorScheme.primary.withValues(alpha: 0.8)
+                          : (_isHovered
+                              ? colorScheme.primary.withValues(alpha: 0.3)
+                              : Colors.transparent),
+                      width: isCurrentAlbum ? 2 : 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (isCurrentAlbum || _isHovered)
+                            ? colorScheme.primary.withValues(alpha: 0.35)
+                            : colorScheme.shadow.withValues(alpha: 0.3),
+                        blurRadius: (isCurrentAlbum || _isHovered) ? 26 : 20,
+                        spreadRadius: (isCurrentAlbum || _isHovered) ? 2 : 0,
+                        offset: Offset(0, (isCurrentAlbum || _isHovered) ? 14 : 10),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: HoverPlayOverlay(
+                      onPlay: onPlayTap,
+                      isHovered: _isHovered,
+                      isPlaying: isPlaying,
+                      size: 42,
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        height: 160,
+                        width: 160,
+                        fit: BoxFit.cover,
+                        placeholder: (_, _) => Container(color: colorScheme.surfaceContainerHighest),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 150),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: (isCurrentAlbum || _isHovered)
+                        ? colorScheme.primary
+                        : colorScheme.onSurface,
+                    fontSize: 14,
+                    letterSpacing: -0.2,
+                  ),
+                  child: Row(
+                    children: [
+                      if (isCurrentAlbum) ...[
+                        Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: AnimatedEqualizer(
+                            color: colorScheme.primary,
+                            size: 14,
+                          ),
+                        ),
+                      ],
+                      Expanded(
+                        child: Text(
+                          album['name'] as String,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  album['release_date']?.toString().substring(0, 4) ?? '',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RelatedArtistCard extends StatefulWidget {
+  final Map<String, dynamic> artist;
+
+  const _RelatedArtistCard({required this.artist});
+
+  @override
+  State<_RelatedArtistCard> createState() => _RelatedArtistCardState();
+}
+
+class _RelatedArtistCardState extends State<_RelatedArtistCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final artist = widget.artist;
+    final rImgs = (artist['images'] as List?) ?? [];
+    final rImgUrl = rImgs.isNotEmpty ? rImgs[0]['url'] as String : '';
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: TactileTap(
+        onTap: () => context.push("/artist/${artist['id']}"),
+        scaleDown: 0.94,
+        child: AnimatedScale(
+          scale: _isHovered ? 1.06 : 1.0,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutBack,
+          child: Container(
+            width: 140,
+            margin: const EdgeInsets.only(right: 16),
+            child: Column(
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOutCubic,
+                  width: 130,
+                  height: 130,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: _isHovered
+                          ? colorScheme.primary.withValues(alpha: 0.8)
+                          : Colors.transparent,
+                      width: 2.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _isHovered
+                            ? colorScheme.primary.withValues(alpha: 0.35)
+                            : colorScheme.shadow.withValues(alpha: 0.5),
+                        blurRadius: _isHovered ? 36 : 30,
+                        spreadRadius: _isHovered ? 2 : -10,
+                        offset: Offset(0, _isHovered ? 18 : 15),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: rImgUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: colorScheme.onSurface.withValues(alpha: 0.05),
+                        child: Icon(Icons.person, color: colorScheme.onSurface.withValues(alpha: 0.1)),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 150),
+                  style: TextStyle(
+                    color: _isHovered ? colorScheme.primary : colorScheme.onSurface,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 13,
+                    letterSpacing: -0.2,
+                  ),
+                  child: Text(
+                    artist['name'] as String,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ArtistPlaylistCard extends ConsumerStatefulWidget {
+  final Map<String, dynamic> playlist;
+
+  const _ArtistPlaylistCard({required this.playlist});
+
+  @override
+  ConsumerState<_ArtistPlaylistCard> createState() => _ArtistPlaylistCardState();
+}
+
+class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
+  bool _isHovered = false;
+
+  void _onPlay() async {
+    try {
+      final tracks = await ref
+          .read(spotifyClientProvider)
+          .getPlaylistTracks(widget.playlist['id'], limit: 50);
+      if (tracks.isNotEmpty) {
+        ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+      }
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final playlist = widget.playlist;
+    final pImgs = (playlist['images'] as List?) ?? [];
+    final images = pImgs.map((i) => i['url'] as String).toList();
+    final pImgUrl = images.isNotEmpty ? images[0] : '';
+
+    Widget imageWidget;
+    if (images.length > 1) {
+      imageWidget = PlaylistCover(
+        images: images,
+        size: 170,
+        borderRadius: 20,
+      );
+    } else {
+      imageWidget = CachedNetworkImage(
+        imageUrl: pImgUrl,
+        width: 170,
+        height: 170,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => const ShimmerPlaceholder(
+          borderRadius: 20,
+        ),
+      );
+    }
+
+    final id = playlist['id'];
+    final name = playlist['name'] as String;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: TactileTap(
+        onTap: () => context.push('/playlist/remote/$id?name=${Uri.encodeComponent(name)}'),
+        scaleDown: 0.96,
+        child: AnimatedScale(
+          scale: _isHovered ? 1.03 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            width: 170,
+            margin: const EdgeInsets.only(right: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOutCubic,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _isHovered
+                            ? colorScheme.primary.withValues(alpha: 0.3)
+                            : colorScheme.shadow.withValues(alpha: 0.4),
+                        blurRadius: _isHovered ? 32 : 25,
+                        spreadRadius: _isHovered ? 2 : -5,
+                        offset: Offset(0, _isHovered ? 18 : 15),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: HoverPlayOverlay(
+                      onPlay: _onPlay,
+                      isHovered: _isHovered,
+                      size: 42,
+                      child: Stack(
+                        children: [
+                          imageWidget,
+                          Positioned(
+                            bottom: 8,
+                            right: 8,
+                            child: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 150),
+                              opacity: _isHovered ? 0.0 : 1.0,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surface.withValues(alpha: 0.6),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.playlist_play_rounded, color: colorScheme.onSurface, size: 14),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 150),
+                  style: TextStyle(
+                    color: _isHovered ? colorScheme.primary : colorScheme.onSurface,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    letterSpacing: -0.2,
+                  ),
+                  child: Text(
+                    playlist['name'] as String,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Playlist • ${playlist['tracks']?['total'] ?? 0} tracks',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

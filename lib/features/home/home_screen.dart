@@ -851,7 +851,7 @@ class _HistoryCardState extends State<_HistoryCard> {
   }
 }
 
-class _AlbumCard extends StatelessWidget {
+class _AlbumCard extends StatefulWidget {
   const _AlbumCard({
     required this.title,
     required this.subtitle,
@@ -871,105 +871,131 @@ class _AlbumCard extends StatelessWidget {
   final bool isGridItem;
 
   @override
+  State<_AlbumCard> createState() => _AlbumCardState();
+}
+
+class _AlbumCardState extends State<_AlbumCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     
     Widget imageWidget;
-    if (images != null && images!.length > 1) {
+    if (widget.images != null && widget.images!.length > 1) {
       imageWidget = PlaylistCover(
-        images: images!,
-        size: isGridItem ? double.infinity : 156,
+        images: widget.images!,
+        size: widget.isGridItem ? double.infinity : 156,
         borderRadius: 20,
       );
     } else {
       imageWidget = PPImage(
-        imageUrl: images?.firstOrNull ?? imageUrl ?? '',
-        width: isGridItem ? double.infinity : 156,
-        height: isGridItem ? double.infinity : 156,
+        imageUrl: widget.images?.firstOrNull ?? widget.imageUrl ?? '',
+        width: widget.isGridItem ? double.infinity : 156,
+        height: widget.isGridItem ? double.infinity : 156,
         fit: BoxFit.cover,
       );
     }
 
-    return TactileTap(
-      onTap: onTap,
-      scaleDown: 0.95,
-      child: Container(
-        width: isGridItem ? null : 156,
-        margin: isGridItem ? EdgeInsets.zero : const EdgeInsets.only(right: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.scrim.withValues(alpha: 0.4),
-                    blurRadius: 25,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: HoverPlayOverlay(
-                  onPlay: onTap,
-                  size: 40,
-                  child: Stack(
-                    children: [
-                      imageWidget,
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: colorScheme.onSurface.withValues(alpha: 0.1),
-                              width: 0.5,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: TactileTap(
+        onTap: widget.onTap,
+        scaleDown: 0.95,
+        child: AnimatedScale(
+          scale: _isHovered ? 1.03 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            width: widget.isGridItem ? null : 156,
+            margin: widget.isGridItem ? EdgeInsets.zero : const EdgeInsets.only(right: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _isHovered
+                              ? colorScheme.primary.withValues(alpha: 0.35)
+                              : colorScheme.scrim.withValues(alpha: 0.4),
+                          blurRadius: _isHovered ? 28 : 25,
+                          spreadRadius: _isHovered ? 2 : 0,
+                          offset: Offset(0, _isHovered ? 14 : 12),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: HoverPlayOverlay(
+                        onPlay: widget.onTap,
+                        isHovered: _isHovered,
+                        size: 40,
+                        child: Stack(
+                          children: [
+                            imageWidget,
+                            Positioned.fill(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: colorScheme.onSurface.withValues(alpha: 0.1),
+                                    width: 0.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      colorScheme.scrim.withValues(alpha: 0.3),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
-                            borderRadius: BorderRadius.circular(20),
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                colorScheme.scrim.withValues(alpha: 0.3),
-                              ],
-                            ),
-                          ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-              ),
+                const SizedBox(height: 14),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 150),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 15,
+                    letterSpacing: -0.4,
+                    height: 1.2,
+                    color: _isHovered ? colorScheme.primary : colorScheme.onSurface,
+                  ),
+                  child: Text(
+                    widget.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 14),
-            Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 15,
-                letterSpacing: -0.4,
-                height: 1.2,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: colorScheme.onSurface.withValues(alpha: 0.4),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
