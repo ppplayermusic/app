@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:hive_ce/hive_ce.dart';
 import '../models/track.dart';
 import '../models/playback_queue.dart';
 import '../playback/playback_providers.dart';
@@ -65,9 +68,11 @@ const Object _sentinel = Object();
 class PlayerNotifier extends Notifier<PlayerState> {
   int _playGeneration = 0;
   bool _skipDebounce = false;
+  Timer? _saveTimer;
 
   @override
   PlayerState build() {
+    _initRestore();
     // Listen to the playback engine's status and sync it to our state
     ref.listen(playbackStatusProvider, (previous, next) {
       next.whenData((status) {
@@ -94,6 +99,43 @@ class PlayerNotifier extends Notifier<PlayerState> {
       position: status.position,
       duration: status.duration,
     );
+    _scheduleSaveState();
+  }
+
+  void _scheduleSaveState() {
+    _saveTimer?.cancel();
+    _saveTimer = Timer(const Duration(seconds: 2), _saveState);
+  }
+
+  Future<void> _saveState() async {
+    try {
+      final box = await Hive.openBox('player_state');
+      await box.put('queue', jsonEncode(state.playbackQueue.toJson()));
+      await box.put('positionMs', state.position.inMilliseconds);
+    } catch (e) {
+      debugPrint('Failed to save player state: $e');
+    }
+  }
+
+  Future<void> _initRestore() async {
+    try {
+      final box = await Hive.openBox('player_state');
+      final queueJson = box.get('queue');
+      final posMs = box.get('positionMs');
+      
+      if (queueJson != null) {
+        final queue = PlaybackQueue.fromJson(jsonDecode(queueJson));
+        final position = Duration(milliseconds: posMs ?? 0);
+        
+        state = state.copyWith(
+          playbackQueue: queue,
+          position: position,
+          isPlaying: false,
+        );
+      }
+    } catch (e) {
+      debugPrint('Failed to restore player state: $e');
+    }
   }
 
   // Removed direct service getter to use ref.read inside methods
@@ -233,7 +275,27 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 
   void pause() => _controller.pause();
-  void resume() => _controller.resume();
+  void resume() {
+    if (_controller.currentStatus.state == PlaybackState.idle && state.currentTrack != null) {
+      _resumeRestoredState();
+    } else {
+      _controller.resume();
+    }
+  }
+
+  Future<void> _resumeRestoredState() async {
+    final track = state.currentTrack;
+    if (track == null) return;
+    
+    await playTrack(track, queue: state.playbackQueue.tracks);
+    if (state.position > Duration.zero) {
+      // Seek slightly after to ensure video is loaded
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _controller.seekTo(state.position);
+      });
+    }
+  }
+
   void togglePlay() {
     if (state.isPlaying) {
       pause();

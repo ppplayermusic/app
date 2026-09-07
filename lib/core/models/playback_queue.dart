@@ -17,6 +17,24 @@ class PlaybackQueue {
     this.isShuffled = false,
   });
 
+  factory PlaybackQueue.fromJson(Map<String, dynamic> json) {
+    return PlaybackQueue(
+      tracks: (json['tracks'] as List<dynamic>?)?.map((e) => Track.fromJson(e as Map<String, dynamic>)).toList() ?? const [],
+      currentIndex: json['currentIndex'] as int? ?? 0,
+      repeatMode: RepeatMode.values[json['repeatMode'] as int? ?? 0],
+      isShuffled: json['isShuffled'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tracks': tracks.map((e) => e.toJson()).toList(),
+      'currentIndex': currentIndex,
+      'repeatMode': repeatMode.index,
+      'isShuffled': isShuffled,
+    };
+  }
+
   Track? get currentTrack =>
       tracks.isNotEmpty && currentIndex >= 0 && currentIndex < tracks.length
           ? tracks[currentIndex]
