@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
 
 /// A premium icon button that provides a "squeeze" scale animation
 /// A premium icon button that provides a "squeeze" scale animation,
@@ -148,35 +149,62 @@ class _TactileIconButtonState extends State<TactileIconButton> {
   }
 }
 
-/// A premium specialized Play/Pause button for the Player screen
-/// with spring animations, hover responsiveness, and haptic feedback.
+/// A premium specialized Play/Pause button for PPPlayer.
+/// Features a living kinetic animation while playing:
+/// - Smooth 360° spin with an organic expand & shrink pulse
+/// - Subtle morph into a glowing play glyph and back to the PPPlayer logo
+/// - Borderless, dark glass container with theme-reactive ambient aura
+/// - Instant pause affordance on hover
 class TactilePlayerPlayPauseButton extends StatefulWidget {
   final bool isPlaying;
   final VoidCallback? onTap;
+  final double size;
+  final Color? activeGlowColor;
+  final String? tooltip;
 
   const TactilePlayerPlayPauseButton({
     super.key,
     required this.isPlaying,
     this.onTap,
+    this.size = 64,
+    this.activeGlowColor,
+    this.tooltip,
   });
 
   @override
   State<TactilePlayerPlayPauseButton> createState() => _TactilePlayerPlayPauseButtonState();
 }
 
-class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseButton> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseButton>
+    with TickerProviderStateMixin {
+  late AnimationController _transitionController;
+  late AnimationController _loopController;
   double _scale = 1.0;
   bool _isHovered = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _transitionController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 320),
+      value: widget.isPlaying ? 1.0 : 0.0,
     );
-    if (widget.isPlaying) _controller.forward();
+
+    // 7.5 second rhythmic loop:
+    // 0.0 - 0.35: Spin & Expand (2.6s)
+    // 0.35 - 0.50: Morph into Play button (1.1s)
+    // 0.50 - 0.70: Play button pulse/breathe (1.5s)
+    // 0.70 - 0.85: Morph back to PPPlayer Logo (1.1s)
+    // 0.85 - 1.00: Rest & subtle micro-breathe (1.2s)
+    _loopController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 7500),
+    );
+
+    if (widget.isPlaying) {
+      _loopController.repeat();
+    }
   }
 
   @override
@@ -184,16 +212,19 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
     super.didUpdateWidget(oldWidget);
     if (widget.isPlaying != oldWidget.isPlaying) {
       if (widget.isPlaying) {
-        _controller.forward();
+        _transitionController.forward();
+        _loopController.repeat();
       } else {
-        _controller.reverse();
+        _transitionController.reverse();
+        _loopController.animateTo(0.0, duration: const Duration(milliseconds: 250));
       }
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _transitionController.dispose();
+    _loopController.dispose();
     super.dispose();
   }
 
@@ -209,47 +240,231 @@ class _TactilePlayerPlayPauseButtonState extends State<TactilePlayerPlayPauseBut
     final isEnabled = widget.onTap != null;
     final effectiveScale = _scale < 1.0
         ? _scale
-        : (_isHovered && isEnabled ? 1.05 : 1.0);
+        : (_isHovered && isEnabled ? 1.08 : 1.0);
+
+    final primaryThemeColor = widget.activeGlowColor ?? colorScheme.primary;
+
+    final String tooltipMessage = widget.tooltip ??
+        (widget.isPlaying ? 'Pause' : 'Play');
+
+    Widget buttonContent = AnimatedBuilder(
+      animation: Listenable.merge([_transitionController, _loopController]),
+      builder: (context, _) {
+        final transition = _transitionController.value;
+        final loop = _loopController.value;
+
+        double angle = 0.0;
+        double scaleMultiplier = 1.0;
+        double logoOpacity = 1.0;
+        double pauseMorphOpacity = 0.0;
+        double glowAlpha = 0.16;
+
+        if (loop < 0.35) {
+          // Phase 1: Spin & Expand/Shrink (0% - 35%)
+          final p = loop / 0.35;
+          final spinCurve = Curves.easeInOutCubic.transform(p);
+          angle = spinCurve * 2 * math.pi;
+          final expand = math.sin(p * math.pi);
+          scaleMultiplier = 1.0 + (0.13 * expand);
+          logoOpacity = 1.0;
+          pauseMorphOpacity = 0.0;
+          glowAlpha = 0.18 + (0.24 * expand);
+        } else if (loop < 0.48) {
+          // Phase 2: Morph into Pause button (35% - 48%)
+          final p = (loop - 0.35) / 0.13;
+          final easeP = Curves.easeInOut.transform(p);
+          angle = 0.0;
+          scaleMultiplier = 1.0 - (0.04 * math.sin(p * math.pi));
+          logoOpacity = 1.0 - easeP;
+          pauseMorphOpacity = easeP;
+          glowAlpha = 0.18;
+        } else if (loop < 0.68) {
+          // Phase 3: Pause button breathing (48% - 68%)
+          final p = (loop - 0.48) / 0.20;
+          angle = 0.0;
+          final breathe = math.sin(p * math.pi);
+          scaleMultiplier = 1.0 + (0.06 * breathe);
+          logoOpacity = 0.0;
+          pauseMorphOpacity = 1.0;
+          glowAlpha = 0.16 + (0.12 * breathe);
+        } else if (loop < 0.82) {
+          // Phase 4: Morph back to PPPlayer Logo (68% - 82%)
+          final p = (loop - 0.68) / 0.14;
+          final easeP = Curves.easeInOut.transform(p);
+          angle = 0.0;
+          scaleMultiplier = 1.0 - (0.03 * math.sin(p * math.pi));
+          logoOpacity = easeP;
+          pauseMorphOpacity = 1.0 - easeP;
+          glowAlpha = 0.18;
+        } else {
+          // Phase 5: Rest & settle before next cycle (82% - 100%)
+          final p = (loop - 0.82) / 0.18;
+          angle = 0.0;
+          scaleMultiplier = 1.0 - (0.02 * math.sin(p * math.pi));
+          logoOpacity = 1.0;
+          pauseMorphOpacity = 0.0;
+          glowAlpha = 0.15;
+        }
+
+        // Ambient theme glow
+        final currentGlowColor = primaryThemeColor.withValues(
+          alpha: (glowAlpha * transition).clamp(0.0, 1.0),
+        );
+        final currentGlowBlur = (widget.size * 0.22 + (widget.size * 0.20) * (scaleMultiplier - 0.95)) * transition;
+        final currentGlowSpread = (0.5 + 2.0 * (scaleMultiplier - 0.95)) * transition;
+
+        // Smooth container background:
+        // Paused: primaryThemeColor (solid & crisp)
+        // Playing: subtle dark glass tint (NO harsh grey disc, NO rigid border)
+        final bgColor = Color.lerp(
+          primaryThemeColor,
+          Colors.black.withValues(alpha: 0.28),
+          transition,
+        )!;
+
+        final iconSize = widget.size * 0.60;
+        final logoSize = widget.size * 0.74;
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          width: widget.size,
+          height: widget.size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: bgColor,
+            boxShadow: [
+              // Resting subtle depth shadow
+              BoxShadow(
+                color: colorScheme.shadow.withValues(
+                  alpha: _isHovered ? 0.40 : 0.22,
+                ),
+                blurRadius: _isHovered ? 16 : 10,
+                offset: Offset(0, _isHovered ? 5 : 3),
+              ),
+              // Playing ambient theme glow (soft & borderless)
+              if (transition > 0.01)
+                BoxShadow(
+                  color: currentGlowColor,
+                  blurRadius: currentGlowBlur,
+                  spreadRadius: currentGlowSpread,
+                ),
+            ],
+          ),
+          child: ClipOval(
+            child: Stack(
+              alignment: Alignment.center,
+              fit: StackFit.expand,
+              children: [
+                // 1. Idle Paused State: Solid play icon
+                if (transition < 0.99)
+                  Opacity(
+                    opacity: (1.0 - transition).clamp(0.0, 1.0),
+                    child: Transform.scale(
+                      scale: 1.0 - (0.15 * transition),
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: widget.size * 0.04), // Optical center
+                          child: Icon(
+                            Icons.play_arrow_rounded,
+                            size: iconSize,
+                            color: colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // 2. Playing State: Living Kinetic Logo / Pause Morph
+                if (transition > 0.01)
+                  Opacity(
+                    opacity: transition.clamp(0.0, 1.0),
+                    child: Transform.scale(
+                      scale: scaleMultiplier,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        fit: StackFit.expand,
+                        children: [
+                          // PPPlayer Logo (Spins smoothly and breathes)
+                          if (logoOpacity > 0.01)
+                            Opacity(
+                              opacity: logoOpacity.clamp(0.0, 1.0),
+                              child: Center(
+                                child: Transform.rotate(
+                                  angle: angle,
+                                  child: Image.asset(
+                                    'assets/logo.png',
+                                    width: logoSize,
+                                    height: logoSize,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          // Morphing Pause Glyph
+                          if (pauseMorphOpacity > 0.01)
+                            Opacity(
+                              opacity: pauseMorphOpacity.clamp(0.0, 1.0),
+                              child: Center(
+                                child: Icon(
+                                  Icons.pause_rounded,
+                                  size: iconSize * 1.05,
+                                  color: primaryThemeColor,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                // 3. Playing State Hover Overlay: Clear Pause Affordance
+                if (transition > 0.5)
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 160),
+                    opacity: (_isHovered && isEnabled) ? 1.0 : 0.0,
+                    curve: Curves.easeOut,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black.withValues(alpha: 0.55),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.pause_rounded,
+                          size: iconSize * 0.95,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
 
     return MouseRegion(
       cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTapDown: _handleTapDown,
-        onTapUp: (_) => setState(() => _scale = 1.0),
-        onTapCancel: () => setState(() => _scale = 1.0),
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: effectiveScale,
-          duration: const Duration(milliseconds: 120),
-          curve: Curves.easeOutCubic,
-          child: Opacity(
-            opacity: isEnabled ? 1.0 : 0.6,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 140),
-              curve: Curves.easeOutCubic,
-              width: 76,
-              height: 76,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: colorScheme.onSurface,
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.shadow.withValues(alpha: _isHovered ? 0.38 : 0.26),
-                    blurRadius: _isHovered ? 22 : 15,
-                    offset: Offset(0, _isHovered ? 7 : 5),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: AnimatedIcon(
-                  icon: AnimatedIcons.play_pause,
-                  progress: _controller,
-                  size: 42,
-                  color: colorScheme.surface,
-                ),
-              ),
+      child: Tooltip(
+        message: tooltipMessage,
+        waitDuration: const Duration(milliseconds: 600),
+        child: GestureDetector(
+          onTapDown: _handleTapDown,
+          onTapUp: (_) => setState(() => _scale = 1.0),
+          onTapCancel: () => setState(() => _scale = 1.0),
+          onTap: widget.onTap,
+          child: AnimatedScale(
+            scale: effectiveScale,
+            duration: const Duration(milliseconds: 120),
+            curve: Curves.easeOutCubic,
+            child: Opacity(
+              opacity: isEnabled ? 1.0 : 0.5,
+              child: buttonContent,
             ),
           ),
         ),

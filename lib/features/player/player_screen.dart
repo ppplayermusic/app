@@ -461,6 +461,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                 ),
                                                 TactilePlayerPlayPauseButton(
                                                   isPlaying: playerState.isPlaying,
+                                                  size: 76,
                                                   onTap: playerNotifier.togglePlay,
                                                 ),
                                                 TactileIconButton(

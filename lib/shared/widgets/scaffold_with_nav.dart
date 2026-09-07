@@ -640,12 +640,10 @@ class _MiniPlayerBar extends ConsumerWidget {
                         hoverColor: colorScheme.primary,
                         tooltip: 'Previous',
                       ),
-                      TactileIconButton(
-                        icon: playerState.isPlaying ? Icons.pause : Icons.play_arrow,
+                      TactilePlayerPlayPauseButton(
+                        isPlaying: playerState.isPlaying,
+                        size: 34,
                         onTap: () => ref.read(playerProvider.notifier).togglePlay(),
-                        size: 28,
-                        color: colorScheme.primary,
-                        hoverColor: colorScheme.primary,
                         tooltip: playerState.isPlaying ? 'Pause' : 'Play',
                       ),
                       TactileIconButton(
@@ -1276,12 +1274,10 @@ class _DesktopPlayerBar extends ConsumerWidget {
                               tooltip: 'Previous',
                             ),
                             const SizedBox(width: 16),
-                            TactileIconButton(
-                              icon: playerState.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                            TactilePlayerPlayPauseButton(
+                              isPlaying: playerState.isPlaying,
+                              size: 46,
                               onTap: () => ref.read(playerProvider.notifier).togglePlay(),
-                              size: 48,
-                              color: colorScheme.primary,
-                              hoverColor: colorScheme.primary,
                               tooltip: playerState.isPlaying ? 'Pause' : 'Play',
                             ),
                             const SizedBox(width: 16),
