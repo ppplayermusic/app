@@ -48,7 +48,7 @@ class Track with _$Track {
       spotifyId: json['id'] as String,
       name: json['name'] as String,
       artistId: artists.isNotEmpty ? artists[0]['id'] as String : '',
-      artistName: artists.isNotEmpty ? artists[0]['name'] as String : '',
+      artistName: artists.isNotEmpty ? artists.map((a) => a['name'] as String).join(', ') : '',
       albumId: album['id'] as String?,
       albumName: album['name'] as String?,
       albumImage: images.isNotEmpty ? images[0]['url'] as String? : null,

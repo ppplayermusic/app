@@ -361,3 +361,46 @@ class _HoverPlayOverlayState extends State<HoverPlayOverlay> {
     );
   }
 }
+
+class HoverText extends StatefulWidget {
+  final String text;
+  final TextStyle style;
+  final VoidCallback onTap;
+  final int maxLines;
+
+  const HoverText({
+    super.key,
+    required this.text,
+    required this.style,
+    required this.onTap,
+    this.maxLines = 1,
+  });
+
+  @override
+  State<HoverText> createState() => _HoverTextState();
+}
+
+class _HoverTextState extends State<HoverText> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Text(
+          widget.text,
+          maxLines: widget.maxLines,
+          overflow: TextOverflow.ellipsis,
+          style: widget.style.copyWith(
+            decoration: _isHovered ? TextDecoration.underline : TextDecoration.none,
+            color: _isHovered ? Theme.of(context).colorScheme.primary : widget.style.color,
+          ),
+        ),
+      ),
+    );
+  }
+}

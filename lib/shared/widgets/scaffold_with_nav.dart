@@ -617,16 +617,15 @@ class _MiniPlayerBar extends ConsumerWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            Text(
-                              track.artistName,
+                            HoverText(
+                              text: track.artistName,
                               style: TextStyle(
                                 color: colorScheme.onSurfaceVariant.withValues(
                                   alpha: 0.6,
                                 ),
                                 fontSize: 11,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              onTap: () => context.push('/artist/${track.artistId}'),
                             ),
                           ],
                         ),
@@ -1088,14 +1087,13 @@ class _DesktopPlayerBar extends ConsumerWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                track.artistName,
+                              HoverText(
+                                text: track.artistName,
                                 style: TextStyle(
                                   color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                                   fontSize: 12,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                onTap: () => context.push('/artist/${track.artistId}'),
                               ),
                             ],
                           ),

@@ -326,7 +326,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     delay: 0.seconds,
                     topPadding: 24,
                     builder: (context, ref, tracks) => SizedBox(
-                      height: 220,
+                      height: 240,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: tracks.length.clamp(0, 10),
