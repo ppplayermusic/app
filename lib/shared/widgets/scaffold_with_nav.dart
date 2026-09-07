@@ -14,8 +14,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import 'user_avatar.dart';
 import 'profile_modal.dart';
 import '../../core/db/app_database.dart' as db;
-
-
+import 'artists_links.dart';
 class ScaffoldWithNav extends ConsumerStatefulWidget {
   const ScaffoldWithNav({
     super.key,
@@ -688,7 +687,6 @@ class _DesktopSidebar extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final location = GoRouterState.of(context).uri.path;
     final database = ref.watch(db.appDatabaseProvider);
-    final settings = ref.watch(settingsProvider);
     final currentIndex = switch (location) {
       String s when s.startsWith('/home') => 0,
       String s when s.startsWith('/search') => 1,
@@ -1087,13 +1085,12 @@ class _DesktopPlayerBar extends ConsumerWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
-                              HoverText(
-                                text: track.artistName,
+                              ArtistsLinks(
+                                track: track,
                                 style: TextStyle(
                                   color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                                   fontSize: 12,
                                 ),
-                                onTap: () => context.push('/artist/${track.artistId}'),
                               ),
                             ],
                           ),

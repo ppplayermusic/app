@@ -17,7 +17,6 @@ import '../../shared/widgets/section_wrapper.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/profile_modal.dart';
-import '../../shared/widgets/user_avatar.dart';
 
 final newReleasesProvider = FutureProvider((ref) async {
   final client = ref.watch(spotifyClientProvider);

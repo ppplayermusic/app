@@ -9,6 +9,7 @@ import '../../core/services/favorites_provider.dart';
 import '../../core/models/track.dart' as model;
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../shared/widgets/adaptive_blur.dart';
+import '../../shared/widgets/artists_links.dart';
 
 class TrackTile extends ConsumerWidget {
   const TrackTile({
@@ -81,10 +82,8 @@ class TrackTile extends ConsumerWidget {
                   ),
                   if (showSubtitle) ...[
                     const SizedBox(height: 4),
-                    Text(
-                      track.artistName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    ArtistsLinks(
+                      track: track,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                         fontSize: 13,

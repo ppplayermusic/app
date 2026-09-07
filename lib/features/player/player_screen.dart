@@ -11,6 +11,7 @@ import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/adaptive_blur.dart';
+import '../../shared/widgets/artists_links.dart';
 import '../../core/db/app_database.dart' as db;
 
 String _formatDuration(Duration d) {
@@ -346,20 +347,20 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                         .fadeIn(duration: 500.ms, delay: 200.ms)
                                                         .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
                                                       const SizedBox(height: 2),
-                                                      Text(
-                                                        playerState.currentTrack?.artistName.toUpperCase() ?? 'UNKNOWN ARTIST',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w800,
-                                                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
-                                                          letterSpacing: 2.0,
-                                                        ),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                      )
-                                                        .animate()
-                                                        .fadeIn(duration: 500.ms, delay: 300.ms)
-                                                        .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
+                                                      if (playerState.currentTrack != null)
+                                                        ArtistsLinks(
+                                                          track: playerState.currentTrack!,
+                                                          toUpperCase: true,
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight: FontWeight.w800,
+                                                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
+                                                            letterSpacing: 2.0,
+                                                          ),
+                                                        )
+                                                          .animate()
+                                                          .fadeIn(duration: 500.ms, delay: 300.ms)
+                                                          .slideX(begin: 0.05, duration: 500.ms, curve: Curves.easeOutCubic),
                                                     ],
                                                   ),
                                                 ),
