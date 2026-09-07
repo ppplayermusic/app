@@ -13,6 +13,7 @@ import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import 'user_avatar.dart';
 import 'profile_modal.dart';
+import 'premium_modals.dart';
 import '../../core/db/app_database.dart' as db;
 import 'artists_links.dart';
 import 'context_menu/content_context_menu.dart';
@@ -798,41 +799,84 @@ class _DesktopSidebar extends ConsumerWidget {
                           color: colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
+                      TactileIconButton(
+                        icon: Icons.add_rounded,
+                        size: 18,
+                        padding: const EdgeInsets.all(4),
+                        color: colorScheme.onSurface.withValues(alpha: 0.6),
+                        hoverColor: colorScheme.primary,
+                        tooltip: 'New Playlist',
+                        onTap: () async {
                           final nameController = TextEditingController();
-                          showDialog(
+                          await showPremiumModal(
                             context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('New Playlist'),
-                              content: TextField(
-                                controller: nameController,
-                                decoration: const InputDecoration(hintText: 'Playlist Name'),
-                                autofocus: true,
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    if (nameController.text.isNotEmpty) {
-                                      await database.createPlaylist(nameController.text);
-                                      if (context.mounted) Navigator.of(context).pop();
-                                    }
-                                  },
-                                  child: const Text('Create'),
-                                ),
-                              ],
+                            title: 'New Playlist',
+                            child: Builder(
+                              builder: (modalContext) {
+                                final modalColors = Theme.of(modalContext).colorScheme;
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextField(
+                                      controller: nameController,
+                                      autofocus: true,
+                                      style: TextStyle(color: modalColors.onSurface),
+                                      decoration: InputDecoration(
+                                        hintText: 'Playlist Name',
+                                        filled: true,
+                                        fillColor: modalColors.surfaceContainerHighest.withValues(alpha: 0.5),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () => Navigator.of(modalContext).pop(),
+                                          child: Text(
+                                            'Cancel',
+                                            style: TextStyle(color: modalColors.onSurface.withValues(alpha: 0.7)),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        TactileTap(
+                                          onTap: () async {
+                                            final name = nameController.text.trim();
+                                            if (name.isNotEmpty) {
+                                              await database.createPlaylist(name);
+                                              if (modalContext.mounted) {
+                                                Navigator.of(modalContext).pop();
+                                              }
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                                            decoration: BoxDecoration(
+                                              color: modalColors.primary,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child: Text(
+                                              'Create',
+                                              style: TextStyle(
+                                                color: modalColors.onPrimary,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           );
                         },
-                        borderRadius: BorderRadius.circular(4),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Icon(Icons.add, size: 16, color: colorScheme.onSurface.withValues(alpha: 0.5)),
-                        ),
                       ),
                     ],
                   ),
@@ -886,7 +930,7 @@ class _DesktopSidebar extends ConsumerWidget {
   }
 }
 
-class _SidebarItem extends StatelessWidget {
+class _SidebarItem extends StatefulWidget {
   const _SidebarItem({
     required this.icon,
     required this.activeIcon,
@@ -902,43 +946,104 @@ class _SidebarItem extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<_SidebarItem> createState() => _SidebarItemState();
+}
+
+class _SidebarItemState extends State<_SidebarItem> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final color = isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.7);
+
+    final iconColor = widget.isSelected
+        ? colorScheme.onPrimary
+        : (_isHovered ? colorScheme.onSurface : colorScheme.onSurface.withValues(alpha: 0.70));
+
+    final textColor = widget.isSelected
+        ? colorScheme.onPrimary
+        : (_isHovered ? colorScheme.onSurface : colorScheme.onSurface.withValues(alpha: 0.70));
+
+    final hoverBg = colorScheme.onSurface.withValues(alpha: 0.08);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            gradient: isSelected
-                ? LinearGradient(
-                    colors: [
-                      colorScheme.primary,
-                      const Color(0xFF8B0000), // Darker red gradient for active item
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  )
-                : null,
-          ),
-          child: Row(
-            children: [
-              Icon(isSelected ? activeIcon : icon, color: color, size: 20),
-              const SizedBox(width: 16),
-              Text(
-                label,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 14,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          behavior: HitTestBehavior.opaque,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 140),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              gradient: widget.isSelected
+                  ? LinearGradient(
+                      colors: [
+                        colorScheme.primary,
+                        colorScheme.primary.withValues(alpha: 0.80),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    )
+                  : null,
+              color: widget.isSelected
+                  ? null
+                  : (_isHovered ? hoverBg : Colors.transparent),
+              border: Border.all(
+                color: widget.isSelected
+                    ? Colors.transparent
+                    : (_isHovered
+                        ? colorScheme.outlineVariant.withValues(alpha: 0.18)
+                        : Colors.transparent),
+                width: 1.0,
               ),
-            ],
+              boxShadow: widget.isSelected
+                  ? [
+                      BoxShadow(
+                        color: colorScheme.primary.withValues(alpha: _isHovered ? 0.35 : 0.20),
+                        blurRadius: _isHovered ? 12 : 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Row(
+              children: [
+                AnimatedScale(
+                  scale: _isHovered ? 1.08 : 1.0,
+                  duration: const Duration(milliseconds: 140),
+                  curve: Curves.easeOutCubic,
+                  child: Icon(
+                    widget.isSelected ? widget.activeIcon : widget.icon,
+                    color: iconColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 140),
+                    curve: Curves.easeOutCubic,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 14,
+                      fontWeight: (widget.isSelected || _isHovered) ? FontWeight.w600 : FontWeight.w500,
+                      letterSpacing: -0.2,
+                    ),
+                    child: Text(
+                      widget.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -946,7 +1051,7 @@ class _SidebarItem extends StatelessWidget {
   }
 }
 
-class _MockPlaylistItem extends StatelessWidget {
+class _MockPlaylistItem extends StatefulWidget {
   final String title;
   final String subtitle;
   final String imageUrl;
@@ -960,58 +1065,100 @@ class _MockPlaylistItem extends StatelessWidget {
   });
 
   @override
+  State<_MockPlaylistItem> createState() => _MockPlaylistItemState();
+}
+
+class _MockPlaylistItemState extends State<_MockPlaylistItem> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
-    return InkWell(
-      onTap: onTap ?? () => context.go('/library'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.network(
-                imageUrl,
-                width: 32,
-                height: 32,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  width: 32,
-                  height: 32,
-                  color: colorScheme.surfaceContainerHighest,
-                  child: Icon(Icons.music_note, size: 16, color: colorScheme.onSurfaceVariant),
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: GestureDetector(
+          onTap: widget.onTap ?? () => context.go('/library'),
+          behavior: HitTestBehavior.opaque,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 140),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: _isHovered
+                  ? colorScheme.onSurface.withValues(alpha: 0.08)
+                  : Colors.transparent,
+              border: Border.all(
+                color: _isHovered
+                    ? colorScheme.outlineVariant.withValues(alpha: 0.16)
+                    : Colors.transparent,
+                width: 1.0,
+              ),
+            ),
+            child: Row(
+              children: [
+                AnimatedScale(
+                  scale: _isHovered ? 1.05 : 1.0,
+                  duration: const Duration(milliseconds: 140),
+                  curve: Curves.easeOutCubic,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Image.network(
+                      widget.imageUrl,
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 32,
+                        height: 32,
+                        color: colorScheme.surfaceContainerHighest,
+                        child: Icon(Icons.music_note, size: 16, color: colorScheme.onSurfaceVariant),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.onSurface.withValues(alpha: 0.9),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.title,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: _isHovered ? FontWeight.w600 : FontWeight.w500,
+                          color: _isHovered
+                              ? colorScheme.onSurface
+                              : colorScheme.onSurface.withValues(alpha: 0.9),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 1),
+                      Text(
+                        widget.subtitle,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: _isHovered
+                              ? colorScheme.primary
+                              : colorScheme.onSurface.withValues(alpha: 0.5),
+                          fontWeight: _isHovered ? FontWeight.w500 : FontWeight.normal,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: colorScheme.onSurface.withValues(alpha: 0.5),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
