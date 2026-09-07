@@ -181,7 +181,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: _isSearching ? kToolbarHeight : 160,
+            toolbarHeight: 64,
+            expandedHeight: _isSearching ? 64 : 170,
             backgroundColor: Colors.transparent,
             elevation: 0,
             forceMaterialTransparency: true,
@@ -204,13 +205,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 : AnimatedOpacity(
                     opacity: _isCollapsed ? 1.0 : 0.0,
                     duration: const Duration(milliseconds: 160),
-                    child: Text(
-                      'Library',
-                      style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 22,
-                        letterSpacing: -0.5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        'Library',
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 22,
+                          letterSpacing: -0.5,
+                        ),
                       ),
                     ),
                   ),
@@ -242,7 +246,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         Positioned.fill(
                           child: IgnorePointer(
                             child: Container(
-                              color: colorScheme.surface.withValues(alpha: 0.75),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surface.withValues(alpha: 0.75),
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: colorScheme.onSurface.withValues(alpha: 0.08),
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -250,7 +262,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         SafeArea(
                           bottom: false,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 48 + 14),
+                            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 60 + 16),
                             child: Align(
                               alignment: Alignment.bottomLeft,
                               child: Row(
@@ -331,21 +343,24 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   ],
             bottom: !_isSearching 
               ? PreferredSize(
-                  preferredSize: const Size.fromHeight(48),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _FilterBar(
-                          selectedFilter: _selectedFilter,
-                          onSelected: _onFilterSelected,
+                  preferredSize: const Size.fromHeight(60),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 4, bottom: 10),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _FilterBar(
+                            selectedFilter: _selectedFilter,
+                            onSelected: _onFilterSelected,
+                          ),
                         ),
-                      ),
-                      _SortToggle(
-                        selectedSort: _selectedSort,
-                        onSelected: _onSortSelected,
-                      ),
-                      const SizedBox(width: 8),
-                    ],
+                        _SortToggle(
+                          selectedSort: _selectedSort,
+                          onSelected: _onSortSelected,
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                    ),
                   ),
                 )
               : null,
@@ -907,11 +922,11 @@ class _FilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return SizedBox(
+      height: 46,
       child: ListView(
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         children: LibraryFilter.values.map((filter) {
           final isSelected = selectedFilter == filter;
           return Padding(
