@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -118,6 +119,8 @@ class LibraryScreen extends ConsumerStatefulWidget {
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
+  late final ScrollController _scrollController;
+  bool _isCollapsed = false;
   String _searchQuery = '';
   late LibraryFilter _selectedFilter;
   LibrarySort _selectedSort = LibrarySort.recent;
@@ -126,6 +129,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   void initState() {
     super.initState();
     _selectedFilter = widget.initialFilter;
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final collapsed = _scrollController.hasClients && _scrollController.offset > 45;
+    if (collapsed != _isCollapsed) {
+      setState(() {
+        _isCollapsed = collapsed;
+      });
+    }
   }
 
   @override
@@ -150,6 +163,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -157,13 +172,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   @override
   Widget build(BuildContext context) {
     final database = ref.watch(db.appDatabaseProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: _isSearching ? kToolbarHeight : 180,
+            expandedHeight: _isSearching ? kToolbarHeight : 160,
             backgroundColor: Colors.transparent,
             elevation: 0,
             forceMaterialTransparency: true,
@@ -174,16 +192,28 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     decoration: InputDecoration(
                       hintText: 'Search in library...',
                       border: InputBorder.none,
-                      hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
+                      hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5)),
                     ),
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18),
+                    style: TextStyle(color: colorScheme.onSurface, fontSize: 18),
                     onChanged: (value) {
                       setState(() {
                         _searchQuery = value.toLowerCase();
                       });
                     },
                   )
-                : null,
+                : AnimatedOpacity(
+                    opacity: _isCollapsed ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 160),
+                    child: Text(
+                      'Library',
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 22,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ),
             leading: _isSearching
                 ? TactileIconButton(
                     icon: Icons.arrow_back_ios_new,
@@ -197,75 +227,78 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     },
                   )
                 : null,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: EdgeInsets.zero,
-              title: LayoutBuilder(
-                builder: (context, constraints) {
-                  final theme = Theme.of(context);
-                  final isCollapsed = constraints.maxHeight <= kToolbarHeight + 64; // Account for 48px filter bar + buffer
-                  return Stack(
+            flexibleSpace: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: _isCollapsed ? 20 : 0,
+                  sigmaY: _isCollapsed ? 20 : 0,
+                ),
+                child: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.parallax,
+                  background: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      if (isCollapsed)
+                      if (_isCollapsed)
                         Positioned.fill(
-                          child: AdaptiveBlur(
-                            sigmaX: 15,
-                            sigmaY: 15,
+                          child: IgnorePointer(
                             child: Container(
-                              color: theme.colorScheme.surface.withValues(alpha: 0.5),
+                              color: colorScheme.surface.withValues(alpha: 0.75),
                             ),
                           ),
                         ),
-                        Container(
-                          height: kToolbarHeight + 44,
-                          alignment: Alignment.bottomLeft,
-                          padding: EdgeInsets.only(
-                            left: 16, 
-                            right: isCollapsed ? 96 : 16, // Reserve space for actions when collapsed
-                            bottom: isCollapsed ? 12 : 60,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              if (!isCollapsed) ...[
-                                Container(
-                                  width: 38,
-                                  height: 38,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2), width: 1.5),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: theme.colorScheme.primary.withValues(alpha: 0.4),
-                                        blurRadius: 20,
-                                        spreadRadius: -2,
+                      if (!_isCollapsed)
+                        SafeArea(
+                          bottom: false,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 48 + 14),
+                            child: Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 38,
+                                    height: 38,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                                        width: 1.5,
                                       ),
-                                    ],
-                                    image: const DecorationImage(
-                                      image: AssetImage('assets/logo.png'),
-                                      fit: BoxFit.cover,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: colorScheme.primary.withValues(alpha: 0.4),
+                                          blurRadius: 20,
+                                          spreadRadius: -2,
+                                        ),
+                                      ],
+                                      image: const DecorationImage(
+                                        image: AssetImage('assets/logo.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ).animate().fadeIn().scale(duration: 400.ms, curve: Curves.easeOutBack),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Text(
+                                      'Your Library',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: colorScheme.onSurface,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 34,
+                                        letterSpacing: -1.5,
+                                      ),
                                     ),
                                   ),
-                                ).animate().fadeIn().scale(duration: 400.ms, curve: Curves.easeOutBack),
-                                const SizedBox(width: 14),
-                              ],
-                              Expanded(
-                                child: Text(
-                                  isCollapsed ? 'Library' : 'Your Library',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: theme.colorScheme.onSurface,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: isCollapsed ? 22 : 36,
-                                    letterSpacing: isCollapsed ? -0.5 : -1.5,
-                                  ),
-                                ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                     ],
-                  );
-                },
+                  ),
+                ),
               ),
             ),
             actions: _isSearching
@@ -883,38 +916,119 @@ class _FilterBar extends StatelessWidget {
           final isSelected = selectedFilter == filter;
           return Padding(
             padding: const EdgeInsets.only(right: 12),
-            child: TactileTap(
+            child: _FilterChipItem(
+              filter: filter,
+              isSelected: isSelected,
               onTap: () => onSelected(filter),
-              child: AnimatedContainer(
-                duration: 250.ms,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                decoration: BoxDecoration(
-                  color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                    color: isSelected ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.2) : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
-                  ),
-                  boxShadow: isSelected ? [
-                    BoxShadow(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 4),
-                    ),
-                  ] : [],
-                ),
-                child: Text(
-                  filter.name[0].toUpperCase() + filter.name.substring(1),
-                  style: TextStyle(
-                    color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
-                    fontSize: 14,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              ),
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+class _FilterChipItem extends StatefulWidget {
+  const _FilterChipItem({
+    required this.filter,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final LibraryFilter filter;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  State<_FilterChipItem> createState() => _FilterChipItemState();
+}
+
+class _FilterChipItemState extends State<_FilterChipItem> {
+  bool _isHovered = false;
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isSelected = widget.isSelected;
+
+    final bgColor = isSelected
+        ? colorScheme.primary
+        : (_isHovered
+            ? colorScheme.onSurface.withValues(alpha: 0.12)
+            : colorScheme.onSurface.withValues(alpha: 0.05));
+
+    final borderColor = isSelected
+        ? colorScheme.onPrimary.withValues(alpha: _isHovered ? 0.35 : 0.20)
+        : (_isHovered
+            ? colorScheme.outlineVariant.withValues(alpha: 0.30)
+            : colorScheme.onSurface.withValues(alpha: 0.05));
+
+    final textColor = isSelected
+        ? colorScheme.onPrimary
+        : (_isHovered
+            ? colorScheme.onSurface
+            : colorScheme.onSurfaceVariant);
+
+    final scale = _isPressed ? 0.95 : (_isHovered ? 1.04 : 1.0);
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          scale: scale,
+          duration: const Duration(milliseconds: 140),
+          curve: Curves.easeOutCubic,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 140),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                color: borderColor,
+                width: 1.0,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: colorScheme.primary.withValues(alpha: _isHovered ? 0.45 : 0.30),
+                        blurRadius: _isHovered ? 18 : 14,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : (_isHovered
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.20),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : []),
+            ),
+            child: Text(
+              widget.filter.name[0].toUpperCase() + widget.filter.name.substring(1),
+              style: TextStyle(
+                color: textColor,
+                fontWeight: isSelected
+                    ? FontWeight.w900
+                    : (_isHovered ? FontWeight.w700 : FontWeight.w600),
+                fontSize: 14,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -1223,6 +1337,7 @@ class _SortToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return TactileIconButton(
       icon: selectedSort == LibrarySort.recent ? Icons.access_time_rounded : Icons.sort_by_alpha_rounded,
+      tooltip: selectedSort == LibrarySort.recent ? 'Sort: Recent' : 'Sort: Alphabetical',
       onTap: () {
         if (selectedSort == LibrarySort.recent) {
           onSelected(LibrarySort.alphabetical);
