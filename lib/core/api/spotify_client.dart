@@ -1,71 +1,23 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/track.dart';
 import '../services/settings_provider.dart';
 
+import 'spotify_auth.dart';
+
 class SpotifyClient {
-  SpotifyClient(this._dio, {this.market = 'US'});
+  SpotifyClient(this._dio, this._authHandler, {this.market = 'US'});
 
   final Dio _dio;
+  final SpotifyAuthHandler _authHandler;
   final String market;
-  String? _accessToken;
-  DateTime? _tokenExpiry;
-  Future<void>? _pendingTokenRequest;
 
   static const _baseUrl = 'https://api.spotify.com/v1';
-  static const _tokenUrl = 'https://accounts.spotify.com/api/token';
-
-  String get _clientId => dotenv.env['SPOTIFY_CLIENT_ID'] ?? '';
-  String get _clientSecret => dotenv.env['SPOTIFY_CLIENT_SECRET'] ?? '';
-
-  // --- Auth: Client Credentials flow (no user login needed) ---
-  Future<void> _ensureToken() async {
-    // 1. Check if we already have a valid token
-    if (_accessToken != null &&
-        _tokenExpiry != null &&
-        DateTime.now().isBefore(_tokenExpiry!)) {
-      return;
-    }
-
-    // 2. If a request is already in progress, wait for it
-    if (_pendingTokenRequest != null) {
-      await _pendingTokenRequest;
-      return;
-    }
-
-    // 3. Start a new request and store the future
-    _pendingTokenRequest = _performTokenRequest();
-    try {
-      await _pendingTokenRequest;
-    } finally {
-      _pendingTokenRequest = null;
-    }
-  }
-
-  Future<void> _performTokenRequest() async {
-    final credentials = base64Encode(utf8.encode('$_clientId:$_clientSecret'));
-    final response = await _dio.post(
-      _tokenUrl,
-      data: 'grant_type=client_credentials',
-      options: Options(
-        headers: {
-          'Authorization': 'Basic $credentials',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      ),
-    );
-
-    _accessToken = response.data['access_token'] as String;
-    final expiresIn = response.data['expires_in'] as int;
-    _tokenExpiry = DateTime.now().add(Duration(seconds: expiresIn - 60));
-  }
 
   Future<Map<String, String>> _authHeaders() async {
-    await _ensureToken();
-    return {'Authorization': 'Bearer $_accessToken'};
+    final token = await _authHandler.getAccessToken();
+    return {'Authorization': 'Bearer $token'};
   }
 
   // --- Search ---
@@ -440,5 +392,6 @@ final spotifyClientProvider = Provider<SpotifyClient>((ref) {
     ));
   }
   
-  return SpotifyClient(dio, market: market);
+  final authHandler = ref.watch(spotifyAuthHandlerProvider(dio));
+  return SpotifyClient(dio, authHandler, market: market);
 });

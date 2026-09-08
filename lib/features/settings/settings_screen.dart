@@ -12,10 +12,17 @@ import '../../core/db/app_database.dart' as db;
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
 import '../../shared/widgets/profile_modal.dart';
+import 'widgets/api_credentials_modal.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 final availableMarketsProvider = FutureProvider<List<String>>((ref) async {
   final client = ref.watch(spotifyClientProvider);
   return client.getAvailableMarkets();
+});
+
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return '${info.version}+${info.buildNumber} Premium Beta';
 });
 
 class SettingsScreen extends ConsumerWidget {
@@ -104,6 +111,27 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 _buildThemeSelector(context, ref, settings),
                 const SizedBox(height: 32),
+                _buildSectionHeader(context, 'API Credentials')
+                    .animate(delay: 360.ms)
+                    .fadeIn(duration: 400.ms)
+                    .slideX(begin: -0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 12),
+                TactileSettingTile(
+                  title: 'Spotify Credentials',
+                  subtitle: settings.spotifyProvider == SpotifyProviderType.custom ? 'Custom Provider' : 'PPPlayer Default',
+                  icon: Icons.key_rounded,
+                  onTap: () => showSpotifyCredentialsModal(context),
+                ).animate(delay: 370.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 12),
+                TactileSettingTile(
+                  title: 'YouTube Credentials',
+                  subtitle: settings.youtubeSearchMethod == YoutubeSearchMethod.scraping 
+                    ? 'Scraping' 
+                    : (settings.youtubeApiProvider == YoutubeApiProviderType.custom ? 'Custom Provider' : 'PPPlayer Default'),
+                  icon: Icons.play_arrow_rounded,
+                  onTap: () => showYoutubeCredentialsModal(context),
+                ).animate(delay: 380.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 32),
                 _buildSectionHeader(context, 'Data & Storage')
                     .animate(delay: 400.ms)
                     .fadeIn(duration: 400.ms)
@@ -130,10 +158,19 @@ class SettingsScreen extends ConsumerWidget {
                     .fadeIn(duration: 400.ms)
                     .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
-                const TactileSettingTile(
-                  title: 'App version',
-                  subtitle: '0.1.0 Premium Beta',
-                  icon: Icons.info_outline_rounded,
+                Consumer(
+                  builder: (context, ref, _) {
+                    final versionAsync = ref.watch(appVersionProvider);
+                    return TactileSettingTile(
+                      title: 'App version',
+                      subtitle: versionAsync.when(
+                        data: (version) => version,
+                        loading: () => 'Loading...',
+                        error: (e, _) => 'Unknown',
+                      ),
+                      icon: Icons.info_outline_rounded,
+                    );
+                  },
                 ).animate(delay: 650.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 100),
               ]),

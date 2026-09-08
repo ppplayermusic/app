@@ -1,24 +1,22 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/secure_credentials_service.dart';
+import '../services/settings_provider.dart';
 
 /// Resolves a YouTube video ID for a given track name + artist.
 /// Returns up to 3 candidates — the player rotates through them on error.
 class YoutubeResolver {
-  YoutubeResolver(this._dio);
+  YoutubeResolver(this._dio, this._settingsState, this._secureStorage);
 
   final Dio _dio;
-  static const _searchUrl =
-      'https://www.googleapis.com/youtube/v3/search';
-
-  String get _apiKey => dotenv.env['YOUTUBE_API_KEY'] ?? '';
-  String get _searchMethod => (dotenv.env['YOUTUBE_SEARCH_METHOD'] ?? 'api').toLowerCase();
+  final SettingsState _settingsState;
+  final SecureCredentialsService _secureStorage;
 
   Future<List<String>> resolve(String artistName, String trackName, {String? regionCode}) async {
     List<String> rawCandidates = [];
-    if (_searchMethod == 'scraping') {
+    if (_settingsState.youtubeSearchMethod == YoutubeSearchMethod.scraping) {
       rawCandidates = await _viaScraping(artistName, trackName);
     } else {
       rawCandidates = await _viaApi(artistName, trackName, regionCode: regionCode);
@@ -57,33 +55,42 @@ class YoutubeResolver {
   }
 
   Future<List<String>> _searchYoutubeApi(String query, String? regionCode) async {
-    final response = await _dio.get(
-      _searchUrl,
-      queryParameters: {
-        'q': query,
-        'key': _apiKey,
-        'part': 'snippet',
-        'fields': 'items(id(videoId),snippet(title))',
-        'maxResults': 15,
-        'type': 'video',
-        'videoEmbeddable': 'true',
-        'videoSyndicated': 'true',
-        if (regionCode != null) 'regionCode': regionCode,
-      },
-    );
+    if (_settingsState.youtubeApiProvider == YoutubeApiProviderType.custom) {
+      final apiKey = await _secureStorage.readYoutubeApiKey();
+      if (apiKey == null || apiKey.isEmpty) {
+        throw Exception('Missing Custom YouTube API Key. Please configure it in Settings.');
+      }
+      
+      final response = await _dio.get(
+        'https://www.googleapis.com/youtube/v3/search',
+        queryParameters: {
+          'part': 'snippet',
+          'q': query,
+          'type': 'video',
+          'videoCategoryId': '10', // Music
+          'maxResults': 5,
+          'key': apiKey,
+          if (regionCode != null) 'regionCode': regionCode,
+        },
+      );
 
-    final items = (response.data['items'] as List?) ?? [];
-    final barWords = ['full album', 'album playlist', 'complete album'];
-    
-    final filtered = items.where((item) {
-      final title = ((item['snippet']?['title'] as String?) ?? '').toLowerCase();
-      return !barWords.any((w) => title.contains(w));
-    }).toList();
+      final items = response.data['items'] as List;
+      return items.map((i) => i['id']['videoId'] as String).toList();
+    } else {
+      final baseUrl = kDebugMode ? 'http://localhost:3000' : 'https://ppplayer.com';
+      final searchUrl = '$baseUrl/api/youtube/search';
 
-    return filtered
-        .map<String>((item) => item['id']['videoId'] as String)
-        .where((id) => id.isNotEmpty)
-        .toList();
+      final response = await _dio.get(
+        searchUrl,
+        queryParameters: {
+          'q': query,
+          if (regionCode != null) 'regionCode': regionCode,
+        },
+      );
+
+      final ids = (response.data['ids'] as List?) ?? [];
+      return ids.cast<String>();
+    }
   }
 
   Future<List<String>> _viaScraping(String artistName, String trackName) async {
@@ -145,8 +152,14 @@ class YoutubeResolver {
 }
 
 final youtubeResolverProvider = Provider<YoutubeResolver>((ref) {
-  return YoutubeResolver(Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 15),
-    receiveTimeout: const Duration(seconds: 15),
-  )));
+  final settings = ref.watch(settingsProvider);
+  final secureStorage = ref.watch(secureCredentialsProvider);
+  return YoutubeResolver(
+    Dio(BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+    )),
+    settings,
+    secureStorage,
+  );
 });

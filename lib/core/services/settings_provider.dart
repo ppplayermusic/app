@@ -4,6 +4,9 @@ import 'package:hive_ce/hive_ce.dart';
 
 enum PlayerView { video, artwork, queue }
 enum PerformanceMode { high, balanced, powerSaver }
+enum SpotifyProviderType { ppplayer, custom }
+enum YoutubeSearchMethod { scraping, api }
+enum YoutubeApiProviderType { ppplayer, custom }
 
 class SettingsState {
   final String selectedCountry;
@@ -17,6 +20,11 @@ class SettingsState {
   final String? userAvatarBase64;
   final bool isLoaded;
 
+  // New Provider Settings
+  final SpotifyProviderType spotifyProvider;
+  final YoutubeSearchMethod youtubeSearchMethod;
+  final YoutubeApiProviderType youtubeApiProvider;
+
   SettingsState({
     required this.selectedCountry,
     this.showVideo = true,
@@ -28,6 +36,9 @@ class SettingsState {
     this.userAvatarColorIndex = 0,
     this.userAvatarBase64,
     this.isLoaded = false,
+    this.spotifyProvider = SpotifyProviderType.ppplayer,
+    this.youtubeSearchMethod = YoutubeSearchMethod.scraping,
+    this.youtubeApiProvider = YoutubeApiProviderType.ppplayer,
   });
 
   SettingsState copyWith({
@@ -41,6 +52,9 @@ class SettingsState {
     int? userAvatarColorIndex,
     String? userAvatarBase64,
     bool? isLoaded,
+    SpotifyProviderType? spotifyProvider,
+    YoutubeSearchMethod? youtubeSearchMethod,
+    YoutubeApiProviderType? youtubeApiProvider,
   }) {
     return SettingsState(
       selectedCountry: selectedCountry ?? this.selectedCountry,
@@ -53,6 +67,9 @@ class SettingsState {
       userAvatarColorIndex: userAvatarColorIndex ?? this.userAvatarColorIndex,
       userAvatarBase64: userAvatarBase64 ?? this.userAvatarBase64,
       isLoaded: isLoaded ?? this.isLoaded,
+      spotifyProvider: spotifyProvider ?? this.spotifyProvider,
+      youtubeSearchMethod: youtubeSearchMethod ?? this.youtubeSearchMethod,
+      youtubeApiProvider: youtubeApiProvider ?? this.youtubeApiProvider,
     );
   }
 }
@@ -78,6 +95,9 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   static const _userNameKey = 'user_name';
   static const _userAvatarColorIndexKey = 'user_avatar_color_index';
   static const _userAvatarPathKey = 'user_avatar_path';
+  static const _spotifyProviderKey = 'spotify_provider';
+  static const _youtubeSearchMethodKey = 'youtube_search_method';
+  static const _youtubeApiProviderKey = 'youtube_api_provider';
 
   Future<void> _loadSettings() async {
     final box = await Hive.openBox(_boxName);
@@ -96,6 +116,11 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
     final userAvatarColorIndex = box.get(_userAvatarColorIndexKey, defaultValue: 0) as int;
     final userAvatarBase64 = box.get(_userAvatarPathKey) as String?;
 
+    // Provider settings
+    final spotifyProviderIndex = box.get(_spotifyProviderKey, defaultValue: SpotifyProviderType.ppplayer.index) as int;
+    final youtubeSearchMethodIndex = box.get(_youtubeSearchMethodKey, defaultValue: YoutubeSearchMethod.scraping.index) as int;
+    final youtubeApiProviderIndex = box.get(_youtubeApiProviderKey, defaultValue: YoutubeApiProviderType.ppplayer.index) as int;
+
     state = state.copyWith(
       selectedCountry: country,
       showVideo: showVideo,
@@ -108,6 +133,9 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
       userName: userName,
       userAvatarColorIndex: userAvatarColorIndex,
       userAvatarBase64: userAvatarBase64,
+      spotifyProvider: SpotifyProviderType.values[spotifyProviderIndex.clamp(0, SpotifyProviderType.values.length - 1)],
+      youtubeSearchMethod: YoutubeSearchMethod.values[youtubeSearchMethodIndex.clamp(0, YoutubeSearchMethod.values.length - 1)],
+      youtubeApiProvider: YoutubeApiProviderType.values[youtubeApiProviderIndex.clamp(0, YoutubeApiProviderType.values.length - 1)],
       isLoaded: true,
     );
   }
@@ -150,6 +178,24 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
       await box.put(_userAvatarPathKey, base64String);
     }
     state = state.copyWith(userAvatarBase64: base64String);
+  }
+
+  Future<void> setSpotifyProvider(SpotifyProviderType provider) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put(_spotifyProviderKey, provider.index);
+    state = state.copyWith(spotifyProvider: provider);
+  }
+
+  Future<void> setYoutubeSearchMethod(YoutubeSearchMethod method) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put(_youtubeSearchMethodKey, method.index);
+    state = state.copyWith(youtubeSearchMethod: method);
+  }
+
+  Future<void> setYoutubeApiProvider(YoutubeApiProviderType provider) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put(_youtubeApiProviderKey, provider.index);
+    state = state.copyWith(youtubeApiProvider: provider);
   }
 
   Future<void> toggleVideo() async {
