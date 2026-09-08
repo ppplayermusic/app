@@ -27,7 +27,7 @@ dependencies:
   google_mobile_ads: ^7.0.0
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4
-  in_app_purchase: ^3.2.3
+
   json_annotation: ^4.9.0
   media_kit: ^1.2.6
   media_kit_libs_video: ^1.0.7
