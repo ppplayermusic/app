@@ -114,7 +114,7 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
         ),
         const SizedBox(height: 8),
         Text(
-          'Your credentials are stored locally on this device in the secure keychain and are never sent to PPPlayer.',
+          'Your credentials are stored locally on this device in the OS secure credential store and are never sent to PPPlayer.',
           style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12),
         ),
         const SizedBox(height: 24),
@@ -308,7 +308,7 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
               ),
               const SizedBox(height: 8),
               Text(
-                'Your credentials are stored locally on this device in the secure keychain and are never sent to PPPlayer.',
+                'Your credentials are stored locally on this device in the OS secure credential store and are never sent to PPPlayer.',
                 style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12),
               ),
               const SizedBox(height: 16),
