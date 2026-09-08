@@ -48,6 +48,16 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
       document.addEventListener('visibilitychange', function(e) {
         e.stopImmediatePropagation();
       }, true);
+
+      // Register MediaSession handlers for next/prev track to change the UI buttons
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('previoustrack', function() {
+          window.webkit.messageHandlers.ppMediaControl.postMessage('previoustrack');
+        });
+        navigator.mediaSession.setActionHandler('nexttrack', function() {
+          window.webkit.messageHandlers.ppMediaControl.postMessage('nexttrack');
+        });
+      }
     })();
   """
 

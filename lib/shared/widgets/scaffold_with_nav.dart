@@ -36,8 +36,15 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
   @override
   Widget build(BuildContext context) {
     final playbackEngine = ref.watch(playbackControllerProvider);
-    final playbackStatusAsync = ref.watch(playbackStatusProvider);
-    final playbackStatus = playbackStatusAsync.value ?? const PlaybackStatus();
+    // Watch only structural identity — NOT position/buffered (those are 10 Hz).
+    // This prevents the entire ScaffoldWithNav from rebuilding on every tick.
+    ref.watch(playbackStatusProvider.select((a) {
+      final v = a.value;
+      return (v?.activeVideoId, v?.isIFrameMode ?? false, v?.state ?? PlaybackState.idle);
+    }));
+    // Read full status without subscribing for widgets that need it inline.
+    final playbackStatus = ref.read(playbackStatusProvider).value ?? const PlaybackStatus();
+
     final settings = ref.watch(settingsProvider);
     final showVideo = settings.showVideo;
     final playerView = settings.playerView;
@@ -218,12 +225,19 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                         clipBehavior: Clip.antiAlias,
                                         child: Stack(
                                           children: [
-                                            RepaintBoundary(
-                                              child: PlaybackView(
-                                                controller: playbackEngine,
-                                                status: playbackStatus,
-                                              ),
+                                            Consumer(
+                                              builder: (ctx, r, _) {
+                                                return RepaintBoundary(
+                                                  child: PlaybackView(
+                                                    controller: playbackEngine,
+                                                    status: playbackStatus,
+                                                  ),
+                                                );
+                                              },
                                             ),
+
+
+
                                             if (playerState.loadError != null)
                                               Positioned.fill(
                                                 child: ClipRRect(

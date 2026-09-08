@@ -1,3 +1,4 @@
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audio_service/audio_service.dart';
 import 'playback_providers.dart';
@@ -44,6 +45,11 @@ class MediaSyncService {
         artUri: track.artworkUrl,
         duration: currentStatus.duration,
       );
+
+      final artUrl = track.artworkUrl;
+      if (artUrl != null && artUrl.isNotEmpty) {
+        _resolveArtwork(track.id, artUrl, track, currentStatus.duration);
+      }
     }
 
     // 2. Throttle playback state updates
@@ -81,6 +87,46 @@ class MediaSyncService {
         return AudioProcessingState.completed;
       case engine.PlaybackState.error:
         return AudioProcessingState.error;
+    }
+  }
+
+  Future<void> _resolveArtwork(
+    String trackId,
+    String artworkUrl,
+    engine.PlaybackTrack track,
+    Duration? duration,
+  ) async {
+    try {
+      // 1. Check if already cached locally
+      final fileInfo = await DefaultCacheManager().getFileFromCache(artworkUrl);
+      if (fileInfo != null && fileInfo.file.existsSync()) {
+        if (_lastTrackId == trackId) {
+          ref.read(audioHandlerProvider).updateMetadata(
+                id: track.id,
+                title: track.title,
+                artist: track.artist ?? '',
+                artUri: track.artworkUrl,
+                artCacheFile: fileInfo.file.path,
+                duration: duration,
+              );
+        }
+        return;
+      }
+
+      // 2. If not yet cached, fetch and save to cache
+      final file = await DefaultCacheManager().getSingleFile(artworkUrl);
+      if (file.existsSync() && _lastTrackId == trackId) {
+        ref.read(audioHandlerProvider).updateMetadata(
+              id: track.id,
+              title: track.title,
+              artist: track.artist ?? '',
+              artUri: track.artworkUrl,
+              artCacheFile: file.path,
+              duration: duration,
+            );
+      }
+    } catch (_) {
+      // Graceful fallback: text metadata and artUri are already active
     }
   }
 

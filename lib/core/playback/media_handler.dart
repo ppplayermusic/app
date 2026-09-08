@@ -33,6 +33,7 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
     required String artist,
     String? album,
     String? artUri,
+    String? artCacheFile,
     Duration? duration,
   }) {
     mediaItem.add(MediaItem(
@@ -44,6 +45,9 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
       displaySubtitle: artist,
       artUri: (artUri != null && artUri.isNotEmpty) ? Uri.parse(artUri) : null,
       duration: duration,
+      extras: (artCacheFile != null && artCacheFile.isNotEmpty)
+          ? {'artCacheFile': artCacheFile}
+          : null,
     ));
   }
 

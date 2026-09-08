@@ -23,7 +23,7 @@ import 'package:permission_handler/permission_handler.dart';
 late ProviderContainer globalContainer;
 
 Future<void> _requestNotificationPermission() async {
-  if (Platform.isAndroid) {
+  if (!kIsWeb && Platform.isAndroid) {
     final status = await Permission.notification.status;
     if (status.isDenied) {
       await Permission.notification.request();
@@ -65,19 +65,29 @@ void main() async {
   await session.configure(const AudioSessionConfiguration.music());
 
   // Initialize the audio handler bridge
-  final handler = await AudioService.init(
-    builder: () => PpPlayerAudioHandler(
-      () => globalContainer,
-    ),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.ppplayer.app.playback',
-      androidNotificationChannelName: 'Music Playback',
-      androidNotificationOngoing: true,
-      androidStopForegroundOnPause: true, 
-      androidNotificationIcon: 'mipmap/ic_launcher',
-      androidResumeOnClick: true,
-    ),
-  );
+  final PpPlayerAudioHandler handler;
+  
+  if (!kIsWeb && Platform.isMacOS) {
+    // macOS: WebKit provides its own Now Playing integration for the YouTube iframe.
+    // If we register audio_service, it creates a duplicate card in the Control Center.
+    // By instantiating our handler directly without AudioService.init, our internal
+    // Riverpod states work, but the OS doesn't get duplicate notifications.
+    handler = PpPlayerAudioHandler(() => globalContainer);
+  } else {
+    handler = await AudioService.init(
+      builder: () => PpPlayerAudioHandler(
+        () => globalContainer,
+      ),
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.ppplayer.app.playback',
+        androidNotificationChannelName: 'Music Playback',
+        androidNotificationOngoing: true,
+        androidStopForegroundOnPause: true, 
+        androidNotificationIcon: 'mipmap/ic_launcher',
+        androidResumeOnClick: true,
+      ),
+    ) as PpPlayerAudioHandler;
+  }
 
   // Re-initialize/Update container with the actual handler instance
   globalContainer = ProviderContainer(
