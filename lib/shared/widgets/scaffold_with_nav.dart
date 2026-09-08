@@ -1281,10 +1281,9 @@ class _DesktopPlayerBar extends ConsumerWidget {
                       ),
                       
                       // Center: Controls
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TactileIconButton(
                               icon: Icons.shuffle,
@@ -1330,7 +1329,6 @@ class _DesktopPlayerBar extends ConsumerWidget {
                             ),
                           ],
                         ),
-                      ),
                       
                       // Right: Extra controls
                       Expanded(
@@ -1357,9 +1355,11 @@ class _DesktopPlayerBar extends ConsumerWidget {
                                 }
                               },
                             ),
-                            _DesktopVolumeSlider(
-                              volume: playerState.volume,
-                              onChanged: (val) => ref.read(playerProvider.notifier).setVolume(val),
+                            Flexible(
+                              child: _DesktopVolumeSlider(
+                                volume: playerState.volume,
+                                onChanged: (val) => ref.read(playerProvider.notifier).setVolume(val),
+                              ),
                             ),
                             const SizedBox(width: 8),
                             TactileIconButton(
@@ -1484,8 +1484,8 @@ class _DesktopVolumeSliderState extends State<_DesktopVolumeSlider> {
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: SizedBox(
-        width: 86,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 86),
         child: SliderTheme(
           data: SliderThemeData(
             trackHeight: _isHovered ? 4.5 : 3.0,
