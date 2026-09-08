@@ -56,3 +56,4 @@ test_swizzle.swift
 test_yt.dart
 test.js
 
+.env.macos_release*
