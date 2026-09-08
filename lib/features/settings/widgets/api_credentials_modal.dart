@@ -67,6 +67,19 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
     }
   }
 
+  Future<void> _clearCredentials() async {
+    final storage = ref.read(secureCredentialsProvider);
+    await storage.clearSpotifyCredentials();
+    if (mounted) {
+      setState(() {
+        _clientIdController.clear();
+        _clientSecretController.clear();
+      });
+      // Revert to PPPlayer provider so it doesn't fail trying to use empty credentials
+      ref.read(settingsProvider.notifier).setSpotifyProvider(SpotifyProviderType.ppplayer);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -126,22 +139,50 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
           ),
         ),
         const SizedBox(height: 24),
-        TactileTap(
-          onTap: isCustom && !_isSaving ? _saveCredentials : null,
-          child: Container(
-            height: 54,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isCustom ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+        Row(
+          children: [
+            if (_clientIdController.text.isNotEmpty || _clientSecretController.text.isNotEmpty)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: TactileTap(
+                    onTap: _clearCredentials,
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: colorScheme.error.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text('Clear', style: TextStyle(
+                        color: colorScheme.error, 
+                        fontWeight: FontWeight.bold,
+                      )),
+                    ),
+                  ),
+                ),
+              ),
+            Expanded(
+              flex: 2,
+              child: TactileTap(
+                onTap: isCustom && !_isSaving ? _saveCredentials : null,
+                child: Container(
+                  height: 54,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isCustom ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: _isSaving 
+                    ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2))
+                    : Text('Save Credentials', style: TextStyle(
+                        color: isCustom ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.5), 
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+              ),
             ),
-            child: _isSaving 
-              ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2))
-              : Text('Save Credentials', style: TextStyle(
-                  color: isCustom ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.5), 
-                  fontWeight: FontWeight.bold,
-                )),
-          ),
+          ],
         ),
       ],
     );
@@ -191,6 +232,18 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
     if (mounted) {
       setState(() => _isSaving = false);
       Navigator.pop(context);
+    }
+  }
+
+  Future<void> _clearCredentials() async {
+    final storage = ref.read(secureCredentialsProvider);
+    await storage.clearYoutubeApiKey();
+    if (mounted) {
+      setState(() {
+        _apiKeyController.clear();
+      });
+      // Revert to PPPlayer provider so it doesn't fail trying to use empty credentials
+      ref.read(settingsProvider.notifier).setYoutubeApiProvider(YoutubeApiProviderType.ppplayer);
     }
   }
 
@@ -270,22 +323,50 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
                 ),
               ),
               const SizedBox(height: 24),
-              TactileTap(
-                onTap: isCustomApi && !_isSaving ? _saveCredentials : null,
-                child: Container(
-                  height: 54,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: isCustomApi ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
+              Row(
+                children: [
+                  if (_apiKeyController.text.isNotEmpty)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: TactileTap(
+                          onTap: _clearCredentials,
+                          child: Container(
+                            height: 54,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: colorScheme.error.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text('Clear', style: TextStyle(
+                              color: colorScheme.error, 
+                              fontWeight: FontWeight.bold,
+                            )),
+                          ),
+                        ),
+                      ),
+                    ),
+                  Expanded(
+                    flex: 2,
+                    child: TactileTap(
+                      onTap: isCustomApi && !_isSaving ? _saveCredentials : null,
+                      child: Container(
+                        height: 54,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isCustomApi ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: _isSaving 
+                          ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2))
+                          : Text('Save Credentials', style: TextStyle(
+                              color: isCustomApi ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.5), 
+                              fontWeight: FontWeight.bold,
+                            )),
+                      ),
+                    ),
                   ),
-                  child: _isSaving 
-                    ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2))
-                    : Text('Save Credentials', style: TextStyle(
-                        color: isCustomApi ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.5), 
-                        fontWeight: FontWeight.bold,
-                      )),
-                ),
+                ],
               ),
             ],
           ),
