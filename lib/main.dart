@@ -86,7 +86,7 @@ void main() async {
         androidNotificationIcon: 'mipmap/ic_launcher',
         androidResumeOnClick: true,
       ),
-    ) as PpPlayerAudioHandler;
+    );
   }
 
   // Re-initialize/Update container with the actual handler instance

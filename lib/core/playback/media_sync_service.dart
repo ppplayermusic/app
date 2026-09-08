@@ -1,13 +1,9 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audio_service/audio_service.dart';
 import 'playback_providers.dart';
 import 'package:pp_playback_engine/pp_playback_engine.dart' as engine;
 import 'media_handler.dart';
-import '../player/player_provider.dart';
 
 /// A service that synchronizes the [PlaybackStatus] with the system media controls.
 class MediaSyncService {
