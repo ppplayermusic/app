@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <style>
+      html {
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        pointer-events: <<pointerEvents>>;
+      }
+
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        pointer-events: inherit;
+      }
+
+      .embed-container iframe,
+      .embed-container object,
+      .embed-container embed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+        pointer-events: inherit;
+      }
+    </style>
+    <title></title>
+    <script>
+      (function() {
+        // 1. Title suppression
+        try {
+          Object.defineProperty(document, 'title', {
+            get: function() { return ''; },
+            set: function() {},
+            configurable: true
+          });
+        } catch(e) {}
+
+        // 2. MediaSession neutralization
+        try {
+          if (window.navigator) {
+            var ms = window.navigator.mediaSession;
+            if (ms) {
+              try { ms.playbackState = 'none'; } catch(e) {}
+              try { ms.metadata = null; } catch(e) {}
+              try {
+                Object.defineProperty(ms, 'playbackState', {
+                  get: function() { return 'none'; },
+                  set: function() {},
+                  configurable: true
+                });
+              } catch(e) {}
+              try {
+                Object.defineProperty(ms, 'metadata', {
+                  get: function() { return null; },
+                  set: function() {},
+                  configurable: true
+                });
+              } catch(e) {}
+              ms.setActionHandler = function() {};
+              ms.setPositionState = function() {};
+            } else {
+              var DummyMediaMetadata = function(init) {
+                this.title = '';
+                this.artist = '';
+                this.album = '';
+                this.artwork = [];
+              };
+              window.MediaMetadata = DummyMediaMetadata;
+              var inertMediaSession = {
+                metadata: null,
+                playbackState: 'none',
+                setActionHandler: function() {},
+                setPositionState: function() {}
+              };
+              Object.defineProperty(window.navigator, 'mediaSession', {
+                get: function() { return inertMediaSession; },
+                set: function() {},
+                configurable: true,
+                enumerable: true
+              });
+            }
+          }
+        } catch (e) {}
+
+        // 3. Disable remote playback on all media elements
+        function sanitizeMedia(m) {
+          if (!m || m.__ppSanitized) return;
+          m.__ppSanitized = true;
+          try {
+            m.disableRemotePlayback = true;
+            m.setAttribute('disableremoteplayback', '');
+            m.setAttribute('x-webkit-wirelessvideoplaybackdisabled', '');
+            m.setAttribute('x-webkit-airplay', 'deny');
+          } catch(e) {}
+        }
+
+        try {
+          if (window.HTMLMediaElement && HTMLMediaElement.prototype) {
+            var origPlay = HTMLMediaElement.prototype.play;
+            HTMLMediaElement.prototype.play = function() {
+              sanitizeMedia(this);
+              return origPlay.apply(this, arguments);
+            };
+          }
+        } catch(e) {}
+
+        try {
+          var origCreate = document.createElement;
+          document.createElement = function(tag) {
+            var elem = origCreate.apply(this, arguments);
+            if (tag && typeof tag === 'string') {
+              var lower = tag.toLowerCase();
+              if (lower === 'video' || lower === 'audio') {
+                sanitizeMedia(elem);
+              }
+            }
+            return elem;
+          };
+        } catch(e) {}
+
+        function scanAllMedia() {
+          try {
+            var mediaList = document.querySelectorAll('video, audio');
+            for (var i = 0; i < mediaList.length; i++) {
+              sanitizeMedia(mediaList[i]);
+            }
+          } catch(e) {}
+        }
+
+        scanAllMedia();
+        try {
+          var observer = new MutationObserver(function() {
+            scanAllMedia();
+          });
+          if (document.documentElement) {
+            observer.observe(document.documentElement, { childList: true, subtree: true });
+          } else {
+            document.addEventListener('DOMContentLoaded', function() {
+              scanAllMedia();
+              if (document.documentElement) {
+                observer.observe(document.documentElement, { childList: true, subtree: true });
+              }
+            });
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div class="embed-container">
+      <div id="<<playerId>>"></div>
+    </div>
+
+    <script>
+      var tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var platform = "<<platform>>";
+      var host = "<<host>>";
+      var player;
+      var timerId;
+
+      function onYouTubeIframeAPIReady() {
+        var pv = <<playerVars>>;
+        player = new YT.Player("<<playerId>>", {
+          host: host,
+          playerVars: pv,
+          events: {
+            onReady: function (event) {
+              handleFullScreenForMobilePlatform();
+              sendMessage('Ready', event);
+            },
+            onStateChange: function (event) {
+              clearTimeout(timerId);
+              sendMessage('StateChange', event.data);
+              if (event.data == 1) {
+                timerId = setInterval(function () {
+                  var state = {
+                    'currentTime': player.getCurrentTime(),
+                    'loadedFraction': player.getVideoLoadedFraction()
+                  };
+
+                  sendMessage('VideoState', JSON.stringify(state));
+                }, 100);
+              }
+            },
+            onPlaybackQualityChange: function (event) {
+              sendMessage('PlaybackQualityChange', event.data);
+            },
+            onPlaybackRateChange: function (event) {
+              sendMessage('PlaybackRateChange', event.data);
+            },
+            onApiChange: function (event) {
+              sendMessage('ApiChange', event.data);
+            },
+            onError: function (event) {
+              sendMessage('PlayerError', event.data);
+            },
+            onAutoplayBlocked: function (event) {
+              sendMessage('AutoplayBlocked', event.data);
+            },
+          },
+        });
+        if (player && typeof player.setSize === 'function') {
+          player.setSize(window.innerWidth, window.innerHeight);
+        }
+      }
+
+      window.addEventListener('message', (event) => {
+        try {
+          var data = JSON.parse(event.data);
+
+          if(data.function){
+            var rawFunction = data.function.replaceAll('<<quote>>', '"');
+            var result = eval(rawFunction);
+
+            if(data.key) {
+              var message = {}
+              message[data.key] = result
+              var messageString = JSON.stringify(message);
+
+              event.source.postMessage(messageString , '*');
+            }
+          }
+        } catch (e) {
+          console.error("[YT] bridge error:", e);
+        }
+      }, false);
+
+      window.onresize = function () {
+        if (player && typeof player.setSize === 'function') {
+          player.setSize(window.innerWidth, window.innerHeight);
+        }
+      };
+
+      function sendPlatformMessage(message) {
+        switch(platform) {
+           case 'android':
+           case 'ios':
+           case 'macos':
+             if (typeof <<playerId>> !== 'undefined') {
+               <<playerId>>.postMessage(message);
+             } else if (window.<<playerId>>) {
+               window.<<playerId>>.postMessage(message);
+             }
+             break;
+           case 'web':
+             window.parent.postMessage(message, '*');
+             break;
+         }
+      }
+
+      function sendMessage(key, data) {
+         var message = {};
+         message[key] = data;
+         message['playerId'] = '<<playerId>>';
+         var messageString = JSON.stringify(message);
+
+         sendPlatformMessage(messageString);
+      }
+
+      function getVideoData() {
+        return prepareDataForPlatform(player.getVideoData());
+      }
+
+      function getPlaylist() {
+        return prepareDataForPlatform(player.getPlaylist());
+      }
+
+      function getAvailablePlaybackRates(){
+        return prepareDataForPlatform(player.getAvailablePlaybackRates());
+      }
+
+      function prepareDataForPlatform(data) {
+        if(platform == 'android') return data;
+
+        return JSON.stringify(data);
+      }
+
+      function handleFullScreenForMobilePlatform() {
+        // Cross-origin DOM access intentionally removed to prevent SecurityError
+        // which would abort onReady before the bridge handshake completes.
+        // Fullscreen is handled via the allowfullscreen attribute on the iframe.
+      }
+    </script>
+  </body>
+</html>
