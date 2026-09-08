@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/home/home_screen.dart';
+import '../../features/discover/discover_screen.dart';
 import '../../features/home/recently_played_screen.dart';
 import '../../features/home/genre_details_screen.dart';
 import '../../features/search/search_screen.dart';
@@ -31,6 +32,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/home',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: HomeScreen()),
+          ),
+          GoRoute(
+            path: '/discover',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: DiscoverScreen()),
           ),
           GoRoute(
             path: '/recently-played',

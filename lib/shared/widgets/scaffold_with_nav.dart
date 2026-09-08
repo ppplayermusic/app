@@ -409,8 +409,9 @@ class _BottomNavBar extends StatelessWidget {
     final location = GoRouterState.of(context).uri.path;
     final currentIndex = switch (location) {
       String s when s.startsWith('/home') => 0,
-      String s when s.startsWith('/search') => 1,
-      String s when s.startsWith('/library') => 2,
+      String s when s.startsWith('/discover') => 1,
+      String s when s.startsWith('/search') => 2,
+      String s when s.startsWith('/library') => 3,
       _ => -1,
     };
 
@@ -449,17 +450,24 @@ class _BottomNavBar extends StatelessWidget {
                 onTap: () => context.go('/home'),
               ),
               _NavBarItem(
+                icon: Icons.explore_outlined,
+                activeIcon: Icons.explore,
+                label: 'Discover',
+                isSelected: currentIndex == 1,
+                onTap: () => context.go('/discover'),
+              ),
+              _NavBarItem(
                 icon: Icons.search_outlined,
                 activeIcon: Icons.search,
                 label: 'Search',
-                isSelected: currentIndex == 1,
+                isSelected: currentIndex == 2,
                 onTap: () => context.go('/search'),
               ),
               _NavBarItem(
                 icon: Icons.library_music_outlined,
                 activeIcon: Icons.library_music,
                 label: 'Library',
-                isSelected: currentIndex == 2,
+                isSelected: currentIndex == 3,
                 onTap: () => context.go('/library'),
               ),
             ],
@@ -701,8 +709,9 @@ class _DesktopSidebar extends ConsumerWidget {
     final database = ref.watch(db.appDatabaseProvider);
     final currentIndex = switch (location) {
       String s when s.startsWith('/home') => 0,
-      String s when s.startsWith('/search') => 1,
-      String s when s.startsWith('/library') => 2,
+      String s when s.startsWith('/discover') => 1,
+      String s when s.startsWith('/search') => 2,
+      String s when s.startsWith('/library') => 3,
       _ => -1,
     };
 
@@ -749,17 +758,24 @@ class _DesktopSidebar extends ConsumerWidget {
                   onTap: () => context.go('/home'),
                 ),
                 _SidebarItem(
+                  icon: Icons.explore_outlined,
+                  activeIcon: Icons.explore,
+                  label: 'Discover',
+                  isSelected: currentIndex == 1,
+                  onTap: () => context.go('/discover'),
+                ),
+                _SidebarItem(
                   icon: Icons.search_outlined,
                   activeIcon: Icons.search,
                   label: 'Search',
-                  isSelected: currentIndex == 1,
+                  isSelected: currentIndex == 2,
                   onTap: () => context.go('/search'),
                 ),
                 _SidebarItem(
                   icon: Icons.library_music_outlined,
                   activeIcon: Icons.library_music,
                   label: 'Library',
-                  isSelected: currentIndex == 2 && GoRouterState.of(context).uri.queryParameters['filter'] != 'playlists',
+                  isSelected: currentIndex == 3 && GoRouterState.of(context).uri.queryParameters['filter'] != 'playlists',
                   onTap: () => context.go('/library'),
                 ),
                 const SizedBox(height: 32),
