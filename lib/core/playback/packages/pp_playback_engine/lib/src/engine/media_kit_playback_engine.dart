@@ -256,9 +256,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
         return;
       }
 
-      // Recovery: only after 10 ticks (20s) with no progress
-      if (timer.tick >= 10 && state == PlaybackState.idle) {
-        debugPrint('MediaKitPlaybackEngine: [WATCHDOG] JS bridge unresponsive after 20s. Retrying loadVideoById.');
+      // Recovery: retry after 10 ticks (20s) with no progress.
+      // State may be 'preparing' (new track) or 'idle' (reset) — retry both.
+      if (timer.tick >= 10 && (state == PlaybackState.idle || state == PlaybackState.preparing)) {
+        debugPrint('MediaKitPlaybackEngine: [WATCHDOG] No playback after 20s (state=$state). Retrying loadVideoById.');
+        _lastPlayedGeneration = -1; // reset so the listener triggers playVideo() again
         _youtubeController?.loadVideoById(videoId: videoId);
       }
 
@@ -345,7 +347,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
   }
 
   void _updateStatus(PlaybackStatus status) {
-    debugPrint('MediaKitPlaybackEngine: _updateStatus(${status.state})');
+    // Only log on meaningful state transitions, not position-polling noise
+    if (status.state != _currentStatus.state) {
+      debugPrint('MediaKitPlaybackEngine: _updateStatus(${_currentStatus.state} → ${status.state})');
+    }
     _currentStatus = status;
     _statusController.add(status);
 
