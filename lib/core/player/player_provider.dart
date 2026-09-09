@@ -162,7 +162,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 
   void _scheduleSaveState() {
-    _saveTimer?.cancel();
+    if (_saveTimer?.isActive ?? false) return;
     _saveTimer = Timer(const Duration(seconds: 2), _saveState);
   }
 
@@ -229,6 +229,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       ),
       clearLoadError: true,
     );
+    _scheduleSaveState();
 
     Track finalTrack = targetTrack;
     
@@ -389,6 +390,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
   void addToQueue(Track track) {
     state = state.copyWith(playbackQueue: state.playbackQueue.add(track));
+    _scheduleSaveState();
   }
 
   void addTracksToQueue(List<Track> tracks) {
@@ -397,31 +399,37 @@ class PlayerNotifier extends Notifier<PlayerState> {
       q = q.add(track);
     }
     state = state.copyWith(playbackQueue: q);
+    _scheduleSaveState();
   }
 
   void playNext(Track track) {
     state = state.copyWith(playbackQueue: state.playbackQueue.insertNext(track));
+    _scheduleSaveState();
   }
 
   void removeFromQueue(int index) {
     state = state.copyWith(playbackQueue: state.playbackQueue.removeAt(index));
+    _scheduleSaveState();
   }
 
   void toggleShuffle() {
     state = state.copyWith(
       playbackQueue: state.playbackQueue.copyWith(isShuffled: !state.playbackQueue.isShuffled),
     );
+    _scheduleSaveState();
   }
 
   void reorderQueue(int oldIndex, int newIndex) {
     state = state.copyWith(
       playbackQueue: state.playbackQueue.reorder(oldIndex, newIndex),
     );
+    _scheduleSaveState();
   }
 
   Future<void> cycleRepeat() async {
     final nextMode = RepeatMode.values[(state.repeatMode.index + 1) % RepeatMode.values.length];
     state = state.copyWith(playbackQueue: state.playbackQueue.copyWith(repeatMode: nextMode));
+    _scheduleSaveState();
   }
 
   Future<void> setVolume(double volume) async {
@@ -445,6 +453,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
     state = state.copyWith(
       playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
     );
+    _scheduleSaveState();
   }
 }
 
