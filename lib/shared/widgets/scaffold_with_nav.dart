@@ -83,6 +83,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
         final isDesktop = boxConstraints.maxWidth >= 600;
 
         return Scaffold(
+          extendBody: true,
           body: SafeArea(
             bottom: false,
             child: Row(
@@ -1424,7 +1425,7 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
   double? _dragProgress;
   double _hoverProgress = 0.0;
   final OverlayPortalController _tooltipController = OverlayPortalController();
-  final GlobalKey _trackKey = GlobalKey();
+  final LayerLink _layerLink = LayerLink();
 
   String _formatDuration(Duration d) {
     final minutes = d.inMinutes;
@@ -1458,11 +1459,14 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
     final hoverDuration = Duration(milliseconds: (widget.duration.inMilliseconds * hoverOrDragProgress).round());
     final isActive = _isHovered || _dragProgress != null;
 
-    if (isActive) {
-      if (!_tooltipController.isShowing) _tooltipController.show();
-    } else {
-      if (_tooltipController.isShowing) _tooltipController.hide();
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (isActive) {
+        if (!_tooltipController.isShowing) _tooltipController.show();
+      } else {
+        if (_tooltipController.isShowing) _tooltipController.hide();
+      }
+    });
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -1480,124 +1484,126 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
           child: OverlayPortal(
             controller: _tooltipController,
             overlayChildBuilder: (context) {
-              final RenderBox? box = _trackKey.currentContext?.findRenderObject() as RenderBox?;
-              if (box == null) return const SizedBox.shrink();
-              final offset = box.localToGlobal(Offset.zero);
-              
-              final tooltipX = (offset.dx + (constraints.maxWidth * hoverOrDragProgress)).clamp(
-                offset.dx + 16.0, 
-                offset.dx + constraints.maxWidth - 32.0
+              final tooltipX = (constraints.maxWidth * hoverOrDragProgress).clamp(
+                16.0, 
+                constraints.maxWidth - 32.0
               ) - 16.0;
-              final tooltipY = offset.dy - 28.0; // Place above the track
 
               return Positioned(
-                left: tooltipX,
-                top: tooltipY,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(4),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+                top: 0,
+                left: 0,
+                child: CompositedTransformFollower(
+                  link: _layerLink,
+                  showWhenUnlinked: false,
+                  offset: Offset(tooltipX, -28.0),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      _formatDuration(hoverDuration),
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  ),
-                  child: Text(
-                    _formatDuration(hoverDuration),
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               );
             },
-            child: GestureDetector(
-              key: _trackKey,
-              behavior: HitTestBehavior.opaque,
-              onTapDown: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
-              onTapUp: (details) => _commitSeek(),
-              onTapCancel: () => setState(() => _dragProgress = null),
-              onHorizontalDragStart: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
-              onHorizontalDragUpdate: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
-              onHorizontalDragEnd: (details) => _commitSeek(),
-              onHorizontalDragCancel: () => setState(() => _dragProgress = null),
-              child: Container(
-                height: 16.0, // Larger hit area
-                width: double.infinity,
-                alignment: Alignment.center,
-                child: Stack(
-                  alignment: Alignment.centerLeft,
-                  clipBehavior: Clip.none,
-                  children: [
-                    // Background track
-                    Container(
-                      height: isActive ? 4.5 : 2.5,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: colorScheme.onSurface.withValues(alpha: isActive ? 0.18 : 0.10),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    // Buffered track
-                    FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
-                      widthFactor: widget.bufferedProgress.clamp(0.0, 1.0),
-                      child: Container(
+            child: CompositedTransformTarget(
+              link: _layerLink,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapDown: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+                onTapUp: (details) => _commitSeek(),
+                onTapCancel: () => setState(() => _dragProgress = null),
+                onHorizontalDragStart: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+                onHorizontalDragUpdate: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+                onHorizontalDragEnd: (details) => _commitSeek(),
+                onHorizontalDragCancel: () => setState(() => _dragProgress = null),
+                child: Container(
+                  height: 16.0, // Larger hit area
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
+                    clipBehavior: Clip.none,
+                    children: [
+                      // Background track
+                      Container(
                         height: isActive ? 4.5 : 2.5,
+                        width: double.infinity,
                         decoration: BoxDecoration(
-                          color: colorScheme.onSurface.withValues(alpha: 0.25),
+                          color: colorScheme.onSurface.withValues(alpha: isActive ? 0.18 : 0.10),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                    ),
-                    // Active progress track
-                    FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
-                      widthFactor: currentProgress,
-                      child: Container(
-                        height: isActive ? 4.5 : 2.5,
-                        decoration: BoxDecoration(
-                          color: colorScheme.primary,
-                          borderRadius: BorderRadius.circular(4),
-                          boxShadow: isActive
-                              ? [
-                                  BoxShadow(
-                                    color: colorScheme.primary.withValues(alpha: 0.45),
-                                    blurRadius: 6,
-                                    spreadRadius: 1,
-                                  ),
-                                ]
-                              : null,
-                        ),
-                      ),
-                    ),
-                    // Thumb
-                    if (isActive)
-                      Positioned(
-                        left: (constraints.maxWidth * currentProgress).clamp(0.0, constraints.maxWidth - 12.0),
+                      // Buffered track
+                      FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: widget.bufferedProgress.clamp(0.0, 1.0),
                         child: Container(
-                          width: 12,
-                          height: 12,
+                          height: isActive ? 4.5 : 2.5,
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 4,
-                                spreadRadius: 1,
-                              ),
-                            ],
+                            color: colorScheme.onSurface.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                       ),
-                  ],
+                      // Active progress track
+                      FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: currentProgress,
+                        child: Container(
+                          height: isActive ? 4.5 : 2.5,
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: isActive
+                                ? [
+                                    BoxShadow(
+                                      color: colorScheme.primary.withValues(alpha: 0.45),
+                                      blurRadius: 6,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                        ),
+                      ),
+                      // Thumb
+                      if (isActive)
+                        Positioned(
+                          left: (constraints.maxWidth * currentProgress).clamp(0.0, constraints.maxWidth - 12.0),
+                          child: Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.3),
+                                  blurRadius: 4,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
