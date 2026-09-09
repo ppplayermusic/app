@@ -474,7 +474,7 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  playlist['description'] ?? '',
+                  (playlist['description'] ?? '').replaceAll(RegExp(r'<[^>]*>'), ''),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

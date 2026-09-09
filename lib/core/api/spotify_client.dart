@@ -498,7 +498,9 @@ class SpotifyClient {
       sanitized['name'] = (sanitized['name'] as String).replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer');
     }
     if (sanitized['description'] is String) {
-      sanitized['description'] = (sanitized['description'] as String).replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer');
+      sanitized['description'] = (sanitized['description'] as String)
+          .replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer')
+          .replaceAll(RegExp(r'<[^>]*>', multiLine: true), '');
     }
     if (sanitized['message'] is String) {
       sanitized['message'] = (sanitized['message'] as String).replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer');

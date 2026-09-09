@@ -1037,7 +1037,7 @@ class _AlbumCardState extends State<_AlbumCard> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  widget.subtitle,
+                  widget.subtitle.replaceAll(RegExp(r'<[^>]*>'), ''),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
