@@ -83,7 +83,6 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
         final isDesktop = boxConstraints.maxWidth >= 600;
 
         return Scaffold(
-          extendBody: true,
           body: SafeArea(
             bottom: false,
             child: Row(
@@ -1210,13 +1209,10 @@ class _DesktopPlayerBar extends ConsumerWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-            child: Container(
+        Container(
           height: 90,
           decoration: BoxDecoration(
-            color: colorScheme.surface.withValues(alpha: 0.4),
+            color: colorScheme.surfaceContainer,
             border: Border(
               top: BorderSide(
                 color: colorScheme.onSurface.withValues(alpha: 0.15),
@@ -1385,10 +1381,8 @@ class _DesktopPlayerBar extends ConsumerWidget {
             ],
           ),
         ),
-      ),
-    ),
-    Positioned(
-      top: 0,
+        Positioned(
+          top: 0,
       left: 0,
       right: 0,
       child: _DesktopProgressBar(
