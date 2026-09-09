@@ -1,18 +1,14 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pp_playback_engine/pp_playback_engine.dart';
 import 'package:ppplayer/core/models/track.dart';
 import 'package:ppplayer/core/player/player_provider.dart';
 import 'package:ppplayer/core/playback/playback_providers.dart';
-import 'package:ppplayer/core/playback/playback_service.dart';
 import 'package:ppplayer/core/api/spotify_repository.dart';
-import 'package:ppplayer/core/api/api_providers.dart';
 import 'package:ppplayer/core/services/settings_provider.dart';
-import 'package:ppplayer/core/models/playback_queue.dart';
-import 'package:ppplayer/core/cache/cache_config.dart';
 import 'package:ppplayer/core/cache/catalog_cache_repository.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
+// ignore: depend_on_referenced_packages
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 // ---------------------------------------------------------------------------
 // Stubs
@@ -61,7 +57,7 @@ class FakePlaybackController implements PlaybackController {
   Future<void> setSpeed(double speed) async {}
 
   @override
-  yt.YoutubePlayerController? get youtubeController => null;
+  YoutubePlayerController? get youtubeController => null;
 
   @override
   Stream<PlaybackStatus> get statusStream => _statusController.stream;
@@ -153,7 +149,7 @@ void main() {
     container.dispose();
   });
 
-  Track _createTrack(String id, {QueueItemOrigin origin = QueueItemOrigin.context}) {
+  Track createTrack(String id, {QueueItemOrigin origin = QueueItemOrigin.context}) {
     return Track(
       spotifyId: id,
       name: 'Track $id',
@@ -166,13 +162,13 @@ void main() {
   test('Autoplay fetches recommendations when approaching end of queue', () async {
     final notifier = container.read(playerProvider.notifier);
     
-    final t1 = _createTrack('1');
-    final t2 = _createTrack('2');
-    final t3 = _createTrack('3');
+    final t1 = createTrack('1');
+    final t2 = createTrack('2');
+    final t3 = createTrack('3');
 
     spotifyRepository.recommendationsToReturn = [
-      _createTrack('4'),
-      _createTrack('5'),
+      createTrack('4'),
+      createTrack('5'),
     ];
 
     // Start playback (queue size = 3, index = 0, remaining = 2)
@@ -193,11 +189,11 @@ void main() {
   test('Autoplay deduplicates tracks already in queue or seen in session', () async {
     final notifier = container.read(playerProvider.notifier);
     
-    final t1 = _createTrack('1');
+    final t1 = createTrack('1');
 
     spotifyRepository.recommendationsToReturn = [
-      _createTrack('1'), // duplicate with current queue
-      _createTrack('2'), // new
+      createTrack('1'), // duplicate with current queue
+      createTrack('2'), // new
     ];
 
     await notifier.playTrack(t1);
@@ -212,8 +208,8 @@ void main() {
     // Skip to track 2, this advances index and should trigger another fetch
     // But since remaining <= 15 still holds, it fetches again
     spotifyRepository.recommendationsToReturn = [
-      _createTrack('2'), // seen in session / currently in queue
-      _createTrack('3'), // new
+      createTrack('2'), // seen in session / currently in queue
+      createTrack('3'), // new
     ];
 
     notifier.skipNext();
@@ -228,10 +224,10 @@ void main() {
   test('User tracks are placed before autoplay tracks when adding to queue', () async {
     final notifier = container.read(playerProvider.notifier);
     
-    final t1 = _createTrack('1');
+    final t1 = createTrack('1');
     spotifyRepository.recommendationsToReturn = [
-      _createTrack('A1'),
-      _createTrack('A2'),
+      createTrack('A1'),
+      createTrack('A2'),
     ];
 
     await notifier.playTrack(t1);
@@ -241,7 +237,7 @@ void main() {
     expect(container.read(playerProvider).playbackQueue.tracks.length, 3);
     
     // User explicitly adds a track
-    final u1 = _createTrack('U1');
+    final u1 = createTrack('U1');
     notifier.addToQueue(u1);
     
     final queue = container.read(playerProvider).playbackQueue.tracks;
@@ -259,8 +255,8 @@ void main() {
     // Cycle repeat mode to RepeatMode.all
     await notifier.cycleRepeat();
     
-    final t1 = _createTrack('1');
-    spotifyRepository.recommendationsToReturn = [_createTrack('2')];
+    final t1 = createTrack('1');
+    spotifyRepository.recommendationsToReturn = [createTrack('2')];
 
     await notifier.playTrack(t1);
     await Future.delayed(Duration.zero);
