@@ -6,7 +6,7 @@ part of 'track.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TrackImpl _$$TrackImplFromJson(Map<String, dynamic> json) => _$TrackImpl(
+_Track _$TrackFromJson(Map<String, dynamic> json) => _Track(
   spotifyId: json['spotifyId'] as String,
   name: json['name'] as String,
   artistId: json['artistId'] as String,
@@ -21,18 +21,17 @@ _$TrackImpl _$$TrackImplFromJson(Map<String, dynamic> json) => _$TrackImpl(
   queueItemId: json['queueItemId'] as String?,
 );
 
-Map<String, dynamic> _$$TrackImplToJson(_$TrackImpl instance) =>
-    <String, dynamic>{
-      'spotifyId': instance.spotifyId,
-      'name': instance.name,
-      'artistId': instance.artistId,
-      'artistName': instance.artistName,
-      'albumId': instance.albumId,
-      'albumName': instance.albumName,
-      'albumImage': instance.albumImage,
-      'durationMs': instance.durationMs,
-      'youtubeVideoId': instance.youtubeVideoId,
-      'playCount': instance.playCount,
-      'isFavorite': instance.isFavorite,
-      'queueItemId': instance.queueItemId,
-    };
+Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
+  'spotifyId': instance.spotifyId,
+  'name': instance.name,
+  'artistId': instance.artistId,
+  'artistName': instance.artistName,
+  'albumId': instance.albumId,
+  'albumName': instance.albumName,
+  'albumImage': instance.albumImage,
+  'durationMs': instance.durationMs,
+  'youtubeVideoId': instance.youtubeVideoId,
+  'playCount': instance.playCount,
+  'isFavorite': instance.isFavorite,
+  'queueItemId': instance.queueItemId,
+};

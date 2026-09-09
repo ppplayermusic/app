@@ -1,5 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'pp_image.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
@@ -329,22 +330,11 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: widget.track.albumImage != null
-                          ? CachedNetworkImage(
+                          ? PPImage(
                               imageUrl: widget.track.albumImage!,
                               width: 46,
                               height: 46,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                width: 46,
-                                height: 46,
-                                color: colorScheme.surfaceContainerHighest,
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                width: 46,
-                                height: 46,
-                                color: colorScheme.surfaceContainerHighest,
-                                child: Icon(Icons.music_note, color: colorScheme.onSurfaceVariant),
-                              ),
                             )
                           : Container(
                               width: 46,

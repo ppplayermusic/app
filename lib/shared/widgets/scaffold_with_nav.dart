@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
@@ -11,6 +10,7 @@ import '../../core/services/settings_provider.dart';
 import '../../core/providers/search_provider.dart';
 import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../shared/widgets/pp_image.dart';
 import 'user_avatar.dart';
 import 'profile_modal.dart';
 import 'premium_modals.dart';
@@ -620,7 +620,7 @@ class _MiniPlayerBar extends ConsumerWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child: CachedNetworkImage(
+                        child: PPImage(
                           imageUrl: track.albumImage ?? '',
                           width: 48,
                           height: 48,
@@ -1136,17 +1136,11 @@ class _MockPlaylistItemState extends State<_MockPlaylistItem> {
                   curve: Curves.easeOutCubic,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: Image.network(
-                      widget.imageUrl,
+                    child: PPImage(
+                      imageUrl: widget.imageUrl,
                       width: 32,
                       height: 32,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        width: 32,
-                        height: 32,
-                        color: colorScheme.surfaceContainerHighest,
-                        child: Icon(Icons.music_note, size: 16, color: colorScheme.onSurfaceVariant),
-                      ),
                     ),
                   ),
                 ),
@@ -1245,7 +1239,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: CachedNetworkImage(
+                                child: PPImage(
                                   imageUrl: track.albumImage ?? '',
                                   width: 56,
                                   height: 56,
@@ -1536,7 +1530,7 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
   @override
   Widget build(BuildContext context) {
     // Keep controller in sync if provider changes from elsewhere
-    ref.listen(searchQueryProvider, (prev, next) {
+    ref.listen<String>(searchQueryProvider, (prev, next) {
       if (_ctrl.text != next) {
         _ctrl.text = next;
         _ctrl.selection = TextSelection.fromPosition(TextPosition(offset: next.length));
@@ -1578,7 +1572,7 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
                             }
                           },
                           onChanged: (val) {
-                            ref.read(searchQueryProvider.notifier).state = val;
+                            ref.read(searchQueryProvider.notifier).updateQuery(val);
                           },
                           onSubmitted: (val) {
                             if (val.trim().isNotEmpty) {

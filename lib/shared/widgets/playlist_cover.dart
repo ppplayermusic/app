@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'pp_image.dart';
+
 
 class PlaylistCover extends StatelessWidget {
   const PlaylistCover({
@@ -102,11 +103,9 @@ class _Image extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
+    return PPImage(
       imageUrl: url,
       fit: BoxFit.cover,
-      placeholder: (context, url) => Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
-      errorWidget: (context, url, e) => Container(color: Theme.of(context).colorScheme.surfaceContainerHighest),
     );
   }
 }

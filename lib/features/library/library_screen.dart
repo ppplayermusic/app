@@ -12,7 +12,7 @@ import '../../core/player/player_provider.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
-
+import '../../shared/widgets/pp_image.dart';
 
 enum LibraryFilter { all, playlists, artists, albums, stations }
 enum LibrarySort { recent, alphabetical }
@@ -794,10 +794,9 @@ class _PlaylistCard extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: playlist.imageUrl != null 
-                          ? Image.network(
-                              playlist.imageUrl!,
+                          ? PPImage(
+                              imageUrl: playlist.imageUrl!,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => PlaylistCover(images: images, size: double.infinity),
                             )
                           : PlaylistCover(images: images, size: double.infinity),
                     ),

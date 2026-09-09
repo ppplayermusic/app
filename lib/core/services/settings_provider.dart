@@ -74,15 +74,17 @@ class SettingsState {
   }
 }
 
-class SettingsNotifier extends StateNotifier<SettingsState> {
-  SettingsNotifier() : super(SettingsState(
-    selectedCountry: 'US', 
-    showVideo: true, 
-    themeIndex: 0,
-    performanceMode: PerformanceMode.balanced,
-    lowDataMode: false,
-  )) {
+class SettingsNotifier extends Notifier<SettingsState> {
+  @override
+  SettingsState build() {
     _loadSettings();
+    return SettingsState(
+      selectedCountry: 'US', 
+      showVideo: true, 
+      themeIndex: 0,
+      performanceMode: PerformanceMode.balanced,
+      lowDataMode: false,
+    );
   }
 
   static const _boxName = 'settings';
@@ -233,9 +235,7 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
   }
 }
 
-final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>((ref) {
-  return SettingsNotifier();
-});
+final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);
 
 final selectedCountryProvider = Provider<String>((ref) {
   return ref.watch(settingsProvider).selectedCountry;

@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
 
-final recentSearchesProvider = StateNotifierProvider<RecentSearchesNotifier, List<String>>((ref) {
-  return RecentSearchesNotifier();
-});
+final recentSearchesProvider = NotifierProvider<RecentSearchesNotifier, List<String>>(
+  RecentSearchesNotifier.new,
+);
 
-class RecentSearchesNotifier extends StateNotifier<List<String>> {
-  RecentSearchesNotifier() : super([]) {
+class RecentSearchesNotifier extends Notifier<List<String>> {
+  @override
+  List<String> build() {
     _load();
+    return [];
   }
 
   static const _boxName = 'recent_searches_box';
@@ -21,10 +23,12 @@ class RecentSearchesNotifier extends StateNotifier<List<String>> {
     final trimmed = query.trim();
     if (trimmed.isEmpty) return;
     
+    final normalized = trimmed.toLowerCase();
+    
     final box = await Hive.openBox<String>(_boxName);
     
     // Remove if already exists to avoid duplicates
-    final keyToRemove = box.keys.firstWhere((k) => box.get(k) == trimmed, orElse: () => null);
+    final keyToRemove = box.keys.firstWhere((k) => box.get(k)?.toLowerCase() == normalized, orElse: () => null);
     if (keyToRemove != null) {
       await box.delete(keyToRemove);
     }
@@ -40,8 +44,9 @@ class RecentSearchesNotifier extends StateNotifier<List<String>> {
   }
 
   Future<void> removeSearch(String query) async {
+    final normalized = query.trim().toLowerCase();
     final box = await Hive.openBox<String>(_boxName);
-    final keyToRemove = box.keys.firstWhere((k) => box.get(k) == query, orElse: () => null);
+    final keyToRemove = box.keys.firstWhere((k) => box.get(k)?.toLowerCase() == normalized, orElse: () => null);
     if (keyToRemove != null) {
       await box.delete(keyToRemove);
       state = box.values.toList().reversed.toList();

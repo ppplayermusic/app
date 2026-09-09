@@ -1,9 +1,11 @@
+import '../../shared/widgets/pp_image.dart';
 import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ppplayer/core/cache/image_cache_manager.dart';
 import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
@@ -86,10 +88,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         children: [
           Positioned.fill(
             child: RepaintBoundary(
-              child: CachedNetworkImage(
+              child: PPImage(
                 imageUrl: track.albumImage ?? '',
                 fit: BoxFit.cover,
-                errorWidget: (context, url, error) => const SizedBox.shrink(),
               )
               .animate(onPlay: (controller) => isPowerSaver ? null : controller.repeat(reverse: true))
               .scale(begin: const Offset(1.1, 1.1), end: const Offset(1.5, 1.5), duration: 25.seconds, curve: Curves.easeInOutSine)
@@ -134,8 +135,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           Positioned.fill(
             child: Opacity(
               opacity: 0.03,
-              child: Image.network(
-                'https://www.transparenttextures.com/patterns/p6.png',
+              child: CachedNetworkImage(
+                cacheManager: PPImageCacheManager.instance,
+                imageUrl: 'https://www.transparenttextures.com/patterns/p6.png',
                 repeat: ImageRepeat.repeat,
                 color: colorScheme.onSurface.withValues(alpha: 0.1),
               ),
@@ -612,7 +614,7 @@ class _QueueView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         child: Stack(
                           children: [
-                            CachedNetworkImage(
+                            PPImage(
                               imageUrl: t.albumImage ?? '',
                               width: 52,
                               height: 52,
@@ -826,7 +828,7 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
                             ),
                           ],
                           image: DecorationImage(
-                            image: CachedNetworkImageProvider(widget.imageUrl),
+                            image: CachedNetworkImageProvider(widget.imageUrl, cacheManager: PPImageCacheManager.instance),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -867,16 +869,11 @@ class _VinylArtworkState extends State<_VinylArtwork> with SingleTickerProviderS
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
-                child: CachedNetworkImage(
+                child: PPImage(
                   imageUrl: widget.imageUrl,
                   fit: BoxFit.cover,
                   width: constraints.maxWidth,
                   height: constraints.maxHeight,
-                  placeholder: (context, url) => Container(color: colorScheme.onSurface.withValues(alpha: 0.05)),
-                  errorWidget: (_, _, _) => Container(
-                    color: colorScheme.onSurface.withValues(alpha: 0.05),
-                    child: Icon(Icons.music_note, size: 64, color: colorScheme.onSurface.withValues(alpha: 0.12)),
-                  ),
                 ),
               ),
             ),

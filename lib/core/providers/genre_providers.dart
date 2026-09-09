@@ -1,28 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../api/spotify_client.dart';
+import '../api/spotify_repository.dart';
 import '../models/track.dart';
 
-final browseCategoriesProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
-  final client = ref.watch(spotifyClientProvider);
-  return client.getBrowseCategories(limit: 40);
+final browseCategoriesProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
+  final repo = ref.watch(spotifyRepositoryProvider);
+  return repo.watchBrowseCategories().map((res) => res.data);
 });
 
-final categoryPlaylistsProvider = FutureProvider.family<List<Map<String, dynamic>>, String>((ref, categoryId) async {
-  final client = ref.watch(spotifyClientProvider);
-  return client.getCategoryPlaylists(categoryId, limit: 20);
+final categoryPlaylistsProvider = StreamProvider.family<List<Map<String, dynamic>>, String>((ref, categoryId) {
+  final repo = ref.watch(spotifyRepositoryProvider);
+  return repo.watchCategoryPlaylists(categoryId).map((r) => r.data);
 });
 
-final categoryTopTracksProvider = FutureProvider.family<List<Track>, String>((ref, categoryId) async {
-  final client = ref.watch(spotifyClientProvider);
-  try {
-    final playlists = await client.getCategoryPlaylists(categoryId, limit: 1);
-    if (playlists.isEmpty) return [];
-    
-    final playlistId = playlists.first['id'] as String?;
-    if (playlistId == null) return [];
-    
-    return client.getPlaylistTracks(playlistId, limit: 30);
-  } catch (e) {
-    return [];
+final categoryTopTracksProvider = StreamProvider.family<List<Track>, String>((ref, categoryId) async* {
+  final playlists = await ref.watch(categoryPlaylistsProvider(categoryId).future);
+  if (playlists.isEmpty) {
+    yield [];
+    return;
   }
+  
+  final playlistId = playlists.first['id'] as String?;
+  if (playlistId == null) {
+    yield [];
+    return;
+  }
+  
+  final repo = ref.watch(spotifyRepositoryProvider);
+  yield* repo.watchPlaylistTracks(playlistId).map((r) => r.data);
 });

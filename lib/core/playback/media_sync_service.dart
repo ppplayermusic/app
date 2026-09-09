@@ -1,6 +1,7 @@
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audio_service/audio_service.dart';
+import '../cache/image_cache_manager.dart';
 import 'playback_providers.dart';
 import 'package:pp_playback_engine/pp_playback_engine.dart' as engine;
 import 'media_handler.dart';
@@ -20,8 +21,11 @@ class MediaSyncService {
     _subscription = ref.listen(
       playbackStatusProvider,
       (previous, next) {
-        if (next.hasValue && next.value != null) {
-          _handleStatusUpdate(next.value!);
+        switch (next) {
+          case AsyncData(:final value):
+            _handleStatusUpdate(value);
+          default:
+            break;
         }
       },
       fireImmediately: true,
@@ -98,8 +102,8 @@ class MediaSyncService {
   ) async {
     try {
       // 1. Check if already cached locally
-      final fileInfo = await DefaultCacheManager().getFileFromCache(artworkUrl);
-      if (fileInfo != null && fileInfo.file.existsSync()) {
+      final fileInfo = await PPImageCacheManager.instance.getFileFromCache(artworkUrl);
+      if (fileInfo != null) {
         if (_lastTrackId == trackId) {
           ref.read(audioHandlerProvider).updateMetadata(
                 id: track.id,
@@ -114,7 +118,8 @@ class MediaSyncService {
       }
 
       // 2. If not yet cached, fetch and save to cache
-      final file = await DefaultCacheManager().getSingleFile(artworkUrl);
+      final file = await PPImageCacheManager.instance.getSingleFile(artworkUrl);
+      
       if (file.existsSync() && _lastTrackId == trackId) {
         ref.read(audioHandlerProvider).updateMetadata(
               id: track.id,

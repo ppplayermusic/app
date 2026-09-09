@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../core/api/spotify_repository.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +11,6 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/playlist_cover.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
-import '../../core/api/spotify_client.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import 'package:drift/drift.dart' show Value;
 
@@ -62,9 +63,9 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
         return;
       }
 
-      final client = ref.read(spotifyClientProvider);
-      final tracks = await client.getPlaylistTracks(spotifyId, limit: 50);
-      
+      final repo = ref.read(spotifyRepositoryProvider);
+      final cacheResult = await repo.watchPlaylistTracks(spotifyId).first;
+      final tracks = cacheResult.data;
       if (tracks.isNotEmpty) {
         final database = ref.read(db.appDatabaseProvider);
         await database.syncPlaylistTracks(

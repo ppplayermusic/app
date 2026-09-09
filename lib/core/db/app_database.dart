@@ -17,6 +17,7 @@ class Tracks extends Table {
   IntColumn get durationMs => integer().nullable()();
   // Cached YouTube video ID after first resolve — avoids re-querying API
   TextColumn get youtubeVideoId => text().nullable()();
+  DateTimeColumn get youtubeResolvedAt => dateTime().nullable()();
   IntColumn get playCount =>
       integer().withDefault(const Constant(0))();
   BoolColumn get isFavorite =>
@@ -87,14 +88,28 @@ class PlaylistTracks extends Table {
   Set<Column> get primaryKey => {playlistId, trackSpotifyId};
 }
 
+class CatalogCacheEntries extends Table {
+  TextColumn get key => text()();
+  TextColumn get payload => text()();
+  DateTimeColumn get fetchedAt => dateTime()();
+  DateTimeColumn get lastAccessedAt => dateTime()();
+  IntColumn get payloadVersion => integer()();
+  TextColumn get resourceType => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
 // --- Database ---
 
-@DriftDatabase(tables: [Tracks, Artists, Albums, Playlists, PlaylistTracks, Radios])
+@DriftDatabase(tables: [Tracks, Artists, Albums, Playlists, PlaylistTracks, Radios, CatalogCacheEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  AppDatabase.forTesting(super.e);
+
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -120,6 +135,17 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 6) {
             await m.createTable(radios);
+          }
+          if (from < 7) {
+            try {
+              await m.createTable(catalogCacheEntries);
+            } catch (_) {}
+            try {
+              await m.addColumn(tracks, tracks.youtubeResolvedAt);
+            } catch (_) {}
+            try {
+              await m.addColumn(tracks, tracks.youtubeVideoId);
+            } catch (_) {}
           }
         },
       );

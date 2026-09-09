@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/api/spotify_repository.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/pp_image.dart';
 import '../../shared/widgets/playlist_cover.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/playback/playback_service.dart';
 import '../../shared/widgets/banner_ad_widget.dart';
@@ -19,46 +19,49 @@ import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/profile_modal.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
 
-final newReleasesProvider = FutureProvider((ref) async {
-  final client = ref.watch(spotifyClientProvider);
-  return client.getNewReleases(limit: 10);
+final newReleasesProvider = StreamProvider((ref) {
+  final repo = ref.watch(spotifyRepositoryProvider);
+  return repo.watchNewReleases().map((r) => r.data);
 });
 
-final featuredPlaylistsProvider = FutureProvider((ref) async {
-  final client = ref.watch(spotifyClientProvider);
-  return client.getFeaturedPlaylists(limit: 10);
+final featuredPlaylistsProvider = StreamProvider((ref) {
+  final repo = ref.watch(spotifyRepositoryProvider);
+  return repo.watchFeaturedPlaylists().map((r) => r.data);
 });
 
-final marketPopularAlbumsProvider = FutureProvider((ref) async {
-  final client = ref.watch(spotifyClientProvider);
-  // Get albums from popular tracks to ensure they are relevant to the market
+final popularTracksProvider = StreamProvider((ref) {
+  final repo = ref.watch(spotifyRepositoryProvider);
+  return repo.watchPopularTracks().map((r) => r.data);
+});
+
+final marketPopularAlbumsProvider = StreamProvider((ref) async* {
+  final repo = ref.watch(spotifyRepositoryProvider);
   final tracks = await ref.watch(popularTracksProvider.future);
   final albumIds = tracks.map((t) => t.albumId).where((id) => id != null && id.isNotEmpty).cast<String>().toSet().toList();
-  if (albumIds.isEmpty) return <Map<String, dynamic>>[];
-  // Limit to top 10 unique albums
-  return client.getMultipleAlbums(albumIds.take(10).toList());
+  if (albumIds.isEmpty) {
+    yield <Map<String, dynamic>>[];
+    return;
+  }
+  yield* repo.watchPopularAlbums(albumIds.take(10).toList()).map((r) => r.data);
 });
 
-final popularTracksProvider = FutureProvider((ref) async {
-  final client = ref.watch(spotifyClientProvider);
-  return client.getPopularTracks(limit: 12);
-});
-
-final popularArtistsProvider = FutureProvider((ref) async {
-  final client = ref.watch(spotifyClientProvider);
-  // Get artists from popular tracks to ensure they are relevant to the market
+final popularArtistsProvider = StreamProvider((ref) async* {
+  final repo = ref.watch(spotifyRepositoryProvider);
   final tracks = await ref.watch(popularTracksProvider.future);
   final artistIds = tracks.map((t) => t.artistId).where((id) => id.isNotEmpty).toSet().toList();
-  if (artistIds.isEmpty) return <Map<String, dynamic>>[];
-  // Limit to top 10 unique artists
-  return client.getMultipleArtists(artistIds.take(10).toList());
+  if (artistIds.isEmpty) {
+    yield <Map<String, dynamic>>[];
+    return;
+  }
+  yield* repo.watchPopularArtists(artistIds.take(10).toList()).map((r) => r.data);
 });
 
-final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
-  final client = ref.watch(spotifyClientProvider);
+final madeForYouMixesProvider = StreamProvider<List<Map<String, dynamic>>>((ref) async* {
+  final repo = ref.watch(spotifyRepositoryProvider);
   final artists = await ref.watch(popularArtistsProvider.future);
   final genres = await ref.watch(browseCategoriesProvider.future);
-  final validSeeds = await client.getAvailableGenreSeeds();
+  final validSeedsResult = await repo.watchGenreSeeds().first;
+  final validSeeds = validSeedsResult.data;
   final mixes = <Map<String, dynamic>>[];
 
   if (artists.isNotEmpty) {
@@ -131,10 +134,10 @@ final madeForYouMixesProvider = FutureProvider<List<Map<String, dynamic>>>((ref)
     'color2': AppTheme.themeColors[11],
   });
 
-  return mixes;
+  yield mixes;
 });
 
-final suggestedStationsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final suggestedStationsProvider = StreamProvider<List<Map<String, dynamic>>>((ref) async* {
   final artists = await ref.watch(popularArtistsProvider.future);
   final genres = await ref.watch(browseCategoriesProvider.future);
   
@@ -211,7 +214,7 @@ final suggestedStationsProvider = FutureProvider<List<Map<String, dynamic>>>((re
     }
   }
   
-  return radios;
+  yield radios;
 });
 
 
@@ -1578,7 +1581,7 @@ class StaggeredHomeSection<T> extends ConsumerStatefulWidget {
   });
 
   final String title;
-  final FutureProvider<List<T>> provider;
+  final dynamic provider;
   final Widget Function(BuildContext context, WidgetRef ref, List<T> data) builder;
   final Duration delay;
   final double topPadding;

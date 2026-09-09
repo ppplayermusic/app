@@ -1,9 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../shared/widgets/pp_image.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../core/api/spotify_client.dart';
+import '../../core/api/spotify_repository.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/track_tile.dart';
@@ -11,33 +12,48 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 
-final _albumProvider =
-    FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
-  return ref.read(spotifyClientProvider).getAlbum(id);
+final albumProvider =
+    StreamProvider.autoDispose.family<Map<String, dynamic>, String>((ref, id) {
+  return ref.watch(spotifyRepositoryProvider).watchAlbum(id).map((res) => res.data);
 });
 
 class AlbumScreen extends ConsumerStatefulWidget {
-  const AlbumScreen({super.key, required this.albumId});
   final String albumId;
+
+  const AlbumScreen({super.key, required this.albumId});
 
   @override
   ConsumerState<AlbumScreen> createState() => _AlbumScreenState();
 }
 
 class _AlbumScreenState extends ConsumerState<AlbumScreen> {
+  final _scrollController = ScrollController();
+  final _headerOpacity = ValueNotifier<double>(0.0);
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      final offset = _scrollController.offset;
+      final opacity = (offset / 150).clamp(0.0, 1.0);
+      _headerOpacity.value = opacity;
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final albumAsync = ref.watch(_albumProvider(widget.albumId));
+    final colorScheme = Theme.of(context).colorScheme;
+    final albumAsync = ref.watch(albumProvider(widget.albumId));
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -203,12 +219,10 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                         fit: StackFit.expand,
                         children: [
                           if (imageUrl != null)
-                            CachedNetworkImage(
+                            PPImage(
                               imageUrl: imageUrl,
                               fit: BoxFit.cover,
                               width: double.infinity,
-                              placeholder: (context, url) =>
-                                  Container(color: colorScheme.surfaceContainerHighest),
                             )
                           else
                             Container(color: colorScheme.surfaceContainer),

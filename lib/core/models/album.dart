@@ -4,7 +4,7 @@ part 'album.freezed.dart';
 part 'album.g.dart';
 
 @freezed
-class Album with _$Album {
+abstract class Album with _$Album {
   const factory Album({
     required String spotifyId,
     required String name,

@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/api/spotify_client.dart';
+import '../../core/api/spotify_repository.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/db/app_database.dart' as db;
+import '../../shared/widgets/pp_image.dart';
 
 final remotePlaylistTracksProvider =
-    FutureProvider.family<List<Track>, String>((ref, id) async {
-  final client = ref.read(spotifyClientProvider);
-  return client.getPlaylistTracks(id, limit: 50);
+    StreamProvider.autoDispose.family<List<Track>, String>((ref, id) {
+  return ref.watch(spotifyRepositoryProvider).watchPlaylistTracks(id).map((res) => res.data);
 });
 
 class RemotePlaylistScreen extends ConsumerStatefulWidget {
@@ -254,8 +254,8 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
                                   child: tracks.isNotEmpty && tracks.first.albumImage != null
-                                      ? Image.network(
-                                          tracks.first.albumImage!,
+                                      ? PPImage(
+                                          imageUrl: tracks.first.albumImage!,
                                           fit: BoxFit.cover,
                                         )
                                       : Container(

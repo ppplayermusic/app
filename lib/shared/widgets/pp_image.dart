@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../core/cache/image_cache_manager.dart';
 
 class PPImage extends StatelessWidget {
   final String? imageUrl;
@@ -39,6 +40,7 @@ class PPImage extends StatelessWidget {
       );
     } else {
       image = CachedNetworkImage(
+        cacheManager: PPImageCacheManager.instance,
         imageUrl: imageUrl!,
         width: width,
         height: height,
@@ -86,7 +88,7 @@ class PPImage extends StatelessWidget {
     if (imageUrl.startsWith('asset:')) {
       return AssetImage(imageUrl.substring(6));
     } else {
-      return CachedNetworkImageProvider(imageUrl);
+      return CachedNetworkImageProvider(imageUrl, cacheManager: PPImageCacheManager.instance);
     }
   }
 }

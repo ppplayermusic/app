@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/track.dart';
 import '../services/settings_provider.dart';
-
+import '../metrics/cache_metrics.dart';
 import 'spotify_auth.dart';
 
 class SpotifyClient {
@@ -134,13 +134,34 @@ class SpotifyClient {
   }
 
   Future<List<Map<String, dynamic>>> getNewReleases({int limit = 10}) async {
-    final response = await _dio.get(
-      '$_baseUrl/browse/new-releases',
-      queryParameters: {'limit': limit, 'country': market},
-      options: Options(headers: await _authHeaders()),
-    );
-    final items = (response.data['albums']['items'] as List?) ?? [];
-    return items.whereType<Map<String, dynamic>>().toList();
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/browse/new-releases',
+        queryParameters: {'limit': limit, 'country': market},
+        options: Options(headers: await _authHeaders()),
+      );
+      final items = (response.data['albums']['items'] as List?) ?? [];
+      return items.whereType<Map<String, dynamic>>().toList();
+    } catch (e) {
+      if (e is SpotifyAuthException) rethrow;
+      try {
+        final year = DateTime.now().year;
+        final response = await _dio.get(
+          '$_baseUrl/search',
+          queryParameters: {
+            'q': 'year:${year - 1}-$year',
+            'type': 'album',
+            'limit': limit,
+            'market': market,
+          },
+          options: Options(headers: await _authHeaders()),
+        );
+        final items = (response.data['albums']['items'] as List?) ?? [];
+        return items.whereType<Map<String, dynamic>>().toList();
+      } catch (_) {
+        throw Exception('Failed to load new releases.');
+      }
+    }
   }
 
   Future<List<Track>> getRecommendations({
@@ -149,37 +170,75 @@ class SpotifyClient {
     String? seedGenres,
     int limit = 50,
   }) async {
-    final response = await _dio.get(
-      '$_baseUrl/recommendations',
-      queryParameters: {
-        if (seedTrackId != null) 'seed_tracks': seedTrackId,
-        if (seedArtistId != null) 'seed_artists': seedArtistId,
-        if (seedGenres != null) 'seed_genres': seedGenres,
-        'limit': limit,
-        'market': market,
-        'min_popularity': 10,
-      },
-      options: Options(headers: await _authHeaders()),
-    );
-    final items = (response.data['tracks'] as List?) ?? [];
-    return items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/recommendations',
+        queryParameters: {
+          if (seedTrackId != null) 'seed_tracks': seedTrackId,
+          if (seedArtistId != null) 'seed_artists': seedArtistId,
+          if (seedGenres != null) 'seed_genres': seedGenres,
+          'limit': limit,
+          'market': market,
+          'min_popularity': 10,
+        },
+        options: Options(headers: await _authHeaders()),
+      );
+      final items = (response.data['tracks'] as List?) ?? [];
+      return items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
+    } catch (e) {
+      if (e is SpotifyAuthException) rethrow;
+      try {
+        if (seedArtistId != null && seedArtistId.isNotEmpty) {
+           final items = await getArtistTopTracks(seedArtistId.split(',').first);
+           final mapped = items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
+           if (mapped.isNotEmpty) return mapped;
+        } else if (seedGenres != null && seedGenres.isNotEmpty) {
+           final items = await searchTracks(seedGenres.split(',').first, limit: limit);
+           if (items.isNotEmpty) return items;
+        } else if (seedTrackId != null && seedTrackId.isNotEmpty) {
+           final items = await getPopularTracks(limit: limit);
+           if (items.isNotEmpty) return items;
+        }
+      } catch (_) {}
+      return getPopularTracks(limit: limit);
+    }
   }
 
   // --- Playlists ---
   Future<List<Map<String, dynamic>>> getFeaturedPlaylists({int limit = 20}) async {
-    final response = await _dio.get(
-      '$_baseUrl/browse/featured-playlists',
-      queryParameters: {
-        'limit': limit,
-        'country': market,
-      },
-      options: Options(headers: await _authHeaders()),
-    );
-    final rawItems = (response.data['playlists']['items'] as List?) ?? [];
-    final items = _filterAndSanitizeItems(rawItems);
-    
-    // Replace the Spotify branded cover with a composite 3-track cover for Spotify-owned playlists
-    return _enrichPlaylistsWithCollage(items);
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/browse/featured-playlists',
+        queryParameters: {
+          'limit': limit,
+          'country': market,
+        },
+        options: Options(headers: await _authHeaders()),
+      );
+      final items = (response.data['playlists']['items'] as List?) ?? [];
+      final sanitizedItems = _filterAndSanitizeItems(items);
+      return _enrichPlaylistsWithCollage(sanitizedItems);
+    } catch (e) {
+      if (e is SpotifyAuthException) rethrow;
+      // /browse/featured-playlists is deprecated. Fallback to search.
+      try {
+        final response = await _dio.get(
+          '$_baseUrl/search',
+          queryParameters: {
+            'q': 'Top Hits',
+            'type': 'playlist',
+            'limit': limit,
+            'market': market,
+          },
+          options: Options(headers: await _authHeaders()),
+        );
+        final items = (response.data['playlists']['items'] as List?) ?? [];
+        final sanitizedItems = _filterAndSanitizeItems(items);
+        return _enrichPlaylistsWithCollage(sanitizedItems);
+      } catch (_) {
+        throw Exception('Failed to load featured playlists.');
+      }
+    }
   }
 
   Future<List<Track>> getPlaylistTracks(String playlistId, {int limit = 20}) async {
@@ -207,31 +266,68 @@ class SpotifyClient {
     return tracks;
   }
 
-  Future<List<Map<String, dynamic>>> getBrowseCategories({int limit = 20}) async {
-    final response = await _dio.get(
-      '$_baseUrl/browse/categories',
-      queryParameters: {
-        'limit': limit,
-        'country': market,
-      },
-      options: Options(headers: await _authHeaders()),
-    );
-    final items = (response.data['categories']['items'] as List?) ?? [];
-    return _filterAndSanitizeItems(items);
+  Future<List<Map<String, dynamic>>> getBrowseCategories({int limit = 20, int offset = 0}) async {
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/browse/categories',
+        queryParameters: {
+          'limit': limit,
+          'offset': offset,
+          'country': market,
+        },
+        options: Options(headers: await _authHeaders()),
+      );
+      final items = (response.data['categories']['items'] as List?) ?? [];
+      return _filterAndSanitizeItems(items);
+    } catch (e) {
+      if (e is SpotifyAuthException) rethrow;
+      // Spotify deprecated the /browse/categories endpoint. Fallback to hardcoded safe categories.
+      final fallbackCategories = [
+        {'id': 'toplists', 'name': 'Top Lists', 'icons': [{'url': 'https://t.scdn.co/images/4eb37cb6a0af436bb4ea5bd1ab411d87.jpg'}]},
+        {'id': 'pop', 'name': 'Pop', 'icons': [{'url': 'https://t.scdn.co/media/derived/pop-274x274_447148649685019f5e2a03a39e78ba52_0_0_274_274.jpg'}]},
+        {'id': 'hiphop', 'name': 'Hip-Hop', 'icons': [{'url': 'https://t.scdn.co/images/051790cb90104e138a0c20a40d5885c4.jpg'}]},
+        {'id': 'rock', 'name': 'Rock', 'icons': [{'url': 'https://t.scdn.co/images/99245151528b49e69eeec5a676722d3b.jpeg'}]},
+        {'id': 'mood', 'name': 'Mood', 'icons': [{'url': 'https://t.scdn.co/media/original/mood-274x274_976986a31ac8c49794cbdc7246fd5ad7_274x274.jpg'}]},
+        {'id': 'workout', 'name': 'Workout', 'icons': [{'url': 'https://t.scdn.co/media/derived/workout-274x274_62db200ee12fbe9bdf9753df28d65a88_0_0_274_274.jpg'}]},
+        {'id': 'chill', 'name': 'Chill', 'icons': [{'url': 'https://t.scdn.co/media/derived/chill-274x274_4c46374f007813dd10b37e8d8fd35b4b_0_0_274_274.jpg'}]},
+      ];
+      return fallbackCategories;
+    }
   }
 
-  Future<List<Map<String, dynamic>>> getCategoryPlaylists(String categoryId, {int limit = 20}) async {
-    final response = await _dio.get(
-      '$_baseUrl/browse/categories/$categoryId/playlists',
-      queryParameters: {
-        'limit': limit,
-        'country': market,
-      },
-      options: Options(headers: await _authHeaders()),
-    );
-    final items = (response.data['playlists']['items'] as List?) ?? [];
-
-    return _filterAndSanitizeItems(items);
+  Future<List<Map<String, dynamic>>> getCategoryPlaylists(String categoryId, {int limit = 20, int offset = 0}) async {
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/browse/categories/$categoryId/playlists',
+        queryParameters: {
+          'limit': limit,
+          'offset': offset,
+          'country': market,
+        },
+        options: Options(headers: await _authHeaders()),
+      );
+      final items = (response.data['playlists']['items'] as List?) ?? [];
+      return _filterAndSanitizeItems(items);
+    } catch (e) {
+      if (e is SpotifyAuthException) rethrow;
+      // Fallback to searching for playlists with the category name since the endpoint is deprecated.
+      try {
+        final response = await _dio.get(
+          '$_baseUrl/search',
+          queryParameters: {
+            'q': categoryId,
+            'type': 'playlist',
+            'limit': limit,
+            'market': market,
+          },
+          options: Options(headers: await _authHeaders()),
+        );
+        final items = (response.data['playlists']['items'] as List?) ?? [];
+        return _filterAndSanitizeItems(items);
+      } catch (_) {
+        throw Exception('Failed to load category playlists.');
+      }
+    }
   }
 
   Future<List<Track>> getPopularTracks({int limit = 12}) async {
@@ -264,12 +360,14 @@ class SpotifyClient {
 
       return await getPlaylistTracks(playlistId, limit: limit);
     } catch (e) {
-      // Final fallback to Global Top 50 or empty list
+      if (e is SpotifyAuthException) rethrow;
+      // Final fallback to Global Top 50 or throw exception
       try {
-        return await getPlaylistTracks('37i9dQZEVXbMDoHDw22t9N', limit: limit);
-      } catch (_) {
-        return [];
-      }
+        final tracks = await getPlaylistTracks('37i9dQZEVXbMDoHDw22t9N', limit: limit);
+        if (tracks.isNotEmpty) return tracks;
+      } catch (_) {}
+      
+      throw Exception('Failed to load popular tracks after trying all fallbacks.');
     }
   }
 
@@ -315,6 +413,7 @@ class SpotifyClient {
       );
       return (response.data['genres'] as List).cast<String>();
     } catch (e) {
+      if (e is SpotifyAuthException) rethrow;
       // Fallback to a set of universally safe seeds
       return const [
         'pop', 'rock', 'hip-hop', 'edm', 'indie', 'alternative', 
@@ -370,7 +469,8 @@ class SpotifyClient {
             playlist['images'] = trackImages.map((url) => {'url': url}).toList();
           }
         }
-      } catch (_) {
+      } catch (e) {
+        if (e is SpotifyAuthException) rethrow;
         // Fallback to original image
       }
       return playlist;
@@ -391,6 +491,14 @@ final spotifyClientProvider = Provider<SpotifyClient>((ref) {
       error: true,
     ));
   }
+  
+  final metrics = ref.watch(cacheMetricsProvider);
+  dio.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) {
+      metrics.spotifyRequests++;
+      handler.next(options);
+    }
+  ));
   
   final authHandler = ref.watch(spotifyAuthHandlerProvider(dio));
   return SpotifyClient(dio, authHandler, market: market);

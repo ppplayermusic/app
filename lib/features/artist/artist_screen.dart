@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../shared/widgets/pp_image.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/section_wrapper.dart';
 import '../../shared/widgets/track_tile.dart';
@@ -15,30 +15,35 @@ import '../../shared/widgets/playlist_cover.dart';
 import '../../shared/widgets/animated_equalizer.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
 
-final _artistProvider =
-    FutureProvider.family<Map<String, dynamic>, String>((ref, id) {
-  return ref.read(spotifyClientProvider).getArtist(id);
+import '../../core/api/spotify_repository.dart';
+
+final artistProvider =
+    StreamProvider.autoDispose.family<Map<String, dynamic>, String>((ref, id) {
+  return ref.watch(spotifyRepositoryProvider).watchArtist(id).map((res) => res.data);
 });
 
-final _artistTopTracksProvider =
-    FutureProvider.family<List<dynamic>, String>((ref, id) {
-  return ref.read(spotifyClientProvider).getArtistTopTracks(id);
+final artistTopTracksProvider =
+    StreamProvider.autoDispose.family<List<dynamic>, String>((ref, id) {
+  return ref.watch(spotifyRepositoryProvider).watchArtistTopTracks(id).map((res) => res.data);
 });
 
-final _artistAlbumsProvider =
-    FutureProvider.family<List<dynamic>, String>((ref, id) {
-  return ref.read(spotifyClientProvider).getArtistAlbums(id);
+final artistAlbumsProvider =
+    StreamProvider.autoDispose.family<List<dynamic>, String>((ref, id) {
+  return ref.watch(spotifyRepositoryProvider).watchArtistAlbums(id).map((res) => res.data);
 });
 
-final _relatedArtistsProvider =
-    FutureProvider.family<List<Map<String, dynamic>>, String>((ref, id) {
-  return ref.read(spotifyClientProvider).getRelatedArtists(id);
+final relatedArtistsProvider =
+    StreamProvider.autoDispose.family<List<Map<String, dynamic>>, String>((ref, id) {
+  return ref.watch(spotifyRepositoryProvider).watchRelatedArtists(id).map((res) => res.data);
 });
 
-final _artistPlaylistsProvider =
-    FutureProvider.family<List<Map<String, dynamic>>, String>((ref, name) {
-  if (name.isEmpty) return Future.value([]);
-  return ref.read(spotifyClientProvider).searchPlaylists('Featuring $name', limit: 12);
+final artistPlaylistsProvider =
+    StreamProvider.autoDispose.family<List<Map<String, dynamic>>, String>((ref, name) {
+  if (name.isEmpty) return Stream.value([]);
+  return ref.watch(spotifyRepositoryProvider).watchSearch('Featuring $name', limit: 12).map((res) {
+    final playlists = res.data['playlists']?['items'] as List?;
+    return playlists?.cast<Map<String, dynamic>>() ?? [];
+  });
 });
 
 class ArtistScreen extends ConsumerStatefulWidget {
@@ -63,11 +68,11 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final artistAsync = ref.watch(_artistProvider(widget.artistId));
-    final tracksAsync = ref.watch(_artistTopTracksProvider(widget.artistId));
-    final albumsAsync = ref.watch(_artistAlbumsProvider(widget.artistId));
-    final relatedAsync = ref.watch(_relatedArtistsProvider(widget.artistId));
-    final playlistsAsync = ref.watch(_artistPlaylistsProvider(artistAsync.asData?.value['name'] ?? ''));
+    final artistAsync = ref.watch(artistProvider(widget.artistId));
+    final tracksAsync = ref.watch(artistTopTracksProvider(widget.artistId));
+    final albumsAsync = ref.watch(artistAlbumsProvider(widget.artistId));
+    final relatedAsync = ref.watch(relatedArtistsProvider(widget.artistId));
+    final playlistsAsync = ref.watch(artistPlaylistsProvider(artistAsync.asData?.value['name'] ?? ''));
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -156,14 +161,9 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                         fit: StackFit.expand,
                         children: [
                           if (headerImage != null)
-                            CachedNetworkImage(
+                            PPImage(
                               imageUrl: headerImage,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(color: colorScheme.surfaceContainerHighest),
-                              errorWidget: (context, url, error) => Container(
-                                color: colorScheme.surfaceContainerHighest,
-                                child: Icon(Icons.person, size: 80, color: colorScheme.onSurface.withValues(alpha: 0.1)),
-                              ),
                             )
                           else
                             Container(color: colorScheme.surfaceContainerHighest),
@@ -587,7 +587,8 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
         return;
       }
       try {
-        final albumData = await ref.read(spotifyClientProvider).getAlbum(album['id']);
+        final cacheResult = await ref.read(spotifyRepositoryProvider).watchAlbum(album['id']).first;
+        final albumData = cacheResult.data;
         final tracksRaw = albumData['tracks']?['items'] as List? ?? [];
         final tracks = tracksRaw.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
         if (tracks.isNotEmpty) {
@@ -651,12 +652,11 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
                       isHovered: _isHovered,
                       isPlaying: isPlaying,
                       size: 42,
-                      child: CachedNetworkImage(
+                      child: PPImage(
                         imageUrl: imageUrl,
                         height: 160,
                         width: 160,
                         fit: BoxFit.cover,
-                        placeholder: (_, _) => Container(color: colorScheme.surfaceContainerHighest),
                       ),
                     ),
                   ),
@@ -778,13 +778,9 @@ class _RelatedArtistCardState extends State<_RelatedArtistCard> {
                     ],
                   ),
                   child: ClipOval(
-                    child: CachedNetworkImage(
+                    child: PPImage(
                       imageUrl: rImgUrl,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: colorScheme.onSurface.withValues(alpha: 0.05),
-                        child: Icon(Icons.person, color: colorScheme.onSurface.withValues(alpha: 0.1)),
-                      ),
                     ),
                   ),
                 ),
@@ -828,9 +824,11 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
 
   void _onPlay() async {
     try {
-      final tracks = await ref
-          .read(spotifyClientProvider)
-          .getPlaylistTracks(widget.playlist['id'], limit: 50);
+      final cacheResult = await ref
+          .read(spotifyRepositoryProvider)
+          .watchPlaylistTracks(widget.playlist['id'])
+          .first;
+      final tracks = cacheResult.data;
       if (tracks.isNotEmpty) {
         ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
       }
@@ -853,14 +851,11 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
         borderRadius: 20,
       );
     } else {
-      imageWidget = CachedNetworkImage(
+      imageWidget = PPImage(
         imageUrl: pImgUrl,
         width: 170,
         height: 170,
         fit: BoxFit.cover,
-        placeholder: (context, url) => const ShimmerPlaceholder(
-          borderRadius: 20,
-        ),
       );
     }
 

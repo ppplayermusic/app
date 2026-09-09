@@ -17,6 +17,7 @@ import 'core/playback/media_handler.dart';
 import 'core/services/settings_provider.dart';
 import 'core/playback/media_sync_service.dart';
 import 'core/services/dock_menu_service.dart';
+import 'core/metrics/cache_metrics.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Global access to the provider container for the [AudioHandler].
@@ -105,6 +106,10 @@ void main() async {
   // Initialize native dock menu service for macOS
   if (!kIsWeb && Platform.isMacOS) {
     globalContainer.read(dockMenuServiceProvider);
+  }
+  
+  if (kDebugMode) {
+    globalContainer.read(cacheMetricsProvider).startLogging();
   }
 
   runApp(

@@ -4,7 +4,7 @@ part 'artist.freezed.dart';
 part 'artist.g.dart';
 
 @freezed
-class Artist with _$Artist {
+abstract class Artist with _$Artist {
   const factory Artist({
     required String spotifyId,
     required String name,

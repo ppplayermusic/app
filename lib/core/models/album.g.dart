@@ -6,7 +6,7 @@ part of 'album.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AlbumImpl _$$AlbumImplFromJson(Map<String, dynamic> json) => _$AlbumImpl(
+_Album _$AlbumFromJson(Map<String, dynamic> json) => _Album(
   spotifyId: json['spotifyId'] as String,
   name: json['name'] as String,
   artistId: json['artistId'] as String,
@@ -16,13 +16,12 @@ _$AlbumImpl _$$AlbumImplFromJson(Map<String, dynamic> json) => _$AlbumImpl(
   totalTracks: (json['totalTracks'] as num?)?.toInt(),
 );
 
-Map<String, dynamic> _$$AlbumImplToJson(_$AlbumImpl instance) =>
-    <String, dynamic>{
-      'spotifyId': instance.spotifyId,
-      'name': instance.name,
-      'artistId': instance.artistId,
-      'artistName': instance.artistName,
-      'imageUrl': instance.imageUrl,
-      'releaseDate': instance.releaseDate,
-      'totalTracks': instance.totalTracks,
-    };
+Map<String, dynamic> _$AlbumToJson(_Album instance) => <String, dynamic>{
+  'spotifyId': instance.spotifyId,
+  'name': instance.name,
+  'artistId': instance.artistId,
+  'artistName': instance.artistName,
+  'imageUrl': instance.imageUrl,
+  'releaseDate': instance.releaseDate,
+  'totalTracks': instance.totalTracks,
+};

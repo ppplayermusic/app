@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../core/api/spotify_repository.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -15,7 +17,6 @@ import '../../shared/widgets/context_menu/content_context_menu.dart';
 import '../../core/providers/genre_providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/favorites_provider.dart';
-import '../../core/api/spotify_client.dart';
 
 
 final categoryColorProvider = Provider.family<Color, String>((ref, name) {
@@ -370,9 +371,11 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
 
   void _onPlay() async {
     try {
-      final tracks = await ref
-          .read(spotifyClientProvider)
-          .getPlaylistTracks(widget.playlist['id'], limit: 50);
+      final cacheResult = await ref
+          .read(spotifyRepositoryProvider)
+          .watchPlaylistTracks(widget.playlist['id'])
+          .first;
+      final tracks = cacheResult.data;
       if (tracks.isNotEmpty) {
         ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
       }

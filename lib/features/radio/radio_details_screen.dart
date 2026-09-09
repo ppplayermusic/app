@@ -1,40 +1,43 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../core/api/spotify_repository.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/pp_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
 
 final radioTracksProvider = FutureProvider.family<List<Track>, ({String type, String id})>((ref, arg) async {
-  final client = ref.watch(spotifyClientProvider);
+  final repo = ref.watch(spotifyRepositoryProvider);
   try {
-    final tracks = await client.getRecommendations(
+    final cacheResult = await repo.watchRecommendations(
       seedArtistId: arg.type == 'artist' ? arg.id : null,
       seedTrackId: arg.type == 'track' ? arg.id : null,
       seedGenres: arg.type == 'genre' ? arg.id : null,
       limit: 50,
-    );
+    ).first;
+    final tracks = cacheResult.data;
     
     if (tracks.isNotEmpty) return tracks;
     
     // Fallback 1: Try a safe genre seed
-    final fallbackTracks = await client.getRecommendations(
+    final fallbackCacheResult = await repo.watchRecommendations(
       seedGenres: 'pop',
       limit: 50,
-    );
+    ).first;
+    final fallbackTracks = fallbackCacheResult.data;
     
     if (fallbackTracks.isNotEmpty) return fallbackTracks;
 
     // Fallback 2: Ultimate fallback to popular tracks
-    return client.getPopularTracks(limit: 50);
+    return (await repo.watchPopularTracks(limit: 50).first).data;
   } catch (e) {
     // If targeted recommendation fails, return popular tracks as ultimate fallback
-    return client.getPopularTracks(limit: 50);
+    return (await repo.watchPopularTracks(limit: 50).first).data;
   }
 });
 

@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../shared/widgets/pp_image.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../core/api/spotify_client.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/banner_ad_widget.dart';
@@ -17,10 +18,14 @@ import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
 import 'package:ppplayer/core/providers/recent_searches_provider.dart';
 import 'package:ppplayer/core/providers/search_provider.dart';
+import 'package:ppplayer/core/api/spotify_repository.dart';
 
-final _searchResultsProvider =
-    FutureProvider.autoDispose.family<Map<String, dynamic>, String>((ref, query) async {
-  if (query.isEmpty) return {};
+final searchResultsProvider =
+    StreamProvider.autoDispose.family<Map<String, dynamic>, String>((ref, query) async* {
+  if (query.isEmpty) {
+    yield {};
+    return;
+  }
   
   bool didDispose = false;
   ref.onDispose(() => didDispose = true);
@@ -29,9 +34,7 @@ final _searchResultsProvider =
   await Future.delayed(const Duration(milliseconds: 800));
   
   if (didDispose) {
-    // If the query changed within 800ms, this provider gets disposed and rebuilt.
-    // We throw to cancel the current request.
-    throw Exception('Cancelled'); 
+    return;
   }
   
   // Automatically save to recent searches since the user paused typing
@@ -39,7 +42,7 @@ final _searchResultsProvider =
     ref.read(recentSearchesProvider.notifier).addSearch(query);
   }
 
-  return ref.read(spotifyClientProvider).search(query);
+  yield* ref.read(spotifyRepositoryProvider).watchSearch(query).map((res) => res.data);
 });
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -71,11 +74,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
   @override
   Widget build(BuildContext context) {
     final query = ref.watch(searchQueryProvider);
-    final results = ref.watch(_searchResultsProvider(query));
+    final results = ref.watch(searchResultsProvider(query));
     final colorScheme = Theme.of(context).colorScheme;
     final isDesktop = MediaQuery.sizeOf(context).width >= 600;
 
-    ref.listen(searchQueryProvider, (prev, next) {
+    ref.listen<String>(searchQueryProvider, (prev, next) {
       if (_ctrl.text != next) {
         _ctrl.text = next;
         _ctrl.selection = TextSelection.fromPosition(TextPosition(offset: next.length));
@@ -169,7 +172,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                     icon: Icons.close_rounded,
                     onTap: () {
                       _ctrl.clear();
-                      ref.read(searchQueryProvider.notifier).state = '';
+                      ref.read(searchQueryProvider.notifier).updateQuery('');
                       setState(() {});
                     },
                     size: 20,
@@ -180,7 +183,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
               contentPadding: const EdgeInsets.symmetric(vertical: 13),
             ),
             onChanged: (val) {
-              ref.read(searchQueryProvider.notifier).state = val;
+              ref.read(searchQueryProvider.notifier).updateQuery(val);
             },
             onSubmitted: (val) {
               if (val.trim().isNotEmpty) {
@@ -267,7 +270,7 @@ class _EmptySearch extends ConsumerWidget {
                   return InputChip(
                     label: Text(query, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurface)),
                     onPressed: () {
-                      ref.read(searchQueryProvider.notifier).state = query;
+                      ref.read(searchQueryProvider.notifier).updateQuery(query);
                     },
                     onDeleted: () {
                       ref.read(recentSearchesProvider.notifier).removeSearch(query);
@@ -411,7 +414,7 @@ class _CategoryCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: CachedNetworkImage(
+                    child: PPImage(
                         imageUrl: imageUrl,
                         width: 80,
                         height: 80,
@@ -541,10 +544,9 @@ class _ArtistResults extends ConsumerWidget {
                     ),
                     child: ClipOval(
                       child: imageUrl.isNotEmpty
-                          ? CachedNetworkImage(
+                          ? PPImage(
                               imageUrl: imageUrl,
                               fit: BoxFit.cover,
-                              placeholder: (_, _) => Container(color: colorScheme.surfaceContainerHighest),
                             )
                           : Container(
                               color: colorScheme.surfaceContainerHighest,
@@ -651,7 +653,7 @@ class _AlbumResults extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(16),
                               child: imageUrl.isNotEmpty
-                                  ? CachedNetworkImage(
+                                  ? PPImage(
                                       imageUrl: imageUrl,
                                       fit: BoxFit.cover,
                                     )
@@ -762,7 +764,7 @@ class _PlaylistResults extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(16),
                               child: imageUrl.isNotEmpty
-                                  ? CachedNetworkImage(
+                                  ? PPImage(
                                       imageUrl: imageUrl,
                                       fit: BoxFit.cover,
                                     )

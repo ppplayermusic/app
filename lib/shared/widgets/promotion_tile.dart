@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../shared/widgets/pp_image.dart';
 
 enum PromotionType { horizontal, vertical }
 
@@ -156,8 +157,8 @@ class PromotionTile extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: imageUrl != null && imageUrl!.startsWith('http')
-          ? Image.network(
-              imageUrl!,
+          ? PPImage(
+              imageUrl: imageUrl!,
               width: width,
               height: height,
               fit: BoxFit.cover,

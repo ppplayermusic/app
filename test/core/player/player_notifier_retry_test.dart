@@ -14,7 +14,7 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
 // ---------------------------------------------------------------------------
 
 /// Configurable fake for PlaybackService.
-class FakePlaybackService extends PlaybackService {
+class FakePlaybackService implements PlaybackService {
   final List<String> _candidates;
   final Exception? _throwError;
   int resolveCallCount = 0;
@@ -23,8 +23,10 @@ class FakePlaybackService extends PlaybackService {
     List<String> candidates = const [],
     Exception? throwError,
   }) : _candidates = candidates,
-       _throwError = throwError,
-       super(_FakeRef());
+       _throwError = throwError;
+
+  @override
+  Ref get ref => throw UnimplementedError();
 
   @override
   Future<List<String>> resolveCandidates(
@@ -41,13 +43,24 @@ class FakePlaybackService extends PlaybackService {
 
   @override
   Future<void> recordPlay(Track track) async {}
+
+  @override
+  Future<void> toggleFavorite(Track track, bool isFavorite) async {}
+
+  @override
+  Future<void> prefetchNext(Track track, String? regionCode) async {}
+
+  @override
+  Future<List<Track>> getPlaylistTracks(int playlistId) async => [];
+
+  @override
+  Future<List<Track>> getRadioTracks(String artistId) async => [];
+
+  @override
+  Future<List<Track>> getRecentlyPlayed({int limit = 50}) async => [];
 }
 
-/// Minimal Ref stub required by PlaybackService constructor.
-class _FakeRef implements Ref {
-  @override
-  dynamic noSuchMethod(Invocation invocation) => null;
-}
+
 
 /// Fake PlaybackController that records play() calls.
 class FakePlaybackController implements PlaybackController {
@@ -312,13 +325,15 @@ void main() {
 // ---------------------------------------------------------------------------
 // Helper: service that blocks until a completer resolves.
 // ---------------------------------------------------------------------------
-class _DelayedFakeService extends PlaybackService {
+class _DelayedFakeService implements PlaybackService {
   final Completer<List<String>> _completer;
   final List<String> _instantFallback;
   int calls = 0;
 
-  _DelayedFakeService(this._completer, this._instantFallback)
-    : super(_FakeRef());
+  _DelayedFakeService(this._completer, this._instantFallback);
+
+  @override
+  Ref get ref => throw UnimplementedError();
 
   @override
   Future<List<String>> resolveCandidates(Track track, String? regionCode) {
@@ -332,4 +347,19 @@ class _DelayedFakeService extends PlaybackService {
 
   @override
   Future<void> recordPlay(Track track) async {}
+
+  @override
+  Future<void> toggleFavorite(Track track, bool isFavorite) async {}
+
+  @override
+  Future<void> prefetchNext(Track track, String? regionCode) async {}
+
+  @override
+  Future<List<Track>> getPlaylistTracks(int playlistId) async => [];
+
+  @override
+  Future<List<Track>> getRadioTracks(String artistId) async => [];
+
+  @override
+  Future<List<Track>> getRecentlyPlayed({int limit = 50}) async => [];
 }

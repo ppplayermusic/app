@@ -105,6 +105,18 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, Track> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _youtubeResolvedAtMeta = const VerificationMeta(
+    'youtubeResolvedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> youtubeResolvedAt =
+      GeneratedColumn<DateTime>(
+        'youtube_resolved_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _playCountMeta = const VerificationMeta(
     'playCount',
   );
@@ -154,6 +166,7 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, Track> {
     albumImage,
     durationMs,
     youtubeVideoId,
+    youtubeResolvedAt,
     playCount,
     isFavorite,
     lastPlayedAt,
@@ -235,6 +248,15 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, Track> {
         ),
       );
     }
+    if (data.containsKey('youtube_resolved_at')) {
+      context.handle(
+        _youtubeResolvedAtMeta,
+        youtubeResolvedAt.isAcceptableOrUnknown(
+          data['youtube_resolved_at']!,
+          _youtubeResolvedAtMeta,
+        ),
+      );
+    }
     if (data.containsKey('play_count')) {
       context.handle(
         _playCountMeta,
@@ -305,6 +327,10 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, Track> {
         DriftSqlType.string,
         data['${effectivePrefix}youtube_video_id'],
       ),
+      youtubeResolvedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}youtube_resolved_at'],
+      ),
       playCount:
           attachedDatabase.typeMapping.read(
             DriftSqlType.int,
@@ -338,6 +364,7 @@ class Track extends DataClass implements Insertable<Track> {
   final String? albumImage;
   final int? durationMs;
   final String? youtubeVideoId;
+  final DateTime? youtubeResolvedAt;
   final int playCount;
   final bool isFavorite;
   final DateTime? lastPlayedAt;
@@ -351,6 +378,7 @@ class Track extends DataClass implements Insertable<Track> {
     this.albumImage,
     this.durationMs,
     this.youtubeVideoId,
+    this.youtubeResolvedAt,
     required this.playCount,
     required this.isFavorite,
     this.lastPlayedAt,
@@ -376,6 +404,9 @@ class Track extends DataClass implements Insertable<Track> {
     }
     if (!nullToAbsent || youtubeVideoId != null) {
       map['youtube_video_id'] = Variable<String>(youtubeVideoId);
+    }
+    if (!nullToAbsent || youtubeResolvedAt != null) {
+      map['youtube_resolved_at'] = Variable<DateTime>(youtubeResolvedAt);
     }
     map['play_count'] = Variable<int>(playCount);
     map['is_favorite'] = Variable<bool>(isFavorite);
@@ -411,6 +442,10 @@ class Track extends DataClass implements Insertable<Track> {
           youtubeVideoId == null && nullToAbsent
               ? const Value.absent()
               : Value(youtubeVideoId),
+      youtubeResolvedAt:
+          youtubeResolvedAt == null && nullToAbsent
+              ? const Value.absent()
+              : Value(youtubeResolvedAt),
       playCount: Value(playCount),
       isFavorite: Value(isFavorite),
       lastPlayedAt:
@@ -435,6 +470,9 @@ class Track extends DataClass implements Insertable<Track> {
       albumImage: serializer.fromJson<String?>(json['albumImage']),
       durationMs: serializer.fromJson<int?>(json['durationMs']),
       youtubeVideoId: serializer.fromJson<String?>(json['youtubeVideoId']),
+      youtubeResolvedAt: serializer.fromJson<DateTime?>(
+        json['youtubeResolvedAt'],
+      ),
       playCount: serializer.fromJson<int>(json['playCount']),
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       lastPlayedAt: serializer.fromJson<DateTime?>(json['lastPlayedAt']),
@@ -453,6 +491,7 @@ class Track extends DataClass implements Insertable<Track> {
       'albumImage': serializer.toJson<String?>(albumImage),
       'durationMs': serializer.toJson<int?>(durationMs),
       'youtubeVideoId': serializer.toJson<String?>(youtubeVideoId),
+      'youtubeResolvedAt': serializer.toJson<DateTime?>(youtubeResolvedAt),
       'playCount': serializer.toJson<int>(playCount),
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'lastPlayedAt': serializer.toJson<DateTime?>(lastPlayedAt),
@@ -469,6 +508,7 @@ class Track extends DataClass implements Insertable<Track> {
     Value<String?> albumImage = const Value.absent(),
     Value<int?> durationMs = const Value.absent(),
     Value<String?> youtubeVideoId = const Value.absent(),
+    Value<DateTime?> youtubeResolvedAt = const Value.absent(),
     int? playCount,
     bool? isFavorite,
     Value<DateTime?> lastPlayedAt = const Value.absent(),
@@ -483,6 +523,10 @@ class Track extends DataClass implements Insertable<Track> {
     durationMs: durationMs.present ? durationMs.value : this.durationMs,
     youtubeVideoId:
         youtubeVideoId.present ? youtubeVideoId.value : this.youtubeVideoId,
+    youtubeResolvedAt:
+        youtubeResolvedAt.present
+            ? youtubeResolvedAt.value
+            : this.youtubeResolvedAt,
     playCount: playCount ?? this.playCount,
     isFavorite: isFavorite ?? this.isFavorite,
     lastPlayedAt: lastPlayedAt.present ? lastPlayedAt.value : this.lastPlayedAt,
@@ -504,6 +548,10 @@ class Track extends DataClass implements Insertable<Track> {
           data.youtubeVideoId.present
               ? data.youtubeVideoId.value
               : this.youtubeVideoId,
+      youtubeResolvedAt:
+          data.youtubeResolvedAt.present
+              ? data.youtubeResolvedAt.value
+              : this.youtubeResolvedAt,
       playCount: data.playCount.present ? data.playCount.value : this.playCount,
       isFavorite:
           data.isFavorite.present ? data.isFavorite.value : this.isFavorite,
@@ -526,6 +574,7 @@ class Track extends DataClass implements Insertable<Track> {
           ..write('albumImage: $albumImage, ')
           ..write('durationMs: $durationMs, ')
           ..write('youtubeVideoId: $youtubeVideoId, ')
+          ..write('youtubeResolvedAt: $youtubeResolvedAt, ')
           ..write('playCount: $playCount, ')
           ..write('isFavorite: $isFavorite, ')
           ..write('lastPlayedAt: $lastPlayedAt')
@@ -544,6 +593,7 @@ class Track extends DataClass implements Insertable<Track> {
     albumImage,
     durationMs,
     youtubeVideoId,
+    youtubeResolvedAt,
     playCount,
     isFavorite,
     lastPlayedAt,
@@ -561,6 +611,7 @@ class Track extends DataClass implements Insertable<Track> {
           other.albumImage == this.albumImage &&
           other.durationMs == this.durationMs &&
           other.youtubeVideoId == this.youtubeVideoId &&
+          other.youtubeResolvedAt == this.youtubeResolvedAt &&
           other.playCount == this.playCount &&
           other.isFavorite == this.isFavorite &&
           other.lastPlayedAt == this.lastPlayedAt);
@@ -576,6 +627,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
   final Value<String?> albumImage;
   final Value<int?> durationMs;
   final Value<String?> youtubeVideoId;
+  final Value<DateTime?> youtubeResolvedAt;
   final Value<int> playCount;
   final Value<bool> isFavorite;
   final Value<DateTime?> lastPlayedAt;
@@ -590,6 +642,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
     this.albumImage = const Value.absent(),
     this.durationMs = const Value.absent(),
     this.youtubeVideoId = const Value.absent(),
+    this.youtubeResolvedAt = const Value.absent(),
     this.playCount = const Value.absent(),
     this.isFavorite = const Value.absent(),
     this.lastPlayedAt = const Value.absent(),
@@ -605,6 +658,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
     this.albumImage = const Value.absent(),
     this.durationMs = const Value.absent(),
     this.youtubeVideoId = const Value.absent(),
+    this.youtubeResolvedAt = const Value.absent(),
     this.playCount = const Value.absent(),
     this.isFavorite = const Value.absent(),
     this.lastPlayedAt = const Value.absent(),
@@ -623,6 +677,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
     Expression<String>? albumImage,
     Expression<int>? durationMs,
     Expression<String>? youtubeVideoId,
+    Expression<DateTime>? youtubeResolvedAt,
     Expression<int>? playCount,
     Expression<bool>? isFavorite,
     Expression<DateTime>? lastPlayedAt,
@@ -638,6 +693,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
       if (albumImage != null) 'album_image': albumImage,
       if (durationMs != null) 'duration_ms': durationMs,
       if (youtubeVideoId != null) 'youtube_video_id': youtubeVideoId,
+      if (youtubeResolvedAt != null) 'youtube_resolved_at': youtubeResolvedAt,
       if (playCount != null) 'play_count': playCount,
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (lastPlayedAt != null) 'last_played_at': lastPlayedAt,
@@ -655,6 +711,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
     Value<String?>? albumImage,
     Value<int?>? durationMs,
     Value<String?>? youtubeVideoId,
+    Value<DateTime?>? youtubeResolvedAt,
     Value<int>? playCount,
     Value<bool>? isFavorite,
     Value<DateTime?>? lastPlayedAt,
@@ -670,6 +727,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
       albumImage: albumImage ?? this.albumImage,
       durationMs: durationMs ?? this.durationMs,
       youtubeVideoId: youtubeVideoId ?? this.youtubeVideoId,
+      youtubeResolvedAt: youtubeResolvedAt ?? this.youtubeResolvedAt,
       playCount: playCount ?? this.playCount,
       isFavorite: isFavorite ?? this.isFavorite,
       lastPlayedAt: lastPlayedAt ?? this.lastPlayedAt,
@@ -707,6 +765,9 @@ class TracksCompanion extends UpdateCompanion<Track> {
     if (youtubeVideoId.present) {
       map['youtube_video_id'] = Variable<String>(youtubeVideoId.value);
     }
+    if (youtubeResolvedAt.present) {
+      map['youtube_resolved_at'] = Variable<DateTime>(youtubeResolvedAt.value);
+    }
     if (playCount.present) {
       map['play_count'] = Variable<int>(playCount.value);
     }
@@ -734,6 +795,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
           ..write('albumImage: $albumImage, ')
           ..write('durationMs: $durationMs, ')
           ..write('youtubeVideoId: $youtubeVideoId, ')
+          ..write('youtubeResolvedAt: $youtubeResolvedAt, ')
           ..write('playCount: $playCount, ')
           ..write('isFavorite: $isFavorite, ')
           ..write('lastPlayedAt: $lastPlayedAt, ')
@@ -2862,6 +2924,451 @@ class RadiosCompanion extends UpdateCompanion<Radio> {
   }
 }
 
+class $CatalogCacheEntriesTable extends CatalogCacheEntries
+    with TableInfo<$CatalogCacheEntriesTable, CatalogCacheEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CatalogCacheEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _keyMeta = const VerificationMeta('key');
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+    'key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fetchedAtMeta = const VerificationMeta(
+    'fetchedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> fetchedAt = GeneratedColumn<DateTime>(
+    'fetched_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastAccessedAtMeta = const VerificationMeta(
+    'lastAccessedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastAccessedAt =
+      GeneratedColumn<DateTime>(
+        'last_accessed_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _payloadVersionMeta = const VerificationMeta(
+    'payloadVersion',
+  );
+  @override
+  late final GeneratedColumn<int> payloadVersion = GeneratedColumn<int>(
+    'payload_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _resourceTypeMeta = const VerificationMeta(
+    'resourceType',
+  );
+  @override
+  late final GeneratedColumn<String> resourceType = GeneratedColumn<String>(
+    'resource_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    key,
+    payload,
+    fetchedAt,
+    lastAccessedAt,
+    payloadVersion,
+    resourceType,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'catalog_cache_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CatalogCacheEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('key')) {
+      context.handle(
+        _keyMeta,
+        key.isAcceptableOrUnknown(data['key']!, _keyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('fetched_at')) {
+      context.handle(
+        _fetchedAtMeta,
+        fetchedAt.isAcceptableOrUnknown(data['fetched_at']!, _fetchedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fetchedAtMeta);
+    }
+    if (data.containsKey('last_accessed_at')) {
+      context.handle(
+        _lastAccessedAtMeta,
+        lastAccessedAt.isAcceptableOrUnknown(
+          data['last_accessed_at']!,
+          _lastAccessedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastAccessedAtMeta);
+    }
+    if (data.containsKey('payload_version')) {
+      context.handle(
+        _payloadVersionMeta,
+        payloadVersion.isAcceptableOrUnknown(
+          data['payload_version']!,
+          _payloadVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadVersionMeta);
+    }
+    if (data.containsKey('resource_type')) {
+      context.handle(
+        _resourceTypeMeta,
+        resourceType.isAcceptableOrUnknown(
+          data['resource_type']!,
+          _resourceTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_resourceTypeMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {key};
+  @override
+  CatalogCacheEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CatalogCacheEntry(
+      key:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}key'],
+          )!,
+      payload:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}payload'],
+          )!,
+      fetchedAt:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}fetched_at'],
+          )!,
+      lastAccessedAt:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}last_accessed_at'],
+          )!,
+      payloadVersion:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.int,
+            data['${effectivePrefix}payload_version'],
+          )!,
+      resourceType:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}resource_type'],
+          )!,
+    );
+  }
+
+  @override
+  $CatalogCacheEntriesTable createAlias(String alias) {
+    return $CatalogCacheEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class CatalogCacheEntry extends DataClass
+    implements Insertable<CatalogCacheEntry> {
+  final String key;
+  final String payload;
+  final DateTime fetchedAt;
+  final DateTime lastAccessedAt;
+  final int payloadVersion;
+  final String resourceType;
+  const CatalogCacheEntry({
+    required this.key,
+    required this.payload,
+    required this.fetchedAt,
+    required this.lastAccessedAt,
+    required this.payloadVersion,
+    required this.resourceType,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['key'] = Variable<String>(key);
+    map['payload'] = Variable<String>(payload);
+    map['fetched_at'] = Variable<DateTime>(fetchedAt);
+    map['last_accessed_at'] = Variable<DateTime>(lastAccessedAt);
+    map['payload_version'] = Variable<int>(payloadVersion);
+    map['resource_type'] = Variable<String>(resourceType);
+    return map;
+  }
+
+  CatalogCacheEntriesCompanion toCompanion(bool nullToAbsent) {
+    return CatalogCacheEntriesCompanion(
+      key: Value(key),
+      payload: Value(payload),
+      fetchedAt: Value(fetchedAt),
+      lastAccessedAt: Value(lastAccessedAt),
+      payloadVersion: Value(payloadVersion),
+      resourceType: Value(resourceType),
+    );
+  }
+
+  factory CatalogCacheEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CatalogCacheEntry(
+      key: serializer.fromJson<String>(json['key']),
+      payload: serializer.fromJson<String>(json['payload']),
+      fetchedAt: serializer.fromJson<DateTime>(json['fetchedAt']),
+      lastAccessedAt: serializer.fromJson<DateTime>(json['lastAccessedAt']),
+      payloadVersion: serializer.fromJson<int>(json['payloadVersion']),
+      resourceType: serializer.fromJson<String>(json['resourceType']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'key': serializer.toJson<String>(key),
+      'payload': serializer.toJson<String>(payload),
+      'fetchedAt': serializer.toJson<DateTime>(fetchedAt),
+      'lastAccessedAt': serializer.toJson<DateTime>(lastAccessedAt),
+      'payloadVersion': serializer.toJson<int>(payloadVersion),
+      'resourceType': serializer.toJson<String>(resourceType),
+    };
+  }
+
+  CatalogCacheEntry copyWith({
+    String? key,
+    String? payload,
+    DateTime? fetchedAt,
+    DateTime? lastAccessedAt,
+    int? payloadVersion,
+    String? resourceType,
+  }) => CatalogCacheEntry(
+    key: key ?? this.key,
+    payload: payload ?? this.payload,
+    fetchedAt: fetchedAt ?? this.fetchedAt,
+    lastAccessedAt: lastAccessedAt ?? this.lastAccessedAt,
+    payloadVersion: payloadVersion ?? this.payloadVersion,
+    resourceType: resourceType ?? this.resourceType,
+  );
+  CatalogCacheEntry copyWithCompanion(CatalogCacheEntriesCompanion data) {
+    return CatalogCacheEntry(
+      key: data.key.present ? data.key.value : this.key,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      fetchedAt: data.fetchedAt.present ? data.fetchedAt.value : this.fetchedAt,
+      lastAccessedAt:
+          data.lastAccessedAt.present
+              ? data.lastAccessedAt.value
+              : this.lastAccessedAt,
+      payloadVersion:
+          data.payloadVersion.present
+              ? data.payloadVersion.value
+              : this.payloadVersion,
+      resourceType:
+          data.resourceType.present
+              ? data.resourceType.value
+              : this.resourceType,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CatalogCacheEntry(')
+          ..write('key: $key, ')
+          ..write('payload: $payload, ')
+          ..write('fetchedAt: $fetchedAt, ')
+          ..write('lastAccessedAt: $lastAccessedAt, ')
+          ..write('payloadVersion: $payloadVersion, ')
+          ..write('resourceType: $resourceType')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    key,
+    payload,
+    fetchedAt,
+    lastAccessedAt,
+    payloadVersion,
+    resourceType,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CatalogCacheEntry &&
+          other.key == this.key &&
+          other.payload == this.payload &&
+          other.fetchedAt == this.fetchedAt &&
+          other.lastAccessedAt == this.lastAccessedAt &&
+          other.payloadVersion == this.payloadVersion &&
+          other.resourceType == this.resourceType);
+}
+
+class CatalogCacheEntriesCompanion extends UpdateCompanion<CatalogCacheEntry> {
+  final Value<String> key;
+  final Value<String> payload;
+  final Value<DateTime> fetchedAt;
+  final Value<DateTime> lastAccessedAt;
+  final Value<int> payloadVersion;
+  final Value<String> resourceType;
+  final Value<int> rowid;
+  const CatalogCacheEntriesCompanion({
+    this.key = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.fetchedAt = const Value.absent(),
+    this.lastAccessedAt = const Value.absent(),
+    this.payloadVersion = const Value.absent(),
+    this.resourceType = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CatalogCacheEntriesCompanion.insert({
+    required String key,
+    required String payload,
+    required DateTime fetchedAt,
+    required DateTime lastAccessedAt,
+    required int payloadVersion,
+    required String resourceType,
+    this.rowid = const Value.absent(),
+  }) : key = Value(key),
+       payload = Value(payload),
+       fetchedAt = Value(fetchedAt),
+       lastAccessedAt = Value(lastAccessedAt),
+       payloadVersion = Value(payloadVersion),
+       resourceType = Value(resourceType);
+  static Insertable<CatalogCacheEntry> custom({
+    Expression<String>? key,
+    Expression<String>? payload,
+    Expression<DateTime>? fetchedAt,
+    Expression<DateTime>? lastAccessedAt,
+    Expression<int>? payloadVersion,
+    Expression<String>? resourceType,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (key != null) 'key': key,
+      if (payload != null) 'payload': payload,
+      if (fetchedAt != null) 'fetched_at': fetchedAt,
+      if (lastAccessedAt != null) 'last_accessed_at': lastAccessedAt,
+      if (payloadVersion != null) 'payload_version': payloadVersion,
+      if (resourceType != null) 'resource_type': resourceType,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CatalogCacheEntriesCompanion copyWith({
+    Value<String>? key,
+    Value<String>? payload,
+    Value<DateTime>? fetchedAt,
+    Value<DateTime>? lastAccessedAt,
+    Value<int>? payloadVersion,
+    Value<String>? resourceType,
+    Value<int>? rowid,
+  }) {
+    return CatalogCacheEntriesCompanion(
+      key: key ?? this.key,
+      payload: payload ?? this.payload,
+      fetchedAt: fetchedAt ?? this.fetchedAt,
+      lastAccessedAt: lastAccessedAt ?? this.lastAccessedAt,
+      payloadVersion: payloadVersion ?? this.payloadVersion,
+      resourceType: resourceType ?? this.resourceType,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (fetchedAt.present) {
+      map['fetched_at'] = Variable<DateTime>(fetchedAt.value);
+    }
+    if (lastAccessedAt.present) {
+      map['last_accessed_at'] = Variable<DateTime>(lastAccessedAt.value);
+    }
+    if (payloadVersion.present) {
+      map['payload_version'] = Variable<int>(payloadVersion.value);
+    }
+    if (resourceType.present) {
+      map['resource_type'] = Variable<String>(resourceType.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CatalogCacheEntriesCompanion(')
+          ..write('key: $key, ')
+          ..write('payload: $payload, ')
+          ..write('fetchedAt: $fetchedAt, ')
+          ..write('lastAccessedAt: $lastAccessedAt, ')
+          ..write('payloadVersion: $payloadVersion, ')
+          ..write('resourceType: $resourceType, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2871,6 +3378,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PlaylistsTable playlists = $PlaylistsTable(this);
   late final $PlaylistTracksTable playlistTracks = $PlaylistTracksTable(this);
   late final $RadiosTable radios = $RadiosTable(this);
+  late final $CatalogCacheEntriesTable catalogCacheEntries =
+      $CatalogCacheEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2882,6 +3391,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     playlists,
     playlistTracks,
     radios,
+    catalogCacheEntries,
   ];
 }
 
@@ -2896,6 +3406,7 @@ typedef $$TracksTableCreateCompanionBuilder =
       Value<String?> albumImage,
       Value<int?> durationMs,
       Value<String?> youtubeVideoId,
+      Value<DateTime?> youtubeResolvedAt,
       Value<int> playCount,
       Value<bool> isFavorite,
       Value<DateTime?> lastPlayedAt,
@@ -2912,6 +3423,7 @@ typedef $$TracksTableUpdateCompanionBuilder =
       Value<String?> albumImage,
       Value<int?> durationMs,
       Value<String?> youtubeVideoId,
+      Value<DateTime?> youtubeResolvedAt,
       Value<int> playCount,
       Value<bool> isFavorite,
       Value<DateTime?> lastPlayedAt,
@@ -2969,6 +3481,11 @@ class $$TracksTableFilterComposer
 
   ColumnFilters<String> get youtubeVideoId => $composableBuilder(
     column: $table.youtubeVideoId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get youtubeResolvedAt => $composableBuilder(
+    column: $table.youtubeResolvedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3042,6 +3559,11 @@ class $$TracksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get youtubeResolvedAt => $composableBuilder(
+    column: $table.youtubeResolvedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get playCount => $composableBuilder(
     column: $table.playCount,
     builder: (column) => ColumnOrderings(column),
@@ -3102,6 +3624,11 @@ class $$TracksTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<DateTime> get youtubeResolvedAt => $composableBuilder(
+    column: $table.youtubeResolvedAt,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get playCount =>
       $composableBuilder(column: $table.playCount, builder: (column) => column);
 
@@ -3153,6 +3680,7 @@ class $$TracksTableTableManager
                 Value<String?> albumImage = const Value.absent(),
                 Value<int?> durationMs = const Value.absent(),
                 Value<String?> youtubeVideoId = const Value.absent(),
+                Value<DateTime?> youtubeResolvedAt = const Value.absent(),
                 Value<int> playCount = const Value.absent(),
                 Value<bool> isFavorite = const Value.absent(),
                 Value<DateTime?> lastPlayedAt = const Value.absent(),
@@ -3167,6 +3695,7 @@ class $$TracksTableTableManager
                 albumImage: albumImage,
                 durationMs: durationMs,
                 youtubeVideoId: youtubeVideoId,
+                youtubeResolvedAt: youtubeResolvedAt,
                 playCount: playCount,
                 isFavorite: isFavorite,
                 lastPlayedAt: lastPlayedAt,
@@ -3183,6 +3712,7 @@ class $$TracksTableTableManager
                 Value<String?> albumImage = const Value.absent(),
                 Value<int?> durationMs = const Value.absent(),
                 Value<String?> youtubeVideoId = const Value.absent(),
+                Value<DateTime?> youtubeResolvedAt = const Value.absent(),
                 Value<int> playCount = const Value.absent(),
                 Value<bool> isFavorite = const Value.absent(),
                 Value<DateTime?> lastPlayedAt = const Value.absent(),
@@ -3197,6 +3727,7 @@ class $$TracksTableTableManager
                 albumImage: albumImage,
                 durationMs: durationMs,
                 youtubeVideoId: youtubeVideoId,
+                youtubeResolvedAt: youtubeResolvedAt,
                 playCount: playCount,
                 isFavorite: isFavorite,
                 lastPlayedAt: lastPlayedAt,
@@ -3207,8 +3738,12 @@ class $$TracksTableTableManager
                   p0
                       .map(
                         (e) => (
-                          e.readTable(table),
-                          BaseReferences(db, table, e),
+                          e.readTable<$TracksTable, Track>(table),
+                          BaseReferences<_$AppDatabase, $TracksTable, Track>(
+                            db,
+                            table,
+                            e,
+                          ),
                         ),
                       )
                       .toList(),
@@ -3450,8 +3985,12 @@ class $$ArtistsTableTableManager
                   p0
                       .map(
                         (e) => (
-                          e.readTable(table),
-                          BaseReferences(db, table, e),
+                          e.readTable<$ArtistsTable, Artist>(table),
+                          BaseReferences<_$AppDatabase, $ArtistsTable, Artist>(
+                            db,
+                            table,
+                            e,
+                          ),
                         ),
                       )
                       .toList(),
@@ -3733,8 +4272,12 @@ class $$AlbumsTableTableManager
                   p0
                       .map(
                         (e) => (
-                          e.readTable(table),
-                          BaseReferences(db, table, e),
+                          e.readTable<$AlbumsTable, Album>(table),
+                          BaseReferences<_$AppDatabase, $AlbumsTable, Album>(
+                            db,
+                            table,
+                            e,
+                          ),
                         ),
                       )
                       .toList(),
@@ -3928,8 +4471,12 @@ class $$PlaylistsTableTableManager
                   p0
                       .map(
                         (e) => (
-                          e.readTable(table),
-                          BaseReferences(db, table, e),
+                          e.readTable<$PlaylistsTable, Playlist>(table),
+                          BaseReferences<
+                            _$AppDatabase,
+                            $PlaylistsTable,
+                            Playlist
+                          >(db, table, e),
                         ),
                       )
                       .toList(),
@@ -4104,8 +4651,14 @@ class $$PlaylistTracksTableTableManager
                   p0
                       .map(
                         (e) => (
-                          e.readTable(table),
-                          BaseReferences(db, table, e),
+                          e.readTable<$PlaylistTracksTable, PlaylistTrack>(
+                            table,
+                          ),
+                          BaseReferences<
+                            _$AppDatabase,
+                            $PlaylistTracksTable,
+                            PlaylistTrack
+                          >(db, table, e),
                         ),
                       )
                       .toList(),
@@ -4329,8 +4882,12 @@ class $$RadiosTableTableManager
                   p0
                       .map(
                         (e) => (
-                          e.readTable(table),
-                          BaseReferences(db, table, e),
+                          e.readTable<$RadiosTable, Radio>(table),
+                          BaseReferences<_$AppDatabase, $RadiosTable, Radio>(
+                            db,
+                            table,
+                            e,
+                          ),
                         ),
                       )
                       .toList(),
@@ -4353,6 +4910,264 @@ typedef $$RadiosTableProcessedTableManager =
       Radio,
       PrefetchHooks Function()
     >;
+typedef $$CatalogCacheEntriesTableCreateCompanionBuilder =
+    CatalogCacheEntriesCompanion Function({
+      required String key,
+      required String payload,
+      required DateTime fetchedAt,
+      required DateTime lastAccessedAt,
+      required int payloadVersion,
+      required String resourceType,
+      Value<int> rowid,
+    });
+typedef $$CatalogCacheEntriesTableUpdateCompanionBuilder =
+    CatalogCacheEntriesCompanion Function({
+      Value<String> key,
+      Value<String> payload,
+      Value<DateTime> fetchedAt,
+      Value<DateTime> lastAccessedAt,
+      Value<int> payloadVersion,
+      Value<String> resourceType,
+      Value<int> rowid,
+    });
+
+class $$CatalogCacheEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CatalogCacheEntriesTable> {
+  $$CatalogCacheEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get fetchedAt => $composableBuilder(
+    column: $table.fetchedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastAccessedAt => $composableBuilder(
+    column: $table.lastAccessedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get payloadVersion => $composableBuilder(
+    column: $table.payloadVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get resourceType => $composableBuilder(
+    column: $table.resourceType,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CatalogCacheEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CatalogCacheEntriesTable> {
+  $$CatalogCacheEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get fetchedAt => $composableBuilder(
+    column: $table.fetchedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastAccessedAt => $composableBuilder(
+    column: $table.lastAccessedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get payloadVersion => $composableBuilder(
+    column: $table.payloadVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get resourceType => $composableBuilder(
+    column: $table.resourceType,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CatalogCacheEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CatalogCacheEntriesTable> {
+  $$CatalogCacheEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get key =>
+      $composableBuilder(column: $table.key, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get fetchedAt =>
+      $composableBuilder(column: $table.fetchedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastAccessedAt => $composableBuilder(
+    column: $table.lastAccessedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get payloadVersion => $composableBuilder(
+    column: $table.payloadVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get resourceType => $composableBuilder(
+    column: $table.resourceType,
+    builder: (column) => column,
+  );
+}
+
+class $$CatalogCacheEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CatalogCacheEntriesTable,
+          CatalogCacheEntry,
+          $$CatalogCacheEntriesTableFilterComposer,
+          $$CatalogCacheEntriesTableOrderingComposer,
+          $$CatalogCacheEntriesTableAnnotationComposer,
+          $$CatalogCacheEntriesTableCreateCompanionBuilder,
+          $$CatalogCacheEntriesTableUpdateCompanionBuilder,
+          (
+            CatalogCacheEntry,
+            BaseReferences<
+              _$AppDatabase,
+              $CatalogCacheEntriesTable,
+              CatalogCacheEntry
+            >,
+          ),
+          CatalogCacheEntry,
+          PrefetchHooks Function()
+        > {
+  $$CatalogCacheEntriesTableTableManager(
+    _$AppDatabase db,
+    $CatalogCacheEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer:
+              () => $$CatalogCacheEntriesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer:
+              () => $$CatalogCacheEntriesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer:
+              () => $$CatalogCacheEntriesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> key = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<DateTime> fetchedAt = const Value.absent(),
+                Value<DateTime> lastAccessedAt = const Value.absent(),
+                Value<int> payloadVersion = const Value.absent(),
+                Value<String> resourceType = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CatalogCacheEntriesCompanion(
+                key: key,
+                payload: payload,
+                fetchedAt: fetchedAt,
+                lastAccessedAt: lastAccessedAt,
+                payloadVersion: payloadVersion,
+                resourceType: resourceType,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String key,
+                required String payload,
+                required DateTime fetchedAt,
+                required DateTime lastAccessedAt,
+                required int payloadVersion,
+                required String resourceType,
+                Value<int> rowid = const Value.absent(),
+              }) => CatalogCacheEntriesCompanion.insert(
+                key: key,
+                payload: payload,
+                fetchedAt: fetchedAt,
+                lastAccessedAt: lastAccessedAt,
+                payloadVersion: payloadVersion,
+                resourceType: resourceType,
+                rowid: rowid,
+              ),
+          withReferenceMapper:
+              (p0) =>
+                  p0
+                      .map(
+                        (e) => (
+                          e.readTable<
+                            $CatalogCacheEntriesTable,
+                            CatalogCacheEntry
+                          >(table),
+                          BaseReferences<
+                            _$AppDatabase,
+                            $CatalogCacheEntriesTable,
+                            CatalogCacheEntry
+                          >(db, table, e),
+                        ),
+                      )
+                      .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CatalogCacheEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CatalogCacheEntriesTable,
+      CatalogCacheEntry,
+      $$CatalogCacheEntriesTableFilterComposer,
+      $$CatalogCacheEntriesTableOrderingComposer,
+      $$CatalogCacheEntriesTableAnnotationComposer,
+      $$CatalogCacheEntriesTableCreateCompanionBuilder,
+      $$CatalogCacheEntriesTableUpdateCompanionBuilder,
+      (
+        CatalogCacheEntry,
+        BaseReferences<
+          _$AppDatabase,
+          $CatalogCacheEntriesTable,
+          CatalogCacheEntry
+        >,
+      ),
+      CatalogCacheEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4369,4 +5184,6 @@ class $AppDatabaseManager {
       $$PlaylistTracksTableTableManager(_db, _db.playlistTracks);
   $$RadiosTableTableManager get radios =>
       $$RadiosTableTableManager(_db, _db.radios);
+  $$CatalogCacheEntriesTableTableManager get catalogCacheEntries =>
+      $$CatalogCacheEntriesTableTableManager(_db, _db.catalogCacheEntries);
 }

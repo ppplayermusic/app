@@ -26,7 +26,7 @@ final favoritesStatusProvider = StreamProvider.family<bool, (FavoriteType, Strin
   }
 });
 
-class FavoritesController extends AutoDisposeNotifier<void> {
+class FavoritesController extends Notifier<void> {
   @override
   void build() {}
 
@@ -101,4 +101,6 @@ class FavoritesController extends AutoDisposeNotifier<void> {
   }
 }
 
-final favoritesControllerProvider = AutoDisposeNotifierProvider<FavoritesController, void>(FavoritesController.new);
+final favoritesControllerProvider = NotifierProvider<FavoritesController, void>(
+  FavoritesController.new,
+);

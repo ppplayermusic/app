@@ -13,7 +13,13 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
 import '../../shared/widgets/profile_modal.dart';
 import 'widgets/api_credentials_modal.dart';
+import '../../core/cache/catalog_cache_repository.dart';
+import '../../core/cache/image_cache_manager.dart';
+import '../../core/api/spotify_repository.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../../shared/widgets/profile_modal.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
+import '../../core/cache/clear_cache_helper.dart';
 
 final availableMarketsProvider = FutureProvider<List<String>>((ref) async {
   final client = ref.watch(spotifyClientProvider);
@@ -152,6 +158,14 @@ class SettingsScreen extends ConsumerWidget {
                   color: colorScheme.error.withValues(alpha: 0.8),
                   onTap: () => _showClearHistoryConfirm(context, ref),
                 ).animate(delay: 500.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 12),
+                TactileSettingTile(
+                  title: 'Clear Cache',
+                  subtitle: 'Frees up space and forces fresh data on next load',
+                  icon: Icons.delete_outline_rounded,
+                  color: colorScheme.error.withValues(alpha: 0.8),
+                  onTap: () => _showClearCacheConfirm(context, ref),
+                ).animate(delay: 550.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 32),
                 _buildSectionHeader(context, 'About')
                     .animate(delay: 600.ms)
@@ -295,6 +309,77 @@ class SettingsScreen extends ConsumerWidget {
           fontWeight: FontWeight.w900,
           letterSpacing: 2.2,
         ),
+      ),
+    );
+  }
+
+  void _showClearCacheConfirm(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    showPremiumModal(
+      context: context,
+      title: 'Clear App Cache?',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'This will clear all cached tracks, playlists, and albums. The app will fetch fresh data on the next load. Your library and favorites will not be affected.',
+            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          Row(
+            children: [
+              Expanded(
+                child: TactileTap(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    height: 54,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
+                    ),
+                    child: Text('Cancel', style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Consumer(
+                  builder: (context, ref, _) => TactileTap(
+                    onTap: () async {
+                      // 1. Clear Catalog L1 and L2 Caches
+                      await ref.read(catalogCacheRepositoryProvider).clearAll();
+                      
+                      // 2. Clear Image Caches (Disk and Memory)
+                      PaintingBinding.instance.imageCache.clear();
+                      PaintingBinding.instance.imageCache.clearLiveImages();
+                      await PPImageCacheManager.instance.emptyCache();
+
+                      // 3. Invalidate API and Repository Providers
+                      ref.invalidate(spotifyClientProvider);
+                      ref.invalidate(spotifyRepositoryProvider);
+
+                      // 4. Invalidate all feature-level catalog providers
+                      invalidateCatalogProviders(ref);
+
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: colorScheme.error,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text('Clear Cache', style: TextStyle(color: colorScheme.onError, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

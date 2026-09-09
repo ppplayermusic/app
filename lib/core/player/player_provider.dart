@@ -7,6 +7,7 @@ import '../models/track.dart';
 import '../models/playback_queue.dart';
 import '../playback/playback_providers.dart';
 import '../playback/youtube_id_validator.dart';
+import '../metrics/cache_metrics.dart';
 
 export '../models/track.dart' show Track;
 export '../models/playback_queue.dart' show PlaybackQueue, RepeatMode;
@@ -69,6 +70,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
   int _playGeneration = 0;
   bool _skipDebounce = false;
   Timer? _saveTimer;
+  bool _forcedResolutionAttemptedForCurrentLoad = false;
+  bool _prefetchedNextTrackForCurrentLoad = false;
 
   @override
   PlayerState build() {
@@ -91,15 +94,71 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 
   void _syncFromStatus(PlaybackStatus status) {
+    String? displayError = status.error;
+    
+    if (status.state == PlaybackState.error && status.error != null) {
+      if (status.error!.startsWith('unavailable_media:')) {
+        if (!_forcedResolutionAttemptedForCurrentLoad) {
+          _forcedResolutionAttemptedForCurrentLoad = true;
+          _handleUnavailableMedia();
+          return; // Skip setting error state, we are retrying
+        } else {
+          displayError = 'Media unavailable after retry';
+        }
+      } else if (status.error!.startsWith('transient:')) {
+        return; // Ignore transient errors
+      }
+    }
+
     state = state.copyWith(
       isPlaying: status.isPlaying,
       isLoadingVideo: status.state == PlaybackState.preparing || status.state == PlaybackState.buffering,
-      loadError: status.error,
+      loadError: displayError,
       videoId: status.activeVideoId,
       position: status.position,
       duration: status.duration,
     );
     _scheduleSaveState();
+    
+    // Trigger prefetch once playback starts successfully
+    if (status.state == PlaybackState.playing && !_prefetchedNextTrackForCurrentLoad) {
+      _prefetchedNextTrackForCurrentLoad = true;
+      _prefetchNextTrack();
+    }
+  }
+
+  void _prefetchNextTrack() {
+    final queue = state.playbackQueue;
+    final nextIdx = queue.currentIndex + 1;
+    if (nextIdx < queue.tracks.length) {
+      final nextTrack = queue.tracks[nextIdx];
+      ref.read(playbackServiceProvider).prefetchNext(nextTrack, null);
+    }
+  }
+
+  Future<void> _handleUnavailableMedia() async {
+    final track = state.currentTrack;
+    if (track == null) return;
+    
+    debugPrint('PlayerNotifier: Unavailable media. Invalidating cached YouTube ID for ${track.name}');
+    ref.read(cacheMetricsProvider).youtubeForcedReresolutions++;
+    final service = ref.read(playbackServiceProvider);
+    
+    // Invalidate the cache (which sets it to null in the database)
+    await service.cacheYoutubeId(track.spotifyId, null);
+    
+    final invalidatedTrack = track.copyWith(youtubeVideoId: null);
+    
+    final newQueue = List<Track>.from(state.playbackQueue.tracks);
+    final idx = state.playbackQueue.currentIndex;
+    if (idx >= 0 && idx < newQueue.length) {
+      newQueue[idx] = invalidatedTrack;
+      state = state.copyWith(
+        playbackQueue: state.playbackQueue.copyWith(tracks: newQueue)
+      );
+    }
+    
+    await playTrack(invalidatedTrack, queue: newQueue, isRetry: true);
   }
 
   void _scheduleSaveState() {
@@ -141,7 +200,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
   // Removed direct service getter to use ref.read inside methods
   PlaybackController get _controller => ref.read(playbackControllerProvider);
 
-  Future<void> playTrack(Track track, {List<Track>? queue}) async {
+  Future<void> playTrack(Track track, {List<Track>? queue, bool isRetry = false}) async {
+    if (!isRetry) {
+      _forcedResolutionAttemptedForCurrentLoad = false;
+      _prefetchedNextTrackForCurrentLoad = false;
+    }
     _playGeneration++;
     final myGen = _playGeneration;
 

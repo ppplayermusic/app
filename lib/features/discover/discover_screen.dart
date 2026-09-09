@@ -19,7 +19,7 @@ class DiscoverScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: RefreshIndicator(
-        onRefresh: () => ref.read(discoverContentProvider.notifier).refresh(),
+        onRefresh: () async => ref.invalidate(discoverContentProvider),
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -144,7 +144,7 @@ class DiscoverScreen extends ConsumerWidget {
                       Text('Failed to load recommendations', style: TextStyle(color: colorScheme.onSurface)),
                       const SizedBox(height: 16),
                       TextButton(
-                        onPressed: () => ref.read(discoverContentProvider.notifier).refresh(),
+                        onPressed: () => ref.invalidate(discoverContentProvider),
                         child: const Text('Try Again'),
                       ),
                     ],

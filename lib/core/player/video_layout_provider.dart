@@ -40,8 +40,9 @@ class VideoLayoutState {
   }
 }
 
-class VideoLayoutNotifier extends StateNotifier<VideoLayoutState> {
-  VideoLayoutNotifier() : super(VideoLayoutState());
+class VideoLayoutNotifier extends Notifier<VideoLayoutState> {
+  @override
+  VideoLayoutState build() => VideoLayoutState();
 
   void updateLayout(Size size, Offset position, {String label = 'unknown'}) {
     state = state.copyWith(
@@ -67,6 +68,6 @@ class VideoLayoutNotifier extends StateNotifier<VideoLayoutState> {
   }
 }
 
-final videoLayoutProvider = StateNotifierProvider<VideoLayoutNotifier, VideoLayoutState>((ref) {
-  return VideoLayoutNotifier();
-});
+final videoLayoutProvider = NotifierProvider<VideoLayoutNotifier, VideoLayoutState>(
+  VideoLayoutNotifier.new,
+);

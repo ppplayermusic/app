@@ -26,11 +26,18 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
   PlaybackStatus _currentStatus = const PlaybackStatus();
 
-  MediaKitPlaybackEngine();
+  MediaKitPlaybackEngine() {
+    _ensureMediaKitInitialized();
+  }
 
-  // ignore: unused_element
   void _ensureMediaKitInitialized() {
     if (_player != null) return;
+    
+    try {
+      MediaKit.ensureInitialized();
+    } catch (_) {
+      // Ignored if already initialized
+    }
     
     _player = Player();
     _videoController = VideoController(_player!);
@@ -171,6 +178,24 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (!_currentStatus.isIFrameMode) return;
         final gen = _playGeneration; // capture
         debugPrint('MediaKitPlaybackEngine: [BRIDGE gen $gen] -> ${ytState.playerState}');
+
+        if (ytState.hasError && ytState.error != yt.YoutubeError.none) {
+          debugPrint('MediaKitPlaybackEngine: [ERROR] YouTube IFrame error: ${ytState.error}');
+          
+          if (ytState.error == yt.YoutubeError.videoNotFound ||
+              ytState.error == yt.YoutubeError.notEmbeddable ||
+              ytState.error == yt.YoutubeError.cannotFindVideo ||
+              ytState.error == yt.YoutubeError.sameAsNotEmbeddable ||
+              ytState.error == yt.YoutubeError.invalidParam) {
+            
+            _updateStatus(_currentStatus.copyWith(
+              state: PlaybackState.error,
+              error: 'unavailable_media:${ytState.error.name}',
+            ));
+            return; // Stop processing state on fatal error
+          }
+          // Transient errors are ignored
+        }
 
         switch (ytState.playerState) {
           case yt.PlayerState.cued:

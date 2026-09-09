@@ -1,9 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../../core/api/spotify_repository.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/api/spotify_client.dart';
 import '../../../core/db/app_database.dart' as db;
 import '../../../core/player/player_provider.dart';
 import '../../../core/services/favorites_provider.dart';
@@ -514,7 +515,7 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           Navigator.of(context).pop();
           try {
             debugPrint('[ContentContextMenu] Fetching album tracks for ${target.id} (${target.name})');
-            final tracks = await _container.read(spotifyClientProvider).getAlbumTracks(target.id);
+            final tracks = (await _container.read(spotifyRepositoryProvider).watchAlbum(target.id).first).data['tracks']?['items']?.map((t) => Track.fromSpotify(t as Map<String,dynamic>))?.toList()?.cast<Track>() ?? <Track>[];
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
             } else {
@@ -532,7 +533,7 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
         onTap: () async {
           Navigator.of(context).pop();
           try {
-            final tracks = await _container.read(spotifyClientProvider).getAlbumTracks(target.id);
+            final tracks = (await _container.read(spotifyRepositoryProvider).watchAlbum(target.id).first).data['tracks']?['items']?.map((t) => Track.fromSpotify(t as Map<String,dynamic>))?.toList()?.cast<Track>() ?? <Track>[];
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).addTracksToQueue(tracks);
               _showToast('Added ${tracks.length} tracks to queue');
@@ -625,7 +626,7 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
               final raw = await _container.read(db.appDatabaseProvider).getPlaylistTracks(target.localId!);
               tracks = raw.map(Track.fromDb).toList();
             } else {
-              tracks = await _container.read(spotifyClientProvider).getPlaylistTracks(target.id);
+              tracks = (await _container.read(spotifyRepositoryProvider).watchPlaylistTracks(target.id).first).data;
             }
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
@@ -649,7 +650,7 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
               final raw = await _container.read(db.appDatabaseProvider).getPlaylistTracks(target.localId!);
               tracks = raw.map(Track.fromDb).toList();
             } else {
-              tracks = await _container.read(spotifyClientProvider).getPlaylistTracks(target.id);
+              tracks = (await _container.read(spotifyRepositoryProvider).watchPlaylistTracks(target.id).first).data;
             }
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).addTracksToQueue(tracks);
@@ -738,7 +739,7 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           Navigator.of(context).pop();
           try {
             debugPrint('[ContentContextMenu] Fetching top tracks for artist ${target.id} (${target.name})');
-            final rawTracks = await _container.read(spotifyClientProvider).getArtistTopTracks(target.id);
+            final rawTracks = (await _container.read(spotifyRepositoryProvider).watchArtistTopTracks(target.id).first).data;
             final tracks = rawTracks.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
@@ -821,12 +822,13 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           final parentContext = _parentContext;
           try {
             debugPrint('[ContentContextMenu] Fetching radio station tracks for ${target.seedType}:${target.seedId}');
-            final client = _container.read(spotifyClientProvider);
-            final tracks = await client.getRecommendations(
+            final repo = _container.read(spotifyRepositoryProvider);
+            final cacheResult = await repo.watchRecommendations(
               seedArtistId: target.seedType == 'artist' ? target.seedId : null,
               seedTrackId: target.seedType == 'track' ? target.seedId : null,
               seedGenres: target.seedType == 'genre' ? target.seedId : null,
-            );
+            ).first;
+            final tracks = cacheResult.data;
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).playTracks(tracks);
             } else {
@@ -923,7 +925,7 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
         await database.addToPlaylist(playlist.id, target.track.spotifyId);
         _showToast('Added to ${playlist.name}');
       } else if (widget.target case AlbumContextTarget target) {
-        final tracks = await _container.read(spotifyClientProvider).getAlbumTracks(target.id);
+        final tracks = (await _container.read(spotifyRepositoryProvider).watchAlbum(target.id).first).data['tracks']?['items']?.map((t) => Track.fromSpotify(t as Map<String,dynamic>))?.toList()?.cast<Track>() ?? <Track>[];
         for (final t in tracks) {
           await database.addToPlaylist(playlist.id, t.spotifyId);
         }
@@ -934,7 +936,7 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           final raw = await database.getPlaylistTracks(target.localId!);
           tracks = raw.map(Track.fromDb).toList();
         } else {
-          tracks = await _container.read(spotifyClientProvider).getPlaylistTracks(target.id);
+          tracks = (await _container.read(spotifyRepositoryProvider).watchPlaylistTracks(target.id).first).data;
         }
         for (final t in tracks) {
           await database.addToPlaylist(playlist.id, t.spotifyId);
