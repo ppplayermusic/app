@@ -52,7 +52,6 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final albumAsync = ref.watch(albumProvider(widget.albumId));
 
     return Scaffold(

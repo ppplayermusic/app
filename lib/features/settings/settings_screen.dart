@@ -17,8 +17,7 @@ import '../../core/cache/catalog_cache_repository.dart';
 import '../../core/cache/image_cache_manager.dart';
 import '../../core/api/spotify_repository.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import '../../shared/widgets/profile_modal.dart';
-import '../../shared/widgets/context_menu/content_context_menu.dart';
+
 import '../../core/cache/clear_cache_helper.dart';
 
 final availableMarketsProvider = FutureProvider<List<String>>((ref) async {

@@ -7,8 +7,6 @@ import 'package:ppplayer/core/metrics/cache_metrics.dart';
 import 'package:ppplayer/core/cache/clear_cache_helper.dart';
 import 'package:ppplayer/core/services/settings_provider.dart';
 import 'package:ppplayer/features/home/home_screen.dart';
-import 'dart:convert';
-
 import 'package:hive_ce/hive.dart';
 
 void main() {
@@ -55,7 +53,7 @@ void main() {
       addTearDown(container.dispose);
 
       // Read a provider to ensure it's cached in Riverpod state
-      final subscription = container.listen(popularTracksProvider, (_, __) {});
+      final subscription = container.listen(popularTracksProvider, (_, _) {});
       
       // 3. Trigger Clear Cache Flow equivalent
       await repo.clearAll();

@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Import top-level features
 import '../../features/home/home_screen.dart';

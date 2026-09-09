@@ -3,8 +3,6 @@ import 'package:mockito/mockito.dart';
 import 'package:dio/dio.dart';
 import 'package:ppplayer/core/api/spotify_client.dart';
 import 'package:ppplayer/core/api/spotify_auth.dart';
-import 'package:ppplayer/core/api/spotify_repository.dart';
-import 'package:ppplayer/core/cache/catalog_cache_repository.dart';
 
 class MockDio extends Mock implements Dio {}
 class FakeSpotifyAuthHandler implements SpotifyAuthHandler {

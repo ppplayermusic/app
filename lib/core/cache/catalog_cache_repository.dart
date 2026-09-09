@@ -150,7 +150,7 @@ class CatalogCacheRepository {
       // 429 rate limits should be handled upstream (SpotifyClient throws or defers).
       // If this is the *first* emission (no stale data), rethrow the error.
       _inFlight.remove(key); // Ensure failed futures are removed immediately on error
-      print('CatalogCacheRepository.watchOrFetch ERROR for key $key: $e');
+      debugPrint('CatalogCacheRepository.watchOrFetch ERROR for key $key: $e');
       rethrow;
     }
   }

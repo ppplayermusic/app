@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/secure_credentials_service.dart';
 import '../services/settings_provider.dart';
@@ -67,10 +68,10 @@ class PPPlayerSpotifyAuth implements SpotifyAuthHandler {
       final expiresIn = response.data['expires_in'] as int;
       _tokenExpiry = DateTime.now().add(Duration(seconds: expiresIn - 60));
     } on DioException catch (e) {
-      print('DioException in _performTokenRequest: ${e.message} ${e.response?.statusCode} ${e.response?.data}');
+      debugPrint('DioException in _performTokenRequest: ${e.message} ${e.response?.statusCode} ${e.response?.data}');
       throw SpotifyAuthException('Failed to acquire PPPlayer token. Token server may be down.', e);
     } catch (e) {
-      print('Unexpected error in _performTokenRequest: $e');
+      debugPrint('Unexpected error in _performTokenRequest: $e');
       throw SpotifyAuthException('Unexpected error acquiring token: $e', e);
     }
   }

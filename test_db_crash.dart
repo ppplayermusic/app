@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'package:ppplayer/core/db/app_database.dart';
 
 void main() async {

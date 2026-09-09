@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ppplayer/core/cache/catalog_cache_repository.dart';
 import 'package:ppplayer/core/models/track.dart';
 
 void main() {
