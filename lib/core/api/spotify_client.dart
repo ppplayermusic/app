@@ -49,7 +49,7 @@ class SpotifyClient {
       final fetchLimit = (limit - items.length).clamp(1, 10);
       int rateLimitRetries = 0;
       int transientRetries = 0;
-      Response? response;
+      late Response response;
       
       while (true) {
         try {
@@ -88,8 +88,6 @@ class SpotifyClient {
           rethrow; // 403, 404, etc. -> let caller track the failure
         }
       }
-
-      if (response == null) break;
 
       final fetched = (response.data[resultKey]?['items'] as List?) ?? [];
       if (fetched.isEmpty) break;
