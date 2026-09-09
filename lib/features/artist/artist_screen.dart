@@ -377,7 +377,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   final modelTracks = tracks
                                       .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
                                       .toList();
-                                  ref.read(playerProvider.notifier).playTrack(modelTracks.first, queue: modelTracks);
+                                  ref.read(playerProvider.notifier).playTrack(modelTracks.first, queue: modelTracks, contextArtistId: widget.artistId);
                                 }
                               },
                             ).animate().scale(delay: 200.ms, duration: 400.ms, curve: Curves.easeOutBack),
@@ -467,7 +467,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   TrackTile(
                                     index: i + 1,
                                     track: filteredTracks[i],
-                                    onTap: () => ref.read(playerProvider.notifier).playTrack(filteredTracks[i], queue: filteredTracks),
+                                    onTap: () => ref.read(playerProvider.notifier).playTrack(filteredTracks[i], queue: filteredTracks, contextArtistId: widget.artistId),
                                   ).animate(delay: (i * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05, end: 0),
                                 ],
                               ],
@@ -492,7 +492,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: items.length,
                       itemBuilder: (context, i) {
-                        return _ArtistAlbumCard(album: items[i] as Map<String, dynamic>)
+                        return _ArtistAlbumCard(album: items[i] as Map<String, dynamic>, artistId: widget.artistId)
                             .animate(delay: (i * 70).ms)
                             .fadeIn(duration: 500.ms)
                             .scale(begin: const Offset(0.95, 0.95));
@@ -538,7 +538,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: playlists.length,
                       itemBuilder: (context, i) {
-                        return _ArtistPlaylistCard(playlist: playlists[i])
+                        return _ArtistPlaylistCard(playlist: playlists[i], artistId: widget.artistId)
                             .animate(delay: (i * 80).ms)
                             .fadeIn(duration: 600.ms)
                             .scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic);
@@ -559,8 +559,9 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
 
 class _ArtistAlbumCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> album;
+  final String artistId;
 
-  const _ArtistAlbumCard({required this.album});
+  const _ArtistAlbumCard({required this.album, required this.artistId});
 
   @override
   ConsumerState<_ArtistAlbumCard> createState() => _ArtistAlbumCardState();
@@ -592,7 +593,7 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
         final tracksRaw = albumData['tracks']?['items'] as List? ?? [];
         final tracks = tracksRaw.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
         if (tracks.isNotEmpty) {
-          ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+          ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks, contextArtistId: widget.artistId);
         }
       } catch (_) {}
     }
@@ -812,8 +813,9 @@ class _RelatedArtistCardState extends State<_RelatedArtistCard> {
 
 class _ArtistPlaylistCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> playlist;
+  final String artistId;
 
-  const _ArtistPlaylistCard({required this.playlist});
+  const _ArtistPlaylistCard({required this.playlist, required this.artistId});
 
   @override
   ConsumerState<_ArtistPlaylistCard> createState() => _ArtistPlaylistCardState();
@@ -830,7 +832,7 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
           .first;
       final tracks = cacheResult.data;
       if (tracks.isNotEmpty) {
-        ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+        ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks, contextArtistId: widget.artistId);
       }
     } catch (_) {}
   }

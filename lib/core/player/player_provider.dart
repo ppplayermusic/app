@@ -230,7 +230,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
   // Removed direct service getter to use ref.read inside methods
   PlaybackController get _controller => ref.read(playbackControllerProvider);
 
-  Future<void> playTrack(Track track, {List<Track>? queue, bool isRetry = false}) async {
+  Future<void> playTrack(Track track, {List<Track>? queue, bool isRetry = false, String? contextArtistId}) async {
     if (!isRetry) {
       _prefetchedNextTrackForCurrentLoad = false;
       if (queue != null) {
@@ -259,6 +259,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       playbackQueue: state.playbackQueue.copyWith(
         tracks: q,
         currentIndex: idx < 0 ? 0 : idx,
+        contextArtistId: contextArtistId ?? (queue != null ? null : state.playbackQueue.contextArtistId),
       ),
       clearLoadError: true,
       isLoadingVideo: true,
@@ -335,13 +336,13 @@ class PlayerNotifier extends Notifier<PlayerState> {
     await service.recordPlay(newTrack);
   }
 
-  Future<void> playTracks(List<Track> tracks, {int initialIndex = 0}) async {
+  Future<void> playTracks(List<Track> tracks, {int initialIndex = 0, String? contextArtistId}) async {
     if (tracks.isEmpty) return;
     final track = (initialIndex >= 0 && initialIndex < tracks.length) ? tracks[initialIndex] : tracks.first;
-    await playTrack(track, queue: tracks);
+    await playTrack(track, queue: tracks, contextArtistId: contextArtistId);
   }
 
-  Future<void> shuffleAndPlay(List<Track> tracks) async {
+  Future<void> shuffleAndPlay(List<Track> tracks, {String? contextArtistId}) async {
     if (tracks.isEmpty) return;
     final shuffled = [...tracks]..shuffle();
     state = state.copyWith(
@@ -349,9 +350,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
         tracks: shuffled,
         currentIndex: 0,
         isShuffled: true,
+        contextArtistId: contextArtistId,
       ),
     );
-    await playTrack(shuffled.first, queue: shuffled);
+    await playTrack(shuffled.first, queue: shuffled, contextArtistId: contextArtistId);
   }
 
   Future<void> playPlaylist(int playlistId) async {
@@ -526,7 +528,29 @@ class PlayerNotifier extends Notifier<PlayerState> {
     try {
       final spotifyRepo = ref.read(spotifyRepositoryProvider);
       
+      String? seedArtistId = queue.contextArtistId;
+      
+      if (seedArtistId == null) {
+        final contextTracks = queue.tracks.where((t) => t.queueOrigin != QueueItemOrigin.autoplay).toList();
+        if (contextTracks.length >= 2) {
+          final artistCounts = <String, int>{};
+          for (final t in contextTracks) {
+            final aId = t.artistId.split(',').first;
+            if (aId.isNotEmpty) {
+              artistCounts[aId] = (artistCounts[aId] ?? 0) + 1;
+            }
+          }
+          if (artistCounts.isNotEmpty) {
+            final dominant = artistCounts.entries.reduce((a, b) => a.value > b.value ? a : b);
+            if (dominant.value > contextTracks.length / 2) {
+              seedArtistId = dominant.key;
+            }
+          }
+        }
+      }
+      
       final cacheResult = await spotifyRepo.watchRecommendations(
+        seedArtistId: seedArtistId,
         seedTrackId: currentTrack.spotifyId,
         limit: 30,
       ).first;

@@ -9,12 +9,14 @@ class PlaybackQueue {
   final int currentIndex;
   final RepeatMode repeatMode;
   final bool isShuffled;
+  final String? contextArtistId;
 
   const PlaybackQueue({
     this.tracks = const [],
     this.currentIndex = 0,
     this.repeatMode = RepeatMode.none,
     this.isShuffled = false,
+    this.contextArtistId,
   });
 
   factory PlaybackQueue.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class PlaybackQueue {
       currentIndex: json['currentIndex'] as int? ?? 0,
       repeatMode: RepeatMode.values[json['repeatMode'] as int? ?? 0],
       isShuffled: json['isShuffled'] as bool? ?? false,
+      contextArtistId: json['contextArtistId'] as String?,
     );
   }
 
@@ -32,6 +35,7 @@ class PlaybackQueue {
       'currentIndex': currentIndex,
       'repeatMode': repeatMode.index,
       'isShuffled': isShuffled,
+      'contextArtistId': contextArtistId,
     };
   }
 
@@ -45,12 +49,14 @@ class PlaybackQueue {
     int? currentIndex,
     RepeatMode? repeatMode,
     bool? isShuffled,
+    String? contextArtistId,
   }) {
     return PlaybackQueue(
       tracks: tracks ?? this.tracks,
       currentIndex: currentIndex ?? this.currentIndex,
       repeatMode: repeatMode ?? this.repeatMode,
       isShuffled: isShuffled ?? this.isShuffled,
+      contextArtistId: contextArtistId ?? this.contextArtistId,
     );
   }
 

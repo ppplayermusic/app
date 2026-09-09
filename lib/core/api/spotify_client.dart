@@ -235,23 +235,72 @@ class SpotifyClient {
     int limit = 50,
   }) async {
     try {
-      if (seedArtistId != null && seedArtistId.isNotEmpty) {
-        final artist = await getArtist(seedArtistId.split(',').first);
-        final artistName = artist['name'] as String?;
-        if (artistName != null && artistName.isNotEmpty) {
-          final items = await searchTracks('artist:"$artistName"', limit: limit);
-          if (items.isNotEmpty) return items;
+      String? targetArtistId = seedArtistId?.split(',').first;
+      
+      if (targetArtistId == null && seedTrackId != null && seedTrackId.isNotEmpty) {
+        final track = await getTrack(seedTrackId.split(',').first);
+        targetArtistId = track.artistId.split(',').first;
+      }
+
+      if (targetArtistId != null && targetArtistId.isNotEmpty) {
+        final List<Track> artistTracks = [];
+        
+        // Tier 1: Original Artist
+        try {
+          final topTracksData = await getArtistTopTracks(targetArtistId);
+          final topTracks = topTracksData
+              .map((t) => Track.fromSpotify(t as Map<String, dynamic>))
+              .where((t) => t.artistId.split(',').contains(targetArtistId));
+          artistTracks.addAll(topTracks);
+          
+          final albumsData = await getArtistAlbums(targetArtistId, limit: 3);
+          final albumFutures = albumsData.map((a) {
+            final albumId = (a as Map<String, dynamic>)['id'] as String;
+            return getAlbumTracks(albumId);
+          });
+          
+          final albumsTracks = await Future.wait(albumFutures);
+          for (final tracks in albumsTracks) {
+            artistTracks.addAll(tracks.where((t) => t.artistId.split(',').contains(targetArtistId)));
+          }
+        } catch (e) {
+          debugPrint('Failed to fetch artist tracks: $e');
         }
+        
+        artistTracks.shuffle();
+        
+        final List<Track> allTracks = [...artistTracks];
+        
+        // Tier 2: Related Artists
+        if (allTracks.length < limit * 2) {
+          try {
+             final relatedArtists = await getRelatedArtists(targetArtistId);
+             final relatedFutures = relatedArtists.take(5).map((a) => getArtistTopTracks(a['id'] as String));
+             final relatedTracksData = await Future.wait(relatedFutures);
+             
+             final List<Track> relatedTracks = [];
+             for (final data in relatedTracksData) {
+                relatedTracks.addAll(data.map((t) => Track.fromSpotify(t as Map<String, dynamic>)));
+             }
+             relatedTracks.shuffle();
+             allTracks.addAll(relatedTracks);
+          } catch (e) {
+            debugPrint('Failed to fetch related artist tracks: $e');
+          }
+        }
+        
+        final uniqueTracks = <String, Track>{};
+        for (final t in allTracks) {
+          if (!uniqueTracks.containsKey(t.spotifyId)) {
+             uniqueTracks[t.spotifyId] = t;
+          }
+        }
+        
+        final results = uniqueTracks.values.take(limit).toList();
+        if (results.isNotEmpty) return results;
       } else if (seedGenres != null && seedGenres.isNotEmpty) {
         final items = await searchTracks('genre:${seedGenres.split(',').first}', limit: limit);
         if (items.isNotEmpty) return items;
-      } else if (seedTrackId != null && seedTrackId.isNotEmpty) {
-        final track = await getTrack(seedTrackId.split(',').first);
-        if (track.artistName.isNotEmpty) {
-          final artistName = track.artistName.split(',').first.trim();
-          final items = await searchTracks('artist:"$artistName"', limit: limit);
-          if (items.isNotEmpty) return items;
-        }
       }
     } catch (e) {
       if (e is SpotifyAuthException) rethrow;

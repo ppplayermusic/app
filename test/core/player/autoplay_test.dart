@@ -94,6 +94,7 @@ class FakePlaybackController implements PlaybackController {
 class FakeSpotifyRepository implements SpotifyRepository {
   List<Track> recommendationsToReturn = [];
   int getRecommendationsCallCount = 0;
+  String? lastSeedArtistId;
 
   @override
   Stream<CacheResult<List<Track>>> watchRecommendations({
@@ -103,6 +104,7 @@ class FakeSpotifyRepository implements SpotifyRepository {
     int limit = 20
   }) async* {
     getRecommendationsCallCount++;
+    lastSeedArtistId = seedArtistId;
     yield CacheResult(
       data: recommendationsToReturn,
       source: CacheSource.network,
@@ -264,5 +266,35 @@ void main() {
     
     expect(spotifyRepository.getRecommendationsCallCount, 0);
     expect(container.read(playerProvider).playbackQueue.tracks.length, 1);
+  });
+
+  test('Autoplay uses explicit contextArtistId when available', () async {
+    final notifier = container.read(playerProvider.notifier);
+    
+    final t1 = createTrack('1');
+    spotifyRepository.recommendationsToReturn = [createTrack('2')];
+
+    await notifier.playTrack(t1, contextArtistId: 'explicit_artist_id');
+    await Future.delayed(Duration.zero);
+    
+    expect(spotifyRepository.getRecommendationsCallCount, 1);
+    expect(spotifyRepository.lastSeedArtistId, 'explicit_artist_id');
+  });
+
+  test('Autoplay uses dominant artist as fallback context', () async {
+    final notifier = container.read(playerProvider.notifier);
+    
+    final t1 = Track(spotifyId: '1', name: 'T1', artistId: 'dom_artist', artistName: 'Dom', queueOrigin: QueueItemOrigin.context);
+    final t2 = Track(spotifyId: '2', name: 'T2', artistId: 'dom_artist', artistName: 'Dom', queueOrigin: QueueItemOrigin.context);
+    final t3 = Track(spotifyId: '3', name: 'T3', artistId: 'other_artist', artistName: 'Other', queueOrigin: QueueItemOrigin.context);
+    
+    spotifyRepository.recommendationsToReturn = [createTrack('4')];
+
+    await notifier.playTrack(t1, queue: [t1, t2, t3]); // No explicit contextArtistId provided
+    await Future.delayed(Duration.zero);
+    
+    expect(spotifyRepository.getRecommendationsCallCount, 1);
+    // 2 out of 3 tracks are 'dom_artist', so it should be the dominant artist
+    expect(spotifyRepository.lastSeedArtistId, 'dom_artist');
   });
 }
