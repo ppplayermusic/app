@@ -31,6 +31,7 @@ class PlayerScreen extends ConsumerStatefulWidget {
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   final GlobalKey _videoSlotKey = GlobalKey(debugLabel: 'player_video_slot');
+  double? _dragValue;
 
   @override
   void initState() {
@@ -417,12 +418,32 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                     thumbColor: colorScheme.onSurface,
                                                     trackShape: const RoundedRectSliderTrackShape(),
                                                   ),
-                                                  child: Slider(
-                                                    value: playerState.position.inSeconds.toDouble(),
-                                                    max: playerState.duration.inSeconds > 0
-                                                        ? playerState.duration.inSeconds.toDouble()
-                                                        : 1.0,
-                                                    onChanged: (v) => playerNotifier.seekTo(Duration(seconds: v.toInt())),
+                                                  child: Builder(
+                                                    builder: (context) {
+                                                      final maxDuration = playerState.duration.inSeconds > 0
+                                                          ? playerState.duration.inSeconds.toDouble()
+                                                          : 1.0;
+                                                      return Slider(
+                                                        value: (_dragValue ?? playerState.position.inSeconds.toDouble()).clamp(0.0, maxDuration),
+                                                        max: maxDuration,
+                                                        onChangeStart: (v) {
+                                                          setState(() {
+                                                            _dragValue = v;
+                                                          });
+                                                        },
+                                                        onChanged: (v) {
+                                                          setState(() {
+                                                            _dragValue = v;
+                                                          });
+                                                        },
+                                                        onChangeEnd: (v) {
+                                                          playerNotifier.seekTo(Duration(seconds: v.toInt()));
+                                                          setState(() {
+                                                            _dragValue = null;
+                                                          });
+                                                        },
+                                                      );
+                                                    }
                                                   ),
                                                 ),
                                                 Padding(
@@ -430,7 +451,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                   child: Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      Text(_formatDuration(playerState.position),
+                                                      Text(_formatDuration(_dragValue != null ? Duration(seconds: _dragValue!.toInt()) : playerState.position),
                                                           style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
                                                       Text(_formatDuration(playerState.duration),
                                                           style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5)),

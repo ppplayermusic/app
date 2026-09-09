@@ -346,7 +346,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
   @override
   Future<void> seekTo(Duration position) async {
     if (_currentStatus.isIFrameMode) {
-      await _youtubeController?.seekTo(seconds: position.inSeconds.toDouble());
+      await _youtubeController?.seekTo(
+        seconds: position.inSeconds.toDouble(),
+        allowSeekAhead: true,
+      );
     } else {
       await _player?.seek(position);
     }

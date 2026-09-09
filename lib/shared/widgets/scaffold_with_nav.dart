@@ -1405,12 +1405,24 @@ class _DesktopProgressBar extends StatefulWidget {
 
 class _DesktopProgressBarState extends State<_DesktopProgressBar> {
   bool _isHovered = false;
+  double? _dragProgress;
 
   void _handleSeek(Offset localPosition, double totalWidth) {
     if (totalWidth <= 0 || widget.duration.inMilliseconds <= 0) return;
     final ratio = (localPosition.dx / totalWidth).clamp(0.0, 1.0);
-    final targetMs = (widget.duration.inMilliseconds * ratio).round();
-    widget.onSeek(Duration(milliseconds: targetMs));
+    setState(() {
+      _dragProgress = ratio;
+    });
+  }
+
+  void _commitSeek() {
+    if (_dragProgress != null && widget.duration.inMilliseconds > 0) {
+      final targetMs = (widget.duration.inMilliseconds * _dragProgress!).round();
+      widget.onSeek(Duration(milliseconds: targetMs));
+      setState(() {
+        _dragProgress = null;
+      });
+    }
   }
 
   @override
@@ -1425,16 +1437,21 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapDown: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+            onTapUp: (details) => _commitSeek(),
+            onTapCancel: () => setState(() => _dragProgress = null),
+            onHorizontalDragStart: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
             onHorizontalDragUpdate: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+            onHorizontalDragEnd: (details) => _commitSeek(),
+            onHorizontalDragCancel: () => setState(() => _dragProgress = null),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 140),
               curve: Curves.easeOutCubic,
-              height: _isHovered ? 4.5 : 2.0,
+              height: _isHovered || _dragProgress != null ? 4.5 : 2.0,
               width: double.infinity,
-              color: colorScheme.onSurface.withValues(alpha: _isHovered ? 0.18 : 0.10),
+              color: colorScheme.onSurface.withValues(alpha: _isHovered || _dragProgress != null ? 0.18 : 0.10),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,
-                widthFactor: widget.progress.clamp(0.0, 1.0),
+                widthFactor: (_dragProgress ?? widget.progress).clamp(0.0, 1.0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: colorScheme.primary,
