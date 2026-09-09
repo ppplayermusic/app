@@ -24,6 +24,7 @@ class SettingsState {
   final SpotifyProviderType spotifyProvider;
   final YoutubeSearchMethod youtubeSearchMethod;
   final YoutubeApiProviderType youtubeApiProvider;
+  final bool autoplayEnabled;
 
   SettingsState({
     required this.selectedCountry,
@@ -39,6 +40,7 @@ class SettingsState {
     this.spotifyProvider = SpotifyProviderType.ppplayer,
     this.youtubeSearchMethod = YoutubeSearchMethod.scraping,
     this.youtubeApiProvider = YoutubeApiProviderType.ppplayer,
+    this.autoplayEnabled = true,
   });
 
   SettingsState copyWith({
@@ -55,6 +57,7 @@ class SettingsState {
     SpotifyProviderType? spotifyProvider,
     YoutubeSearchMethod? youtubeSearchMethod,
     YoutubeApiProviderType? youtubeApiProvider,
+    bool? autoplayEnabled,
   }) {
     return SettingsState(
       selectedCountry: selectedCountry ?? this.selectedCountry,
@@ -70,6 +73,7 @@ class SettingsState {
       spotifyProvider: spotifyProvider ?? this.spotifyProvider,
       youtubeSearchMethod: youtubeSearchMethod ?? this.youtubeSearchMethod,
       youtubeApiProvider: youtubeApiProvider ?? this.youtubeApiProvider,
+      autoplayEnabled: autoplayEnabled ?? this.autoplayEnabled,
     );
   }
 }
@@ -84,6 +88,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       themeIndex: 0,
       performanceMode: PerformanceMode.balanced,
       lowDataMode: false,
+      autoplayEnabled: true,
     );
   }
 
@@ -100,6 +105,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
   static const _spotifyProviderKey = 'spotify_provider';
   static const _youtubeSearchMethodKey = 'youtube_search_method';
   static const _youtubeApiProviderKey = 'youtube_api_provider';
+  static const _autoplayEnabledKey = 'autoplay_enabled';
 
   Future<void> _loadSettings() async {
     final box = await Hive.openBox(_boxName);
@@ -122,6 +128,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final spotifyProviderIndex = box.get(_spotifyProviderKey, defaultValue: SpotifyProviderType.ppplayer.index) as int;
     final youtubeSearchMethodIndex = box.get(_youtubeSearchMethodKey, defaultValue: YoutubeSearchMethod.scraping.index) as int;
     final youtubeApiProviderIndex = box.get(_youtubeApiProviderKey, defaultValue: YoutubeApiProviderType.ppplayer.index) as int;
+    final autoplayEnabled = box.get(_autoplayEnabledKey, defaultValue: true) as bool;
 
     state = state.copyWith(
       selectedCountry: country,
@@ -138,6 +145,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       spotifyProvider: SpotifyProviderType.values[spotifyProviderIndex.clamp(0, SpotifyProviderType.values.length - 1)],
       youtubeSearchMethod: YoutubeSearchMethod.values[youtubeSearchMethodIndex.clamp(0, YoutubeSearchMethod.values.length - 1)],
       youtubeApiProvider: YoutubeApiProviderType.values[youtubeApiProviderIndex.clamp(0, YoutubeApiProviderType.values.length - 1)],
+      autoplayEnabled: autoplayEnabled,
       isLoaded: true,
     );
   }
@@ -194,10 +202,16 @@ class SettingsNotifier extends Notifier<SettingsState> {
     state = state.copyWith(youtubeSearchMethod: method);
   }
 
-  Future<void> setYoutubeApiProvider(YoutubeApiProviderType provider) async {
+  Future<void> setYoutubeApiProvider(YoutubeApiProviderType type) async {
     final box = await Hive.openBox(_boxName);
-    await box.put(_youtubeApiProviderKey, provider.index);
-    state = state.copyWith(youtubeApiProvider: provider);
+    await box.put(_youtubeApiProviderKey, type.index);
+    state = state.copyWith(youtubeApiProvider: type);
+  }
+
+  Future<void> toggleAutoplay(bool enabled) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put(_autoplayEnabledKey, enabled);
+    state = state.copyWith(autoplayEnabled: enabled);
   }
 
   Future<void> toggleVideo() async {

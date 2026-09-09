@@ -8,6 +8,8 @@ import '../models/playback_queue.dart';
 import '../playback/playback_providers.dart';
 import '../playback/youtube_id_validator.dart';
 import '../metrics/cache_metrics.dart';
+import '../api/spotify_repository.dart';
+import '../services/settings_provider.dart';
 
 export '../models/track.dart' show Track;
 export '../models/playback_queue.dart' show PlaybackQueue, RepeatMode;
@@ -72,6 +74,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
   Timer? _saveTimer;
   bool _forcedResolutionAttemptedForCurrentLoad = false;
   bool _prefetchedNextTrackForCurrentLoad = false;
+  
+  bool _isFetchingAutoplay = false;
+  final Set<String> _autoplaySeenTrackIds = {};
 
   @override
   PlayerState build() {
@@ -204,6 +209,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
     if (!isRetry) {
       _forcedResolutionAttemptedForCurrentLoad = false;
       _prefetchedNextTrackForCurrentLoad = false;
+      if (queue != null) {
+        _autoplaySeenTrackIds.clear();
+      }
     }
     _playGeneration++;
     final myGen = _playGeneration;
@@ -230,6 +238,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       clearLoadError: true,
     );
     _scheduleSaveState();
+    _evaluateAutoplay();
 
     Track finalTrack = targetTrack;
     
@@ -374,6 +383,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
       final track = nextQueue.tracks[nextQueue.currentIndex];
       playTrack(track, queue: nextQueue.tracks);
     }
+    
+    // Evaluate autoplay if we didn't play a track but still advanced
+    _evaluateAutoplay();
   }
 
   void skipPrevious() {
@@ -389,27 +401,33 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 
   void addToQueue(Track track) {
-    state = state.copyWith(playbackQueue: state.playbackQueue.add(track));
+    final t = track.copyWith(queueOrigin: QueueItemOrigin.user);
+    state = state.copyWith(playbackQueue: state.playbackQueue.add(t));
     _scheduleSaveState();
+    _evaluateAutoplay();
   }
 
   void addTracksToQueue(List<Track> tracks) {
     var q = state.playbackQueue;
     for (final track in tracks) {
-      q = q.add(track);
+      q = q.add(track.copyWith(queueOrigin: QueueItemOrigin.user));
     }
     state = state.copyWith(playbackQueue: q);
     _scheduleSaveState();
+    _evaluateAutoplay();
   }
 
   void playNext(Track track) {
-    state = state.copyWith(playbackQueue: state.playbackQueue.insertNext(track));
+    final t = track.copyWith(queueOrigin: QueueItemOrigin.user);
+    state = state.copyWith(playbackQueue: state.playbackQueue.insertNext(t));
     _scheduleSaveState();
+    _evaluateAutoplay();
   }
 
   void removeFromQueue(int index) {
     state = state.copyWith(playbackQueue: state.playbackQueue.removeAt(index));
     _scheduleSaveState();
+    _evaluateAutoplay();
   }
 
   void toggleShuffle() {
@@ -424,6 +442,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       playbackQueue: state.playbackQueue.reorder(oldIndex, newIndex),
     );
     _scheduleSaveState();
+    _evaluateAutoplay();
   }
 
   Future<void> cycleRepeat() async {
@@ -454,6 +473,55 @@ class PlayerNotifier extends Notifier<PlayerState> {
       playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
     );
     _scheduleSaveState();
+  }
+
+  Future<void> _evaluateAutoplay() async {
+    final settings = ref.read(settingsProvider);
+    if (!settings.autoplayEnabled) return;
+    if (state.repeatMode != RepeatMode.none) return;
+    if (_isFetchingAutoplay) return;
+
+    final queue = state.playbackQueue;
+    if (queue.tracks.isEmpty) return;
+
+    final remainingAfterCurrent = queue.tracks.length - queue.currentIndex - 1;
+    if (remainingAfterCurrent > 15) return;
+
+    final currentTrack = queue.currentTrack;
+    if (currentTrack == null) return;
+
+    _isFetchingAutoplay = true;
+    try {
+      final spotifyRepo = ref.read(spotifyRepositoryProvider);
+      
+      final cacheResult = await spotifyRepo.watchRecommendations(
+        seedTrackId: currentTrack.spotifyId,
+        limit: 30,
+      ).first;
+      final candidates = cacheResult.data;
+
+      final queueIds = queue.tracks.map((t) => t.spotifyId).toSet();
+      final newTracks = candidates.where((t) {
+        if (queueIds.contains(t.spotifyId)) return false;
+        if (t.spotifyId == currentTrack.spotifyId) return false;
+        if (_autoplaySeenTrackIds.contains(t.spotifyId)) return false;
+        return true;
+      }).map((t) => t.copyWith(queueOrigin: QueueItemOrigin.autoplay)).toList();
+
+      if (newTracks.isNotEmpty) {
+        _autoplaySeenTrackIds.addAll(newTracks.map((t) => t.spotifyId));
+        var newQueue = state.playbackQueue;
+        for (final t in newTracks) {
+          newQueue = newQueue.add(t);
+        }
+        state = state.copyWith(playbackQueue: newQueue);
+        _scheduleSaveState();
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch autoplay tracks: $e');
+    } finally {
+      _isFetchingAutoplay = false;
+    }
   }
 }
 

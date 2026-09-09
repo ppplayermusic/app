@@ -3,6 +3,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'track.freezed.dart';
 part 'track.g.dart';
 
+enum QueueItemOrigin {
+  context,
+  user,
+  autoplay,
+}
+
 @freezed
 abstract class Track with _$Track {
   const factory Track({
@@ -18,6 +24,7 @@ abstract class Track with _$Track {
     @Default(0) int playCount,
     @Default(false) bool isFavorite,
     String? queueItemId, // Unique ID for queue instances
+    @Default(QueueItemOrigin.context) QueueItemOrigin queueOrigin,
   }) = _Track;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);

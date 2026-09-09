@@ -110,8 +110,23 @@ class PlaybackQueue {
     final timestamp = DateTime.now().microsecondsSinceEpoch;
     final random = Random().nextInt(10000);
     final uniqueId = '${track.spotifyId}_${timestamp}_$random';
+    final t = track.copyWith(queueItemId: uniqueId);
     
-    return copyWith(tracks: [...tracks, track.copyWith(queueItemId: uniqueId)]);
+    final newTracks = List<Track>.from(tracks);
+    if (t.queueOrigin != QueueItemOrigin.autoplay) {
+      int insertIndex = newTracks.length;
+      for (int i = currentIndex + 1; i < newTracks.length; i++) {
+        if (newTracks[i].queueOrigin == QueueItemOrigin.autoplay) {
+          insertIndex = i;
+          break;
+        }
+      }
+      newTracks.insert(insertIndex, t);
+    } else {
+      newTracks.add(t);
+    }
+    
+    return copyWith(tracks: newTracks);
   }
 
   PlaybackQueue insertNext(Track track) {

@@ -143,6 +143,14 @@ class SettingsScreen extends ConsumerWidget {
                     .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSwitchTile(
+                  title: 'Autoplay',
+                  subtitle: 'Keep playing similar tracks when queue ends',
+                  icon: Icons.all_inclusive_rounded,
+                  value: settings.autoplayEnabled,
+                  onChanged: (v) => ref.read(settingsProvider.notifier).toggleAutoplay(v),
+                ).animate(delay: 390.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 12),
+                TactileSwitchTile(
                   title: 'Low Data Mode',
                   subtitle: 'Force audio-only streams to save data',
                   icon: Icons.data_usage_rounded,

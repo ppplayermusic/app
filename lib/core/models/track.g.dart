@@ -19,6 +19,9 @@ _Track _$TrackFromJson(Map<String, dynamic> json) => _Track(
   playCount: (json['playCount'] as num?)?.toInt() ?? 0,
   isFavorite: json['isFavorite'] as bool? ?? false,
   queueItemId: json['queueItemId'] as String?,
+  queueOrigin:
+      $enumDecodeNullable(_$QueueItemOriginEnumMap, json['queueOrigin']) ??
+      QueueItemOrigin.context,
 );
 
 Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
@@ -34,4 +37,11 @@ Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
   'playCount': instance.playCount,
   'isFavorite': instance.isFavorite,
   'queueItemId': instance.queueItemId,
+  'queueOrigin': _$QueueItemOriginEnumMap[instance.queueOrigin]!,
+};
+
+const _$QueueItemOriginEnumMap = {
+  QueueItemOrigin.context: 'context',
+  QueueItemOrigin.user: 'user',
+  QueueItemOrigin.autoplay: 'autoplay',
 };
