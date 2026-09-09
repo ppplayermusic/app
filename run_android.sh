@@ -4,12 +4,13 @@
 EMULATOR_ID="Medium_Phone_API_36.1"
 
 echo "Checking if an Android emulator is already running..."
-if ! flutter devices | grep -q "android"; then
+# Use adb instead of flutter devices to avoid Broken Pipe Dart errors
+if ! adb devices | grep -q "emulator"; then
   echo "No active Android device found. Launching emulator ($EMULATOR_ID)..."
   flutter emulators --launch "$EMULATOR_ID"
   
   echo "Waiting for emulator to become available..."
-  until flutter devices | grep -q "android"; do
+  until adb devices | grep -q "emulator"; do
       sleep 2
       echo -n "."
   done
@@ -21,6 +22,14 @@ else
   echo "Android emulator or device is already running."
 fi
 
-echo "Building and running the Flutter app..."
-# We explicitly target the android device just in case an iOS simulator is also open
-flutter run -d android
+echo "Detecting running emulator ID..."
+# Extract the device ID dynamically
+RUNNING_DEVICE=$(flutter devices | grep "emulator" | head -n 1 | awk -F'•' '{print $2}' | xargs)
+
+if [ -z "$RUNNING_DEVICE" ]; then
+    echo "Could not detect the running emulator for Flutter."
+    exit 1
+fi
+
+echo "Building and running the Flutter app on $RUNNING_DEVICE..."
+flutter run -d "$RUNNING_DEVICE"
