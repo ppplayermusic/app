@@ -4,12 +4,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i3;
-import 'package:ppplayer/core/api/spotify_client.dart' as _i2;
-import 'package:ppplayer/core/models/track.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:ppplayer/core/api/spotify_client.dart' as _i3;
+import 'package:ppplayer/core/models/track.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -26,10 +26,15 @@ import 'package:ppplayer/core/models/track.dart' as _i5;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
+class _FakeTrack_0 extends _i1.SmartFake implements _i2.Track {
+  _FakeTrack_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [SpotifyClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSpotifyClient extends _i1.Mock implements _i2.SpotifyClient {
+class MockSpotifyClient extends _i1.Mock implements _i3.SpotifyClient {
   MockSpotifyClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -38,7 +43,7 @@ class MockSpotifyClient extends _i1.Mock implements _i2.SpotifyClient {
   String get market =>
       (super.noSuchMethod(
             Invocation.getter(#market),
-            returnValue: _i3.dummyValue<String>(
+            returnValue: _i4.dummyValue<String>(
               this,
               Invocation.getter(#market),
             ),
@@ -46,104 +51,127 @@ class MockSpotifyClient extends _i1.Mock implements _i2.SpotifyClient {
           as String);
 
   @override
-  _i4.Future<Map<String, dynamic>> search(String? query, {int? limit = 20}) =>
+  _i5.Future<Map<String, dynamic>> search(String? query, {int? limit = 20}) =>
       (super.noSuchMethod(
             Invocation.method(#search, [query], {#limit: limit}),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<List<_i5.Track>> searchTracks(String? query, {int? limit = 20}) =>
+  _i5.Future<List<_i2.Track>> searchTracks(String? query, {int? limit = 20}) =>
       (super.noSuchMethod(
             Invocation.method(#searchTracks, [query], {#limit: limit}),
-            returnValue: _i4.Future<List<_i5.Track>>.value(<_i5.Track>[]),
+            returnValue: _i5.Future<List<_i2.Track>>.value(<_i2.Track>[]),
           )
-          as _i4.Future<List<_i5.Track>>);
+          as _i5.Future<List<_i2.Track>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> getArtist(String? artistId) =>
+  _i5.Future<List<Map<String, dynamic>>> searchPlaylists(
+    String? query, {
+    int? limit = 20,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#searchPlaylists, [query], {#limit: limit}),
+            returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i5.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> getArtist(String? artistId) =>
       (super.noSuchMethod(
             Invocation.method(#getArtist, [artistId]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getMultipleArtists(
+  _i5.Future<List<Map<String, dynamic>>> getMultipleArtists(
     List<String>? ids,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getMultipleArtists, [ids]),
-            returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
           )
-          as _i4.Future<List<Map<String, dynamic>>>);
+          as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<List<dynamic>> getArtistTopTracks(String? artistId) =>
+  _i5.Future<List<dynamic>> getArtistTopTracks(String? artistId) =>
       (super.noSuchMethod(
             Invocation.method(#getArtistTopTracks, [artistId]),
-            returnValue: _i4.Future<List<dynamic>>.value(<dynamic>[]),
+            returnValue: _i5.Future<List<dynamic>>.value(<dynamic>[]),
           )
-          as _i4.Future<List<dynamic>>);
+          as _i5.Future<List<dynamic>>);
 
   @override
-  _i4.Future<List<dynamic>> getArtistAlbums(
+  _i5.Future<List<dynamic>> getArtistAlbums(
     String? artistId, {
     int? limit = 20,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getArtistAlbums, [artistId], {#limit: limit}),
-            returnValue: _i4.Future<List<dynamic>>.value(<dynamic>[]),
+            returnValue: _i5.Future<List<dynamic>>.value(<dynamic>[]),
           )
-          as _i4.Future<List<dynamic>>);
+          as _i5.Future<List<dynamic>>);
 
   @override
-  _i4.Future<Map<String, dynamic>> getAlbum(String? albumId) =>
+  _i5.Future<_i2.Track> getTrack(String? trackId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getTrack, [trackId]),
+            returnValue: _i5.Future<_i2.Track>.value(
+              _FakeTrack_0(this, Invocation.method(#getTrack, [trackId])),
+            ),
+          )
+          as _i5.Future<_i2.Track>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> getAlbum(String? albumId) =>
       (super.noSuchMethod(
             Invocation.method(#getAlbum, [albumId]),
-            returnValue: _i4.Future<Map<String, dynamic>>.value(
+            returnValue: _i5.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
             ),
           )
-          as _i4.Future<Map<String, dynamic>>);
+          as _i5.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getMultipleAlbums(List<String>? ids) =>
+  _i5.Future<List<Map<String, dynamic>>> getMultipleAlbums(List<String>? ids) =>
       (super.noSuchMethod(
             Invocation.method(#getMultipleAlbums, [ids]),
-            returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
           )
-          as _i4.Future<List<Map<String, dynamic>>>);
+          as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<List<_i5.Track>> getAlbumTracks(String? albumId) =>
+  _i5.Future<List<_i2.Track>> getAlbumTracks(String? albumId) =>
       (super.noSuchMethod(
             Invocation.method(#getAlbumTracks, [albumId]),
-            returnValue: _i4.Future<List<_i5.Track>>.value(<_i5.Track>[]),
+            returnValue: _i5.Future<List<_i2.Track>>.value(<_i2.Track>[]),
           )
-          as _i4.Future<List<_i5.Track>>);
+          as _i5.Future<List<_i2.Track>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getNewReleases({int? limit = 10}) =>
+  _i5.Future<List<Map<String, dynamic>>> getNewReleases({int? limit = 10}) =>
       (super.noSuchMethod(
             Invocation.method(#getNewReleases, [], {#limit: limit}),
-            returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
           )
-          as _i4.Future<List<Map<String, dynamic>>>);
+          as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<List<_i5.Track>> getRecommendations({
+  _i5.Future<List<_i2.Track>> getRecommendations({
     String? seedTrackId,
     String? seedArtistId,
     String? seedGenres,
@@ -156,24 +184,24 @@ class MockSpotifyClient extends _i1.Mock implements _i2.SpotifyClient {
               #seedGenres: seedGenres,
               #limit: limit,
             }),
-            returnValue: _i4.Future<List<_i5.Track>>.value(<_i5.Track>[]),
+            returnValue: _i5.Future<List<_i2.Track>>.value(<_i2.Track>[]),
           )
-          as _i4.Future<List<_i5.Track>>);
+          as _i5.Future<List<_i2.Track>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getFeaturedPlaylists({
+  _i5.Future<List<Map<String, dynamic>>> getFeaturedPlaylists({
     int? limit = 20,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getFeaturedPlaylists, [], {#limit: limit}),
-            returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
           )
-          as _i4.Future<List<Map<String, dynamic>>>);
+          as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<List<_i5.Track>> getPlaylistTracks(
+  _i5.Future<List<_i2.Track>> getPlaylistTracks(
     String? playlistId, {
     int? limit = 20,
   }) =>
@@ -183,12 +211,12 @@ class MockSpotifyClient extends _i1.Mock implements _i2.SpotifyClient {
               [playlistId],
               {#limit: limit},
             ),
-            returnValue: _i4.Future<List<_i5.Track>>.value(<_i5.Track>[]),
+            returnValue: _i5.Future<List<_i2.Track>>.value(<_i2.Track>[]),
           )
-          as _i4.Future<List<_i5.Track>>);
+          as _i5.Future<List<_i2.Track>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getBrowseCategories({
+  _i5.Future<List<Map<String, dynamic>>> getBrowseCategories({
     int? limit = 20,
     int? offset = 0,
   }) =>
@@ -197,14 +225,14 @@ class MockSpotifyClient extends _i1.Mock implements _i2.SpotifyClient {
               #limit: limit,
               #offset: offset,
             }),
-            returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
           )
-          as _i4.Future<List<Map<String, dynamic>>>);
+          as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getCategoryPlaylists(
+  _i5.Future<List<Map<String, dynamic>>> getCategoryPlaylists(
     String? categoryId, {
     int? limit = 20,
     int? offset = 0,
@@ -215,56 +243,43 @@ class MockSpotifyClient extends _i1.Mock implements _i2.SpotifyClient {
               [categoryId],
               {#limit: limit, #offset: offset},
             ),
-            returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
           )
-          as _i4.Future<List<Map<String, dynamic>>>);
+          as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<List<_i5.Track>> getPopularTracks({int? limit = 12}) =>
+  _i5.Future<List<_i2.Track>> getPopularTracks({int? limit = 12}) =>
       (super.noSuchMethod(
             Invocation.method(#getPopularTracks, [], {#limit: limit}),
-            returnValue: _i4.Future<List<_i5.Track>>.value(<_i5.Track>[]),
+            returnValue: _i5.Future<List<_i2.Track>>.value(<_i2.Track>[]),
           )
-          as _i4.Future<List<_i5.Track>>);
+          as _i5.Future<List<_i2.Track>>);
 
   @override
-  _i4.Future<List<String>> getAvailableMarkets() =>
+  _i5.Future<List<String>> getAvailableMarkets() =>
       (super.noSuchMethod(
             Invocation.method(#getAvailableMarkets, []),
-            returnValue: _i4.Future<List<String>>.value(<String>[]),
+            returnValue: _i5.Future<List<String>>.value(<String>[]),
           )
-          as _i4.Future<List<String>>);
+          as _i5.Future<List<String>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getRelatedArtists(String? artistId) =>
+  _i5.Future<List<Map<String, dynamic>>> getRelatedArtists(String? artistId) =>
       (super.noSuchMethod(
             Invocation.method(#getRelatedArtists, [artistId]),
-            returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+            returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
           )
-          as _i4.Future<List<Map<String, dynamic>>>);
+          as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> searchPlaylists(
-    String? query, {
-    int? limit = 20,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#searchPlaylists, [query], {#limit: limit}),
-            returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
-              <Map<String, dynamic>>[],
-            ),
-          )
-          as _i4.Future<List<Map<String, dynamic>>>);
-
-  @override
-  _i4.Future<List<String>> getAvailableGenreSeeds() =>
+  _i5.Future<List<String>> getAvailableGenreSeeds() =>
       (super.noSuchMethod(
             Invocation.method(#getAvailableGenreSeeds, []),
-            returnValue: _i4.Future<List<String>>.value(<String>[]),
+            returnValue: _i5.Future<List<String>>.value(<String>[]),
           )
-          as _i4.Future<List<String>>);
+          as _i5.Future<List<String>>);
 }
