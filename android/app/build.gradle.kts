@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.ppplayer.app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
