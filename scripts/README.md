@@ -32,6 +32,15 @@ To run the full end-to-end release pipeline, simply execute:
 
 This will output the final `.dmg` in the `../dist/` folder, ready for distribution on your website.
 
+### Fast Local Build (Unsigned)
+
+If you just want to quickly compile an unsigned DMG for local testing (without signing or notarizing), you can run:
+
+```bash
+flutter build macos --release --dart-define=PPPLAYER_API_BASE_URL=https://ppplayer.com
+./scripts/create_dmg.sh <version>
+```
+
 ---
 
 ## What each script does
@@ -62,3 +71,6 @@ Submits the signed `.dmg` to Apple's notarization service (`xcrun notarytool`). 
 
 ### 5. `release_macos.sh`
 The master script that orchestrates steps 1 through 4. It reads the `.env.macos_release` file, ensures all variables are present, and passes them to the individual scripts.
+
+### 6. `audit_secrets.sh`
+Performs a production-readiness security audit on the generated `.app` bundle. It uses `strings` to verify that no backend credentials (such as `SPOTIFY_CLIENT_SECRET` or `YOUTUBE_API_KEY`) were inadvertently compiled or leaked into the macOS binary. Run this to ensure your keys remain securely on the proxy server.
