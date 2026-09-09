@@ -49,9 +49,9 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     final showVideo = settings.showVideo;
     final playerView = settings.playerView;
     final isVideoView = playerView == PlayerView.video;
-    final playerState = ref.watch(playerProvider);
     final isPlayerScreen = widget.location == '/player';
-    final hasVideoId = playerState.videoId != null;
+    final hasVideoId = ref.watch(playerProvider.select((s) => s.videoId != null));
+    final loadError = ref.watch(playerProvider.select((s) => s.loadError));
 
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
@@ -238,7 +238,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
 
 
 
-                                            if (playerState.loadError != null)
+                                            if (loadError != null)
                                               Positioned.fill(
                                                 child: ClipRRect(
                                                   borderRadius: BorderRadius.circular(
@@ -273,7 +273,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                                                   horizontal: 16,
                                                                 ),
                                                             child: Text(
-                                                              playerState.loadError!,
+                                                              loadError,
                                                               textAlign: TextAlign.center,
                                                               style: TextStyle(
                                                                 color:
@@ -1206,10 +1206,13 @@ class _DesktopPlayerBar extends ConsumerWidget {
         ? playerState.buffered.inSeconds / playerState.duration.inSeconds
         : 0.0;
 
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-        child: Container(
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+            child: Container(
           height: 90,
           decoration: BoxDecoration(
             color: colorScheme.surface.withValues(alpha: 0.4),
@@ -1222,13 +1225,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
           ),
           child: Column(
             children: [
-              // Interactive Hover-responsive Progress Bar
-              _DesktopProgressBar(
-                progress: progress,
-                bufferedProgress: bufferedProgress,
-                duration: playerState.duration,
-                onSeek: (pos) => ref.read(playerProvider.notifier).seekTo(pos),
-              ),
+              const SizedBox(height: 16),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1388,7 +1385,20 @@ class _DesktopPlayerBar extends ConsumerWidget {
           ),
         ),
       ),
-    );
+    ),
+    Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: _DesktopProgressBar(
+        progress: progress,
+        bufferedProgress: bufferedProgress,
+        duration: playerState.duration,
+        onSeek: (pos) => ref.read(playerProvider.notifier).seekTo(pos),
+      ),
+    ),
+  ],
+);
   }
 }
 
@@ -1413,6 +1423,8 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
   bool _isHovered = false;
   double? _dragProgress;
   double _hoverProgress = 0.0;
+  final OverlayPortalController _tooltipController = OverlayPortalController();
+  final GlobalKey _trackKey = GlobalKey();
 
   String _formatDuration(Duration d) {
     final minutes = d.inMinutes;
@@ -1441,13 +1453,19 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final currentProgress = (_dragProgress ?? widget.progress).clamp(0.0, 1.0);
+    final hoverOrDragProgress = (_dragProgress ?? _hoverProgress).clamp(0.0, 1.0);
+    final hoverDuration = Duration(milliseconds: (widget.duration.inMilliseconds * hoverOrDragProgress).round());
+    final isActive = _isHovered || _dragProgress != null;
+
+    if (isActive) {
+      if (!_tooltipController.isShowing) _tooltipController.show();
+    } else {
+      if (_tooltipController.isShowing) _tooltipController.hide();
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final currentProgress = (_dragProgress ?? widget.progress).clamp(0.0, 1.0);
-        final hoverOrDragProgress = (_dragProgress ?? _hoverProgress).clamp(0.0, 1.0);
-        final hoverDuration = Duration(milliseconds: (widget.duration.inMilliseconds * hoverOrDragProgress).round());
-        final isActive = _isHovered || _dragProgress != null;
-
         return MouseRegion(
           cursor: SystemMouseCursors.click,
           onEnter: (_) => setState(() => _isHovered = true),
@@ -1459,121 +1477,130 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
               });
             }
           },
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapDown: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
-                onTapUp: (details) => _commitSeek(),
-                onTapCancel: () => setState(() => _dragProgress = null),
-                onHorizontalDragStart: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
-                onHorizontalDragUpdate: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
-                onHorizontalDragEnd: (details) => _commitSeek(),
-                onHorizontalDragCancel: () => setState(() => _dragProgress = null),
+          child: OverlayPortal(
+            controller: _tooltipController,
+            overlayChildBuilder: (context) {
+              final RenderBox? box = _trackKey.currentContext?.findRenderObject() as RenderBox?;
+              if (box == null) return const SizedBox.shrink();
+              final offset = box.localToGlobal(Offset.zero);
+              
+              final tooltipX = (offset.dx + (constraints.maxWidth * hoverOrDragProgress)).clamp(
+                offset.dx + 16.0, 
+                offset.dx + constraints.maxWidth - 32.0
+              ) - 16.0;
+              final tooltipY = offset.dy - 28.0; // Place above the track
+
+              return Positioned(
+                left: tooltipX,
+                top: tooltipY,
                 child: Container(
-                  height: 16.0, // Larger hit area
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  child: Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [
-                      // Background track
-                      Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    _formatDuration(hoverDuration),
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              );
+            },
+            child: GestureDetector(
+              key: _trackKey,
+              behavior: HitTestBehavior.opaque,
+              onTapDown: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+              onTapUp: (details) => _commitSeek(),
+              onTapCancel: () => setState(() => _dragProgress = null),
+              onHorizontalDragStart: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+              onHorizontalDragUpdate: (details) => _handleSeek(details.localPosition, constraints.maxWidth),
+              onHorizontalDragEnd: (details) => _commitSeek(),
+              onHorizontalDragCancel: () => setState(() => _dragProgress = null),
+              child: Container(
+                height: 16.0, // Larger hit area
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  clipBehavior: Clip.none,
+                  children: [
+                    // Background track
+                    Container(
+                      height: isActive ? 4.5 : 2.5,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onSurface.withValues(alpha: isActive ? 0.18 : 0.10),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    // Buffered track
+                    FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: widget.bufferedProgress.clamp(0.0, 1.0),
+                      child: Container(
                         height: isActive ? 4.5 : 2.5,
-                        width: double.infinity,
                         decoration: BoxDecoration(
-                          color: colorScheme.onSurface.withValues(alpha: isActive ? 0.18 : 0.10),
+                          color: colorScheme.onSurface.withValues(alpha: 0.25),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                      // Buffered track
-                      FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor: widget.bufferedProgress.clamp(0.0, 1.0),
+                    ),
+                    // Active progress track
+                    FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: currentProgress,
+                      child: Container(
+                        height: isActive ? 4.5 : 2.5,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: isActive
+                              ? [
+                                  BoxShadow(
+                                    color: colorScheme.primary.withValues(alpha: 0.45),
+                                    blurRadius: 6,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                      ),
+                    ),
+                    // Thumb
+                    if (isActive)
+                      Positioned(
+                        left: (constraints.maxWidth * currentProgress).clamp(0.0, constraints.maxWidth - 12.0),
                         child: Container(
-                          height: isActive ? 4.5 : 2.5,
+                          width: 12,
+                          height: 12,
                           decoration: BoxDecoration(
-                            color: colorScheme.onSurface.withValues(alpha: 0.25),
-                            borderRadius: BorderRadius.circular(4),
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: 4,
+                                spreadRadius: 1,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      // Active progress track
-                      FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor: currentProgress,
-                        child: Container(
-                          height: isActive ? 4.5 : 2.5,
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary,
-                            borderRadius: BorderRadius.circular(4),
-                            boxShadow: isActive
-                                ? [
-                                    BoxShadow(
-                                      color: colorScheme.primary.withValues(alpha: 0.45),
-                                      blurRadius: 6,
-                                      spreadRadius: 1,
-                                    ),
-                                  ]
-                                : null,
-                          ),
-                        ),
-                      ),
-                      // Thumb
-                      if (isActive)
-                        Positioned(
-                          left: (constraints.maxWidth * currentProgress).clamp(0.0, constraints.maxWidth - 12.0),
-                          child: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.3),
-                                  blurRadius: 4,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
-              // Floating Time Label
-              if (isActive)
-                Positioned(
-                  left: (constraints.maxWidth * hoverOrDragProgress).clamp(16.0, constraints.maxWidth - 32.0) - 16.0,
-                  bottom: 16.0,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      _formatDuration(hoverDuration),
-                      style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+            ),
           ),
         );
       },
