@@ -23,6 +23,7 @@ class PlayerState {
     this.loadError,
     this.position = Duration.zero,
     this.duration = Duration.zero,
+    this.buffered = Duration.zero,
     this.volume = 1.0,
   });
 
@@ -33,6 +34,7 @@ class PlayerState {
   final String? loadError;
   final Duration position;
   final Duration duration;
+  final Duration buffered;
   final double volume;
 
   // Shortcuts to avoid breaking UI that expects these on state
@@ -50,6 +52,7 @@ class PlayerState {
     Object? loadError = _sentinel,
     Duration? position,
     Duration? duration,
+    Duration? buffered,
     double? volume,
     bool clearLoadError = false,
   }) {
@@ -61,6 +64,7 @@ class PlayerState {
       loadError: clearLoadError ? null : (identical(loadError, _sentinel) ? this.loadError : loadError as String?),
       position: position ?? this.position,
       duration: duration ?? this.duration,
+      buffered: buffered ?? this.buffered,
       volume: volume ?? this.volume,
     );
   }
@@ -122,6 +126,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       videoId: status.activeVideoId,
       position: status.position,
       duration: status.duration,
+      buffered: status.buffered,
     );
     _scheduleSaveState();
     
