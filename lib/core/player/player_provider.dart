@@ -161,16 +161,18 @@ class PlayerNotifier extends Notifier<PlayerState> {
       await _attemptCurrentCandidate(_playbackGeneration, track, List<Track>.from(state.playbackQueue.tracks));
     } else {
       await _controller.stop();
-      _handleLogicalTrackFailure();
+      _handleLogicalTrackFailure('Playback failed for all available sources');
     }
     _isRecovering = false;
   }
 
-  void _handleLogicalTrackFailure() {
+  void _handleLogicalTrackFailure([String? specificError]) {
     _consecutiveTrackFailures++;
     
     if (_consecutiveTrackFailures < 5) {
-      state = state.copyWith(loadError: 'Media unavailable');
+      if (specificError != null) {
+        state = state.copyWith(loadError: specificError);
+      }
       debugPrint('PlayerNotifier: Track exhausted. Auto-skipping to next (failure count: $_consecutiveTrackFailures)');
       
       var queue = state.playbackQueue;
@@ -183,10 +185,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
         final nextTrack = nextQueue.tracks[nextQueue.currentIndex];
         playTrack(nextTrack, queue: nextQueue.tracks, isRetry: true);
       } else {
-        state = state.copyWith(loadError: 'Queue ended after consecutive failures.');
+        state = state.copyWith(loadError: specificError ?? 'Queue ended after consecutive failures.', isLoadingVideo: false);
       }
     } else {
-      state = state.copyWith(loadError: 'Excessive consecutive track failures. Playback stopped.');
+      state = state.copyWith(loadError: specificError ?? 'Excessive consecutive track failures. Playback stopped.', isLoadingVideo: false);
       debugPrint('PlayerNotifier: Stopped due to excessive consecutive failures.');
     }
   }
@@ -263,6 +265,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
       ),
       clearLoadError: true,
       isLoadingVideo: true,
+      videoId: null,
+      position: Duration.zero,
+      duration: Duration.zero,
+      buffered: Duration.zero,
     );
     _scheduleSaveState();
     _evaluateAutoplay();
@@ -280,11 +286,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       } else {
         await _controller.stop();
         if (myGen != _playbackGeneration) return;
-        state = state.copyWith(
-          isLoadingVideo: false,
-          loadError: 'No YouTube video found for this track',
-        );
-        _handleLogicalTrackFailure();
+        _handleLogicalTrackFailure('No YouTube video found for this track');
         return;
       }
     } catch (e) {
@@ -292,11 +294,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       debugPrint('Failed to resolve YouTube ID for ${targetTrack.name}: $e');
       await _controller.stop();
       if (myGen != _playbackGeneration) return;
-      state = state.copyWith(
-        isLoadingVideo: false,
-        loadError: 'Failed to resolve YouTube ID: $e',
-      );
-      _handleLogicalTrackFailure();
+      _handleLogicalTrackFailure('Failed to resolve YouTube ID');
       return;
     }
   }
