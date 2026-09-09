@@ -5,9 +5,8 @@ import 'dart:convert';
 import 'package:hive_ce/hive_ce.dart';
 import '../models/track.dart';
 import '../models/playback_queue.dart';
+import '../models/resolved_video_candidate.dart';
 import '../playback/playback_providers.dart';
-import '../playback/youtube_id_validator.dart';
-import '../metrics/cache_metrics.dart';
 import '../api/spotify_repository.dart';
 import '../services/settings_provider.dart';
 
@@ -73,10 +72,13 @@ class PlayerState {
 const Object _sentinel = Object();
 
 class PlayerNotifier extends Notifier<PlayerState> {
-  int _playGeneration = 0;
+  int _playbackGeneration = 0;
+  int _consecutiveTrackFailures = 0;
+  List<ResolvedVideoCandidate> _currentCandidates = [];
+  int _currentCandidateIndex = 0;
+  bool _isRecovering = false;
   bool _skipDebounce = false;
   Timer? _saveTimer;
-  bool _forcedResolutionAttemptedForCurrentLoad = false;
   bool _prefetchedNextTrackForCurrentLoad = false;
   
   bool _isFetchingAutoplay = false;
@@ -106,17 +108,17 @@ class PlayerNotifier extends Notifier<PlayerState> {
     String? displayError = status.error;
     
     if (status.state == PlaybackState.error && status.error != null) {
-      if (status.error!.startsWith('unavailable_media:')) {
-        if (!_forcedResolutionAttemptedForCurrentLoad) {
-          _forcedResolutionAttemptedForCurrentLoad = true;
-          _handleUnavailableMedia();
-          return; // Skip setting error state, we are retrying
-        } else {
-          displayError = 'Media unavailable after retry';
-        }
+      if (status.error!.startsWith('unavailable_media:') || status.error!.startsWith('error:')) {
+        _handleCandidateFailure();
+        return; 
       } else if (status.error!.startsWith('transient:')) {
         return; // Ignore transient errors
       }
+    }
+
+    if (status.state == PlaybackState.playing) {
+      _consecutiveTrackFailures = 0;
+      _isRecovering = false;
     }
 
     state = state.copyWith(
@@ -146,29 +148,47 @@ class PlayerNotifier extends Notifier<PlayerState> {
     }
   }
 
-  Future<void> _handleUnavailableMedia() async {
+  Future<void> _handleCandidateFailure() async {
+    if (_isRecovering) return;
+    _isRecovering = true;
     final track = state.currentTrack;
     if (track == null) return;
     
-    debugPrint('PlayerNotifier: Unavailable media. Invalidating cached YouTube ID for ${track.name}');
-    ref.read(cacheMetricsProvider).youtubeForcedReresolutions++;
-    final service = ref.read(playbackServiceProvider);
+    debugPrint('PlayerNotifier: Candidate ${track.youtubeVideoId} failed. Trying next candidate.');
     
-    // Invalidate the cache (which sets it to null in the database)
-    await service.cacheYoutubeId(track.spotifyId, null);
-    
-    final invalidatedTrack = track.copyWith(youtubeVideoId: null);
-    
-    final newQueue = List<Track>.from(state.playbackQueue.tracks);
-    final idx = state.playbackQueue.currentIndex;
-    if (idx >= 0 && idx < newQueue.length) {
-      newQueue[idx] = invalidatedTrack;
-      state = state.copyWith(
-        playbackQueue: state.playbackQueue.copyWith(tracks: newQueue)
-      );
+    _currentCandidateIndex++;
+    if (_currentCandidateIndex < _currentCandidates.length) {
+      await _attemptCurrentCandidate(_playbackGeneration, track, List<Track>.from(state.playbackQueue.tracks));
+    } else {
+      await _controller.stop();
+      _handleLogicalTrackFailure();
     }
+    _isRecovering = false;
+  }
+
+  void _handleLogicalTrackFailure() {
+    _consecutiveTrackFailures++;
     
-    await playTrack(invalidatedTrack, queue: newQueue, isRetry: true);
+    if (_consecutiveTrackFailures < 5) {
+      state = state.copyWith(loadError: 'Media unavailable');
+      debugPrint('PlayerNotifier: Track exhausted. Auto-skipping to next (failure count: $_consecutiveTrackFailures)');
+      
+      var queue = state.playbackQueue;
+      if (queue.repeatMode == RepeatMode.one) {
+         queue = queue.copyWith(repeatMode: RepeatMode.all);
+      }
+      
+      final nextQueue = queue.next();
+      if (nextQueue.currentIndex < nextQueue.tracks.length) {
+        final nextTrack = nextQueue.tracks[nextQueue.currentIndex];
+        playTrack(nextTrack, queue: nextQueue.tracks, isRetry: true);
+      } else {
+        state = state.copyWith(loadError: 'Queue ended after consecutive failures.');
+      }
+    } else {
+      state = state.copyWith(loadError: 'Excessive consecutive track failures. Playback stopped.');
+      debugPrint('PlayerNotifier: Stopped due to excessive consecutive failures.');
+    }
   }
 
   void _scheduleSaveState() {
@@ -212,28 +232,28 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
   Future<void> playTrack(Track track, {List<Track>? queue, bool isRetry = false}) async {
     if (!isRetry) {
-      _forcedResolutionAttemptedForCurrentLoad = false;
       _prefetchedNextTrackForCurrentLoad = false;
       if (queue != null) {
         _autoplaySeenTrackIds.clear();
       }
+      _consecutiveTrackFailures = 0;
     }
-    _playGeneration++;
-    final myGen = _playGeneration;
+    _playbackGeneration++;
+    final myGen = _playbackGeneration;
+    _isRecovering = false;
 
     final timestamp = DateTime.now().microsecondsSinceEpoch;
     
-    // Ensure every track in the upcoming queue has a unique occurrence ID
     final q = (queue ?? [track]).asMap().entries.map((e) {
       final t = e.value;
-      if (t.queueItemId != null) return t; // Already has ID
+      if (t.queueItemId != null) return t; 
       return t.copyWith(queueItemId: '${t.spotifyId}_${timestamp}_${e.key}');
     }).toList();
 
     final targetTrack = q.firstWhere((t) => t.spotifyId == track.spotifyId && t.name == track.name);
     final idx = q.indexOf(targetTrack);
 
-    debugPrint('PlayerNotifier: Playing track ${track.name}');
+    debugPrint('PlayerNotifier: Resolving track ${track.name}');
 
     state = state.copyWith(
       playbackQueue: state.playbackQueue.copyWith(
@@ -241,71 +261,78 @@ class PlayerNotifier extends Notifier<PlayerState> {
         currentIndex: idx < 0 ? 0 : idx,
       ),
       clearLoadError: true,
+      isLoadingVideo: true,
     );
     _scheduleSaveState();
     _evaluateAutoplay();
 
-    Track finalTrack = targetTrack;
-    
-    // Resolve YouTube ID if missing or invalid
-    final currentYtId = finalTrack.youtubeVideoId;
-    final needsResolution = !YoutubeIdValidator.isValid(
-      currentYtId, 
-      spotifyId: finalTrack.spotifyId
-    );
+    try {
+      final service = ref.read(playbackServiceProvider);
+      final candidates = await service.resolveCandidates(targetTrack, null);
+      
+      if (myGen != _playbackGeneration) return;
 
-    if (needsResolution) {
-      state = state.copyWith(isLoadingVideo: true);
-      try {
-        final service = ref.read(playbackServiceProvider);
-        final candidates = await service.resolveCandidates(finalTrack, null);
-        
-        if (myGen != _playGeneration) return;
-
-        if (candidates.isNotEmpty) {
-          final resolvedId = candidates.first;
-          if (YoutubeIdValidator.isValid(resolvedId, spotifyId: finalTrack.spotifyId)) {
-            finalTrack = finalTrack.copyWith(youtubeVideoId: resolvedId);
-            await service.cacheYoutubeId(finalTrack.spotifyId, resolvedId);
-            
-            // Update queue with resolved track
-            final newQueue = List<Track>.from(state.playbackQueue.tracks);
-            newQueue[idx] = finalTrack;
-            state = state.copyWith(
-              playbackQueue: state.playbackQueue.copyWith(tracks: newQueue)
-            );
-          } else {
-            state = state.copyWith(
-              isLoadingVideo: false,
-              loadError: 'Resolved invalid YouTube ID: $resolvedId',
-            );
-            return;
-          }
-        } else {
-          state = state.copyWith(
-            isLoadingVideo: false,
-            loadError: 'No YouTube video found for this track',
-          );
-          return;
-        }
-      } catch (e) {
-        if (myGen != _playGeneration) return;
-        debugPrint('Failed to resolve YouTube ID for ${finalTrack.name}: $e');
+      if (candidates.isNotEmpty) {
+        _currentCandidates = candidates;
+        _currentCandidateIndex = 0;
+        await _attemptCurrentCandidate(myGen, targetTrack, q);
+      } else {
+        await _controller.stop();
+        if (myGen != _playbackGeneration) return;
         state = state.copyWith(
           isLoadingVideo: false,
-          loadError: 'Failed to resolve YouTube ID: $e',
+          loadError: 'No YouTube video found for this track',
         );
+        _handleLogicalTrackFailure();
         return;
       }
+    } catch (e) {
+      if (myGen != _playbackGeneration) return;
+      debugPrint('Failed to resolve YouTube ID for ${targetTrack.name}: $e');
+      await _controller.stop();
+      if (myGen != _playbackGeneration) return;
+      state = state.copyWith(
+        isLoadingVideo: false,
+        loadError: 'Failed to resolve YouTube ID: $e',
+      );
+      _handleLogicalTrackFailure();
+      return;
     }
+  }
 
-    if (myGen != _playGeneration) return;
-
-    // Delegate to the new playback controller
-    await _controller.play(finalTrack.toPlaybackTrack());
-    _controller.setVolume(state.volume); // Apply current volume
+  Future<void> _attemptCurrentCandidate(int myGen, Track track, List<Track> queue) async {
+    final candidate = _currentCandidates[_currentCandidateIndex];
+    final service = ref.read(playbackServiceProvider);
     
-    await ref.read(playbackServiceProvider).recordPlay(finalTrack);
+    if (myGen != _playbackGeneration) return;
+    
+    final newTrack = track.copyWith(youtubeVideoId: candidate.videoId);
+    await service.cacheYoutubeId(newTrack.spotifyId, candidate.videoId);
+    
+    final newQueue = List<Track>.from(state.playbackQueue.tracks);
+    final idx = state.playbackQueue.currentIndex;
+    if (idx >= 0 && idx < newQueue.length) {
+       newQueue[idx] = newTrack;
+       state = state.copyWith(
+         playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
+         isLoadingVideo: true,
+       );
+    }
+    
+    if (_currentCandidateIndex > 0) {
+       state = state.copyWith(loadError: 'Trying another source...');
+    } else {
+       state = state.copyWith(clearLoadError: true);
+    }
+    
+    await _controller.stop(); 
+    if (myGen != _playbackGeneration) return;
+
+    await _controller.play(newTrack.toPlaybackTrack());
+    if (myGen != _playbackGeneration) return;
+    _controller.setVolume(state.volume);
+    
+    await service.recordPlay(newTrack);
   }
 
   Future<void> playTracks(List<Track> tracks, {int initialIndex = 0}) async {

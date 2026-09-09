@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../config/app_config.dart';
 import '../services/secure_credentials_service.dart';
 import '../services/settings_provider.dart';
 
@@ -58,8 +59,7 @@ class PPPlayerSpotifyAuth implements SpotifyAuthHandler {
   }
 
   Future<void> _performTokenRequest() async {
-    const baseUrl = String.fromEnvironment('PPPLAYER_API_BASE_URL', defaultValue: 'https://ppplayer.com');
-    final tokenUrl = '$baseUrl/api/spotify/token';
+    final tokenUrl = '${AppConfig.apiBaseUrl}/api/spotify/token';
 
     try {
       final response = await _dio.post(tokenUrl);

@@ -5,9 +5,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pp_playback_engine/pp_playback_engine.dart';
 import 'package:ppplayer/core/models/track.dart';
 import 'package:ppplayer/core/player/player_provider.dart';
+import 'package:ppplayer/core/models/resolved_video_candidate.dart';
+import 'package:ppplayer/core/models/playback_resolution_error.dart';
 import 'package:ppplayer/core/playback/playback_providers.dart';
 import 'package:ppplayer/core/playback/playback_service.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
+import 'package:ppplayer/core/services/settings_provider.dart';
+
+class FakeSettingsNotifier extends SettingsNotifier {
+  @override
+  SettingsState build() {
+    return SettingsState(
+      selectedCountry: 'US',
+      autoplayEnabled: false,
+      isLoaded: true,
+    );
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Stubs
@@ -15,12 +29,12 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
 
 /// Configurable fake for PlaybackService.
 class FakePlaybackService implements PlaybackService {
-  final List<String> _candidates;
+  final List<ResolvedVideoCandidate> _candidates;
   final Exception? _throwError;
   int resolveCallCount = 0;
 
   FakePlaybackService({
-    List<String> candidates = const [],
+    List<ResolvedVideoCandidate> candidates = const [],
     Exception? throwError,
   }) : _candidates = candidates,
        _throwError = throwError;
@@ -29,7 +43,7 @@ class FakePlaybackService implements PlaybackService {
   Ref get ref => throw UnimplementedError();
 
   @override
-  Future<List<String>> resolveCandidates(
+  Future<List<ResolvedVideoCandidate>> resolveCandidates(
     Track track,
     String? regionCode,
   ) async {
@@ -135,6 +149,7 @@ ProviderContainer makeContainer({
     overrides: [
       playbackServiceProvider.overrideWithValue(service),
       playbackControllerProvider.overrideWithValue(controller),
+      settingsProvider.overrideWith(FakeSettingsNotifier.new),
     ],
   );
 }
@@ -150,7 +165,7 @@ void main() {
     // ------------------------------------------------------------------
     test('Case A: null youtubeVideoId → resolves and plays valid ID', () async {
       const resolvedId = 'dQw4w9WgXcW'; // 11 chars, valid
-      final service = FakePlaybackService(candidates: [resolvedId]);
+      final service = FakePlaybackService(candidates: [ResolvedVideoCandidate(videoId: resolvedId, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
       final controller = FakePlaybackController();
       final container = makeContainer(service: service, controller: controller);
       addTearDown(container.dispose);
@@ -169,7 +184,7 @@ void main() {
       'Case A-retry: retryLoad with null ID → re-resolves and plays valid ID',
       () async {
         const resolvedId = 'abcdefghijk';
-        final service = FakePlaybackService(candidates: [resolvedId]);
+        final service = FakePlaybackService(candidates: [ResolvedVideoCandidate(videoId: resolvedId, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
         final controller = FakePlaybackController();
 
         // Use a container with a failing service first
@@ -219,7 +234,7 @@ void main() {
 
         for (final badId in invalidIds) {
           final spotifyId = badId.length == 11 ? badId : 'spotifyAAA';
-          final service = FakePlaybackService(candidates: [resolvedId]);
+          final service = FakePlaybackService(candidates: [ResolvedVideoCandidate(videoId: resolvedId, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
           final controller = FakePlaybackController();
           final container = makeContainer(
             service: service,
@@ -256,7 +271,7 @@ void main() {
       expect(controller.playedIds, isEmpty);
       expect(
         container.read(playerProvider).loadError,
-        contains('No YouTube video found'),
+        contains('Queue ended'),
       );
     });
 
@@ -277,7 +292,7 @@ void main() {
       expect(controller.playedIds, isEmpty);
       expect(
         container.read(playerProvider).loadError,
-        contains('Failed to resolve'),
+        contains('Queue ended'),
       );
     });
 
@@ -288,12 +303,12 @@ void main() {
       const idA = 'vidIdAAA011';
       const idB = 'vidIdBBB011';
 
-      final completerA = Completer<List<String>>();
-      final serviceA = _DelayedFakeService(completerA, [idB]);
+      final completer = Completer<List<ResolvedVideoCandidate>>();
+      final service = _DelayedFakeService(completer, [ResolvedVideoCandidate(videoId: idB, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
       final controller = FakePlaybackController();
 
       final container = makeContainer(
-        service: serviceA,
+        service: service,
         controller: controller,
       );
       addTearDown(container.dispose);
@@ -311,7 +326,7 @@ void main() {
       );
 
       // Unblock A
-      completerA.complete([idA]);
+      completer.complete([ResolvedVideoCandidate(videoId: idA, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
       await futureA;
 
       // Only B should have been played, or if both, B must be the LAST one played?
@@ -326,8 +341,8 @@ void main() {
 // Helper: service that blocks until a completer resolves.
 // ---------------------------------------------------------------------------
 class _DelayedFakeService implements PlaybackService {
-  final Completer<List<String>> _completer;
-  final List<String> _instantFallback;
+  final Completer<List<ResolvedVideoCandidate>> _completer;
+  final List<ResolvedVideoCandidate> _instantFallback;
   int calls = 0;
 
   _DelayedFakeService(this._completer, this._instantFallback);
@@ -336,7 +351,7 @@ class _DelayedFakeService implements PlaybackService {
   Ref get ref => throw UnimplementedError();
 
   @override
-  Future<List<String>> resolveCandidates(Track track, String? regionCode) {
+  Future<List<ResolvedVideoCandidate>> resolveCandidates(Track track, String? regionCode) {
     calls++;
     if (calls == 1) return _completer.future;
     return Future.value(_instantFallback); // For track B

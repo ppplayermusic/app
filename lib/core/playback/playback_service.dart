@@ -4,6 +4,7 @@ import '../models/track.dart';
 import '../db/app_database.dart' as db;
 import '../api/spotify_repository.dart';
 import '../api/youtube_resolver.dart';
+import '../models/resolved_video_candidate.dart';
 import '../metrics/cache_metrics.dart';
 
 class PlaybackService {
@@ -67,10 +68,10 @@ class PlaybackService {
   }
 
   final Map<String, DateTime> _negativeCache = {};
-  final Map<String, List<String>> _prefetchedCandidates = {};
+  final Map<String, List<ResolvedVideoCandidate>> _prefetchedCandidates = {};
 
   /// Resolves video candidates for a track.
-  Future<List<String>> resolveCandidates(Track track, String? regionCode) async {
+  Future<List<ResolvedVideoCandidate>> resolveCandidates(Track track, String? regionCode) async {
     // Check 10-minute negative cache
     if (_negativeCache.containsKey(track.spotifyId)) {
       if (DateTime.now().difference(_negativeCache[track.spotifyId]!) < const Duration(minutes: 10)) {
@@ -92,6 +93,7 @@ class PlaybackService {
       track.artistName,
       track.name,
       regionCode: regionCode,
+      durationMs: track.durationMs,
     );
 
     if (candidates.isEmpty) {
@@ -117,6 +119,7 @@ class PlaybackService {
         track.artistName,
         track.name,
         regionCode: regionCode,
+        durationMs: track.durationMs,
       );
 
       if (candidates.isEmpty) {

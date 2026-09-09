@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ppplayer/core/models/track.dart';
 import 'package:ppplayer/core/player/player_provider.dart';
+import 'package:ppplayer/core/models/resolved_video_candidate.dart';
 import 'package:ppplayer/core/playback/playback_providers.dart';
 import 'package:ppplayer/core/api/spotify_repository.dart';
 import 'package:ppplayer/core/services/settings_provider.dart';
@@ -19,8 +20,8 @@ class FakePlaybackService implements PlaybackService {
   Ref get ref => throw UnimplementedError();
 
   @override
-  Future<List<String>> resolveCandidates(Track track, String? regionCode) async {
-    return ['test_video_id'];
+  Future<List<ResolvedVideoCandidate>> resolveCandidates(Track track, String? regionCode) async {
+    return [ResolvedVideoCandidate(videoId: 'youtube_id_for_${track.spotifyId}', title: 'Title', channel: 'Channel', confidenceScore: 1.0)];
   }
 
   @override
