@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../player/player_provider.dart';
 
@@ -7,20 +8,22 @@ import '../player/player_provider.dart';
 class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
   PpPlayerAudioHandler(this._containerProvider) {
     // Initial state: stopped
-    playbackState.add(playbackState.value.copyWith(
-      controls: [
-        MediaControl.skipToPrevious,
-        MediaControl.play,
-        MediaControl.skipToNext,
-      ],
-      systemActions: const {
-        MediaAction.seek,
-        MediaAction.seekForward,
-        MediaAction.seekBackward,
-      },
-      processingState: AudioProcessingState.idle,
-      playing: false,
-    ));
+    playbackState.add(
+      playbackState.value.copyWith(
+        controls: [
+          MediaControl.skipToPrevious,
+          MediaControl.play,
+          MediaControl.skipToNext,
+        ],
+        systemActions: const {
+          MediaAction.seek,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
+        },
+        processingState: AudioProcessingState.idle,
+        playing: false,
+      ),
+    );
   }
 
   final ProviderContainer Function() _containerProvider;
@@ -36,19 +39,23 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
     String? artCacheFile,
     Duration? duration,
   }) {
-    mediaItem.add(MediaItem(
-      id: id,
-      title: title,
-      artist: artist,
-      album: album,
-      displayTitle: title,
-      displaySubtitle: artist,
-      artUri: (artUri != null && artUri.isNotEmpty) ? Uri.parse(artUri) : null,
-      duration: duration,
-      extras: (artCacheFile != null && artCacheFile.isNotEmpty)
-          ? {'artCacheFile': artCacheFile}
-          : null,
-    ));
+    mediaItem.add(
+      MediaItem(
+        id: id,
+        title: title,
+        artist: artist,
+        album: album,
+        displayTitle: title,
+        displaySubtitle: artist,
+        artUri:
+            (artUri != null && artUri.isNotEmpty) ? Uri.parse(artUri) : null,
+        duration: duration,
+        extras:
+            (artCacheFile != null && artCacheFile.isNotEmpty)
+                ? {'artCacheFile': artCacheFile}
+                : null,
+      ),
+    );
   }
 
   /// Update the OS playback state (Playing, Paused, Position).
@@ -58,27 +65,32 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
     required Duration bufferedPosition,
     AudioProcessingState processingState = AudioProcessingState.ready,
   }) {
-    playbackState.add(playbackState.value.copyWith(
-      controls: [
-        MediaControl.skipToPrevious,
-        if (playing) MediaControl.pause else MediaControl.play,
-        MediaControl.skipToNext,
-        MediaControl.stop,
-      ],
-      systemActions: const {
-        MediaAction.seek,
-        MediaAction.play,
-        MediaAction.pause,
-        MediaAction.skipToNext,
-        MediaAction.skipToPrevious,
-        MediaAction.stop,
-      },
-      androidCompactActionIndices: const [0, 1, 2],
-      processingState: processingState,
-      playing: playing,
-      updatePosition: position,
-      bufferedPosition: bufferedPosition,
-    ));
+    debugPrint(
+      '${DateTime.now().toIso8601String()} AUDIO_HANDLER publish playing=$playing position=$position',
+    );
+    playbackState.add(
+      playbackState.value.copyWith(
+        controls: [
+          MediaControl.skipToPrevious,
+          if (playing) MediaControl.pause else MediaControl.play,
+          MediaControl.skipToNext,
+          MediaControl.stop,
+        ],
+        systemActions: const {
+          MediaAction.seek,
+          MediaAction.play,
+          MediaAction.pause,
+          MediaAction.skipToNext,
+          MediaAction.skipToPrevious,
+          MediaAction.stop,
+        },
+        androidCompactActionIndices: const [0, 1, 2],
+        processingState: processingState,
+        playing: playing,
+        updatePosition: position,
+        bufferedPosition: bufferedPosition,
+      ),
+    );
   }
 
   // --- Remote Command Handlers ---
@@ -111,10 +123,12 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
   @override
   Future<void> stop() async {
     _container.read(playerProvider.notifier).pause();
-    playbackState.add(playbackState.value.copyWith(
-      playing: false,
-      processingState: AudioProcessingState.idle,
-    ));
+    playbackState.add(
+      playbackState.value.copyWith(
+        playing: false,
+        processingState: AudioProcessingState.idle,
+      ),
+    );
     await super.stop();
   }
 }

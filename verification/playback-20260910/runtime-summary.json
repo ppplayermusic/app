@@ -1,0 +1,9 @@
+{
+  "locked_observation_seconds": 61.15157413482666,
+  "locked_samples": 59,
+  "native_playing_samples": 0,
+  "note": "No active playable session; this does not verify engine guard delivery or audio.",
+  "pause_latency": "untested: media pause did not reach engine",
+  "foreground_resume": "failed: IFrame error 152-4 and libmpv callback-after-delete SIGABRT during Flutter engine recreation",
+  "physical_device": "not attached; untested"
+}

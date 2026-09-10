@@ -1,0 +1,3486 @@
+--- a/lib/core/playback/media_handler.dart
++++ b/lib/core/playback/media_handler.dart
+@@ -1,4 +1,5 @@
+ import 'package:audio_service/audio_service.dart';
++import 'package:flutter/foundation.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import '../player/player_provider.dart';
+ 
+@@ -7,20 +8,22 @@
+ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
+   PpPlayerAudioHandler(this._containerProvider) {
+     // Initial state: stopped
+-    playbackState.add(playbackState.value.copyWith(
+-      controls: [
+-        MediaControl.skipToPrevious,
+-        MediaControl.play,
+-        MediaControl.skipToNext,
+-      ],
+-      systemActions: const {
+-        MediaAction.seek,
+-        MediaAction.seekForward,
+-        MediaAction.seekBackward,
+-      },
+-      processingState: AudioProcessingState.idle,
+-      playing: false,
+-    ));
++    playbackState.add(
++      playbackState.value.copyWith(
++        controls: [
++          MediaControl.skipToPrevious,
++          MediaControl.play,
++          MediaControl.skipToNext,
++        ],
++        systemActions: const {
++          MediaAction.seek,
++          MediaAction.seekForward,
++          MediaAction.seekBackward,
++        },
++        processingState: AudioProcessingState.idle,
++        playing: false,
++      ),
++    );
+   }
+ 
+   final ProviderContainer Function() _containerProvider;
+@@ -36,19 +39,23 @@
+     String? artCacheFile,
+     Duration? duration,
+   }) {
+-    mediaItem.add(MediaItem(
+-      id: id,
+-      title: title,
+-      artist: artist,
+-      album: album,
+-      displayTitle: title,
+-      displaySubtitle: artist,
+-      artUri: (artUri != null && artUri.isNotEmpty) ? Uri.parse(artUri) : null,
+-      duration: duration,
+-      extras: (artCacheFile != null && artCacheFile.isNotEmpty)
+-          ? {'artCacheFile': artCacheFile}
+-          : null,
+-    ));
++    mediaItem.add(
++      MediaItem(
++        id: id,
++        title: title,
++        artist: artist,
++        album: album,
++        displayTitle: title,
++        displaySubtitle: artist,
++        artUri:
++            (artUri != null && artUri.isNotEmpty) ? Uri.parse(artUri) : null,
++        duration: duration,
++        extras:
++            (artCacheFile != null && artCacheFile.isNotEmpty)
++                ? {'artCacheFile': artCacheFile}
++                : null,
++      ),
++    );
+   }
+ 
+   /// Update the OS playback state (Playing, Paused, Position).
+@@ -58,27 +65,32 @@
+     required Duration bufferedPosition,
+     AudioProcessingState processingState = AudioProcessingState.ready,
+   }) {
+-    playbackState.add(playbackState.value.copyWith(
+-      controls: [
+-        MediaControl.skipToPrevious,
+-        if (playing) MediaControl.pause else MediaControl.play,
+-        MediaControl.skipToNext,
+-        MediaControl.stop,
+-      ],
+-      systemActions: const {
+-        MediaAction.seek,
+-        MediaAction.play,
+-        MediaAction.pause,
+-        MediaAction.skipToNext,
+-        MediaAction.skipToPrevious,
+-        MediaAction.stop,
+-      },
+-      androidCompactActionIndices: const [0, 1, 2],
+-      processingState: processingState,
+-      playing: playing,
+-      updatePosition: position,
+-      bufferedPosition: bufferedPosition,
+-    ));
++    debugPrint(
++      '${DateTime.now().toIso8601String()} AUDIO_HANDLER publish playing=$playing position=$position',
++    );
++    playbackState.add(
++      playbackState.value.copyWith(
++        controls: [
++          MediaControl.skipToPrevious,
++          if (playing) MediaControl.pause else MediaControl.play,
++          MediaControl.skipToNext,
++          MediaControl.stop,
++        ],
++        systemActions: const {
++          MediaAction.seek,
++          MediaAction.play,
++          MediaAction.pause,
++          MediaAction.skipToNext,
++          MediaAction.skipToPrevious,
++          MediaAction.stop,
++        },
++        androidCompactActionIndices: const [0, 1, 2],
++        processingState: processingState,
++        playing: playing,
++        updatePosition: position,
++        bufferedPosition: bufferedPosition,
++      ),
++    );
+   }
+ 
+   // --- Remote Command Handlers ---
+@@ -111,10 +123,12 @@
+   @override
+   Future<void> stop() async {
+     _container.read(playerProvider.notifier).pause();
+-    playbackState.add(playbackState.value.copyWith(
+-      playing: false,
+-      processingState: AudioProcessingState.idle,
+-    ));
++    playbackState.add(
++      playbackState.value.copyWith(
++        playing: false,
++        processingState: AudioProcessingState.idle,
++      ),
++    );
+     await super.stop();
+   }
+ }
+--- a/lib/core/playback/packages/pp_playback_engine/lib/src/engine/media_kit_playback_engine.dart
++++ b/lib/core/playback/packages/pp_playback_engine/lib/src/engine/media_kit_playback_engine.dart
+@@ -13,22 +13,28 @@
+ /// Returns an ISO-8601-like timestamp for diagnostic log lines.
+ String _ts() {
+   final now = DateTime.now();
+-  return '${now.hour.toString().padLeft(2,'0')}:'
+-         '${now.minute.toString().padLeft(2,'0')}:'
+-         '${now.second.toString().padLeft(2,'0')}.'
+-         '${now.millisecond.toString().padLeft(3,'0')}';
++  return '${now.hour.toString().padLeft(2, '0')}:'
++      '${now.minute.toString().padLeft(2, '0')}:'
++      '${now.second.toString().padLeft(2, '0')}.'
++      '${now.millisecond.toString().padLeft(3, '0')}';
+ }
+ 
+ /// Tagged diagnostic print — always present regardless of experiment flag.
+-void _diag(String msg) => debugPrint('${_ts()} ${BackgroundPlaybackExperiment.tag} $msg');
++void _diag(String msg) =>
++    debugPrint('${_ts()} ${BackgroundPlaybackExperiment.tag} $msg');
+ 
+ class MediaKitPlaybackEngine implements PlaybackController {
+-  final yt.YoutubePlayerController Function(String, yt.YoutubePlayerParams)? youtubeControllerFactory;
+-
+-  MediaKitPlaybackEngine({this.youtubeControllerFactory}) {
++  final yt.YoutubePlayerController Function(String, yt.YoutubePlayerParams)?
++  youtubeControllerFactory;
++
++  MediaKitPlaybackEngine({
++    this.youtubeControllerFactory,
++    Player? nativePlayer,
++  }) {
++    _player = nativePlayer;
+     _ensureMediaKitInitialized();
+   }
+-  
++
+   /// Informs the engine that the host activity is stopped (e.g., screen locked).
+   /// Used to block IFrame playback dispatches when the WebView is frozen.
+   static bool isActivityStopped = false;
+@@ -39,6 +45,68 @@
+ 
+   int _playGeneration = 0;
+   int _lastPlayedGeneration = 0;
++  int _intentRevision = 0;
++  bool _disposed = false;
++  bool _attemptActive = false;
++  bool _recoveryUsed = false;
++  bool _ready = false;
++  int? _latePauseGeneration;
++
++  bool _valid(int generation) =>
++      !_disposed && _attemptActive && generation == _playGeneration;
++
++  void _failAttempt(int generation, String error) {
++    if (!_valid(generation)) return;
++    _attemptActive = false;
++    _watchdogTimer?.cancel();
++    _updateStatus(
++      _currentStatus.copyWith(state: PlaybackState.error, error: error),
++    );
++  }
++
++  // Loading measures bridge readiness; start measures an accepted play command.
++  // The single recovery budget is shared by both phases of one attempt.
++  void _armWatchdog(int generation, {required bool loading}) {
++    _watchdogTimer?.cancel();
++    _watchdogTimer = Timer(Duration(seconds: _recoveryUsed ? 10 : 20), () {
++      if (!_valid(generation) || _intendedState != PlaybackState.playing)
++        return;
++      if (_currentStatus.state == PlaybackState.playing) return;
++      if (!BackgroundPlaybackExperiment.enabled && isActivityStopped) return;
++      if (_recoveryUsed) {
++        _failAttempt(
++          generation,
++          loading
++              ? 'YouTube loading timed out (gen=$generation)'
++              : 'YouTube playback start timed out (gen=$generation)',
++        );
++        return;
++      }
++      _recoveryUsed = true;
++      _ready = false;
++      _lastPlayedGeneration = -1;
++      if (!_valid(generation)) return;
++      _armWatchdog(generation, loading: true);
++      unawaited(_cue(generation, _currentStatus.track!.id));
++    });
++  }
++
++  Future<void> _cue(
++    int generation,
++    String videoId, {
++    double? startSeconds,
++  }) async {
++    if (!_valid(generation)) return;
++    try {
++      await _youtubeController!.cueVideoById(
++        videoId: videoId,
++        startSeconds: startSeconds,
++      );
++    } catch (error) {
++      _failAttempt(generation, 'YouTube loading failed: $error');
++    }
++  }
++
+   Timer? _watchdogTimer;
+   Timer? _iframePositionTimer;
+   final List<StreamSubscription<dynamic>> _subscriptions = [];
+@@ -46,19 +114,20 @@
+   final _statusController = StreamController<PlaybackStatus>.broadcast();
+   final _eventController = StreamController<PlaybackEvent>.broadcast();
+ 
+-
+   PlaybackStatus _currentStatus = const PlaybackStatus();
+   PlaybackState? _intendedState;
+ 
+   void _ensureMediaKitInitialized() {
+     if (_player != null) return;
+-    
++
+     try {
+       MediaKit.ensureInitialized();
+       _player = Player();
+       _videoController = VideoController(_player!);
+     } catch (e) {
+-      debugPrint('MediaKitPlaybackEngine: Test environment detected, skipping MediaKit Player initialization.');
++      debugPrint(
++        'MediaKitPlaybackEngine: Test environment detected, skipping MediaKit Player initialization.',
++      );
+       return;
+     }
+ 
+@@ -80,17 +149,18 @@
+       }),
+       _player!.stream.playing.listen((playing) {
+         if (!_currentStatus.isIFrameMode) {
+-          _updateStatus(_currentStatus.copyWith(
+-            state: playing ? PlaybackState.playing : PlaybackState.paused,
+-          ));
++          _updateStatus(
++            _currentStatus.copyWith(
++              state: playing ? PlaybackState.playing : PlaybackState.paused,
++            ),
++          );
+         }
+       }),
+       _player!.stream.error.listen((err) {
+         if (!_currentStatus.isIFrameMode) {
+-          _updateStatus(_currentStatus.copyWith(
+-            state: PlaybackState.error,
+-            error: err,
+-          ));
++          _updateStatus(
++            _currentStatus.copyWith(state: PlaybackState.error, error: err),
++          );
+         }
+       }),
+       _player!.stream.completed.listen((completed) {
+@@ -100,9 +170,11 @@
+       }),
+       _player!.stream.buffering.listen((buffering) {
+         if (!_currentStatus.isIFrameMode) {
+-          _updateStatus(_currentStatus.copyWith(
+-            state: buffering ? PlaybackState.buffering : _currentStatus.state,
+-          ));
++          _updateStatus(
++            _currentStatus.copyWith(
++              state: buffering ? PlaybackState.buffering : _currentStatus.state,
++            ),
++          );
+         }
+       }),
+     ]);
+@@ -125,54 +197,68 @@
+ 
+   @override
+   Future<void> play(PlaybackTrack track) async {
++    if (_disposed) return;
++    _attemptActive = false;
++    _intentRevision++;
++    _intendedState = PlaybackState.playing;
+     _playGeneration++;
+     final myGen = _playGeneration;
+ 
+     debugPrint('ENGINE: play called for track ${track.id} (gen: $myGen)');
+-    
+-    String testVideoId = track.id; 
+-
+-    debugPrint('MediaKitPlaybackEngine: Playing track $testVideoId (original: ${track.id})');
+-    
++
++    String testVideoId = track.id;
++
++    debugPrint(
++      'MediaKitPlaybackEngine: Playing track $testVideoId (original: ${track.id})',
++    );
++
+     // 1. Cleanup previous state but keep IFrame controller if possible
+     _watchdogTimer?.cancel();
+     if (!_currentStatus.isIFrameMode) {
+-      await stop();
++      await _player?.stop();
+     } else {
+       // If already in IFrame mode, just stop the current video
+       try {
+-        await _youtubeController?.pauseVideo().timeout(const Duration(seconds: 1));
++        await _youtubeController?.pauseVideo().timeout(
++          const Duration(seconds: 1),
++        );
+       } catch (e) {
+         debugPrint('MediaKitPlaybackEngine: pauseVideo failed/timed out: $e');
+       }
+     }
+ 
+-    _intendedState = PlaybackState.playing;
+-
+-    if (myGen != _playGeneration) return;
+-
+-    _updateStatus(_currentStatus.copyWith(
+-      track: track,
+-      state: PlaybackState.preparing,
+-      clearError: true,
+-      activeVideoId: testVideoId,
+-      hasVideo: true,
+-      // Pivot immediately so the UI builds the platform view
+-      isIFrameMode: true,
+-    ));
++    if (_disposed || myGen != _playGeneration) return;
++    _attemptActive = true;
++    _recoveryUsed = false;
++    _ready = false;
++    _latePauseGeneration = null;
++
++    _updateStatus(
++      _currentStatus.copyWith(
++        track: track,
++        state: PlaybackState.preparing,
++        clearError: true,
++        activeVideoId: testVideoId,
++        hasVideo: true,
++        // Pivot immediately so the UI builds the platform view
++        isIFrameMode: true,
++      ),
++    );
+ 
+     // 2. Initialize or reuse IFrame controller
+     await _enterIFrameMode(testVideoId, generation: myGen);
+   }
+ 
+-  Future<void> _enterIFrameMode(String videoId, {required int generation}) async {
+-    // Create the controller once. We do NOT use fromVideoId because that
+-    // internally schedules cueVideoById which produces 'unStarted' rather
+-    // than 'cued'. We always want to drive the state via loadVideoById so
+-    // the listener has a single, predictable trigger ('cued' → playVideo).
++  Future<void> _enterIFrameMode(
++    String videoId, {
++    required int generation,
++  }) async {
++    // Initialization prepares media without implicitly starting playback.
+     if (_youtubeController == null) {
+-      debugPrint('MediaKitPlaybackEngine: [INIT] Creating YoutubePlayerController (persistent singleton)');
+-      
++      debugPrint(
++        'MediaKitPlaybackEngine: [INIT] Creating YoutubePlayerController (persistent singleton)',
++      );
++
+       if (youtubeControllerFactory != null) {
+         _youtubeController = youtubeControllerFactory!(
+           videoId,
+@@ -185,9 +271,7 @@
+           ),
+         );
+       } else {
+-        _youtubeController = yt.YoutubePlayerController.fromVideoId(
+-          videoId: videoId,
+-          autoPlay: false,
++        _youtubeController = yt.YoutubePlayerController(
+           params: const yt.YoutubePlayerParams(
+             showControls: true,
+             showFullscreenButton: false,
+@@ -199,272 +283,238 @@
+       }
+ 
+       // ignore: invalid_use_of_internal_member
+-      _youtubeController!.webViewController.addJavaScriptChannel('NativeLog', onMessageReceived: (msg) {
+-        debugPrint('MediaKitPlaybackEngine: [NativeLog] ${msg.message}');
+-      });
++      _youtubeController!.webViewController.addJavaScriptChannel(
++        'NativeLog',
++        onMessageReceived: (msg) {
++          debugPrint('MediaKitPlaybackEngine: [NativeLog] ${msg.message}');
++        },
++      );
+ 
+       // Persistent generation-aware listener. This is the ONLY place
+       // that calls playVideo() in response to a 'cued' state.
+-      _youtubeController!.listen((ytState) {
+-        if (!_currentStatus.isIFrameMode) return;
+-        
+-        final gen = _playGeneration; // capture
+-        _diag('BRIDGE gen=$gen iframeState=${ytState.playerState} '
+-              'engineState=${_currentStatus.state} intended=$_intendedState '
+-              'activityStopped=$isActivityStopped');
+-
+-        switch (ytState.playerState) {
+-          case yt.PlayerState.cued:
+-          case yt.PlayerState.unStarted:
+-          case yt.PlayerState.buffering:
+-          case yt.PlayerState.playing:
+-          case yt.PlayerState.paused:
+-          case yt.PlayerState.ended:
+-            break;
+-          default:
+-            break;
+-        }
+-
+-        if (ytState.hasError && ytState.error != yt.YoutubeError.none) {
+-          debugPrint('MediaKitPlaybackEngine: [ERROR] YouTube IFrame error: ${ytState.error}');
+-          
+-          final eventVideoId = ytState.metaData.videoId;
+-          final currentVideoId = _currentStatus.track?.id;
+-
+-          if (eventVideoId.isNotEmpty && currentVideoId != null && eventVideoId != currentVideoId) {
+-             debugPrint('MediaKitPlaybackEngine: [BRIDGE] Ignoring stale error for $eventVideoId (current: $currentVideoId).');
+-             return;
++      _subscriptions.add(
++        _youtubeController!.listen((ytState) {
++          if (!_currentStatus.isIFrameMode || !_valid(_playGeneration)) return;
++          final eventId = ytState.metaData.videoId;
++          if (eventId.isNotEmpty && eventId != _currentStatus.track?.id) return;
++          // Missing IDs and same-video retries remain ambiguous: metadata and
++          // the mutable generation cannot establish event provenance.
++
++          final gen = _playGeneration; // capture
++          _diag(
++            'BRIDGE gen=$gen iframeState=${ytState.playerState} '
++            'engineState=${_currentStatus.state} intended=$_intendedState '
++            'activityStopped=$isActivityStopped',
++          );
++
++          if (ytState.hasError && ytState.error != yt.YoutubeError.none) {
++            debugPrint(
++              'MediaKitPlaybackEngine: [ERROR] YouTube IFrame error: ${ytState.error}',
++            );
++
++            final eventVideoId = ytState.metaData.videoId;
++            final currentVideoId = _currentStatus.track?.id;
++
++            if (eventVideoId.isNotEmpty &&
++                currentVideoId != null &&
++                eventVideoId != currentVideoId) {
++              debugPrint(
++                'MediaKitPlaybackEngine: [BRIDGE] Ignoring stale error for $eventVideoId (current: $currentVideoId).',
++              );
++              return;
++            }
++
++            if (ytState.error == yt.YoutubeError.videoNotFound ||
++                ytState.error == yt.YoutubeError.notEmbeddable ||
++                ytState.error == yt.YoutubeError.cannotFindVideo ||
++                ytState.error == yt.YoutubeError.sameAsNotEmbeddable ||
++                ytState.error == yt.YoutubeError.invalidParam) {
++              _failAttempt(gen, 'unavailable_media:${ytState.error.name}');
++              return; // Stop processing state on fatal error
++            }
++            // Transient errors are ignored
+           }
+ 
+-          if (ytState.error == yt.YoutubeError.videoNotFound ||
+-              ytState.error == yt.YoutubeError.notEmbeddable ||
+-              ytState.error == yt.YoutubeError.cannotFindVideo ||
+-              ytState.error == yt.YoutubeError.sameAsNotEmbeddable ||
+-              ytState.error == yt.YoutubeError.invalidParam) {
+-            
+-            _updateStatus(_currentStatus.copyWith(
+-              state: PlaybackState.error,
+-              error: 'unavailable_media:${ytState.error.name}',
+-            ));
+-            return; // Stop processing state on fatal error
++          switch (ytState.playerState) {
++            case yt.PlayerState.cued:
++            case yt.PlayerState.unStarted:
++              _ready = true;
++              // Repeated readiness events must not restart the start deadline.
++              if (_lastPlayedGeneration != gen) {
++                unawaited(_dispatchIFramePlay(gen, ytState.playerState.name));
++              }
++              break;
++            default:
++              break;
+           }
+-          // Transient errors are ignored
+-        }
+-
+-        switch (ytState.playerState) {
+-          case yt.PlayerState.cued:
+-          case yt.PlayerState.unStarted:
+-            // Video is loaded and ready or hasn't started. Try to play.
+-            if (_lastPlayedGeneration != gen) {
+-              _dispatchIFramePlay(gen, ytState.playerState.name);
++
++          final newState = switch (ytState.playerState) {
++            yt.PlayerState.playing => PlaybackState.playing,
++            yt.PlayerState.paused => PlaybackState.paused,
++            yt.PlayerState.unStarted => PlaybackState.paused,
++            yt.PlayerState.buffering => PlaybackState.buffering,
++            yt.PlayerState.ended => PlaybackState.ended,
++            _ => _currentStatus.state,
++          };
++
++          if (newState == PlaybackState.ended) {
++            final eventVideoId = ytState.metaData.videoId;
++            final currentVideoId = _currentStatus.track?.id;
++
++            if (eventVideoId.isNotEmpty &&
++                currentVideoId != null &&
++                eventVideoId != currentVideoId) {
++              debugPrint(
++                'MediaKitPlaybackEngine: [BRIDGE] Ignoring stale ended event for $eventVideoId (current: $currentVideoId).',
++              );
++              return;
+             }
+-            break;
+-          default:
+-            break;
+-        }
+-
+-        final newState = switch (ytState.playerState) {
+-          yt.PlayerState.playing => PlaybackState.playing,
+-          yt.PlayerState.paused => PlaybackState.paused,
+-          yt.PlayerState.unStarted => PlaybackState.paused,
+-          yt.PlayerState.buffering => PlaybackState.buffering,
+-          yt.PlayerState.ended => PlaybackState.ended,
+-          _ => _currentStatus.state,
+-        };
+-
+-        if (newState == PlaybackState.ended) {
+-          final eventVideoId = ytState.metaData.videoId;
+-          final currentVideoId = _currentStatus.track?.id;
+-          
+-          if (eventVideoId.isNotEmpty && currentVideoId != null && eventVideoId != currentVideoId) {
+-            debugPrint('MediaKitPlaybackEngine: [BRIDGE] Ignoring stale ended event for $eventVideoId (current: $currentVideoId).');
+-            return;
+           }
+-        }
+-
+-        if (newState == PlaybackState.playing && _intendedState == PlaybackState.paused) {
+-          if (!BackgroundPlaybackExperiment.enabled) {
+-            // [BASELINE] Auto-recovery: if IFrame reports playing while we intend paused,
+-            // force a pause command to honour user intent.
+-            _diag('BRIDGE SPURIOUS-PLAY: intendedState=paused. [BASELINE] forcing pauseVideo().');
+-            _youtubeController?.pauseVideo();
+-            return;
+-          } else {
+-            // [EXPERIMENT] Observe only — do not auto-recover. Let the IFrame play
+-            // so we can measure whether it actually sustains playback in background.
+-            _diag('BRIDGE SPURIOUS-PLAY: intendedState=paused. [EXPERIMENT] OBSERVE ONLY — '
+-                  'NOT forcing pauseVideo(). IFrame state will be recorded.');
++
++          if ((newState == PlaybackState.playing ||
++                  newState == PlaybackState.buffering) &&
++              _intendedState == PlaybackState.paused) {
++            if (!BackgroundPlaybackExperiment.enabled) {
++              // [BASELINE] Auto-recovery: if IFrame reports playing while we intend paused,
++              // force a pause command to honour user intent.
++              _diag(
++                'BRIDGE SPURIOUS-PLAY: intendedState=paused. [BASELINE] forcing pauseVideo().',
++              );
++              unawaited(
++                _youtubeController?.pauseVideo().catchError((Object error) {
++                  _diag('Corrective pause failed: $error');
++                }),
++              );
++              return;
++            } else {
++              // [EXPERIMENT] Observe only — do not auto-recover. Let the IFrame play
++              // so we can measure whether it actually sustains playback in background.
++              _diag(
++                'BRIDGE SPURIOUS-PLAY: intendedState=paused. [EXPERIMENT] OBSERVE ONLY — '
++                'NOT forcing pauseVideo(). IFrame state will be recorded.',
++              );
++            }
+           }
+-        }
+-
+-        if (newState == PlaybackState.paused && _intendedState == PlaybackState.playing) {
+-          if (!BackgroundPlaybackExperiment.enabled) {
+-            // [BASELINE] Auto-recovery: IFrame paused unexpectedly (e.g. PiP transition),
+-            // force play to honour user intent.
+-            _diag('BRIDGE SPURIOUS-PAUSE: intendedState=playing. [BASELINE] forcing playVideo().');
+-            _youtubeController?.playVideo();
+-            // Fall through to update state to paused momentarily.
+-          } else {
+-            // [EXPERIMENT] Observe only — record the IFrame pause without re-dispatching.
+-            _diag('BRIDGE SPURIOUS-PAUSE: intendedState=playing. [EXPERIMENT] OBSERVE ONLY — '
+-                  'NOT forcing playVideo(). Recording IFrame-reported pause.');
++
++          if (ytState.playerState == yt.PlayerState.paused &&
++              _intendedState == PlaybackState.paused) {
++            // The renderer acknowledged this pause before any resume; there is
++            // no outstanding pause event to reconcile on a later focus loss.
++            _latePauseGeneration = null;
+           }
+-        }
+-
+-        if (newState != _currentStatus.state) {
+-          _updateStatus(_currentStatus.copyWith(state: newState));
+-        }
+-      });
++          if (newState == PlaybackState.paused &&
++              _intendedState == PlaybackState.playing) {
++            // One reconciliation for an outstanding pause command, never a replay
++            // loop. Future completion is deliberately unrelated to renderer events.
++            if (ytState.playerState == yt.PlayerState.paused &&
++                _latePauseGeneration == gen) {
++              _latePauseGeneration = null;
++              unawaited(_dispatchIFramePlay(gen, 'late-pause'));
++            }
++            if (ytState.playerState == yt.PlayerState.unStarted) return;
++          }
++          if (newState == PlaybackState.playing) _watchdogTimer?.cancel();
++
++          if (newState != _currentStatus.state) {
++            _updateStatus(_currentStatus.copyWith(state: newState));
++          }
++        }),
++      );
+     }
+ 
+     if (generation != _playGeneration) {
+-      debugPrint('MediaKitPlaybackEngine: Stale enterIFrameMode (gen: $generation). Aborting.');
++      debugPrint(
++        'MediaKitPlaybackEngine: Stale enterIFrameMode (gen: $generation). Aborting.',
++      );
+       return;
+     }
+ 
+-    // Emit status so ScaffoldWithNav rebuilds and mounts YoutubePlayer.
+-    // The widget mounting will call controller.init() → loadHtmlString →
+-    // onReady → JS bridge ready → loadVideoById (below or from listener).
+     _updateStatus(_currentStatus);
+-
+-    // Start the watchdog BEFORE issuing cueVideoById so it can observe
+-    // whether the bridge gets established. The watchdog is a recovery
+-    // mechanism, not the primary playback driver.
+-    final watchdogGen = generation; // captured so this timer belongs only to this load attempt
++    _armWatchdog(generation, loading: true);
++    await _cue(generation, videoId);
++  }
++
++  @override
++  Future<void> pause({String caller = 'user'}) async {
++    _diag(
++      'ENGINE pause() caller=$caller intendedWas=$_intendedState gen=$_playGeneration',
++    );
++    _intentRevision++;
+     _watchdogTimer?.cancel();
+-    _watchdogTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+-      // Stale check: a newer play() call supersedes this watchdog.
+-      if (watchdogGen != _playGeneration) {
+-        _diag('WATCHDOG gen=$watchdogGen CANCELLED: superseded by gen=$_playGeneration');
+-        timer.cancel();
+-        return;
+-      }
+-      if (_youtubeController == null || !_currentStatus.isIFrameMode) {
+-        _diag('WATCHDOG gen=$watchdogGen CANCELLED: controller gone or not in IFrame mode');
+-        timer.cancel();
+-        return;
+-      }
+-
+-      final state = _currentStatus.state;
+-      _diag('WATCHDOG gen=$watchdogGen tick=${timer.tick} state=$state '
+-            'intended=$_intendedState activityStopped=$isActivityStopped');
+-
+-      if (state == PlaybackState.playing ||
+-          state == PlaybackState.buffering ||
+-          state == PlaybackState.ended) {
+-        _diag('WATCHDOG gen=$watchdogGen SUCCESS at tick=${timer.tick} state=$state');
+-        timer.cancel();
+-        return;
+-      }
+-
+-      if (_intendedState == PlaybackState.paused) {
+-        _diag('WATCHDOG gen=$watchdogGen STOP: intendedState=paused '
+-              '(backgrounded or user pause). No error raised.');
+-        timer.cancel();
+-        return;
+-      }
+-
+-      // Recovery: retry after 10 ticks (20s) with no progress in foreground.
+-      if (timer.tick >= 10 && (state == PlaybackState.idle || state == PlaybackState.preparing)) {
+-        _diag('WATCHDOG gen=$watchdogGen RETRY cueVideoById after 20s (state=$state)');
+-        _lastPlayedGeneration = -1;
+-        _youtubeController?.cueVideoById(videoId: videoId);
+-      }
+-
+-      if (timer.tick >= 15) {
+-        _diag('WATCHDOG gen=$watchdogGen CUTOFF at tick=${timer.tick}. Emitting error.');
+-        timer.cancel();
+-        _updateStatus(_currentStatus.copyWith(
+-          state: PlaybackState.error,
+-          error: 'YouTube playback timed out (gen=$watchdogGen)',
+-        ));
+-      }
+-    });
+-
+-    // Issue cueVideoById explicitly. This is the authoritative command
+-    // that drives the player to 'cued' state, after which the listener
+-    // calls playVideo(). We use cueVideoById instead of loadVideoById because
+-    // loadVideoById automatically starts playing, bypassing our generation 
+-    // and lock-screen guards.
+-    debugPrint('MediaKitPlaybackEngine: [CUE gen $generation] cueVideoById: $videoId');
+-    _youtubeController!.cueVideoById(videoId: videoId);
+-  }
+-
+-
+-  @override
+-  Future<void> pause({String caller = 'user'}) async {
+-    _diag('ENGINE pause() caller=$caller intendedWas=$_intendedState gen=$_playGeneration');
+     _intendedState = PlaybackState.paused;
+-    
+-    // Optimistically update the state so the UI and OS MediaSession reflect 
+-    // the paused state immediately, rather than waiting for the JS bridge 
++
++    // Optimistically update the state so the UI and OS MediaSession reflect
++    // the paused state immediately, rather than waiting for the JS bridge
+     // (which may be suspended by the OS and never fire the event).
+     _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+-    
++
+     if (_currentStatus.isIFrameMode) {
++      _latePauseGeneration = _playGeneration;
+       try {
+-        await _youtubeController?.pauseVideo().timeout(const Duration(seconds: 2));
++        await _youtubeController?.pauseVideo().timeout(
++          const Duration(seconds: 2),
++        );
+       } catch (e) {
+         debugPrint('MediaKitPlaybackEngine: pauseVideo failed/timed out: $e');
+       }
+-      
+-      // If a resume() was called while we were waiting for the pause command 
+-      // (which could have hung due to WebView suspension), don't leave the engine 
+-      // in a paused intended state.
+-      if (_intendedState == PlaybackState.paused && !isActivityStopped) {
+-         // The user didn't resume, and we aren't stopped. We maintain our paused intent.
+-      }
+     } else {
+       await _player?.pause();
+     }
+   }
+ 
+-  void _dispatchIFramePlay(int expectedGeneration, String source) {
+-    _diag('_dispatchIFramePlay src=$source gen=$expectedGeneration/_playGeneration=$_playGeneration '
+-          'activityStopped=$isActivityStopped intended=$_intendedState');
+-
+-    if (expectedGeneration != _playGeneration) {
+-      _diag('_dispatchIFramePlay SKIP: stale gen $expectedGeneration (current=$_playGeneration)');
++  Future<void> _dispatchIFramePlay(
++    int expectedGeneration,
++    String source,
++  ) async {
++    bool eligible() =>
++        _valid(expectedGeneration) &&
++        _intendedState == PlaybackState.playing &&
++        (BackgroundPlaybackExperiment.enabled || !isActivityStopped);
++    if (!eligible()) {
++      if (_valid(expectedGeneration) && isActivityStopped) {
++        _watchdogTimer?.cancel();
++        _intendedState = PlaybackState.paused;
++        _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
++      }
+       return;
+     }
+-
+-    // --- Activity-stopped guard (baseline only) ---
+-    if (!BackgroundPlaybackExperiment.enabled && isActivityStopped) {
+-      _diag('_dispatchIFramePlay BLOCKED [BASELINE guard]: activity stopped. '
+-            'Setting intendedState=paused.');
+-      _intendedState = PlaybackState.paused;
+-      _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+-      return;
+-    }
+-
+-    if (BackgroundPlaybackExperiment.enabled && isActivityStopped) {
+-      _diag('_dispatchIFramePlay PASS-THROUGH [EXPERIMENT]: activity stopped but guard disabled. '
+-            'Forwarding playVideo() to WebView.');
+-    }
+-    // --- End activity-stopped guard ---
+-
+-    if (_intendedState == PlaybackState.paused) {
+-      _diag('_dispatchIFramePlay BLOCKED: intendedState=paused (user pause). Reason: normal user-pause.');
+-      return;
+-    }
+-
++    final revision = _intentRevision;
+     _lastPlayedGeneration = expectedGeneration;
+-    _diag('_dispatchIFramePlay DISPATCH playVideo() gen=$expectedGeneration src=$source');
+-    _youtubeController?.setVolume((_currentStatus.volume * 100).toInt());
+-    _youtubeController?.playVideo();
++    try {
++      await _youtubeController!.setVolume(
++        (_currentStatus.volume * 100).toInt(),
++      );
++      if (!eligible() || revision != _intentRevision) return;
++      _diag('DISPATCH playVideo gen=$expectedGeneration source=$source');
++      final command = _youtubeController!.playVideo();
++      _armWatchdog(expectedGeneration, loading: false);
++      await command;
++    } catch (error) {
++      if (eligible() && revision == _intentRevision) {
++        _failAttempt(
++          expectedGeneration,
++          'YouTube playback dispatch failed: $error',
++        );
++      }
++    }
+   }
+ 
+   @override
+   Future<void> resume() async {
+-    _diag('ENGINE resume() iframeMode=${_currentStatus.isIFrameMode} '
+-          'activityStopped=$isActivityStopped gen=$_playGeneration');
++    _intentRevision++;
++    _diag(
++      'ENGINE resume() iframeMode=${_currentStatus.isIFrameMode} '
++      'activityStopped=$isActivityStopped gen=$_playGeneration',
++    );
+ 
+     // --- Activity-stopped guard (baseline only) ---
+     if (!BackgroundPlaybackExperiment.enabled &&
+         _currentStatus.isIFrameMode &&
+         isActivityStopped) {
+-      _diag('ENGINE resume() BLOCKED [BASELINE guard]: activity stopped. '
+-            'Setting intendedState=paused, emitting paused.');
++      _diag(
++        'ENGINE resume() BLOCKED [BASELINE guard]: activity stopped. '
++        'Setting intendedState=paused, emitting paused.',
++      );
+       _intendedState = PlaybackState.paused;
+       _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+       return;
+@@ -473,13 +523,19 @@
+     if (BackgroundPlaybackExperiment.enabled &&
+         _currentStatus.isIFrameMode &&
+         isActivityStopped) {
+-      _diag('ENGINE resume() PASS-THROUGH [EXPERIMENT]: activity stopped but guard disabled.');
++      _diag(
++        'ENGINE resume() PASS-THROUGH [EXPERIMENT]: activity stopped but guard disabled.',
++      );
+     }
+     // --- End activity-stopped guard ---
+ 
+     _intendedState = PlaybackState.playing;
+     if (_currentStatus.isIFrameMode) {
+-      _dispatchIFramePlay(_playGeneration, 'resume');
++      if (_ready) {
++        await _dispatchIFramePlay(_playGeneration, 'resume');
++      } else if (_valid(_playGeneration)) {
++        _armWatchdog(_playGeneration, loading: true);
++      }
+     } else {
+       await _player?.play();
+     }
+@@ -487,21 +543,33 @@
+ 
+   @override
+   Future<void> stop() async {
++    _playGeneration++;
++    _intentRevision++;
++    _attemptActive = false;
++    _latePauseGeneration = null;
++    _watchdogTimer?.cancel();
++    _stopIFramePolling();
+     _intendedState = PlaybackState.paused;
+-    
++
+     // Optimistically update the state before awaiting, because if the app is
+     // suspended in the background, the JS bridge will hang and timeout after 25s.
+-    _updateStatus(_currentStatus.copyWith(
+-      state: PlaybackState.idle, 
+-      track: null,
+-      activeVideoId: null,
+-    ));
+-    
++    _updateStatus(
++      _currentStatus.copyWith(
++        state: PlaybackState.idle,
++        track: null,
++        activeVideoId: null,
++      ),
++    );
++
+     if (_currentStatus.isIFrameMode) {
+       try {
+-        await _youtubeController?.pauseVideo().timeout(const Duration(seconds: 2));
++        await _youtubeController?.pauseVideo().timeout(
++          const Duration(seconds: 2),
++        );
+       } catch (e) {
+-        debugPrint('MediaKitPlaybackEngine: stop() pauseVideo threw/timed out: $e');
++        debugPrint(
++          'MediaKitPlaybackEngine: stop() pauseVideo threw/timed out: $e',
++        );
+       }
+       // We keep the controller alive to avoid recreating the platform view
+     } else {
+@@ -511,15 +579,34 @@
+ 
+   @override
+   Future<void> seekTo(Duration position) async {
++    final generation = _playGeneration;
++    final revision = _intentRevision;
+     final wasPlaying = _currentStatus.state == PlaybackState.playing;
+-    
++
+     if (_currentStatus.isIFrameMode) {
++      if (!_valid(generation)) return;
++      // Seeking a cued video can start it implicitly. Prepare the offset with
++      // cue instead whenever playback is paused, loading, or ineligible.
++      if (!wasPlaying ||
++          _intendedState != PlaybackState.playing ||
++          (!BackgroundPlaybackExperiment.enabled && isActivityStopped)) {
++        _ready = false;
++        await _cue(
++          generation,
++          _currentStatus.track!.id,
++          startSeconds: position.inMilliseconds / 1000,
++        );
++        if (_valid(generation)) {
++          _updateStatus(_currentStatus.copyWith(position: position));
++        }
++        return;
++      }
+       await _youtubeController?.seekTo(
+         seconds: position.inSeconds.toDouble(),
+         allowSeekAhead: true,
+       );
+-      if (wasPlaying) {
+-        await _youtubeController?.playVideo();
++      if (wasPlaying && revision == _intentRevision) {
++        await _dispatchIFramePlay(generation, 'seek');
+       }
+     } else {
+       await _player?.seek(position);
+@@ -549,11 +636,14 @@
+   }
+ 
+   void _updateStatus(PlaybackStatus status) {
++    if (_disposed) return;
+     // Only log on meaningful state transitions, not position-polling noise
+     if (status.state != _currentStatus.state) {
+-      _diag('STATE ${_currentStatus.state} → ${status.state} '
+-            'gen=$_playGeneration intended=$_intendedState '
+-            'activityStopped=$isActivityStopped');
++      _diag(
++        'STATE ${_currentStatus.state} → ${status.state} '
++        'gen=$_playGeneration intended=$_intendedState '
++        'activityStopped=$isActivityStopped',
++      );
+     }
+     _currentStatus = status;
+     _statusController.add(status);
+@@ -569,22 +659,31 @@
+   }
+ 
+   void _startIFramePolling() {
++    final generation = _playGeneration;
+     _iframePositionTimer?.cancel();
+-    _iframePositionTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) async {
++    _iframePositionTimer = Timer.periodic(const Duration(milliseconds: 500), (
++      timer,
++    ) async {
+       if (_youtubeController == null || !_currentStatus.isIFrameMode) {
+         timer.cancel();
+         return;
+       }
+-      
++
+       try {
+         final currentTime = await _youtubeController!.currentTime;
+         final duration = await _youtubeController!.duration;
+-        
+-        if (_currentStatus.state == PlaybackState.playing) {
+-          _updateStatus(_currentStatus.copyWith(
+-            position: Duration(seconds: currentTime.toInt()),
+-            duration: Duration(seconds: duration.toInt()),
+-          ));
++
++        if (_valid(generation) &&
++            _currentStatus.state == PlaybackState.playing) {
++          _diag(
++            'RENDERER gen=$generation position=$currentTime duration=$duration',
++          );
++          _updateStatus(
++            _currentStatus.copyWith(
++              position: Duration(seconds: currentTime.toInt()),
++              duration: Duration(seconds: duration.toInt()),
++            ),
++          );
+         }
+       } catch (e) {
+         // Ignore polling errors during transitions
+@@ -599,6 +698,10 @@
+ 
+   @override
+   void dispose() {
++    if (_disposed) return;
++    _disposed = true;
++    _attemptActive = false;
++    _playGeneration++;
+     _watchdogTimer?.cancel();
+     _iframePositionTimer?.cancel();
+     // Cancel all stream subscriptions BEFORE disposing the player.
+@@ -614,4 +717,3 @@
+     _eventController.close();
+   }
+ }
+-
+--- a/lib/core/playback/packages/pp_playback_engine/test/engine_error_test.dart
++++ b/lib/core/playback/packages/pp_playback_engine/test/engine_error_test.dart
+@@ -1,155 +1,124 @@
+-import 'dart:async';
+ import 'package:flutter_test/flutter_test.dart';
+ import 'package:pp_playback_engine/pp_playback_engine.dart';
+ import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
+-import 'package:webview_flutter/webview_flutter.dart';
+-
+-class FakeWebViewController extends Fake implements WebViewController {
+-  @override
+-  Future<void> addJavaScriptChannel(String name, {required void Function(JavaScriptMessage) onMessageReceived}) async {}
+-}
+-
+-// A fake YoutubePlayerController to emit custom events without a real webview
+-class FakeYoutubeController extends Fake implements yt.YoutubePlayerController {
+-  final StreamController<yt.YoutubePlayerValue> _streamController = StreamController<yt.YoutubePlayerValue>.broadcast();
+-  yt.YoutubePlayerValue _value = yt.YoutubePlayerValue();
+-  final _webViewController = FakeWebViewController();
+-
+-  @override
+-  WebViewController get webViewController => _webViewController;
+-
+-  @override
+-  yt.YoutubePlayerValue get value => _value;
+-
+-  @override
+-  StreamSubscription<yt.YoutubePlayerValue> listen(
+-    void Function(yt.YoutubePlayerValue event)? onData, {
+-    Function? onError,
+-    void Function()? onDone,
+-    bool? cancelOnError,
+-  }) {
+-    return _streamController.stream.listen(
+-      onData,
+-      onError: onError,
+-      onDone: onDone,
+-      cancelOnError: cancelOnError,
+-    );
+-  }
+-
+-  void emitError(String videoId, yt.YoutubeError error) {
+-    _value = yt.YoutubePlayerValue(
+-      error: error,
+-      metaData: yt.YoutubeMetaData(videoId: videoId),
+-    );
+-    _streamController.add(_value);
+-  }
+-
+-  void emitState(String videoId, yt.PlayerState state) {
+-    _value = yt.YoutubePlayerValue(
+-      playerState: state,
+-      metaData: yt.YoutubeMetaData(videoId: videoId),
+-    );
+-    _streamController.add(_value);
+-  }
+-
+-  @override
+-  Future<void> loadVideoById({
+-    required String videoId,
+-    double? startSeconds,
+-    double? endSeconds,
+-  }) async {}
+-
+-  @override
+-  Future<void> cueVideoById({
+-    required String videoId,
+-    double? startSeconds,
+-    double? endSeconds,
+-  }) async {}
+-
+-  @override
+-  Future<void> pauseVideo() async {}
+-}
++import 'fake_youtube_controller.dart';
+ 
+ void main() {
+-  test('Engine ignores stale errors for different video IDs but accepts legitimate errors', () async {
++  testWidgets(
++    'Engine ignores stale errors for different video IDs but accepts legitimate errors',
++    (tester) async {
++      final fakeController = FakeYoutubeController();
++
++      final engine = MediaKitPlaybackEngine(
++        youtubeControllerFactory: (id, params) => fakeController,
++      );
++
++      addTearDown(engine.dispose);
++      final statuses = <PlaybackStatus>[];
++      final subscription = engine.statusStream.listen(statuses.add);
++      addTearDown(subscription.cancel);
++
++      final track1 = const PlaybackTrack(
++        id: 'vid_1',
++        title: 'T1',
++        artist: 'A',
++        duration: Duration.zero,
++      );
++      final track2 = const PlaybackTrack(
++        id: 'vid_2',
++        title: 'T2',
++        artist: 'A',
++        duration: Duration.zero,
++      );
++
++      // 1. Play track 1
++      await engine.play(track1);
++
++      // 2. Play track 2 (simulating a rapid skip)
++      await engine.play(track2);
++
++      // We are now waiting for track 2 ('vid_2') to load.
++      // The previous track ('vid_1') suddenly emits a delayed network error.
++      fakeController.emitError('vid_1', yt.YoutubeError.videoNotFound);
++
++      await tester.pump();
++
++      // The engine should STILL be in preparing state for track 2, ignoring the stale error.
++      expect(statuses.last.state, PlaybackState.preparing);
++      expect(statuses.last.track?.id, 'vid_2');
++      expect(statuses.last.error, isNull);
++
++      // Now track 2 legitimately fails.
++      fakeController.emitError('vid_2', yt.YoutubeError.videoNotFound);
++
++      await tester.pump();
++
++      // The engine should accept this error because the video ID matches the current load.
++      expect(statuses.last.state, PlaybackState.error);
++      expect(statuses.last.error, 'unavailable_media:videoNotFound');
++    },
++  );
++
++  testWidgets('Engine accepts errors with missing video IDs', (tester) async {
+     final fakeController = FakeYoutubeController();
+-    
+     final engine = MediaKitPlaybackEngine(
+       youtubeControllerFactory: (id, params) => fakeController,
+     );
+-    
++    addTearDown(engine.dispose);
+     final statuses = <PlaybackStatus>[];
+-    engine.statusStream.listen((s) => statuses.add(s));
++    final subscription = engine.statusStream.listen(statuses.add);
++    addTearDown(subscription.cancel);
+ 
+-    final track1 = const PlaybackTrack(id: 'vid_1', title: 'T1', artist: 'A', duration: Duration.zero);
+-    final track2 = const PlaybackTrack(id: 'vid_2', title: 'T2', artist: 'A', duration: Duration.zero);
++    await engine.play(
++      const PlaybackTrack(
++        id: 'vid_1',
++        title: 'T1',
++        artist: 'A',
++        duration: Duration.zero,
++      ),
++    );
+ 
+-    // 1. Play track 1
+-    await engine.play(track1);
+-    
+-    // 2. Play track 2 (simulating a rapid skip)
+-    await engine.play(track2);
+-    
+-    // We are now waiting for track 2 ('vid_2') to load.
+-    // The previous track ('vid_1') suddenly emits a delayed network error.
+-    fakeController.emitError('vid_1', yt.YoutubeError.videoNotFound);
+-    
+-    await Future.delayed(const Duration(milliseconds: 50));
+-    
+-    // The engine should STILL be in preparing state for track 2, ignoring the stale error.
+-    expect(statuses.last.state, PlaybackState.preparing);
+-    expect(statuses.last.track?.id, 'vid_2');
+-    expect(statuses.last.error, isNull);
+-    
+-    // Now track 2 legitimately fails.
+-    fakeController.emitError('vid_2', yt.YoutubeError.videoNotFound);
+-    
+-    await Future.delayed(const Duration(milliseconds: 50));
+-    
+-    // The engine should accept this error because the video ID matches the current load.
+-    expect(statuses.last.state, PlaybackState.error);
+-    expect(statuses.last.error, 'unavailable_media:videoNotFound');
+-  });
+-
+-  test('Engine accepts errors with missing video IDs', () async {
+-    final fakeController = FakeYoutubeController();
+-    final engine = MediaKitPlaybackEngine(youtubeControllerFactory: (id, params) => fakeController);
+-    final statuses = <PlaybackStatus>[];
+-    engine.statusStream.listen((s) => statuses.add(s));
+-
+-    await engine.play(const PlaybackTrack(id: 'vid_1', title: 'T1', artist: 'A', duration: Duration.zero));
+-    
+     // Emit an error with an empty video ID
+     fakeController.emitError('', yt.YoutubeError.notEmbeddable);
+-    await Future.delayed(const Duration(milliseconds: 50));
+-    
++    await tester.pump();
++
+     // Since the video ID is missing, the engine can't prove it's stale, so it must accept it
+     expect(statuses.last.state, PlaybackState.error);
+     expect(statuses.last.error, 'unavailable_media:notEmbeddable');
+   });
+ 
+-  test('Engine behavior on same-video retry with stale error', () async {
++  testWidgets('Engine behavior on same-video retry with stale error', (
++    tester,
++  ) async {
+     final fakeController = FakeYoutubeController();
+-    final engine = MediaKitPlaybackEngine(youtubeControllerFactory: (id, params) => fakeController);
++    final engine = MediaKitPlaybackEngine(
++      youtubeControllerFactory: (id, params) => fakeController,
++    );
++    addTearDown(engine.dispose);
+     final statuses = <PlaybackStatus>[];
+-    engine.statusStream.listen((s) => statuses.add(s));
++    final subscription = engine.statusStream.listen(statuses.add);
++    addTearDown(subscription.cancel);
+ 
+-    final track = const PlaybackTrack(id: 'vid_1', title: 'T1', artist: 'A', duration: Duration.zero);
+-    
++    final track = const PlaybackTrack(
++      id: 'vid_1',
++      title: 'T1',
++      artist: 'A',
++      duration: Duration.zero,
++    );
++
+     // 1. Play track
+     await engine.play(track);
+-    
++
+     // 2. Simulate a user hitting retry (playing the exact same track again)
+     await engine.play(track);
+-    
++
+     // 3. A stale error from the first attempt arrives
+     fakeController.emitError('vid_1', yt.YoutubeError.cannotFindVideo);
+-    await Future.delayed(const Duration(milliseconds: 50));
+-    
++    await tester.pump();
++
+     // Currently, the engine accepts it because the videoId matches the current track.
+     // This test documents the current known limitation.
+     expect(statuses.last.state, PlaybackState.error);
+     expect(statuses.last.error, 'unavailable_media:cannotFindVideo');
+   });
+ }
+-
+--- /dev/null
++++ b/lib/core/playback/packages/pp_playback_engine/test/fake_youtube_controller.dart
+@@ -0,0 +1,114 @@
++import 'dart:async';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
++// ignore: depend_on_referenced_packages
++import 'package:webview_flutter/webview_flutter.dart';
++
++class FakeWebViewController extends Fake implements WebViewController {
++  @override
++  Future<void> addJavaScriptChannel(
++    String name, {
++    required void Function(JavaScriptMessage) onMessageReceived,
++  }) async {}
++}
++
++// A fake YoutubePlayerController to emit custom events without a real webview
++class FakeYoutubeController extends Fake implements yt.YoutubePlayerController {
++  final StreamController<yt.YoutubePlayerValue> _streamController =
++      StreamController<yt.YoutubePlayerValue>.broadcast();
++  yt.YoutubePlayerValue _value = yt.YoutubePlayerValue();
++  final _webViewController = FakeWebViewController();
++
++  @override
++  WebViewController get webViewController => _webViewController;
++
++  @override
++  yt.YoutubePlayerValue get value => _value;
++
++  @override
++  StreamSubscription<yt.YoutubePlayerValue> listen(
++    void Function(yt.YoutubePlayerValue event)? onData, {
++    Function? onError,
++    void Function()? onDone,
++    bool? cancelOnError,
++  }) {
++    return _streamController.stream.listen(
++      onData,
++      onError: onError,
++      onDone: onDone,
++      cancelOnError: cancelOnError,
++    );
++  }
++
++  void emitError(String videoId, yt.YoutubeError error) {
++    _value = yt.YoutubePlayerValue(
++      error: error,
++      metaData: yt.YoutubeMetaData(videoId: videoId),
++    );
++    _streamController.add(_value);
++  }
++
++  void emitState(String videoId, yt.PlayerState state) {
++    _value = yt.YoutubePlayerValue(
++      playerState: state,
++      metaData: yt.YoutubeMetaData(videoId: videoId),
++    );
++    _streamController.add(_value);
++  }
++
++  final commands = <({String name, Map<String, Object?> parameters})>[];
++  Completer<void>? pauseCompletion,
++      volumeCompletion,
++      seekCompletion,
++      cueCompletion,
++      playCompletion;
++  int count(String name) => commands.where((c) => c.name == name).length;
++  Future<void> record(
++    String name, [
++    Map<String, Object?> parameters = const {},
++    Completer<void>? completion,
++  ]) {
++    commands.add((name: name, parameters: parameters));
++    return completion?.future ?? Future.value();
++  }
++
++  @override
++  Future<void> playVideo() => record('play', const {}, playCompletion);
++  @override
++  Future<void> setVolume(int volume) =>
++      record('volume', {'volume': volume}, volumeCompletion);
++  @override
++  Future<void> seekTo({required double seconds, bool allowSeekAhead = true}) =>
++      record('seek', {
++        'seconds': seconds,
++        'allowSeekAhead': allowSeekAhead,
++      }, seekCompletion);
++  @override
++  Future<double> get currentTime async => 12;
++  @override
++  Future<double> get duration async => 200;
++  @override
++  Future<void> close() => _streamController.close();
++  @override
++  Future<void> loadVideoById({
++    required String videoId,
++    double? startSeconds,
++    double? endSeconds,
++  }) => record('load', {
++    'videoId': videoId,
++    'startSeconds': startSeconds,
++    'endSeconds': endSeconds,
++  });
++  @override
++  Future<void> cueVideoById({
++    required String videoId,
++    double? startSeconds,
++    double? endSeconds,
++  }) => record('cue', {
++    'videoId': videoId,
++    'startSeconds': startSeconds,
++    'endSeconds': endSeconds,
++  }, cueCompletion);
++  @override
++  Future<void> pauseVideo() => record('pause', const {}, pauseCompletion);
++}
+--- a/lib/core/playback/packages/pp_playback_engine/test/media_kit_playback_engine_test.dart
++++ b/lib/core/playback/packages/pp_playback_engine/test/media_kit_playback_engine_test.dart
+@@ -1,5 +1,362 @@
++import 'dart:async';
++import 'package:media_kit/media_kit.dart' show Player;
+ import 'package:flutter_test/flutter_test.dart';
++import 'package:pp_playback_engine/pp_playback_engine.dart';
++import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
++import 'fake_youtube_controller.dart';
++
++class FakeNativePlayer extends Fake implements Player {
++  int plays = 0;
++  int pauses = 0;
++  @override
++  Future<void> play() async {
++    plays++;
++  }
++
++  @override
++  Future<void> pause() async {
++    pauses++;
++  }
++
++  @override
++  Future<void> dispose() async {}
++}
++
++const track = PlaybackTrack(id: 'videoAAAAAA', title: 'A');
++const other = PlaybackTrack(id: 'videoBBBBBB', title: 'B');
+ 
+ void main() {
+-  test('Placeholder for playback engine tests', () {});
++  late FakeYoutubeController controller;
++  late MediaKitPlaybackEngine engine;
++  late List<PlaybackStatus> statuses;
++  late StreamSubscription<PlaybackStatus> subscription;
++  setUp(() {
++    MediaKitPlaybackEngine.isActivityStopped = false;
++    controller = FakeYoutubeController();
++    engine = MediaKitPlaybackEngine(
++      youtubeControllerFactory: (_, _) => controller,
++    );
++    statuses = [];
++    subscription = engine.statusStream.listen(statuses.add);
++  });
++  tearDown(() async {
++    engine.dispose();
++    await subscription.cancel();
++    MediaKitPlaybackEngine.isActivityStopped = false;
++  });
++  void engineTest(String name, Future<void> Function(WidgetTester) body) {
++    testWidgets(name, (tester) async {
++      try {
++        await body(tester);
++      } finally {
++        engine.dispose();
++        await tester.pump();
++      }
++    });
++  }
++
++  Future<void> ready(WidgetTester tester) async {
++    await engine.play(track);
++    controller.emitState(track.id, yt.PlayerState.cued);
++    await tester.pump();
++  }
++
++  engineTest('loading timeout: one recovery cue and one terminal failure', (
++    tester,
++  ) async {
++    addTearDown(engine.dispose);
++    addTearDown(engine.dispose);
++    await engine.play(track);
++    await tester.pump(const Duration(seconds: 20));
++    expect(controller.count('cue'), 2);
++    await tester.pump(const Duration(seconds: 10));
++    expect(engine.currentStatus.error, contains('loading timed out'));
++    await tester.pump(const Duration(minutes: 2));
++    expect(controller.count('cue'), 2);
++    expect(statuses.where((s) => s.state == PlaybackState.error), hasLength(1));
++  });
++  engineTest('playback start timeout has one shared recovery and one failure', (
++    tester,
++  ) async {
++    addTearDown(engine.dispose);
++    await ready(tester);
++    await tester.pump(const Duration(seconds: 20));
++    expect(controller.count('cue'), 2);
++    controller.emitState(track.id, yt.PlayerState.cued);
++    await tester.pump();
++    expect(controller.count('play'), 2);
++    await tester.pump(const Duration(seconds: 10));
++    expect(engine.currentStatus.error, contains('playback start timed out'));
++    await tester.pump(const Duration(minutes: 2));
++    expect(statuses.where((s) => s.state == PlaybackState.error), hasLength(1));
++    expect(controller.count('cue'), 2);
++  });
++  engineTest('replacement and stop invalidate old watchdogs', (tester) async {
++    addTearDown(engine.dispose);
++    await engine.play(track);
++    await tester.pump(const Duration(seconds: 19));
++    await engine.play(other);
++    await tester.pump(const Duration(seconds: 11));
++    expect(controller.count('cue'), 2);
++    expect(engine.currentStatus.track?.id, other.id);
++    await engine.stop();
++    await tester.pump(const Duration(minutes: 2));
++    expect(controller.count('cue'), 2);
++    expect(statuses.where((s) => s.state == PlaybackState.error), isEmpty);
++  });
++  engineTest(
++    'stopped activity cues without play or start timeout; foreground resume plays once',
++    (tester) async {
++      addTearDown(engine.dispose);
++      MediaKitPlaybackEngine.isActivityStopped = true;
++      await ready(tester);
++      expect(controller.commands.first.parameters['videoId'], track.id);
++      expect(controller.count('load'), 0);
++      expect(controller.count('play'), 0);
++      await tester.pump(const Duration(minutes: 1));
++      expect(engine.currentStatus.error, isNull);
++      MediaKitPlaybackEngine.isActivityStopped = false;
++      await engine.resume();
++      controller.emitState(track.id, yt.PlayerState.cued);
++      controller.emitState(track.id, yt.PlayerState.cued);
++      await tester.pump();
++      expect(controller.count('play'), 1);
++    },
++  );
++  engineTest('superseded asynchronous preparation cannot play', (tester) async {
++    addTearDown(engine.dispose);
++    controller.volumeCompletion = Completer<void>();
++    await ready(tester);
++    await engine.play(other);
++    controller.volumeCompletion!.complete();
++    await tester.pump();
++    expect(controller.count('play'), 0);
++    controller.emitState(track.id, yt.PlayerState.cued);
++    await tester.pump();
++    expect(controller.count('play'), 0);
++    controller.emitState(other.id, yt.PlayerState.cued);
++    await tester.pump();
++    expect(controller.count('play'), 1);
++  });
++  engineTest(
++    'lifecycle is checked again after asynchronous volume preparation',
++    (tester) async {
++      addTearDown(engine.dispose);
++      controller.volumeCompletion = Completer<void>();
++      await ready(tester);
++      MediaKitPlaybackEngine.isActivityStopped = true;
++      controller.volumeCompletion!.complete();
++      await tester.pump();
++      expect(controller.count('play'), 0);
++      await tester.pump(const Duration(minutes: 1));
++      expect(engine.currentStatus.error, isNull);
++    },
++  );
++  engineTest(
++    'pause is prompt; timeout and late completion never fail or end playback',
++    (tester) async {
++      addTearDown(engine.dispose);
++      await ready(tester);
++      controller.emitState(track.id, yt.PlayerState.playing);
++      await tester.pump();
++      controller.pauseCompletion = Completer<void>();
++      var finished = false;
++      final pause = engine.pause().then((_) => finished = true);
++      expect(engine.currentStatus.state, PlaybackState.paused);
++      await tester.pump();
++      expect(finished, false);
++      await tester.pump(const Duration(seconds: 2));
++      await pause;
++      expect(finished, true);
++      controller.pauseCompletion!.complete();
++      await tester.pump();
++      expect(engine.currentStatus.state, PlaybackState.paused);
++      expect(
++        statuses.where(
++          (s) =>
++              s.state == PlaybackState.error || s.state == PlaybackState.ended,
++        ),
++        isEmpty,
++      );
++    },
++  );
++  engineTest(
++    'resume wins pending pause; late renderer pause reconciles only once',
++    (tester) async {
++      addTearDown(engine.dispose);
++      await ready(tester);
++      controller.pauseCompletion = Completer<void>();
++      final pause = engine.pause();
++      await engine.resume();
++      controller.emitState(track.id, yt.PlayerState.playing);
++      await tester.pump();
++      controller.pauseCompletion!.complete();
++      await pause;
++      expect(engine.currentStatus.state, PlaybackState.playing);
++      controller.emitState(track.id, yt.PlayerState.paused);
++      await tester.pump();
++      expect(controller.count('play'), 3);
++      controller.emitState(track.id, yt.PlayerState.paused);
++      await tester.pump();
++      expect(controller.count('play'), 3);
++      expect(engine.currentStatus.state, PlaybackState.paused);
++    },
++  );
++  for (final caller in ['user', 'audio-focus-loss']) {
++    engineTest('$caller pause respects intent despite late playing/buffering', (
++      tester,
++    ) async {
++      addTearDown(engine.dispose);
++      await ready(tester);
++      await engine.pause(caller: caller);
++      controller.emitState(track.id, yt.PlayerState.playing);
++      controller.emitState(track.id, yt.PlayerState.buffering);
++      await tester.pump();
++      expect(engine.currentStatus.state, PlaybackState.paused);
++      expect(controller.count('play'), 1);
++    });
++  }
++  engineTest('stop during pending pause and dispatch prevents stale restart', (
++    tester,
++  ) async {
++    addTearDown(engine.dispose);
++    await ready(tester);
++    controller.pauseCompletion = Completer<void>();
++    final pause = engine.pause();
++    controller.volumeCompletion = Completer<void>();
++    final resume = engine.resume();
++    final stop = engine.stop();
++    controller.volumeCompletion!.complete();
++    controller.pauseCompletion!.complete();
++    await Future.wait([pause, resume, stop]);
++    controller.emitState(track.id, yt.PlayerState.paused);
++    controller.emitState(track.id, yt.PlayerState.cued);
++    await tester.pump(const Duration(minutes: 1));
++    expect(controller.count('play'), 1);
++    expect(engine.currentStatus.state, PlaybackState.idle);
++  });
++  engineTest('seek completion cannot replay after pause', (tester) async {
++    addTearDown(engine.dispose);
++    await ready(tester);
++    controller.emitState(track.id, yt.PlayerState.playing);
++    await tester.pump();
++    controller.seekCompletion = Completer<void>();
++    final seek = engine.seekTo(const Duration(seconds: 5));
++    await engine.pause();
++    controller.seekCompletion!.complete();
++    await seek;
++    expect(controller.count('play'), 1);
++  });
++  engineTest('duplicate ambiguous errors terminate a single attempt once', (
++    tester,
++  ) async {
++    addTearDown(engine.dispose);
++    await engine.play(track);
++    for (var i = 0; i < 100; i++) {
++      controller.emitError('', yt.YoutubeError.notEmbeddable);
++    }
++    await tester.pump(const Duration(minutes: 1));
++    expect(statuses.where((s) => s.state == PlaybackState.error), hasLength(1));
++    expect(controller.count('cue'), 1);
++  });
++  engineTest(
++    'acknowledged pause leaves no replay credit for later focus pause',
++    (tester) async {
++      await ready(tester);
++      await engine.pause();
++      controller.emitState(track.id, yt.PlayerState.paused);
++      await tester.pump();
++      await engine.resume();
++      controller.emitState(track.id, yt.PlayerState.playing);
++      await tester.pump();
++      controller.emitState(track.id, yt.PlayerState.paused);
++      await tester.pump();
++      expect(controller.count('play'), 2);
++      expect(engine.currentStatus.state, PlaybackState.paused);
++    },
++  );
++  engineTest('paused seek prepares an offset without implicit playback', (
++    tester,
++  ) async {
++    await ready(tester);
++    await engine.pause();
++    await engine.seekTo(const Duration(milliseconds: 5500));
++    expect(controller.count('seek'), 0);
++    expect(
++      controller.commands
++          .where((c) => c.name == 'cue')
++          .last
++          .parameters['startSeconds'],
++      5.5,
++    );
++    controller.emitState(track.id, yt.PlayerState.cued);
++    await tester.pump();
++    expect(controller.count('play'), 1);
++  });
++  engineTest('pause failure after resume preserves current state', (
++    tester,
++  ) async {
++    await ready(tester);
++    controller.pauseCompletion = Completer<void>();
++    final pause = engine.pause();
++    await engine.resume();
++    controller.emitState(track.id, yt.PlayerState.playing);
++    await tester.pump();
++    controller.pauseCompletion!.completeError(StateError('bridge failed'));
++    await pause;
++    expect(engine.currentStatus.state, PlaybackState.playing);
++    expect(engine.currentStatus.error, isNull);
++  });
++  engineTest(
++    'disposal during volume preparation cancels watchdog and prevents play',
++    (tester) async {
++      controller.volumeCompletion = Completer<void>();
++      await ready(tester);
++      engine.dispose();
++      controller.volumeCompletion!.complete();
++      await tester.pump(const Duration(minutes: 2));
++      expect(controller.count('play'), 0);
++      expect(controller.count('cue'), 1);
++    },
++  );
++  engineTest('superseded cleanup cannot cue its old track', (tester) async {
++    await engine.play(track);
++    controller.pauseCompletion = Completer<void>();
++    final stale = engine.play(track);
++    final current = engine.play(other);
++    controller.pauseCompletion!.complete();
++    await Future.wait([stale, current]);
++    expect(controller.count('cue'), 2);
++    expect(
++      controller.commands
++          .where((c) => c.name == 'cue')
++          .last
++          .parameters['videoId'],
++      other.id,
++    );
++  });
++  engineTest('repeated readiness events do not postpone start timeout', (
++    tester,
++  ) async {
++    await ready(tester);
++    await tester.pump(const Duration(seconds: 19));
++    controller.emitState(track.id, yt.PlayerState.cued);
++    await tester.pump(const Duration(seconds: 1));
++    expect(controller.count('play'), 1);
++    expect(controller.count('cue'), 2);
++  });
++  test(
++    'native resume and pause are unaffected by Android IFrame restriction',
++    () async {
++      engine.dispose();
++      final native = FakeNativePlayer();
++      engine = MediaKitPlaybackEngine(nativePlayer: native);
++      MediaKitPlaybackEngine.isActivityStopped = true;
++      await engine.resume();
++      await engine.pause();
++      expect(native.plays, 1);
++      expect(native.pauses, 1);
++      expect(controller.count('play'), 0);
++    },
++  );
+ }
+--- a/lib/core/playback/packages/youtube_player_iframe_macos_patch/package/lib/src/controller/youtube_player_controller.dart
++++ b/lib/core/playback/packages/youtube_player_iframe_macos_patch/package/lib/src/controller/youtube_player_controller.dart
+@@ -660,7 +660,8 @@
+       case 'emb_rel_end':
+       case 'emb_info':
+         final videoId = params['v'];
+-        if (videoId != null) loadVideoById(videoId: videoId);
++        // Navigation prepares media; the host owns playback dispatch policy.
++        if (videoId != null) cueVideoById(videoId: videoId);
+         break;
+       case 'emb_title':
+       case 'emb_logo':
+--- a/lib/core/player/player_provider.dart
++++ b/lib/core/player/player_provider.dart
+@@ -10,7 +10,6 @@
+ import '../playback/pip_handler.dart';
+ import '../api/spotify_repository.dart';
+ import '../services/settings_provider.dart';
+-import 'package:pp_playback_engine/pp_playback_engine.dart';
+ 
+ export '../models/track.dart' show Track;
+ export '../models/playback_queue.dart' show PlaybackQueue, RepeatMode;
+@@ -63,9 +62,15 @@
+     return PlayerState(
+       playbackQueue: playbackQueue ?? this.playbackQueue,
+       isPlaying: isPlaying ?? this.isPlaying,
+-      videoId: identical(videoId, _sentinel) ? this.videoId : videoId as String?,
++      videoId:
++          identical(videoId, _sentinel) ? this.videoId : videoId as String?,
+       isLoadingVideo: isLoadingVideo ?? this.isLoadingVideo,
+-      loadError: clearLoadError ? null : (identical(loadError, _sentinel) ? this.loadError : loadError as String?),
++      loadError:
++          clearLoadError
++              ? null
++              : (identical(loadError, _sentinel)
++                  ? this.loadError
++                  : loadError as String?),
+       position: position ?? this.position,
+       duration: duration ?? this.duration,
+       buffered: buffered ?? this.buffered,
+@@ -86,14 +91,23 @@
+   bool _skipDebounce = false;
+   bool _lastPipEnabled = false;
+   Timer? _saveTimer;
++  bool _disposed = false;
++  Future<void> _persistenceWork = Future.value();
++
++  /// Allows shutdown/tests to wait for already started disk operations.
++  Future<void> get persistenceSettled => _persistenceWork;
+   bool _prefetchedNextTrackForCurrentLoad = false;
+-  
++
+   bool _isFetchingAutoplay = false;
+   final Set<String> _autoplaySeenTrackIds = {};
+ 
+   @override
+   PlayerState build() {
+-    _initRestore();
++    _persistenceWork = _initRestore();
++    ref.onDispose(() {
++      _disposed = true;
++      _saveTimer?.cancel();
++    });
+     // Listen to the playback engine's status and sync it to our state
+     ref.listen(playbackStatusProvider, (previous, next) {
+       if (next is AsyncData<PlaybackStatus>) {
+@@ -102,7 +116,10 @@
+           if (!_skipDebounce) {
+             _skipDebounce = true;
+             skipNext();
+-            Future.delayed(const Duration(milliseconds: 1000), () => _skipDebounce = false);
++            Future.delayed(
++              const Duration(milliseconds: 1000),
++              () => _skipDebounce = false,
++            );
+           }
+         }
+         _syncFromStatus(status);
+@@ -116,16 +133,22 @@
+     PipHandler.onActivityStopped = () {
+       final status = ref.read(playbackStatusProvider).value;
+       final ts = DateTime.now().toIso8601String();
+-      debugPrint('$ts PlayerNotifier: onActivityStopped '
+-                 'isPlaying=${state.isPlaying} isIFrameMode=${status?.isIFrameMode} '
+-                 'track=${state.currentTrack?.spotifyId}');
++      debugPrint(
++        '$ts PlayerNotifier: onActivityStopped '
++        'isPlaying=${state.isPlaying} isIFrameMode=${status?.isIFrameMode} '
++        'track=${state.currentTrack?.spotifyId}',
++      );
+       if (state.isPlaying && status?.isIFrameMode == true) {
+         if (!BackgroundPlaybackExperiment.enabled) {
+-          debugPrint('$ts PlayerNotifier: pausing via onActivityStopped (caller=lifecycle/lock-screen)');
++          debugPrint(
++            '$ts PlayerNotifier: pausing via onActivityStopped (caller=lifecycle/lock-screen)',
++          );
+           _controller.pause(caller: 'onActivityStopped/lock-screen');
+           state = state.copyWith(isPlaying: false);
+         } else {
+-          debugPrint('$ts ${BackgroundPlaybackExperiment.tag} PlayerNotifier: NOT pausing onActivityStopped to observe native WebView behavior.');
++          debugPrint(
++            '$ts ${BackgroundPlaybackExperiment.tag} PlayerNotifier: NOT pausing onActivityStopped to observe native WebView behavior.',
++          );
+         }
+       }
+     };
+@@ -140,12 +163,17 @@
+   }
+ 
+   void _syncFromStatus(PlaybackStatus status) {
++    if (_disposed) return;
++    debugPrint(
++      '${DateTime.now().toIso8601String()} PLAYER status=${status.state}',
++    );
+     String? displayError = status.error;
+-    
++
+     if (status.state == PlaybackState.error && status.error != null) {
+-      if (status.error!.startsWith('unavailable_media:') || status.error!.startsWith('error:')) {
++      if (status.error!.startsWith('unavailable_media:') ||
++          status.error!.startsWith('error:')) {
+         _handleCandidateFailure();
+-        return; 
++        return;
+       } else if (status.error!.startsWith('transient:')) {
+         return; // Ignore transient errors
+       }
+@@ -156,7 +184,9 @@
+       _isRecovering = false;
+     }
+ 
+-    final isPlaying = status.state == PlaybackState.playing || status.state == PlaybackState.buffering;
++    final isPlaying =
++        status.state == PlaybackState.playing ||
++        status.state == PlaybackState.buffering;
+     final pipEnabled = ref.read(settingsProvider).continuePlaybackInPip;
+     // Only call setPipEnabled when the desired state changes to avoid calling
+     // setPictureInPictureParams during non-foreground states (causes Android
+@@ -169,7 +199,9 @@
+ 
+     state = state.copyWith(
+       isPlaying: isPlaying,
+-      isLoadingVideo: status.state == PlaybackState.preparing || status.state == PlaybackState.buffering,
++      isLoadingVideo:
++          status.state == PlaybackState.preparing ||
++          status.state == PlaybackState.buffering,
+       loadError: displayError,
+       videoId: status.activeVideoId,
+       position: status.position,
+@@ -177,9 +209,10 @@
+       buffered: status.buffered,
+     );
+     _scheduleSaveState();
+-    
++
+     // Trigger prefetch once playback starts successfully
+-    if (status.state == PlaybackState.playing && !_prefetchedNextTrackForCurrentLoad) {
++    if (status.state == PlaybackState.playing &&
++        !_prefetchedNextTrackForCurrentLoad) {
+       _prefetchedNextTrackForCurrentLoad = true;
+       _prefetchNextTrack();
+     }
+@@ -195,75 +228,106 @@
+   }
+ 
+   Future<void> _handleCandidateFailure() async {
+-    if (_isRecovering) return;
++    if (_disposed || _isRecovering || _consecutiveTrackFailures >= 5) return;
+     _isRecovering = true;
+     final track = state.currentTrack;
+-    if (track == null) return;
+-    
+-    debugPrint('PlayerNotifier: Candidate ${track.youtubeVideoId} failed. Trying next candidate.');
+-    
++    if (track == null) {
++      _isRecovering = false;
++      return;
++    }
++    final generation = _playbackGeneration;
++
++    debugPrint(
++      'PlayerNotifier: Candidate ${track.youtubeVideoId} failed. Trying next candidate.',
++    );
++
+     _currentCandidateIndex++;
+     if (_currentCandidateIndex < _currentCandidates.length) {
+-      await _attemptCurrentCandidate(_playbackGeneration, track, List<Track>.from(state.playbackQueue.tracks));
++      await _attemptCurrentCandidate(
++        _playbackGeneration,
++        track,
++        List<Track>.from(state.playbackQueue.tracks),
++      );
+     } else {
+       await _controller.stop();
++      if (_disposed || generation != _playbackGeneration) return;
+       _handleLogicalTrackFailure('Playback failed for all available sources');
+     }
+-    _isRecovering = false;
++    if (!_disposed && generation == _playbackGeneration) _isRecovering = false;
+   }
+ 
+   void _handleLogicalTrackFailure([String? specificError]) {
+     _consecutiveTrackFailures++;
+-    
++
+     if (_consecutiveTrackFailures < 5) {
+       if (specificError != null) {
+         state = state.copyWith(loadError: specificError);
+       }
+-      debugPrint('PlayerNotifier: Track exhausted. Auto-skipping to next (failure count: $_consecutiveTrackFailures)');
+-      
++      debugPrint(
++        'PlayerNotifier: Track exhausted. Auto-skipping to next (failure count: $_consecutiveTrackFailures)',
++      );
++
+       var queue = state.playbackQueue;
+       if (queue.repeatMode == RepeatMode.one) {
+-         queue = queue.copyWith(repeatMode: RepeatMode.all);
+-      }
+-      
++        queue = queue.copyWith(repeatMode: RepeatMode.all);
++      }
++
+       final nextQueue = queue.next();
+       if (nextQueue.currentIndex < nextQueue.tracks.length) {
+         final nextTrack = nextQueue.tracks[nextQueue.currentIndex];
+         playTrack(nextTrack, queue: nextQueue.tracks, isRetry: true);
+       } else {
+-        state = state.copyWith(loadError: specificError ?? 'Queue ended after consecutive failures.', isLoadingVideo: false);
++        state = state.copyWith(
++          loadError: specificError ?? 'Queue ended after consecutive failures.',
++          isLoadingVideo: false,
++        );
+       }
+     } else {
+-      state = state.copyWith(loadError: specificError ?? 'Excessive consecutive track failures. Playback stopped.', isLoadingVideo: false);
+-      debugPrint('PlayerNotifier: Stopped due to excessive consecutive failures.');
++      state = state.copyWith(
++        loadError:
++            specificError ??
++            'Excessive consecutive track failures. Playback stopped.',
++        isLoadingVideo: false,
++      );
++      debugPrint(
++        'PlayerNotifier: Stopped due to excessive consecutive failures.',
++      );
+     }
+   }
+ 
+   void _scheduleSaveState() {
+     if (_saveTimer?.isActive ?? false) return;
+-    _saveTimer = Timer(const Duration(seconds: 2), _saveState);
++    if (_disposed) return;
++    _saveTimer = Timer(const Duration(seconds: 2), () {
++      _persistenceWork = _saveState();
++    });
+   }
+ 
+   Future<void> _saveState() async {
+     try {
++      if (_disposed) return;
++      final snapshot = state;
+       final box = await Hive.openBox('player_state');
+-      await box.put('queue', jsonEncode(state.playbackQueue.toJson()));
+-      await box.put('positionMs', state.position.inMilliseconds);
++      if (_disposed) return;
++      await box.put('queue', jsonEncode(snapshot.playbackQueue.toJson()));
++      await box.put('positionMs', snapshot.position.inMilliseconds);
+     } catch (e) {
+       debugPrint('Failed to save player state: $e');
+     }
+   }
+ 
+   Future<void> _initRestore() async {
++    final generation = _playbackGeneration;
+     try {
+       final box = await Hive.openBox('player_state');
++      if (_disposed || generation != _playbackGeneration) return;
+       final queueJson = box.get('queue');
+       final posMs = box.get('positionMs');
+-      
++
+       if (queueJson != null) {
+         final queue = PlaybackQueue.fromJson(jsonDecode(queueJson));
+         final position = Duration(milliseconds: posMs ?? 0);
+-        
++
+         state = state.copyWith(
+           playbackQueue: queue,
+           position: position,
+@@ -278,7 +342,12 @@
+   // Removed direct service getter to use ref.read inside methods
+   PlaybackController get _controller => ref.read(playbackControllerProvider);
+ 
+-  Future<void> playTrack(Track track, {List<Track>? queue, bool isRetry = false, String? contextArtistId}) async {
++  Future<void> playTrack(
++    Track track, {
++    List<Track>? queue,
++    bool isRetry = false,
++    String? contextArtistId,
++  }) async {
+     if (!isRetry) {
+       _prefetchedNextTrackForCurrentLoad = false;
+       if (queue != null) {
+@@ -291,14 +360,19 @@
+     _isRecovering = false;
+ 
+     final timestamp = DateTime.now().microsecondsSinceEpoch;
+-    
+-    final q = (queue ?? [track]).asMap().entries.map((e) {
+-      final t = e.value;
+-      if (t.queueItemId != null) return t; 
+-      return t.copyWith(queueItemId: '${t.spotifyId}_${timestamp}_${e.key}');
+-    }).toList();
+-
+-    final targetTrack = q.firstWhere((t) => t.spotifyId == track.spotifyId && t.name == track.name);
++
++    final q =
++        (queue ?? [track]).asMap().entries.map((e) {
++          final t = e.value;
++          if (t.queueItemId != null) return t;
++          return t.copyWith(
++            queueItemId: '${t.spotifyId}_${timestamp}_${e.key}',
++          );
++        }).toList();
++
++    final targetTrack = q.firstWhere(
++      (t) => t.spotifyId == track.spotifyId && t.name == track.name,
++    );
+     final idx = q.indexOf(targetTrack);
+ 
+     debugPrint('PlayerNotifier: Resolving track ${track.name}');
+@@ -307,7 +381,9 @@
+       playbackQueue: state.playbackQueue.copyWith(
+         tracks: q,
+         currentIndex: idx < 0 ? 0 : idx,
+-        contextArtistId: contextArtistId ?? (queue != null ? null : state.playbackQueue.contextArtistId),
++        contextArtistId:
++            contextArtistId ??
++            (queue != null ? null : state.playbackQueue.contextArtistId),
+       ),
+       clearLoadError: true,
+       isLoadingVideo: true,
+@@ -322,8 +398,8 @@
+     try {
+       final service = ref.read(playbackServiceProvider);
+       final candidates = await service.resolveCandidates(targetTrack, null);
+-      
+-      if (myGen != _playbackGeneration) return;
++
++      if (_disposed || myGen != _playbackGeneration) return;
+ 
+       if (candidates.isNotEmpty) {
+         _currentCandidates = candidates;
+@@ -331,62 +407,77 @@
+         await _attemptCurrentCandidate(myGen, targetTrack, q);
+       } else {
+         await _controller.stop();
+-        if (myGen != _playbackGeneration) return;
++        if (_disposed || myGen != _playbackGeneration) return;
+         _handleLogicalTrackFailure('No YouTube video found for this track');
+         return;
+       }
+     } catch (e) {
+-      if (myGen != _playbackGeneration) return;
++      if (_disposed || myGen != _playbackGeneration) return;
+       debugPrint('Failed to resolve YouTube ID for ${targetTrack.name}: $e');
+       await _controller.stop();
+-      if (myGen != _playbackGeneration) return;
++      if (_disposed || myGen != _playbackGeneration) return;
+       _handleLogicalTrackFailure('Failed to resolve YouTube ID');
+       return;
+     }
+   }
+ 
+-  Future<void> _attemptCurrentCandidate(int myGen, Track track, List<Track> queue) async {
++  Future<void> _attemptCurrentCandidate(
++    int myGen,
++    Track track,
++    List<Track> queue,
++  ) async {
+     final candidate = _currentCandidates[_currentCandidateIndex];
+     final service = ref.read(playbackServiceProvider);
+-    
+-    if (myGen != _playbackGeneration) return;
+-    
++
++    if (_disposed || myGen != _playbackGeneration) return;
++
+     final newTrack = track.copyWith(youtubeVideoId: candidate.videoId);
+     await service.cacheYoutubeId(newTrack.spotifyId, candidate.videoId);
+-    
++    if (_disposed || myGen != _playbackGeneration) return;
++
+     final newQueue = List<Track>.from(state.playbackQueue.tracks);
+     final idx = state.playbackQueue.currentIndex;
+     if (idx >= 0 && idx < newQueue.length) {
+-       newQueue[idx] = newTrack;
+-       state = state.copyWith(
+-         playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
+-         isLoadingVideo: true,
+-       );
+-    }
+-    
++      newQueue[idx] = newTrack;
++      state = state.copyWith(
++        playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
++        isLoadingVideo: true,
++      );
++    }
++
+     if (_currentCandidateIndex > 0) {
+-       state = state.copyWith(loadError: 'Trying another source...');
++      state = state.copyWith(loadError: 'Trying another source...');
+     } else {
+-       state = state.copyWith(clearLoadError: true);
+-    }
+-    
+-    await _controller.stop(); 
+-    if (myGen != _playbackGeneration) return;
++      state = state.copyWith(clearLoadError: true);
++    }
++
++    await _controller.stop();
++    if (_disposed || myGen != _playbackGeneration) return;
+ 
+     await _controller.play(newTrack.toPlaybackTrack());
+-    if (myGen != _playbackGeneration) return;
++    if (_disposed || myGen != _playbackGeneration) return;
+     _controller.setVolume(state.volume);
+-    
++
+     await service.recordPlay(newTrack);
+   }
+ 
+-  Future<void> playTracks(List<Track> tracks, {int initialIndex = 0, String? contextArtistId}) async {
++  Future<void> playTracks(
++    List<Track> tracks, {
++    int initialIndex = 0,
++    String? contextArtistId,
++  }) async {
+     if (tracks.isEmpty) return;
+-    final track = (initialIndex >= 0 && initialIndex < tracks.length) ? tracks[initialIndex] : tracks.first;
++    final track =
++        (initialIndex >= 0 && initialIndex < tracks.length)
++            ? tracks[initialIndex]
++            : tracks.first;
+     await playTrack(track, queue: tracks, contextArtistId: contextArtistId);
+   }
+ 
+-  Future<void> shuffleAndPlay(List<Track> tracks, {String? contextArtistId}) async {
++  Future<void> shuffleAndPlay(
++    List<Track> tracks, {
++    String? contextArtistId,
++  }) async {
+     if (tracks.isEmpty) return;
+     final shuffled = [...tracks]..shuffle();
+     state = state.copyWith(
+@@ -397,18 +488,26 @@
+         contextArtistId: contextArtistId,
+       ),
+     );
+-    await playTrack(shuffled.first, queue: shuffled, contextArtistId: contextArtistId);
++    await playTrack(
++      shuffled.first,
++      queue: shuffled,
++      contextArtistId: contextArtistId,
++    );
+   }
+ 
+   Future<void> playPlaylist(int playlistId) async {
+-    final tracks = await ref.read(playbackServiceProvider).getPlaylistTracks(playlistId);
++    final tracks = await ref
++        .read(playbackServiceProvider)
++        .getPlaylistTracks(playlistId);
+     if (tracks.isNotEmpty) {
+       await playTracks(tracks);
+     }
+   }
+ 
+   Future<void> playRadio(String artistId) async {
+-    final tracks = await ref.read(playbackServiceProvider).getRadioTracks(artistId);
++    final tracks = await ref
++        .read(playbackServiceProvider)
++        .getRadioTracks(artistId);
+     if (tracks.isNotEmpty) {
+       await playTrack(tracks.first, queue: tracks);
+     }
+@@ -427,7 +526,8 @@
+ 
+   void pause() => _controller.pause();
+   void resume() {
+-    if (_controller.currentStatus.state == PlaybackState.idle && state.currentTrack != null) {
++    if (_controller.currentStatus.state == PlaybackState.idle &&
++        state.currentTrack != null) {
+       _resumeRestoredState();
+     } else {
+       _controller.resume();
+@@ -437,14 +537,13 @@
+   Future<void> _resumeRestoredState() async {
+     final track = state.currentTrack;
+     if (track == null) return;
+-    
+-    await playTrack(track, queue: state.playbackQueue.tracks);
+-    if (state.position > Duration.zero) {
+-      // Seek slightly after to ensure video is loaded
+-      Future.delayed(const Duration(milliseconds: 500), () {
+-        _controller.seekTo(state.position);
+-      });
+-    }
++
++    final position = state.position;
++    final preparation = playTrack(track, queue: state.playbackQueue.tracks);
++    final generation = _playbackGeneration;
++    await preparation;
++    if (_disposed || generation != _playbackGeneration) return;
++    if (position > Duration.zero) await _controller.seekTo(position);
+   }
+ 
+   void togglePlay() {
+@@ -461,7 +560,7 @@
+       final track = nextQueue.tracks[nextQueue.currentIndex];
+       playTrack(track, queue: nextQueue.tracks);
+     }
+-    
++
+     // Evaluate autoplay if we didn't play a track but still advanced
+     _evaluateAutoplay();
+   }
+@@ -474,7 +573,10 @@
+ 
+   void skipTo(int index) {
+     if (index >= 0 && index < state.playbackQueue.tracks.length) {
+-      playTrack(state.playbackQueue.tracks[index], queue: state.playbackQueue.tracks);
++      playTrack(
++        state.playbackQueue.tracks[index],
++        queue: state.playbackQueue.tracks,
++      );
+     }
+   }
+ 
+@@ -510,7 +612,9 @@
+ 
+   void toggleShuffle() {
+     state = state.copyWith(
+-      playbackQueue: state.playbackQueue.copyWith(isShuffled: !state.playbackQueue.isShuffled),
++      playbackQueue: state.playbackQueue.copyWith(
++        isShuffled: !state.playbackQueue.isShuffled,
++      ),
+     );
+     _scheduleSaveState();
+   }
+@@ -524,8 +628,12 @@
+   }
+ 
+   Future<void> cycleRepeat() async {
+-    final nextMode = RepeatMode.values[(state.repeatMode.index + 1) % RepeatMode.values.length];
+-    state = state.copyWith(playbackQueue: state.playbackQueue.copyWith(repeatMode: nextMode));
++    final nextMode =
++        RepeatMode.values[(state.repeatMode.index + 1) %
++            RepeatMode.values.length];
++    state = state.copyWith(
++      playbackQueue: state.playbackQueue.copyWith(repeatMode: nextMode),
++    );
+     _scheduleSaveState();
+   }
+ 
+@@ -540,12 +648,13 @@
+     final newValue = !track.isFavorite;
+     await ref.read(playbackServiceProvider).toggleFavorite(track, newValue);
+ 
+-    final newQueue = state.queue.map((t) {
+-      if (t.spotifyId == track.spotifyId) {
+-        return t.copyWith(isFavorite: newValue);
+-      }
+-      return t;
+-    }).toList();
++    final newQueue =
++        state.queue.map((t) {
++          if (t.spotifyId == track.spotifyId) {
++            return t.copyWith(isFavorite: newValue);
++          }
++          return t;
++        }).toList();
+ 
+     state = state.copyWith(
+       playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
+@@ -571,11 +680,14 @@
+     _isFetchingAutoplay = true;
+     try {
+       final spotifyRepo = ref.read(spotifyRepositoryProvider);
+-      
++
+       String? seedArtistId = queue.contextArtistId;
+-      
++
+       if (seedArtistId == null) {
+-        final contextTracks = queue.tracks.where((t) => t.queueOrigin != QueueItemOrigin.autoplay).toList();
++        final contextTracks =
++            queue.tracks
++                .where((t) => t.queueOrigin != QueueItemOrigin.autoplay)
++                .toList();
+         if (contextTracks.length >= 2) {
+           final artistCounts = <String, int>{};
+           for (final t in contextTracks) {
+@@ -585,28 +697,37 @@
+             }
+           }
+           if (artistCounts.isNotEmpty) {
+-            final dominant = artistCounts.entries.reduce((a, b) => a.value > b.value ? a : b);
++            final dominant = artistCounts.entries.reduce(
++              (a, b) => a.value > b.value ? a : b,
++            );
+             if (dominant.value > contextTracks.length / 2) {
+               seedArtistId = dominant.key;
+             }
+           }
+         }
+       }
+-      
+-      final cacheResult = await spotifyRepo.watchRecommendations(
+-        seedArtistId: seedArtistId,
+-        seedTrackId: currentTrack.spotifyId,
+-        limit: 30,
+-      ).first;
++
++      final cacheResult =
++          await spotifyRepo
++              .watchRecommendations(
++                seedArtistId: seedArtistId,
++                seedTrackId: currentTrack.spotifyId,
++                limit: 30,
++              )
++              .first;
+       final candidates = cacheResult.data;
+ 
+       final queueIds = queue.tracks.map((t) => t.spotifyId).toSet();
+-      final newTracks = candidates.where((t) {
+-        if (queueIds.contains(t.spotifyId)) return false;
+-        if (t.spotifyId == currentTrack.spotifyId) return false;
+-        if (_autoplaySeenTrackIds.contains(t.spotifyId)) return false;
+-        return true;
+-      }).map((t) => t.copyWith(queueOrigin: QueueItemOrigin.autoplay)).toList();
++      final newTracks =
++          candidates
++              .where((t) {
++                if (queueIds.contains(t.spotifyId)) return false;
++                if (t.spotifyId == currentTrack.spotifyId) return false;
++                if (_autoplaySeenTrackIds.contains(t.spotifyId)) return false;
++                return true;
++              })
++              .map((t) => t.copyWith(queueOrigin: QueueItemOrigin.autoplay))
++              .toList();
+ 
+       if (newTracks.isNotEmpty) {
+         _autoplaySeenTrackIds.addAll(newTracks.map((t) => t.spotifyId));
+@@ -625,4 +746,6 @@
+   }
+ }
+ 
+-final playerProvider = NotifierProvider<PlayerNotifier, PlayerState>(PlayerNotifier.new);
++final playerProvider = NotifierProvider<PlayerNotifier, PlayerState>(
++  PlayerNotifier.new,
++);
+--- /dev/null
++++ b/test/core/playback/media_sync_pause_test.dart
+@@ -0,0 +1,184 @@
++import 'dart:async';
++import 'dart:convert';
++import 'dart:io';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:hive_ce/hive.dart';
++import 'package:ppplayer/core/playback/media_handler.dart';
++import 'package:ppplayer/core/playback/media_sync_service.dart';
++import 'package:ppplayer/core/playback/playback_providers.dart';
++import 'package:ppplayer/core/player/player_provider.dart';
++import 'package:ppplayer/core/services/settings_provider.dart';
++import 'package:ppplayer/core/models/resolved_video_candidate.dart';
++// ignore: depend_on_referenced_packages
++import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
++// Shared test fixture lives in the nested engine package.
++// ignore: avoid_relative_lib_imports
++import '../../../lib/core/playback/packages/pp_playback_engine/test/fake_youtube_controller.dart';
++import '../player/player_notifier_retry_test.dart' as fakes;
++
++class EntryService extends fakes.FakePlaybackService {
++  @override
++  Future<List<ResolvedVideoCandidate>> resolveCandidates(
++    Track track,
++    String? regionCode,
++  ) async => [
++    ResolvedVideoCandidate(
++      videoId: track.youtubeVideoId!,
++      title: track.name,
++      channel: 'test',
++      confidenceScore: 1,
++    ),
++  ];
++}
++
++void main() {
++  for (final entry in ['selection', 'retry', 'queue', 'restore']) {
++    test(
++      '$entry prepares while stopped and foreground resume dispatches current video',
++      () async {
++        final directory = await Directory.systemTemp.createTemp(
++          'ppplayer-entry-',
++        );
++        Hive.init(directory.path);
++        final box = await Hive.openBox('player_state');
++        final first = fakes.trackWith(youtubeVideoId: 'videoAAAAAA');
++        final second = fakes.trackWith(
++          youtubeVideoId: 'videoBBBBBB',
++          spotifyId: 'second',
++        );
++        if (entry == 'restore') {
++          await box.put(
++            'queue',
++            jsonEncode(PlaybackQueue(tracks: [first]).toJson()),
++          );
++          await box.put('positionMs', 5000);
++        }
++        final renderer = FakeYoutubeController();
++        final engine = MediaKitPlaybackEngine(
++          youtubeControllerFactory: (_, _) => renderer,
++        );
++        final container = ProviderContainer(
++          overrides: [
++            playbackControllerProvider.overrideWithValue(engine),
++            playbackServiceProvider.overrideWithValue(EntryService()),
++            settingsProvider.overrideWith(fakes.FakeSettingsNotifier.new),
++          ],
++        );
++        final subscription = container.listen(playerProvider, (_, _) {});
++        final notifier = container.read(playerProvider.notifier);
++        MediaKitPlaybackEngine.isActivityStopped = true;
++        try {
++          await notifier.persistenceSettled;
++          if (entry == 'restore') {
++            notifier.resume();
++            await Future<void>(() {});
++          } else {
++            await notifier.playTrack(first, queue: [first, second]);
++            if (entry == 'retry') await notifier.retryLoad();
++            if (entry == 'queue') {
++              notifier.skipNext();
++              await Future<void>(() {});
++            }
++          }
++          final expectedId = entry == 'queue' ? 'videoBBBBBB' : 'videoAAAAAA';
++          expect(
++            renderer.commands
++                .where((c) => c.name == 'cue')
++                .last
++                .parameters['videoId'],
++            expectedId,
++          );
++          renderer.emitState(expectedId, yt.PlayerState.cued);
++          await Future<void>(() {});
++          expect(renderer.count('load'), 0);
++          expect(renderer.count('play'), 0);
++          if (entry == 'restore') {
++            expect(renderer.count('seek'), 0);
++            expect(
++              renderer.commands
++                  .where((c) => c.name == 'cue')
++                  .last
++                  .parameters['startSeconds'],
++              5.0,
++            );
++          }
++          MediaKitPlaybackEngine.isActivityStopped = false;
++          notifier.resume();
++          await Future<void>(() {});
++          expect(renderer.count('play'), 1);
++        } finally {
++          subscription.close();
++          container.dispose();
++          await notifier.persistenceSettled;
++          engine.dispose();
++          MediaKitPlaybackEngine.isActivityStopped = false;
++          await Hive.close();
++          await directory.delete(recursive: true);
++        }
++      },
++    );
++  }
++
++  test(
++    'engine pause propagates through player and handler while bridge is pending; stale states cannot restore playing',
++    () async {
++      final directory = await Directory.systemTemp.createTemp('ppplayer-sync-');
++      Hive.init(directory.path);
++      await Hive.openBox('player_state');
++      final renderer = FakeYoutubeController();
++      final engine = MediaKitPlaybackEngine(
++        youtubeControllerFactory: (_, _) => renderer,
++      );
++      late ProviderContainer container;
++      final handler = PpPlayerAudioHandler(() => container);
++      container = ProviderContainer(
++        overrides: [
++          playbackControllerProvider.overrideWithValue(engine),
++          playbackServiceProvider.overrideWithValue(
++            fakes.FakePlaybackService(),
++          ),
++          settingsProvider.overrideWith(fakes.FakeSettingsNotifier.new),
++          audioHandlerProvider.overrideWithValue(handler),
++        ],
++      );
++      final notifier = container.read(playerProvider.notifier);
++      final playerSubscription = container.listen(playerProvider, (_, _) {});
++      final syncSubscription = container.listen(
++        mediaSyncServiceProvider,
++        (_, _) {},
++      );
++      try {
++        await notifier.persistenceSettled;
++        await engine.play(const PlaybackTrack(id: 'videoAAAAAA', title: 'A'));
++        renderer.emitState('videoAAAAAA', yt.PlayerState.cued);
++        renderer.emitState('videoAAAAAA', yt.PlayerState.playing);
++        await Future<void>(() {});
++        expect(container.read(playerProvider).isPlaying, true);
++        expect(handler.playbackState.value.playing, true);
++        renderer.pauseCompletion = Completer<void>();
++        final paused = engine.pause();
++        expect(engine.currentStatus.state, PlaybackState.paused);
++        await Future<void>(() {});
++        expect(renderer.pauseCompletion!.isCompleted, false);
++        expect(container.read(playerProvider).isPlaying, false);
++        expect(handler.playbackState.value.playing, false);
++        renderer.emitState('videoAAAAAA', yt.PlayerState.playing);
++        renderer.emitState('videoAAAAAA', yt.PlayerState.buffering);
++        await Future<void>(() {});
++        expect(handler.playbackState.value.playing, false);
++        renderer.pauseCompletion!.complete();
++        await paused;
++        expect(handler.playbackState.value.playing, false);
++      } finally {
++        syncSubscription.close();
++        playerSubscription.close();
++        container.dispose();
++        await notifier.persistenceSettled;
++        engine.dispose();
++        await Hive.close();
++        await directory.delete(recursive: true);
++      }
++    },
++  );
++}
+--- a/test/core/player/autoplay_test.dart
++++ b/test/core/player/autoplay_test.dart
+@@ -22,8 +22,18 @@
+   Ref get ref => throw UnimplementedError();
+ 
+   @override
+-  Future<List<ResolvedVideoCandidate>> resolveCandidates(Track track, String? regionCode) async {
+-    return [ResolvedVideoCandidate(videoId: 'youtube_id_for_${track.spotifyId}', title: 'Title', channel: 'Channel', confidenceScore: 1.0)];
++  Future<List<ResolvedVideoCandidate>> resolveCandidates(
++    Track track,
++    String? regionCode,
++  ) async {
++    return [
++      ResolvedVideoCandidate(
++        videoId: 'youtube_id_for_${track.spotifyId}',
++        title: 'Title',
++        channel: 'Channel',
++        confidenceScore: 1.0,
++      ),
++    ];
+   }
+ 
+   @override
+@@ -50,7 +60,7 @@
+ 
+ class FakePlaybackController implements PlaybackController {
+   final _statusController = StreamController<PlaybackStatus>.broadcast();
+-  
++
+   void emitStatus(PlaybackStatus s) => _statusController.add(s);
+ 
+   @override
+@@ -90,7 +100,9 @@
+   Future<void> setVolume(double volume) async {}
+ 
+   @override
+-  Future<void> dispose() async {}
++  void dispose() {
++    _statusController.close();
++  }
+ }
+ 
+ class FakeSpotifyRepository implements SpotifyRepository {
+@@ -100,10 +112,10 @@
+ 
+   @override
+   Stream<CacheResult<List<Track>>> watchRecommendations({
+-    String? seedArtistId, 
+-    String? seedTrackId, 
+-    String? seedGenres, 
+-    int limit = 20
++    String? seedArtistId,
++    String? seedTrackId,
++    String? seedGenres,
++    int limit = 20,
+   }) async* {
+     getRecommendationsCallCount++;
+     lastSeedArtistId = seedArtistId;
+@@ -130,8 +142,16 @@
+ }
+ 
+ void main() {
+-  setUpAll(() {
+-    Hive.init(Directory.systemTemp.path);
++  late Directory hiveDirectory;
++  setUp(() async {
++    hiveDirectory = await Directory.systemTemp.createTemp('ppplayer-hive-');
++    Hive.init(hiveDirectory.path);
++    // Disk-backed storage owned by this case, with no shared persisted state.
++    await Hive.openBox('player_state');
++  });
++  tearDown(() async {
++    await Hive.close();
++    await hiveDirectory.delete(recursive: true);
+   });
+ 
+   late ProviderContainer container;
+@@ -154,11 +174,17 @@
+     );
+   });
+ 
+-  tearDown(() {
++  tearDown(() async {
++    final notifier = container.read(playerProvider.notifier);
+     container.dispose();
+-  });
+-
+-  Track createTrack(String id, {QueueItemOrigin origin = QueueItemOrigin.context}) {
++    await notifier.persistenceSettled;
++    playbackController.dispose();
++  });
++
++  Track createTrack(
++    String id, {
++    QueueItemOrigin origin = QueueItemOrigin.context,
++  }) {
+     return Track(
+       spotifyId: id,
+       name: 'Track $id',
+@@ -168,137 +194,167 @@
+     );
+   }
+ 
+-  test('Autoplay fetches recommendations when approaching end of queue', () async {
++  test(
++    'Autoplay fetches recommendations when approaching end of queue',
++    () async {
++      final notifier = container.read(playerProvider.notifier);
++
++      final t1 = createTrack('1');
++      final t2 = createTrack('2');
++      final t3 = createTrack('3');
++
++      spotifyRepository.recommendationsToReturn = [
++        createTrack('4'),
++        createTrack('5'),
++      ];
++
++      // Start playback (queue size = 3, index = 0, remaining = 2)
++      // Threshold is <= 15, so it should fetch immediately
++      await notifier.playTrack(t1, queue: [t1, t2, t3]);
++
++      // Give microtasks time to run
++      await Future.delayed(Duration.zero);
++
++      expect(spotifyRepository.getRecommendationsCallCount, 1);
++
++      final finalQueue = container.read(playerProvider).playbackQueue.tracks;
++      expect(finalQueue.length, 5); // 3 original + 2 recommendations
++      expect(finalQueue[3].spotifyId, '4');
++      expect(finalQueue[3].queueOrigin, QueueItemOrigin.autoplay);
++    },
++  );
++
++  test(
++    'Autoplay deduplicates tracks already in queue or seen in session',
++    () async {
++      final notifier = container.read(playerProvider.notifier);
++
++      final t1 = createTrack('1');
++
++      spotifyRepository.recommendationsToReturn = [
++        createTrack('1'), // duplicate with current queue
++        createTrack('2'), // new
++      ];
++
++      await notifier.playTrack(t1);
++      await Future.delayed(Duration.zero);
++
++      expect(spotifyRepository.getRecommendationsCallCount, 1);
++
++      final queue = container.read(playerProvider).playbackQueue.tracks;
++      expect(queue.length, 2);
++      expect(queue[1].spotifyId, '2');
++
++      // Skip to track 2, this advances index and should trigger another fetch
++      // But since remaining <= 15 still holds, it fetches again
++      spotifyRepository.recommendationsToReturn = [
++        createTrack('2'), // seen in session / currently in queue
++        createTrack('3'), // new
++      ];
++
++      notifier.skipNext();
++      await Future.delayed(Duration.zero);
++
++      expect(spotifyRepository.getRecommendationsCallCount, 2);
++      final queue2 = container.read(playerProvider).playbackQueue.tracks;
++      expect(queue2.length, 3);
++      expect(queue2.last.spotifyId, '3');
++    },
++  );
++
++  test(
++    'User tracks are placed before autoplay tracks when adding to queue',
++    () async {
++      final notifier = container.read(playerProvider.notifier);
++
++      final t1 = createTrack('1');
++      spotifyRepository.recommendationsToReturn = [
++        createTrack('A1'),
++        createTrack('A2'),
++      ];
++
++      await notifier.playTrack(t1);
++      await Future.delayed(Duration.zero);
++
++      // Queue is [1, A1, A2]
++      expect(container.read(playerProvider).playbackQueue.tracks.length, 3);
++
++      // User explicitly adds a track
++      final u1 = createTrack('U1');
++      notifier.addToQueue(u1);
++
++      final queue = container.read(playerProvider).playbackQueue.tracks;
++      // Expected: [1, U1, A1, A2]
++      expect(queue.length, 4);
++      expect(queue[0].spotifyId, '1');
++      expect(queue[1].spotifyId, 'U1');
++      expect(queue[2].spotifyId, 'A1');
++      expect(queue[3].spotifyId, 'A2');
++    },
++  );
++
++  test('Does not autoplay if Repeat Mode is not none', () async {
+     final notifier = container.read(playerProvider.notifier);
+-    
++
++    // Cycle repeat mode to RepeatMode.all
++    await notifier.cycleRepeat();
++
+     final t1 = createTrack('1');
+-    final t2 = createTrack('2');
+-    final t3 = createTrack('3');
+-
+-    spotifyRepository.recommendationsToReturn = [
+-      createTrack('4'),
+-      createTrack('5'),
+-    ];
+-
+-    // Start playback (queue size = 3, index = 0, remaining = 2)
+-    // Threshold is <= 15, so it should fetch immediately
+-    await notifier.playTrack(t1, queue: [t1, t2, t3]);
+-
+-    // Give microtasks time to run
+-    await Future.delayed(Duration.zero);
+-
+-    expect(spotifyRepository.getRecommendationsCallCount, 1);
+-    
+-    final finalQueue = container.read(playerProvider).playbackQueue.tracks;
+-    expect(finalQueue.length, 5); // 3 original + 2 recommendations
+-    expect(finalQueue[3].spotifyId, '4');
+-    expect(finalQueue[3].queueOrigin, QueueItemOrigin.autoplay);
+-  });
+-
+-  test('Autoplay deduplicates tracks already in queue or seen in session', () async {
+-    final notifier = container.read(playerProvider.notifier);
+-    
+-    final t1 = createTrack('1');
+-
+-    spotifyRepository.recommendationsToReturn = [
+-      createTrack('1'), // duplicate with current queue
+-      createTrack('2'), // new
+-    ];
++    spotifyRepository.recommendationsToReturn = [createTrack('2')];
+ 
+     await notifier.playTrack(t1);
+     await Future.delayed(Duration.zero);
+ 
+-    expect(spotifyRepository.getRecommendationsCallCount, 1);
+-    
+-    final queue = container.read(playerProvider).playbackQueue.tracks;
+-    expect(queue.length, 2); 
+-    expect(queue[1].spotifyId, '2');
+-
+-    // Skip to track 2, this advances index and should trigger another fetch
+-    // But since remaining <= 15 still holds, it fetches again
+-    spotifyRepository.recommendationsToReturn = [
+-      createTrack('2'), // seen in session / currently in queue
+-      createTrack('3'), // new
+-    ];
+-
+-    notifier.skipNext();
+-    await Future.delayed(Duration.zero);
+-    
+-    expect(spotifyRepository.getRecommendationsCallCount, 2);
+-    final queue2 = container.read(playerProvider).playbackQueue.tracks;
+-    expect(queue2.length, 3);
+-    expect(queue2.last.spotifyId, '3');
+-  });
+-
+-  test('User tracks are placed before autoplay tracks when adding to queue', () async {
++    expect(spotifyRepository.getRecommendationsCallCount, 0);
++    expect(container.read(playerProvider).playbackQueue.tracks.length, 1);
++  });
++
++  test('Autoplay uses explicit contextArtistId when available', () async {
+     final notifier = container.read(playerProvider.notifier);
+-    
+-    final t1 = createTrack('1');
+-    spotifyRepository.recommendationsToReturn = [
+-      createTrack('A1'),
+-      createTrack('A2'),
+-    ];
+-
+-    await notifier.playTrack(t1);
+-    await Future.delayed(Duration.zero);
+-    
+-    // Queue is [1, A1, A2]
+-    expect(container.read(playerProvider).playbackQueue.tracks.length, 3);
+-    
+-    // User explicitly adds a track
+-    final u1 = createTrack('U1');
+-    notifier.addToQueue(u1);
+-    
+-    final queue = container.read(playerProvider).playbackQueue.tracks;
+-    // Expected: [1, U1, A1, A2]
+-    expect(queue.length, 4);
+-    expect(queue[0].spotifyId, '1');
+-    expect(queue[1].spotifyId, 'U1');
+-    expect(queue[2].spotifyId, 'A1');
+-    expect(queue[3].spotifyId, 'A2');
+-  });
+-
+-  test('Does not autoplay if Repeat Mode is not none', () async {
+-    final notifier = container.read(playerProvider.notifier);
+-    
+-    // Cycle repeat mode to RepeatMode.all
+-    await notifier.cycleRepeat();
+-    
++
+     final t1 = createTrack('1');
+     spotifyRepository.recommendationsToReturn = [createTrack('2')];
+ 
+-    await notifier.playTrack(t1);
+-    await Future.delayed(Duration.zero);
+-    
+-    expect(spotifyRepository.getRecommendationsCallCount, 0);
+-    expect(container.read(playerProvider).playbackQueue.tracks.length, 1);
+-  });
+-
+-  test('Autoplay uses explicit contextArtistId when available', () async {
+-    final notifier = container.read(playerProvider.notifier);
+-    
+-    final t1 = createTrack('1');
+-    spotifyRepository.recommendationsToReturn = [createTrack('2')];
+-
+     await notifier.playTrack(t1, contextArtistId: 'explicit_artist_id');
+     await Future.delayed(Duration.zero);
+-    
++
+     expect(spotifyRepository.getRecommendationsCallCount, 1);
+     expect(spotifyRepository.lastSeedArtistId, 'explicit_artist_id');
+   });
+ 
+   test('Autoplay uses dominant artist as fallback context', () async {
+     final notifier = container.read(playerProvider.notifier);
+-    
+-    final t1 = Track(spotifyId: '1', name: 'T1', artistId: 'dom_artist', artistName: 'Dom', queueOrigin: QueueItemOrigin.context);
+-    final t2 = Track(spotifyId: '2', name: 'T2', artistId: 'dom_artist', artistName: 'Dom', queueOrigin: QueueItemOrigin.context);
+-    final t3 = Track(spotifyId: '3', name: 'T3', artistId: 'other_artist', artistName: 'Other', queueOrigin: QueueItemOrigin.context);
+-    
++
++    final t1 = Track(
++      spotifyId: '1',
++      name: 'T1',
++      artistId: 'dom_artist',
++      artistName: 'Dom',
++      queueOrigin: QueueItemOrigin.context,
++    );
++    final t2 = Track(
++      spotifyId: '2',
++      name: 'T2',
++      artistId: 'dom_artist',
++      artistName: 'Dom',
++      queueOrigin: QueueItemOrigin.context,
++    );
++    final t3 = Track(
++      spotifyId: '3',
++      name: 'T3',
++      artistId: 'other_artist',
++      artistName: 'Other',
++      queueOrigin: QueueItemOrigin.context,
++    );
++
+     spotifyRepository.recommendationsToReturn = [createTrack('4')];
+ 
+-    await notifier.playTrack(t1, queue: [t1, t2, t3]); // No explicit contextArtistId provided
++    await notifier.playTrack(
++      t1,
++      queue: [t1, t2, t3],
++    ); // No explicit contextArtistId provided
+     await Future.delayed(Duration.zero);
+-    
++
+     expect(spotifyRepository.getRecommendationsCallCount, 1);
+     // 2 out of 3 tracks are 'dom_artist', so it should be the dominant artist
+     expect(spotifyRepository.lastSeedArtistId, 'dom_artist');
+--- a/test/core/player/player_notifier_retry_test.dart
++++ b/test/core/player/player_notifier_retry_test.dart
+@@ -31,15 +31,12 @@
+ 
+ /// Configurable fake for PlaybackService.
+ class FakePlaybackService implements PlaybackService {
+-  final List<ResolvedVideoCandidate> _candidates;
++  List<ResolvedVideoCandidate> candidates;
+   final Exception? _throwError;
+   int resolveCallCount = 0;
+ 
+-  FakePlaybackService({
+-    List<ResolvedVideoCandidate> candidates = const [],
+-    Exception? throwError,
+-  }) : _candidates = candidates,
+-       _throwError = throwError;
++  FakePlaybackService({this.candidates = const [], Exception? throwError})
++    : _throwError = throwError;
+ 
+   @override
+   Ref get ref => throw UnimplementedError();
+@@ -51,7 +48,7 @@
+   ) async {
+     resolveCallCount++;
+     if (_throwError != null) throw _throwError;
+-    return _candidates;
++    return candidates;
+   }
+ 
+   @override
+@@ -75,13 +72,12 @@
+   @override
+   Future<List<Track>> getRecentlyPlayed({int limit = 50}) async => [];
+ }
+-
+-
+ 
+ /// Fake PlaybackController that records play() calls.
+ class FakePlaybackController implements PlaybackController {
+   final _statusController = StreamController<PlaybackStatus>.broadcast();
+   final List<String> playedIds = [];
++  Completer<void>? nextPlay;
+   bool disposed = false;
+ 
+   void emitStatus(PlaybackStatus s) => _statusController.add(s);
+@@ -96,7 +92,11 @@
+   PlaybackStatus get currentStatus => const PlaybackStatus();
+ 
+   @override
+-  Future<void> play(PlaybackTrack track) async => playedIds.add(track.id);
++  Future<void> play(PlaybackTrack track) async {
++    playedIds.add(track.id);
++    nextPlay?.complete();
++    nextPlay = null;
++  }
+ 
+   @override
+   Future<void> pause({String caller = 'user'}) async {}
+@@ -156,11 +156,29 @@
+   );
+ }
+ 
++Future<void> disposeContainer(
++  ProviderContainer container,
++  FakePlaybackController controller,
++) async {
++  final notifier = container.read(playerProvider.notifier);
++  container.dispose();
++  await notifier.persistenceSettled;
++  controller.dispose();
++}
++
+ // ---------------------------------------------------------------------------
+ // Tests
+ void main() {
+-  setUpAll(() {
+-    Hive.init(Directory.systemTemp.path);
++  late Directory hiveDirectory;
++  setUp(() async {
++    hiveDirectory = await Directory.systemTemp.createTemp('ppplayer-hive-');
++    Hive.init(hiveDirectory.path);
++    // Disk-backed storage owned by this case, with no shared persisted state.
++    await Hive.openBox('player_state');
++  });
++  tearDown(() async {
++    await Hive.close();
++    await hiveDirectory.delete(recursive: true);
+   });
+ 
+   group('PlayerNotifier.retryLoad()', () {
+@@ -169,10 +187,19 @@
+     // ------------------------------------------------------------------
+     test('Case A: null youtubeVideoId → resolves and plays valid ID', () async {
+       const resolvedId = 'dQw4w9WgXcW'; // 11 chars, valid
+-      final service = FakePlaybackService(candidates: [ResolvedVideoCandidate(videoId: resolvedId, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
++      final service = FakePlaybackService(
++        candidates: [
++          ResolvedVideoCandidate(
++            videoId: resolvedId,
++            title: 'title',
++            channel: 'channel',
++            confidenceScore: 1.0,
++          ),
++        ],
++      );
+       final controller = FakePlaybackController();
+       final container = makeContainer(service: service, controller: controller);
+-      addTearDown(container.dispose);
++      addTearDown(() => disposeContainer(container, controller));
+ 
+       final notifier = container.read(playerProvider.notifier);
+ 
+@@ -188,7 +215,16 @@
+       'Case A-retry: retryLoad with null ID → re-resolves and plays valid ID',
+       () async {
+         const resolvedId = 'abcdefghijk';
+-        final service = FakePlaybackService(candidates: [ResolvedVideoCandidate(videoId: resolvedId, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
++        final service = FakePlaybackService(
++          candidates: [
++            ResolvedVideoCandidate(
++              videoId: resolvedId,
++              title: 'title',
++              channel: 'channel',
++              confidenceScore: 1.0,
++            ),
++          ],
++        );
+         final controller = FakePlaybackController();
+ 
+         // Use a container with a failing service first
+@@ -197,28 +233,18 @@
+           service: emptyService,
+           controller: controller,
+         );
+-        addTearDown(container.dispose);
++        addTearDown(() => disposeContainer(container, controller));
+ 
+         final notifier = container.read(playerProvider.notifier);
+         await notifier.playTrack(trackWith(youtubeVideoId: null));
+         expect(container.read(playerProvider).loadError, isNotNull);
+         expect(controller.playedIds, isEmpty);
+ 
+-        // Now override with the working service to simulate successful retry
+-        final retryContainer = ProviderContainer(
+-          overrides: [
+-            playbackServiceProvider.overrideWithValue(service),
+-            playbackControllerProvider.overrideWithValue(controller),
+-            playerProvider.overrideWith(() => notifier),
+-          ],
+-        );
+-        addTearDown(retryContainer.dispose);
+-
+-        // Call retryLoad on the same notifier but inside the new container?
+-        // Actually Riverpod doesn't easily let us hot-swap overrides like this for tests without updating.
+-        // Simpler: Just test that retryLoad() correctly delegates to playTrack() which we proved re-resolves.
+-        // Since retryLoad is just `await playTrack(track, queue: state.playbackQueue.tracks);` now,
+-        // we can just test that calling retryLoad with a track lacking an ID calls resolveCandidates.
++        emptyService.candidates = service.candidates;
++        await notifier.retryLoad();
++        expect(emptyService.resolveCallCount, 2);
++        expect(controller.playedIds, [resolvedId]);
++        expect(container.read(playerProvider).loadError, isNull);
+       },
+     );
+ 
+@@ -238,13 +264,22 @@
+ 
+         for (final badId in invalidIds) {
+           final spotifyId = badId.length == 11 ? badId : 'spotifyAAA';
+-          final service = FakePlaybackService(candidates: [ResolvedVideoCandidate(videoId: resolvedId, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
++          final service = FakePlaybackService(
++            candidates: [
++              ResolvedVideoCandidate(
++                videoId: resolvedId,
++                title: 'title',
++                channel: 'channel',
++                confidenceScore: 1.0,
++              ),
++            ],
++          );
+           final controller = FakePlaybackController();
+           final container = makeContainer(
+             service: service,
+             controller: controller,
+           );
+-          addTearDown(container.dispose);
++          addTearDown(() => disposeContainer(container, controller));
+ 
+           final notifier = container.read(playerProvider.notifier);
+           await notifier.playTrack(
+@@ -267,31 +302,39 @@
+       final service = FakePlaybackService(candidates: []);
+       final controller = FakePlaybackController();
+       final container = makeContainer(service: service, controller: controller);
+-      addTearDown(container.dispose);
++      addTearDown(() => disposeContainer(container, controller));
+ 
+       final notifier = container.read(playerProvider.notifier);
+       await notifier.playTrack(trackWith(youtubeVideoId: null));
+ 
+       expect(service.resolveCallCount, 1);
+       expect(controller.playedIds, isEmpty); // never reaches engine
+-      expect(container.read(playerProvider).loadError, 'No YouTube video found for this track');
++      expect(
++        container.read(playerProvider).loadError,
++        'No YouTube video found for this track',
++      );
+     });
+ 
+     // ------------------------------------------------------------------
+     // Case D — Network/Exception in resolver: must not crash, skip next.
+     // ------------------------------------------------------------------
+     test('Case D: resolver throws → no engine call, error set', () async {
+-      final service = FakePlaybackService(throwError: Exception('network error'));
++      final service = FakePlaybackService(
++        throwError: Exception('network error'),
++      );
+       final controller = FakePlaybackController();
+       final container = makeContainer(service: service, controller: controller);
+-      addTearDown(container.dispose);
++      addTearDown(() => disposeContainer(container, controller));
+ 
+       final notifier = container.read(playerProvider.notifier);
+       await notifier.playTrack(trackWith(youtubeVideoId: null));
+ 
+       expect(service.resolveCallCount, 1);
+       expect(controller.playedIds, isEmpty);
+-      expect(container.read(playerProvider).loadError, 'Failed to resolve YouTube ID');
++      expect(
++        container.read(playerProvider).loadError,
++        'Failed to resolve YouTube ID',
++      );
+     });
+ 
+     // ------------------------------------------------------------------
+@@ -302,14 +345,18 @@
+       const idB = 'vidIdBBB011';
+ 
+       final completer = Completer<List<ResolvedVideoCandidate>>();
+-      final service = _DelayedFakeService(completer, [ResolvedVideoCandidate(videoId: idB, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
++      final service = _DelayedFakeService(completer, [
++        ResolvedVideoCandidate(
++          videoId: idB,
++          title: 'title',
++          channel: 'channel',
++          confidenceScore: 1.0,
++        ),
++      ]);
+       final controller = FakePlaybackController();
+ 
+-      final container = makeContainer(
+-        service: service,
+-        controller: controller,
+-      );
+-      addTearDown(container.dispose);
++      final container = makeContainer(service: service, controller: controller);
++      addTearDown(() => disposeContainer(container, controller));
+ 
+       final notifier = container.read(playerProvider.notifier);
+ 
+@@ -324,7 +371,14 @@
+       );
+ 
+       // Unblock A
+-      completer.complete([ResolvedVideoCandidate(videoId: idA, title: 'title', channel: 'channel', confidenceScore: 1.0)]);
++      completer.complete([
++        ResolvedVideoCandidate(
++          videoId: idA,
++          title: 'title',
++          channel: 'channel',
++          confidenceScore: 1.0,
++        ),
++      ]);
+       await futureA;
+ 
+       // Only B should have been played, or if both, B must be the LAST one played?
+@@ -334,52 +388,122 @@
+     });
+   });
+ 
++  test(
++    'ambiguous failures exhaust finite candidates and stop after five track failures',
++    () async {
++      final service = FakePlaybackService(
++        candidates: [
++          ResolvedVideoCandidate(
++            videoId: 'candidate01',
++            title: 'A',
++            channel: 'C',
++            confidenceScore: 1,
++          ),
++          ResolvedVideoCandidate(
++            videoId: 'candidate02',
++            title: 'B',
++            channel: 'C',
++            confidenceScore: 1,
++          ),
++        ],
++      );
++      final controller = FakePlaybackController();
++      final container = makeContainer(service: service, controller: controller);
++      addTearDown(() => disposeContainer(container, controller));
++      final notifier = container.read(playerProvider.notifier);
++      final subscription = container.listen(playerProvider, (_, _) {});
++      addTearDown(subscription.close);
++      await notifier.cycleRepeat();
++      await notifier.playTrack(trackWith());
++      for (var i = 0; i < 100; i++) {
++        controller.emitStatus(
++          const PlaybackStatus(
++            state: PlaybackState.error,
++            error: 'unavailable_media:notEmbeddable',
++          ),
++        );
++        // One event-loop barrier drains the async candidate/cache/stop chain.
++        await Future<void>(() {});
++      }
++      expect(controller.playedIds.length, lessThanOrEqualTo(10));
++      expect(service.resolveCallCount, lessThanOrEqualTo(5));
++      expect(container.read(playerProvider).loadError, isNotNull);
++    },
++  );
++
+   group('Preparing State Error Handling', () {
+-    test('legitimate load failure during preparing triggers recovery', () async {
+-      final fakeService = FakePlaybackService(
+-        candidates: [
+-          ResolvedVideoCandidate(videoId: 'vid_1', title: 'A', channel: 'C', confidenceScore: 1.0),
+-          ResolvedVideoCandidate(videoId: 'vid_2', title: 'B', channel: 'C', confidenceScore: 1.0),
+-        ],
+-      );
+-      final fakeController = FakePlaybackController();
+-      
+-      final container = makeContainer(service: fakeService, controller: fakeController);
+-      
+-      // Add a listener to ensure the provider is actively mounted
+-      final sub = container.listen(playerProvider, (previous, next) {});
+-      addTearDown(sub.close);
+-      
+-      final notifier = container.read(playerProvider.notifier);
+-      
+-      final track = trackWith(youtubeVideoId: null);
+-      await notifier.playTrack(track);
+-      
+-      // Wait for play dispatch
+-      await Future.delayed(const Duration(milliseconds: 50));
+-      expect(fakeController.playedIds.length, 1);
+-      
+-      // Emit preparing
+-      fakeController.emitStatus(const PlaybackStatus(
+-        state: PlaybackState.preparing,
+-      ));
+-      
+-      await Future.delayed(const Duration(milliseconds: 50));
+-      
+-      // Emit a legitimate fatal error during preparing
+-      fakeController.emitStatus(const PlaybackStatus(
+-        state: PlaybackState.error,
+-        error: 'unavailable_media:videoNotFound',
+-      ));
+-      
+-      await Future.delayed(const Duration(milliseconds: 100));
+-      
+-      // Should have advanced to candidate 2 automatically
+-      expect(fakeController.playedIds.length, 2);
+-      expect(notifier.state.currentTrack?.youtubeVideoId, 'vid_2'); // Now running candidate 2
+-    });
++    test(
++      'legitimate load failure during preparing triggers recovery',
++      () async {
++        final fakeService = FakePlaybackService(
++          candidates: [
++            ResolvedVideoCandidate(
++              videoId: 'vid_1',
++              title: 'A',
++              channel: 'C',
++              confidenceScore: 1.0,
++            ),
++            ResolvedVideoCandidate(
++              videoId: 'vid_2',
++              title: 'B',
++              channel: 'C',
++              confidenceScore: 1.0,
++            ),
++          ],
++        );
++        final fakeController = FakePlaybackController();
++
++        final container = makeContainer(
++          service: fakeService,
++          controller: fakeController,
++        );
++
++        addTearDown(() => disposeContainer(container, fakeController));
++
++        // Add a listener to ensure the provider is actively mounted
++        final sub = container.listen(playerProvider, (previous, next) {});
++        addTearDown(sub.close);
++
++        final notifier = container.read(playerProvider.notifier);
++
++        final track = trackWith(youtubeVideoId: null);
++        await notifier.playTrack(track);
++
++        // Wait for play dispatch
++        await container.pump();
++        expect(fakeController.playedIds.length, 1);
++
++        // Emit preparing
++        fakeController.emitStatus(
++          const PlaybackStatus(state: PlaybackState.preparing),
++        );
++
++        await container.pump();
++
++        final recovered = Completer<void>();
++        fakeController.nextPlay = recovered;
++        // Emit a legitimate fatal error during preparing
++        fakeController.emitStatus(
++          const PlaybackStatus(
++            state: PlaybackState.error,
++            error: 'unavailable_media:videoNotFound',
++          ),
++        );
++
++        await container.pump();
++
++        await recovered.future;
++        // Should have advanced to candidate 2 automatically
++        expect(fakeController.playedIds.length, 2);
++        expect(
++          notifier.state.currentTrack?.youtubeVideoId,
++          'vid_2',
++        ); // Now running candidate 2
++      },
++    );
+   });
+ }
++
+ // ---------------------------------------------------------------------------
+ // Helper: service that blocks until a completer resolves.
+ // ---------------------------------------------------------------------------
+@@ -394,7 +518,10 @@
+   Ref get ref => throw UnimplementedError();
+ 
+   @override
+-  Future<List<ResolvedVideoCandidate>> resolveCandidates(Track track, String? regionCode) {
++  Future<List<ResolvedVideoCandidate>> resolveCandidates(
++    Track track,
++    String? regionCode,
++  ) {
+     calls++;
+     if (calls == 1) return _completer.future;
+     return Future.value(_instantFallback); // For track B

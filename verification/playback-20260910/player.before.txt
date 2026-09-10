@@ -10,6 +10,7 @@ import '../playback/playback_providers.dart';
 import '../playback/pip_handler.dart';
 import '../api/spotify_repository.dart';
 import '../services/settings_provider.dart';
+import 'package:pp_playback_engine/pp_playback_engine.dart';
 
 export '../models/track.dart' show Track;
 export '../models/playback_queue.dart' show PlaybackQueue, RepeatMode;
@@ -62,15 +63,9 @@ class PlayerState {
     return PlayerState(
       playbackQueue: playbackQueue ?? this.playbackQueue,
       isPlaying: isPlaying ?? this.isPlaying,
-      videoId:
-          identical(videoId, _sentinel) ? this.videoId : videoId as String?,
+      videoId: identical(videoId, _sentinel) ? this.videoId : videoId as String?,
       isLoadingVideo: isLoadingVideo ?? this.isLoadingVideo,
-      loadError:
-          clearLoadError
-              ? null
-              : (identical(loadError, _sentinel)
-                  ? this.loadError
-                  : loadError as String?),
+      loadError: clearLoadError ? null : (identical(loadError, _sentinel) ? this.loadError : loadError as String?),
       position: position ?? this.position,
       duration: duration ?? this.duration,
       buffered: buffered ?? this.buffered,
@@ -91,23 +86,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
   bool _skipDebounce = false;
   bool _lastPipEnabled = false;
   Timer? _saveTimer;
-  bool _disposed = false;
-  Future<void> _persistenceWork = Future.value();
-
-  /// Allows shutdown/tests to wait for already started disk operations.
-  Future<void> get persistenceSettled => _persistenceWork;
   bool _prefetchedNextTrackForCurrentLoad = false;
-
+  
   bool _isFetchingAutoplay = false;
   final Set<String> _autoplaySeenTrackIds = {};
 
   @override
   PlayerState build() {
-    _persistenceWork = _initRestore();
-    ref.onDispose(() {
-      _disposed = true;
-      _saveTimer?.cancel();
-    });
+    _initRestore();
     // Listen to the playback engine's status and sync it to our state
     ref.listen(playbackStatusProvider, (previous, next) {
       if (next is AsyncData<PlaybackStatus>) {
@@ -116,10 +102,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
           if (!_skipDebounce) {
             _skipDebounce = true;
             skipNext();
-            Future.delayed(
-              const Duration(milliseconds: 1000),
-              () => _skipDebounce = false,
-            );
+            Future.delayed(const Duration(milliseconds: 1000), () => _skipDebounce = false);
           }
         }
         _syncFromStatus(status);
@@ -133,22 +116,16 @@ class PlayerNotifier extends Notifier<PlayerState> {
     PipHandler.onActivityStopped = () {
       final status = ref.read(playbackStatusProvider).value;
       final ts = DateTime.now().toIso8601String();
-      debugPrint(
-        '$ts PlayerNotifier: onActivityStopped '
-        'isPlaying=${state.isPlaying} isIFrameMode=${status?.isIFrameMode} '
-        'track=${state.currentTrack?.spotifyId}',
-      );
+      debugPrint('$ts PlayerNotifier: onActivityStopped '
+                 'isPlaying=${state.isPlaying} isIFrameMode=${status?.isIFrameMode} '
+                 'track=${state.currentTrack?.spotifyId}');
       if (state.isPlaying && status?.isIFrameMode == true) {
         if (!BackgroundPlaybackExperiment.enabled) {
-          debugPrint(
-            '$ts PlayerNotifier: pausing via onActivityStopped (caller=lifecycle/lock-screen)',
-          );
+          debugPrint('$ts PlayerNotifier: pausing via onActivityStopped (caller=lifecycle/lock-screen)');
           _controller.pause(caller: 'onActivityStopped/lock-screen');
           state = state.copyWith(isPlaying: false);
         } else {
-          debugPrint(
-            '$ts ${BackgroundPlaybackExperiment.tag} PlayerNotifier: NOT pausing onActivityStopped to observe native WebView behavior.',
-          );
+          debugPrint('$ts ${BackgroundPlaybackExperiment.tag} PlayerNotifier: NOT pausing onActivityStopped to observe native WebView behavior.');
         }
       }
     };
@@ -163,17 +140,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 
   void _syncFromStatus(PlaybackStatus status) {
-    if (_disposed) return;
-    debugPrint(
-      '${DateTime.now().toIso8601String()} PLAYER status=${status.state}',
-    );
     String? displayError = status.error;
-
+    
     if (status.state == PlaybackState.error && status.error != null) {
-      if (status.error!.startsWith('unavailable_media:') ||
-          status.error!.startsWith('error:')) {
+      if (status.error!.startsWith('unavailable_media:') || status.error!.startsWith('error:')) {
         _handleCandidateFailure();
-        return;
+        return; 
       } else if (status.error!.startsWith('transient:')) {
         return; // Ignore transient errors
       }
@@ -184,9 +156,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       _isRecovering = false;
     }
 
-    final isPlaying =
-        status.state == PlaybackState.playing ||
-        status.state == PlaybackState.buffering;
+    final isPlaying = status.state == PlaybackState.playing || status.state == PlaybackState.buffering;
     final pipEnabled = ref.read(settingsProvider).continuePlaybackInPip;
     // Only call setPipEnabled when the desired state changes to avoid calling
     // setPictureInPictureParams during non-foreground states (causes Android
@@ -199,9 +169,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     state = state.copyWith(
       isPlaying: isPlaying,
-      isLoadingVideo:
-          status.state == PlaybackState.preparing ||
-          status.state == PlaybackState.buffering,
+      isLoadingVideo: status.state == PlaybackState.preparing || status.state == PlaybackState.buffering,
       loadError: displayError,
       videoId: status.activeVideoId,
       position: status.position,
@@ -209,10 +177,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
       buffered: status.buffered,
     );
     _scheduleSaveState();
-
+    
     // Trigger prefetch once playback starts successfully
-    if (status.state == PlaybackState.playing &&
-        !_prefetchedNextTrackForCurrentLoad) {
+    if (status.state == PlaybackState.playing && !_prefetchedNextTrackForCurrentLoad) {
       _prefetchedNextTrackForCurrentLoad = true;
       _prefetchNextTrack();
     }
@@ -228,106 +195,75 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 
   Future<void> _handleCandidateFailure() async {
-    if (_disposed || _isRecovering || _consecutiveTrackFailures >= 5) return;
+    if (_isRecovering) return;
     _isRecovering = true;
     final track = state.currentTrack;
-    if (track == null) {
-      _isRecovering = false;
-      return;
-    }
-    final generation = _playbackGeneration;
-
-    debugPrint(
-      'PlayerNotifier: Candidate ${track.youtubeVideoId} failed. Trying next candidate.',
-    );
-
+    if (track == null) return;
+    
+    debugPrint('PlayerNotifier: Candidate ${track.youtubeVideoId} failed. Trying next candidate.');
+    
     _currentCandidateIndex++;
     if (_currentCandidateIndex < _currentCandidates.length) {
-      await _attemptCurrentCandidate(
-        _playbackGeneration,
-        track,
-        List<Track>.from(state.playbackQueue.tracks),
-      );
+      await _attemptCurrentCandidate(_playbackGeneration, track, List<Track>.from(state.playbackQueue.tracks));
     } else {
       await _controller.stop();
-      if (_disposed || generation != _playbackGeneration) return;
       _handleLogicalTrackFailure('Playback failed for all available sources');
     }
-    if (!_disposed && generation == _playbackGeneration) _isRecovering = false;
+    _isRecovering = false;
   }
 
   void _handleLogicalTrackFailure([String? specificError]) {
     _consecutiveTrackFailures++;
-
+    
     if (_consecutiveTrackFailures < 5) {
       if (specificError != null) {
         state = state.copyWith(loadError: specificError);
       }
-      debugPrint(
-        'PlayerNotifier: Track exhausted. Auto-skipping to next (failure count: $_consecutiveTrackFailures)',
-      );
-
+      debugPrint('PlayerNotifier: Track exhausted. Auto-skipping to next (failure count: $_consecutiveTrackFailures)');
+      
       var queue = state.playbackQueue;
       if (queue.repeatMode == RepeatMode.one) {
-        queue = queue.copyWith(repeatMode: RepeatMode.all);
+         queue = queue.copyWith(repeatMode: RepeatMode.all);
       }
-
+      
       final nextQueue = queue.next();
       if (nextQueue.currentIndex < nextQueue.tracks.length) {
         final nextTrack = nextQueue.tracks[nextQueue.currentIndex];
         playTrack(nextTrack, queue: nextQueue.tracks, isRetry: true);
       } else {
-        state = state.copyWith(
-          loadError: specificError ?? 'Queue ended after consecutive failures.',
-          isLoadingVideo: false,
-        );
+        state = state.copyWith(loadError: specificError ?? 'Queue ended after consecutive failures.', isLoadingVideo: false);
       }
     } else {
-      state = state.copyWith(
-        loadError:
-            specificError ??
-            'Excessive consecutive track failures. Playback stopped.',
-        isLoadingVideo: false,
-      );
-      debugPrint(
-        'PlayerNotifier: Stopped due to excessive consecutive failures.',
-      );
+      state = state.copyWith(loadError: specificError ?? 'Excessive consecutive track failures. Playback stopped.', isLoadingVideo: false);
+      debugPrint('PlayerNotifier: Stopped due to excessive consecutive failures.');
     }
   }
 
   void _scheduleSaveState() {
     if (_saveTimer?.isActive ?? false) return;
-    if (_disposed) return;
-    _saveTimer = Timer(const Duration(seconds: 2), () {
-      _persistenceWork = _saveState();
-    });
+    _saveTimer = Timer(const Duration(seconds: 2), _saveState);
   }
 
   Future<void> _saveState() async {
     try {
-      if (_disposed) return;
-      final snapshot = state;
       final box = await Hive.openBox('player_state');
-      if (_disposed) return;
-      await box.put('queue', jsonEncode(snapshot.playbackQueue.toJson()));
-      await box.put('positionMs', snapshot.position.inMilliseconds);
+      await box.put('queue', jsonEncode(state.playbackQueue.toJson()));
+      await box.put('positionMs', state.position.inMilliseconds);
     } catch (e) {
       debugPrint('Failed to save player state: $e');
     }
   }
 
   Future<void> _initRestore() async {
-    final generation = _playbackGeneration;
     try {
       final box = await Hive.openBox('player_state');
-      if (_disposed || generation != _playbackGeneration) return;
       final queueJson = box.get('queue');
       final posMs = box.get('positionMs');
-
+      
       if (queueJson != null) {
         final queue = PlaybackQueue.fromJson(jsonDecode(queueJson));
         final position = Duration(milliseconds: posMs ?? 0);
-
+        
         state = state.copyWith(
           playbackQueue: queue,
           position: position,
@@ -342,12 +278,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
   // Removed direct service getter to use ref.read inside methods
   PlaybackController get _controller => ref.read(playbackControllerProvider);
 
-  Future<void> playTrack(
-    Track track, {
-    List<Track>? queue,
-    bool isRetry = false,
-    String? contextArtistId,
-  }) async {
+  Future<void> playTrack(Track track, {List<Track>? queue, bool isRetry = false, String? contextArtistId}) async {
     if (!isRetry) {
       _prefetchedNextTrackForCurrentLoad = false;
       if (queue != null) {
@@ -360,19 +291,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
     _isRecovering = false;
 
     final timestamp = DateTime.now().microsecondsSinceEpoch;
+    
+    final q = (queue ?? [track]).asMap().entries.map((e) {
+      final t = e.value;
+      if (t.queueItemId != null) return t; 
+      return t.copyWith(queueItemId: '${t.spotifyId}_${timestamp}_${e.key}');
+    }).toList();
 
-    final q =
-        (queue ?? [track]).asMap().entries.map((e) {
-          final t = e.value;
-          if (t.queueItemId != null) return t;
-          return t.copyWith(
-            queueItemId: '${t.spotifyId}_${timestamp}_${e.key}',
-          );
-        }).toList();
-
-    final targetTrack = q.firstWhere(
-      (t) => t.spotifyId == track.spotifyId && t.name == track.name,
-    );
+    final targetTrack = q.firstWhere((t) => t.spotifyId == track.spotifyId && t.name == track.name);
     final idx = q.indexOf(targetTrack);
 
     debugPrint('PlayerNotifier: Resolving track ${track.name}');
@@ -381,9 +307,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       playbackQueue: state.playbackQueue.copyWith(
         tracks: q,
         currentIndex: idx < 0 ? 0 : idx,
-        contextArtistId:
-            contextArtistId ??
-            (queue != null ? null : state.playbackQueue.contextArtistId),
+        contextArtistId: contextArtistId ?? (queue != null ? null : state.playbackQueue.contextArtistId),
       ),
       clearLoadError: true,
       isLoadingVideo: true,
@@ -398,8 +322,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
     try {
       final service = ref.read(playbackServiceProvider);
       final candidates = await service.resolveCandidates(targetTrack, null);
-
-      if (_disposed || myGen != _playbackGeneration) return;
+      
+      if (myGen != _playbackGeneration) return;
 
       if (candidates.isNotEmpty) {
         _currentCandidates = candidates;
@@ -407,77 +331,62 @@ class PlayerNotifier extends Notifier<PlayerState> {
         await _attemptCurrentCandidate(myGen, targetTrack, q);
       } else {
         await _controller.stop();
-        if (_disposed || myGen != _playbackGeneration) return;
+        if (myGen != _playbackGeneration) return;
         _handleLogicalTrackFailure('No YouTube video found for this track');
         return;
       }
     } catch (e) {
-      if (_disposed || myGen != _playbackGeneration) return;
+      if (myGen != _playbackGeneration) return;
       debugPrint('Failed to resolve YouTube ID for ${targetTrack.name}: $e');
       await _controller.stop();
-      if (_disposed || myGen != _playbackGeneration) return;
+      if (myGen != _playbackGeneration) return;
       _handleLogicalTrackFailure('Failed to resolve YouTube ID');
       return;
     }
   }
 
-  Future<void> _attemptCurrentCandidate(
-    int myGen,
-    Track track,
-    List<Track> queue,
-  ) async {
+  Future<void> _attemptCurrentCandidate(int myGen, Track track, List<Track> queue) async {
     final candidate = _currentCandidates[_currentCandidateIndex];
     final service = ref.read(playbackServiceProvider);
-
-    if (_disposed || myGen != _playbackGeneration) return;
-
+    
+    if (myGen != _playbackGeneration) return;
+    
     final newTrack = track.copyWith(youtubeVideoId: candidate.videoId);
     await service.cacheYoutubeId(newTrack.spotifyId, candidate.videoId);
-    if (_disposed || myGen != _playbackGeneration) return;
-
+    
     final newQueue = List<Track>.from(state.playbackQueue.tracks);
     final idx = state.playbackQueue.currentIndex;
     if (idx >= 0 && idx < newQueue.length) {
-      newQueue[idx] = newTrack;
-      state = state.copyWith(
-        playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
-        isLoadingVideo: true,
-      );
+       newQueue[idx] = newTrack;
+       state = state.copyWith(
+         playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
+         isLoadingVideo: true,
+       );
     }
-
+    
     if (_currentCandidateIndex > 0) {
-      state = state.copyWith(loadError: 'Trying another source...');
+       state = state.copyWith(loadError: 'Trying another source...');
     } else {
-      state = state.copyWith(clearLoadError: true);
+       state = state.copyWith(clearLoadError: true);
     }
-
-    await _controller.stop();
-    if (_disposed || myGen != _playbackGeneration) return;
+    
+    await _controller.stop(); 
+    if (myGen != _playbackGeneration) return;
 
     await _controller.play(newTrack.toPlaybackTrack());
-    if (_disposed || myGen != _playbackGeneration) return;
+    if (myGen != _playbackGeneration) return;
     _controller.setVolume(state.volume);
-
+    
     await service.recordPlay(newTrack);
   }
 
-  Future<void> playTracks(
-    List<Track> tracks, {
-    int initialIndex = 0,
-    String? contextArtistId,
-  }) async {
+  Future<void> playTracks(List<Track> tracks, {int initialIndex = 0, String? contextArtistId}) async {
     if (tracks.isEmpty) return;
-    final track =
-        (initialIndex >= 0 && initialIndex < tracks.length)
-            ? tracks[initialIndex]
-            : tracks.first;
+    final track = (initialIndex >= 0 && initialIndex < tracks.length) ? tracks[initialIndex] : tracks.first;
     await playTrack(track, queue: tracks, contextArtistId: contextArtistId);
   }
 
-  Future<void> shuffleAndPlay(
-    List<Track> tracks, {
-    String? contextArtistId,
-  }) async {
+  Future<void> shuffleAndPlay(List<Track> tracks, {String? contextArtistId}) async {
     if (tracks.isEmpty) return;
     final shuffled = [...tracks]..shuffle();
     state = state.copyWith(
@@ -488,26 +397,18 @@ class PlayerNotifier extends Notifier<PlayerState> {
         contextArtistId: contextArtistId,
       ),
     );
-    await playTrack(
-      shuffled.first,
-      queue: shuffled,
-      contextArtistId: contextArtistId,
-    );
+    await playTrack(shuffled.first, queue: shuffled, contextArtistId: contextArtistId);
   }
 
   Future<void> playPlaylist(int playlistId) async {
-    final tracks = await ref
-        .read(playbackServiceProvider)
-        .getPlaylistTracks(playlistId);
+    final tracks = await ref.read(playbackServiceProvider).getPlaylistTracks(playlistId);
     if (tracks.isNotEmpty) {
       await playTracks(tracks);
     }
   }
 
   Future<void> playRadio(String artistId) async {
-    final tracks = await ref
-        .read(playbackServiceProvider)
-        .getRadioTracks(artistId);
+    final tracks = await ref.read(playbackServiceProvider).getRadioTracks(artistId);
     if (tracks.isNotEmpty) {
       await playTrack(tracks.first, queue: tracks);
     }
@@ -526,8 +427,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
   void pause() => _controller.pause();
   void resume() {
-    if (_controller.currentStatus.state == PlaybackState.idle &&
-        state.currentTrack != null) {
+    if (_controller.currentStatus.state == PlaybackState.idle && state.currentTrack != null) {
       _resumeRestoredState();
     } else {
       _controller.resume();
@@ -537,13 +437,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
   Future<void> _resumeRestoredState() async {
     final track = state.currentTrack;
     if (track == null) return;
-
-    final position = state.position;
-    final preparation = playTrack(track, queue: state.playbackQueue.tracks);
-    final generation = _playbackGeneration;
-    await preparation;
-    if (_disposed || generation != _playbackGeneration) return;
-    if (position > Duration.zero) await _controller.seekTo(position);
+    
+    await playTrack(track, queue: state.playbackQueue.tracks);
+    if (state.position > Duration.zero) {
+      // Seek slightly after to ensure video is loaded
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _controller.seekTo(state.position);
+      });
+    }
   }
 
   void togglePlay() {
@@ -560,7 +461,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       final track = nextQueue.tracks[nextQueue.currentIndex];
       playTrack(track, queue: nextQueue.tracks);
     }
-
+    
     // Evaluate autoplay if we didn't play a track but still advanced
     _evaluateAutoplay();
   }
@@ -573,10 +474,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
   void skipTo(int index) {
     if (index >= 0 && index < state.playbackQueue.tracks.length) {
-      playTrack(
-        state.playbackQueue.tracks[index],
-        queue: state.playbackQueue.tracks,
-      );
+      playTrack(state.playbackQueue.tracks[index], queue: state.playbackQueue.tracks);
     }
   }
 
@@ -612,9 +510,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
   void toggleShuffle() {
     state = state.copyWith(
-      playbackQueue: state.playbackQueue.copyWith(
-        isShuffled: !state.playbackQueue.isShuffled,
-      ),
+      playbackQueue: state.playbackQueue.copyWith(isShuffled: !state.playbackQueue.isShuffled),
     );
     _scheduleSaveState();
   }
@@ -628,12 +524,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 
   Future<void> cycleRepeat() async {
-    final nextMode =
-        RepeatMode.values[(state.repeatMode.index + 1) %
-            RepeatMode.values.length];
-    state = state.copyWith(
-      playbackQueue: state.playbackQueue.copyWith(repeatMode: nextMode),
-    );
+    final nextMode = RepeatMode.values[(state.repeatMode.index + 1) % RepeatMode.values.length];
+    state = state.copyWith(playbackQueue: state.playbackQueue.copyWith(repeatMode: nextMode));
     _scheduleSaveState();
   }
 
@@ -648,13 +540,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
     final newValue = !track.isFavorite;
     await ref.read(playbackServiceProvider).toggleFavorite(track, newValue);
 
-    final newQueue =
-        state.queue.map((t) {
-          if (t.spotifyId == track.spotifyId) {
-            return t.copyWith(isFavorite: newValue);
-          }
-          return t;
-        }).toList();
+    final newQueue = state.queue.map((t) {
+      if (t.spotifyId == track.spotifyId) {
+        return t.copyWith(isFavorite: newValue);
+      }
+      return t;
+    }).toList();
 
     state = state.copyWith(
       playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
@@ -680,14 +571,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
     _isFetchingAutoplay = true;
     try {
       final spotifyRepo = ref.read(spotifyRepositoryProvider);
-
+      
       String? seedArtistId = queue.contextArtistId;
-
+      
       if (seedArtistId == null) {
-        final contextTracks =
-            queue.tracks
-                .where((t) => t.queueOrigin != QueueItemOrigin.autoplay)
-                .toList();
+        final contextTracks = queue.tracks.where((t) => t.queueOrigin != QueueItemOrigin.autoplay).toList();
         if (contextTracks.length >= 2) {
           final artistCounts = <String, int>{};
           for (final t in contextTracks) {
@@ -697,37 +585,28 @@ class PlayerNotifier extends Notifier<PlayerState> {
             }
           }
           if (artistCounts.isNotEmpty) {
-            final dominant = artistCounts.entries.reduce(
-              (a, b) => a.value > b.value ? a : b,
-            );
+            final dominant = artistCounts.entries.reduce((a, b) => a.value > b.value ? a : b);
             if (dominant.value > contextTracks.length / 2) {
               seedArtistId = dominant.key;
             }
           }
         }
       }
-
-      final cacheResult =
-          await spotifyRepo
-              .watchRecommendations(
-                seedArtistId: seedArtistId,
-                seedTrackId: currentTrack.spotifyId,
-                limit: 30,
-              )
-              .first;
+      
+      final cacheResult = await spotifyRepo.watchRecommendations(
+        seedArtistId: seedArtistId,
+        seedTrackId: currentTrack.spotifyId,
+        limit: 30,
+      ).first;
       final candidates = cacheResult.data;
 
       final queueIds = queue.tracks.map((t) => t.spotifyId).toSet();
-      final newTracks =
-          candidates
-              .where((t) {
-                if (queueIds.contains(t.spotifyId)) return false;
-                if (t.spotifyId == currentTrack.spotifyId) return false;
-                if (_autoplaySeenTrackIds.contains(t.spotifyId)) return false;
-                return true;
-              })
-              .map((t) => t.copyWith(queueOrigin: QueueItemOrigin.autoplay))
-              .toList();
+      final newTracks = candidates.where((t) {
+        if (queueIds.contains(t.spotifyId)) return false;
+        if (t.spotifyId == currentTrack.spotifyId) return false;
+        if (_autoplaySeenTrackIds.contains(t.spotifyId)) return false;
+        return true;
+      }).map((t) => t.copyWith(queueOrigin: QueueItemOrigin.autoplay)).toList();
 
       if (newTracks.isNotEmpty) {
         _autoplaySeenTrackIds.addAll(newTracks.map((t) => t.spotifyId));
@@ -746,6 +625,4 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 }
 
-final playerProvider = NotifierProvider<PlayerNotifier, PlayerState>(
-  PlayerNotifier.new,
-);
+final playerProvider = NotifierProvider<PlayerNotifier, PlayerState>(PlayerNotifier.new);
