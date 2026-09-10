@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pp_playback_engine/pp_playback_engine.dart';
 import '../models/track.dart';
+import 'hybrid_playback_engine.dart';
 
 export 'playback_service.dart' show playbackServiceProvider, PlaybackService;
 export 'package:pp_playback_engine/pp_playback_engine.dart';
@@ -25,7 +27,13 @@ extension TrackToPlayback on Track {
 
 /// The primary playback controller used by the app.
 final playbackControllerProvider = Provider<PlaybackController>((ref) {
-  final engine = MediaKitPlaybackEngine();
+  final PlaybackController engine;
+  
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    engine = HybridPlaybackEngine();
+  } else {
+    engine = MediaKitPlaybackEngine();
+  }
   
   ref.onDispose(() {
     engine.dispose();

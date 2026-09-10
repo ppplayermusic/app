@@ -91,21 +91,6 @@ class MediaKitPlaybackEngine implements PlaybackController {
     });
   }
 
-  Future<void> _cue(
-    int generation,
-    String videoId, {
-    double? startSeconds,
-  }) async {
-    if (!_valid(generation)) return;
-    try {
-      await _youtubeController!.cueVideoById(
-        videoId: videoId,
-        startSeconds: startSeconds,
-      );
-    } catch (error) {
-      _failAttempt(generation, 'YouTube loading failed: $error');
-    }
-  }
 
   Timer? _watchdogTimer;
   Timer? _iframePositionTimer;
@@ -196,7 +181,31 @@ class MediaKitPlaybackEngine implements PlaybackController {
   yt.YoutubePlayerController? get youtubeController => _youtubeController;
 
   @override
-  Future<void> play(PlaybackTrack track) async {
+  Future<void> prepare(PlaybackTrack track, {Duration? position}) async {
+    if (_disposed) return;
+    
+    _attemptActive = false;
+    _intentRevision++;
+    _intendedState = PlaybackState.paused;
+    _playGeneration++;
+    final myGen = _playGeneration;
+    
+    _updateStatus(_currentStatus.copyWith(
+      track: track,
+      state: PlaybackState.preparing,
+      isIFrameMode: true
+    ));
+    
+    // Initialize controller if needed
+    if (_youtubeController == null) {
+      await _enterIFrameMode(track.id, generation: myGen);
+    }
+    
+    await _load(myGen, track.id, startSeconds: position?.inMilliseconds != null ? position!.inMilliseconds / 1000.0 : null);
+  }
+
+  @override
+  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero}) async {
     if (_disposed) return;
     _attemptActive = false;
     _intentRevision++;
@@ -204,13 +213,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _playGeneration++;
     final myGen = _playGeneration;
 
-    debugPrint('ENGINE: play called for track ${track.id} (gen: $myGen)');
+    debugPrint('ENGINE: play called for track ${track.id} (gen: $myGen, startAt: $startAt)');
 
     String testVideoId = track.id;
-
-    debugPrint(
-      'MediaKitPlaybackEngine: Playing track $testVideoId (original: ${track.id})',
-    );
 
     // 1. Cleanup previous state but keep IFrame controller if possible
     _watchdogTimer?.cancel();
@@ -246,12 +251,17 @@ class MediaKitPlaybackEngine implements PlaybackController {
     );
 
     // 2. Initialize or reuse IFrame controller
-    await _enterIFrameMode(testVideoId, generation: myGen);
+    await _enterIFrameMode(
+      testVideoId,
+      generation: myGen,
+      startSeconds: startAt.inMilliseconds > 0 ? startAt.inMilliseconds / 1000.0 : null,
+    );
   }
 
   Future<void> _enterIFrameMode(
     String videoId, {
     required int generation,
+    double? startSeconds,
   }) async {
     // Initialization prepares media without implicitly starting playback.
     if (_youtubeController == null) {
@@ -435,7 +445,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
     _updateStatus(_currentStatus);
     _armWatchdog(generation, loading: true);
-    await _load(generation, videoId);
+    await _load(generation, videoId, startSeconds: startSeconds);
   }
 
   Future<void> _load(
@@ -471,6 +481,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
   @override
   Future<void> pause({String caller = 'user'}) async {
+    if (_currentStatus.state == PlaybackState.paused || _currentStatus.state == PlaybackState.idle) {
+      return;
+    }
+    
     _diag(
       'ENGINE pause() caller=$caller intendedWas=$_intendedState gen=$_playGeneration',
     );
@@ -478,22 +492,28 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _watchdogTimer?.cancel();
     _intendedState = PlaybackState.paused;
 
-    // Optimistically update the state so the UI and OS MediaSession reflect
-    // the paused state immediately, rather than waiting for the JS bridge
-    // (which may be suspended by the OS and never fire the event).
-    _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+    final pauseAck = statusStream
+        .firstWhere((s) => s.state == PlaybackState.paused || s.state == PlaybackState.idle)
+        .timeout(const Duration(seconds: 2));
 
     if (_currentStatus.isIFrameMode) {
       _latePauseGeneration = _playGeneration;
       try {
-        await _youtubeController?.pauseVideo().timeout(
-          const Duration(seconds: 2),
-        );
+        await _youtubeController?.pauseVideo();
       } catch (e) {
         debugPrint('MediaKitPlaybackEngine: pauseVideo failed/timed out: $e');
+        _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+        return;
       }
     } else {
       await _player?.pause();
+    }
+    
+    try {
+      await pauseAck;
+    } catch (_) {
+      debugPrint('Timeout waiting for pause acknowledgment in MediaKit');
+      _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
     }
   }
 

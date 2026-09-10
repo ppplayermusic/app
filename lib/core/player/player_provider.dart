@@ -126,11 +126,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
       }
     });
 
-    PipHandler.onPipModeChanged = (isPipMode) {
+    PipHandler.addPipModeListener((isPipMode) {
       state = state.copyWith(isPipMode: isPipMode);
-    };
+    });
 
-    PipHandler.onActivityStopped = () {
+    PipHandler.addActivityStoppedListener(() {
       final status = ref.read(playbackStatusProvider).value;
       final ts = DateTime.now().toIso8601String();
       debugPrint(
@@ -139,7 +139,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
         'track=${state.currentTrack?.spotifyId}',
       );
       if (state.isPlaying && status?.isIFrameMode == true) {
-        if (!BackgroundPlaybackExperiment.enabled) {
+        if (!BackgroundPlaybackExperiment.enabled && defaultTargetPlatform != TargetPlatform.android) {
           debugPrint(
             '$ts PlayerNotifier: pausing via onActivityStopped (caller=lifecycle/lock-screen)',
           );
@@ -147,11 +147,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
           state = state.copyWith(isPlaying: false);
         } else {
           debugPrint(
-            '$ts ${BackgroundPlaybackExperiment.tag} PlayerNotifier: NOT pausing onActivityStopped to observe native WebView behavior.',
+            '$ts PlayerNotifier: NOT pausing onActivityStopped (BackgroundPlaybackExperiment=${BackgroundPlaybackExperiment.enabled}, platform=$defaultTargetPlatform).',
           );
         }
       }
-    };
+    });
 
     ref.listen(settingsProvider, (previous, next) {
       if (previous?.continuePlaybackInPip != next.continuePlaybackInPip) {

@@ -52,6 +52,11 @@ class PlaybackView extends StatelessWidget {
       );
     }
 
+    if (controller.renderer == null) {
+      // Headless mode (e.g. NativeServicePlaybackEngine on Android)
+      return const ColoredBox(color: Colors.black);
+    }
+
     return mk.Video(
       controller: controller.renderer,
       controls: showControls ? mk.MaterialVideoControls : mk.NoVideoControls,

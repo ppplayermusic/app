@@ -9,7 +9,7 @@ abstract class PlaybackController {
   Stream<PlaybackEvent> get eventStream;
   PlaybackStatus get currentStatus;
 
-  Future<void> play(PlaybackTrack track);
+  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero});
   Future<void> pause({String caller = 'user'});
   Future<void> resume();
   Future<void> stop();
@@ -21,6 +21,8 @@ abstract class PlaybackController {
   dynamic get renderer;
   
   YoutubePlayerController? get youtubeController;
+  
+  Future<void> prepare(PlaybackTrack track, {Duration? position});
   
   void dispose();
 }
