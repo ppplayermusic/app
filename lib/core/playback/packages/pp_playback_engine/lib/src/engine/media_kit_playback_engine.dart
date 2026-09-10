@@ -55,6 +55,15 @@ class MediaKitPlaybackEngine implements PlaybackController {
   bool _valid(int generation) =>
       !_disposed && _attemptActive && generation == _playGeneration;
 
+  // The startSeconds used for the current load attempt — preserved for watchdog recovery.
+  double? _currentStartSeconds;
+
+  // Confirmed playback position observed during the current generation's playing state.
+  // Only updated while _attemptActive && state==playing for this generation.
+  // Used by watchdog recovery to retry from where audio actually was, not from start.
+  Duration? _confirmedPlaybackPosition;
+  int _confirmedPositionGeneration = -1;
+
   void _failAttempt(int generation, String error) {
     if (!_valid(generation)) return;
     _attemptActive = false;
@@ -87,7 +96,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
       _lastPlayedGeneration = -1;
       if (!_valid(generation)) return;
       _armWatchdog(generation, loading: true);
-      unawaited(_load(generation, _currentStatus.track!.id));
+      // Use the latest confirmed position for the current generation, falling back to
+      // the original start offset when no position has been observed yet.
+      final recoveryStart = (_confirmedPositionGeneration == generation &&
+              _confirmedPlaybackPosition != null)
+          ? _confirmedPlaybackPosition!.inMilliseconds / 1000.0
+          : _currentStartSeconds;
+      unawaited(_load(generation, _currentStatus.track!.id, startSeconds: recoveryStart));
     });
   }
 
@@ -251,10 +266,12 @@ class MediaKitPlaybackEngine implements PlaybackController {
     );
 
     // 2. Initialize or reuse IFrame controller
+    final ss = startAt.inMilliseconds > 0 ? startAt.inMilliseconds / 1000.0 : null;
+    _currentStartSeconds = ss;
     await _enterIFrameMode(
       testVideoId,
       generation: myGen,
-      startSeconds: startAt.inMilliseconds > 0 ? startAt.inMilliseconds / 1000.0 : null,
+      startSeconds: ss,
     );
   }
 
@@ -427,7 +444,12 @@ class MediaKitPlaybackEngine implements PlaybackController {
             }
             if (ytState.playerState == yt.PlayerState.unStarted) return;
           }
-          if (newState == PlaybackState.playing) _watchdogTimer?.cancel();
+          if (newState == PlaybackState.playing) {
+            _watchdogTimer?.cancel();
+            // Record the confirmed position for this generation so the watchdog
+            // retries from here rather than from the original start offset.
+            _confirmedPositionGeneration = gen;
+          }
 
           if (newState != _currentStatus.state) {
             _updateStatus(_currentStatus.copyWith(state: newState));
@@ -480,13 +502,14 @@ class MediaKitPlaybackEngine implements PlaybackController {
   }
 
   @override
-  Future<void> pause({String caller = 'user'}) async {
+  Future<void> pause({String caller = 'user', bool failOnTimeout = false}) async {
     if (_currentStatus.state == PlaybackState.paused || _currentStatus.state == PlaybackState.idle) {
       return;
     }
     
     _diag(
-      'ENGINE pause() caller=$caller intendedWas=$_intendedState gen=$_playGeneration',
+      'ENGINE pause() caller=$caller failOnTimeout=$failOnTimeout '
+      'intendedWas=$_intendedState gen=$_playGeneration',
     );
     _intentRevision++;
     _watchdogTimer?.cancel();
@@ -502,6 +525,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
         await _youtubeController?.pauseVideo();
       } catch (e) {
         debugPrint('MediaKitPlaybackEngine: pauseVideo failed/timed out: $e');
+        if (failOnTimeout) {
+          throw TimeoutException('Source pause failed (IFrame error)', const Duration(seconds: 2));
+        }
         _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
         return;
       }
@@ -511,8 +537,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
     
     try {
       await pauseAck;
-    } catch (_) {
-      debugPrint('Timeout waiting for pause acknowledgment in MediaKit');
+    } catch (e) {
+      // TimeoutException: ack didn't arrive within 2 s.
+      // StateError ("No element"): engine disposed while pause was pending.
+      debugPrint('MediaKit: pause ack timeout/close (caller=$caller, failOnTimeout=$failOnTimeout): $e');
+      if (failOnTimeout && e is TimeoutException) {
+        throw TimeoutException('Source pause unconfirmed by IFrame', const Duration(seconds: 2));
+      }
       _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
     }
   }
@@ -735,13 +766,20 @@ class MediaKitPlaybackEngine implements PlaybackController {
           _diag(
             'RENDERER gen=$generation position=$currentTime duration=$duration',
           );
+          final positionDuration = Duration(seconds: currentTime.toInt());
+          // Update the confirmed position for watchdog recovery \u2014
+          // validated by generation so stale polling cannot overwrite a newer attempt.
+          if (_confirmedPositionGeneration == generation) {
+            _confirmedPlaybackPosition = positionDuration;
+          }
           _updateStatus(
             _currentStatus.copyWith(
-              position: Duration(seconds: currentTime.toInt()),
+              position: positionDuration,
               duration: Duration(seconds: duration.toInt()),
             ),
           );
         }
+
       } catch (e) {
         // Ignore polling errors during transitions
       }

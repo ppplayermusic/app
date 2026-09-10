@@ -76,13 +76,15 @@ class WebViewPlugin : FlutterPlugin, MethodCallHandler {
                 val args = call.arguments as Map<*, *>
                 val videoId = args["videoId"] as String
                 val startSeconds = args["startSeconds"] as Double
-                CustomWebViewService.instance?.prepareVideo(videoId, startSeconds)
+                val commandId = (args["commandId"] as? Int) ?: 0
+                CustomWebViewService.instance?.prepareVideo(videoId, startSeconds, commandId)
                 result.success(null)
             }
             "loadVideo" -> {
                 val videoId = call.argument<String>("videoId") ?: return result.error("INVALID", "Missing videoId", null)
                 val startSeconds = call.argument<Double>("startSeconds") ?: 0.0
-                CustomWebViewService.instance?.loadVideo(videoId, startSeconds)
+                val commandId = call.argument<Int>("commandId") ?: 0
+                CustomWebViewService.instance?.loadVideo(videoId, startSeconds, commandId)
                 result.success(null)
             }
             "playVideo" -> {

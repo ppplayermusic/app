@@ -10,7 +10,7 @@ abstract class PlaybackController {
   PlaybackStatus get currentStatus;
 
   Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero});
-  Future<void> pause({String caller = 'user'});
+  Future<void> pause({String caller = 'user', bool failOnTimeout = false});
   Future<void> resume();
   Future<void> stop();
   Future<void> seekTo(Duration position);

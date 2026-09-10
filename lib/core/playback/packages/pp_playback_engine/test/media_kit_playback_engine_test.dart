@@ -348,6 +348,98 @@ void main() {
     expect(controller.count('play'), 1);
     expect(controller.count('load'), 2);
   });
+  engineTest(
+    'watchdog recovery uses confirmed position after playback has progressed',
+    (tester) async {
+      addTearDown(engine.dispose);
+      // Play starting at t=10 s.
+      await engine.play(track, startAt: const Duration(seconds: 10));
+      expect(
+        controller.commands.last.parameters['startSeconds'],
+        10.0,
+        reason: 'initial load uses startAt',
+      );
+      // Signal cued, then playing — this records _confirmedPositionGeneration.
+      controller.emitState(track.id, yt.PlayerState.cued);
+      await tester.pump();
+      controller.emitState(track.id, yt.PlayerState.playing);
+      await tester.pump();
+      // Simulate stall: IFrame position has moved to 42 s.
+      // We fake this by reading what the engine exposes via FakeYoutubeController.currentTime (=12.0)
+      // then triggering the watchdog. The engine should load with startSeconds=12.0 (currentTime),
+      // not 10.0 (the original startAt).
+      await tester.pump(const Duration(seconds: 20));
+      expect(controller.count('load'), 2);
+      final recoveryCmd = controller.commands
+          .where((c) => c.name == 'load')
+          .last;
+      // FakeYoutubeController.currentTime returns 12.0 (see fake definition).
+      expect(
+        recoveryCmd.parameters['startSeconds'],
+        isNot(equals(10.0)),
+        reason: 'watchdog recovery must not restart from original startAt',
+      );
+    },
+  );
+  engineTest(
+    'watchdog recovery falls back to startSeconds when no playing was observed',
+    (tester) async {
+      addTearDown(engine.dispose);
+      await engine.play(track, startAt: const Duration(seconds: 30));
+      // Never emit playing — watchdog fires without a confirmed position.
+      await tester.pump(const Duration(seconds: 20));
+      expect(controller.count('load'), 2);
+      final recoveryCmd = controller.commands
+          .where((c) => c.name == 'load')
+          .last;
+      expect(
+        recoveryCmd.parameters['startSeconds'],
+        30.0,
+        reason: 'without confirmed position, fallback to original startSeconds',
+      );
+    },
+  );
+  engineTest(
+    'newer play survives watchdog recovery — stale recovery is discarded',
+    (tester) async {
+      addTearDown(engine.dispose);
+      await engine.play(track);
+      // Start watchdog countdown, then switch tracks before it fires.
+      await tester.pump(const Duration(seconds: 19));
+      await engine.play(other);
+      // Watchdog from old generation fires.
+      await tester.pump(const Duration(seconds: 1));
+      // No error; new track attempt is live.
+      expect(engine.currentStatus.track?.id, other.id);
+      expect(engine.currentStatus.error, isNull);
+      await tester.pump(const Duration(minutes: 2));
+      expect(statuses.where((s) => s.state == PlaybackState.error), isEmpty);
+    },
+  );
+  engineTest(
+    'pause with failOnTimeout throws on timeout instead of emitting paused',
+    (tester) async {
+      addTearDown(engine.dispose);
+      await ready(tester);
+      controller.emitState(track.id, yt.PlayerState.playing);
+      await tester.pump();
+      // Block the pause command indefinitely.
+      controller.pauseCompletion = Completer<void>();
+      Object? caughtError;
+      final pauseFuture = engine
+          .pause(caller: 'handoff', failOnTimeout: true)
+          .catchError((e) { caughtError = e; });
+      // Advance past the 2 s ack window.
+      await tester.pump(const Duration(seconds: 3));
+      await pauseFuture;
+      expect(
+        caughtError,
+        isA<TimeoutException>(),
+        reason: 'failOnTimeout=true must throw, not silently emit paused',
+      );
+      controller.pauseCompletion!.complete();
+    },
+  );
   test(
     'native resume and pause are unaffected by Android IFrame restriction',
     () async {

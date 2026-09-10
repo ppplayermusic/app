@@ -77,29 +77,53 @@ class HybridPlaybackEngine implements PlaybackController {
          return;
      }
      if (_isTransferring) return;
+     // Route completion through unified handler; don't let raw 'ended' propagate.
+     if (status.state == PlaybackState.ended) {
+         _handleTrackCompletion(source, status.track);
+         return;
+     }
      _updateStatus(status);
   }
 
   void _handleSubEvent(EngineOwner source, PlaybackEvent event) {
      if (event.type == PlaybackEventType.trackEnded) {
-         if (_currentTrack == null || event.track?.id != _currentTrack!.id || _lastCompletedGeneration == _playGeneration) {
-             return;
-         }
-         _lastCompletedGeneration = _playGeneration;
-         
-         if (_isTransferring) {
-             _log('Source engine emitted trackEnded during transfer. Advancing queue.');
-             _handoffGeneration++;
-             _isTransferring = false;
-         }
-         if (!_disposed) _eventController.add(event);
+         // Route through unified handler — deduplication guards against both
+         // the status path (background) and event path (foreground) firing.
+         _handleTrackCompletion(source, event.track);
          return;
      }
-
      if (source == _owner) {
          if (_isTransferring) return;
          if (!_disposed) _eventController.add(event);
      }
+  }
+
+  /// Single authority for track-completion logic.
+  /// Validates: active owner, track identity, and generation deduplication.
+  void _handleTrackCompletion(EngineOwner source, PlaybackTrack? completedTrack) {
+      if (source != _owner) return;
+      if (completedTrack == null || completedTrack.id != _currentTrack?.id) {
+          _log('Completion rejected: track mismatch '
+              '(completed=${completedTrack?.id}, current=${_currentTrack?.id})');
+          return;
+      }
+      if (_lastCompletedGeneration == _playGeneration) {
+          _log('Completion rejected: duplicate for generation $_playGeneration');
+          return;
+      }
+      if (_isTransferring) {
+          _log('Completion during transfer — advancing generation and passing through.');
+          _handoffGeneration++;
+          _isTransferring = false;
+      }
+      _lastCompletedGeneration = _playGeneration;
+      _log('Track completed: ${completedTrack.id} (gen: $_playGeneration)');
+      if (!_disposed) {
+          _eventController.add(PlaybackEvent(
+              type: PlaybackEventType.trackEnded,
+              track: completedTrack,
+          ));
+      }
   }
 
   void _log(String msg) {
@@ -116,6 +140,7 @@ class HybridPlaybackEngine implements PlaybackController {
       
       _handoffGeneration++;
       final myGen = _handoffGeneration;
+      final myTrackId = _currentTrack!.id;
       
       _log('Initiating handoff to $targetOwner (gen: $myGen) intendedState: $_intendedState');
       
@@ -126,33 +151,56 @@ class HybridPlaybackEngine implements PlaybackController {
       final destEngine = _activeEngine;
       
       try {
-          // Snapshot the position before anything else.
+          // Step 1: Pause source and wait for CONFIRMED acknowledgment.
+          // failOnTimeout=true: a timeout throws instead of silently faking paused state.
+          // If source cannot confirm silence, we cannot safely start the destination.
+          try {
+              await sourceEngine.pause(caller: 'handoff', failOnTimeout: true);
+          } on TimeoutException catch (e) {
+              _log('Handoff ABORTED: source pause unconfirmed — $e');
+              // Roll back owner; destination was never started, so no audio overlap.
+              _owner = targetOwner == EngineOwner.foreground
+                  ? EngineOwner.background
+                  : EngineOwner.foreground;
+              _isTransferring = false;
+              return;
+          }
+
+          if (_disposed || _handoffGeneration != myGen) return;
+
+          // Step 2: Capture position AFTER source confirms pause — this is the
+          // exact timestamp at which audio stopped, giving the tightest position.
           final pos = sourceEngine.currentStatus.position;
-          _prewarmedTrack = null; // pre-warm superseded by real handoff
-          
+          _prewarmedTrack = null;
+
+          // Step 3: Re-validate generation, track identity, and user intent.
+          // A newer play() or track-change during the pause await must win.
+          if (_currentTrack?.id != myTrackId) {
+              _log('Handoff ABORTED: track changed during pause wait');
+              _isTransferring = false;
+              return;
+          }
+
           if (_intendedState == PlaybackState.playing) {
               _log('Handoff: play(startAt: $pos) on $targetOwner');
-              // Pause source and start destination atomically in parallel.
-              // play(track, startAt: pos) passes the position through loadVideoById/
-              // loadVideo in a single round-trip — no separate seekTo needed.
-              await Future.wait([
-                  sourceEngine.pause(caller: 'handoff'),
-                  destEngine.play(_currentTrack!, startAt: pos),
-              ]);
-              
+
+              // Step 4: Register the "destination playing" listener BEFORE issuing
+              // play() to avoid missing a fast state-change event.
+              final playingFuture = destEngine.statusStream
+                  .firstWhere((s) => s.state == PlaybackState.playing)
+                  .timeout(const Duration(seconds: 5));
+
+              await destEngine.play(_currentTrack!, startAt: pos);
+
               if (_disposed || _handoffGeneration != myGen) return;
-              
               await destEngine.setVolume(_currentStatus.volume);
-              
-              // Wait for destination to reach playing state.
+
+              // Step 5: Wait for destination confirmation via the pre-registered future.
               if (destEngine.currentStatus.state != PlaybackState.playing) {
                   try {
-                      await destEngine.statusStream
-                          .firstWhere((s) => s.state == PlaybackState.playing)
-                          .timeout(const Duration(seconds: 5));
+                      await playingFuture;
                   } catch (_) {
                       _log('Timeout waiting for destination to play');
-                      // Invalidate generation first so late events are discarded.
                       _handoffGeneration++;
                       _isTransferring = false;
                       try {
@@ -161,7 +209,10 @@ class HybridPlaybackEngine implements PlaybackController {
                       } catch (_) {
                           _log('Failed to pause destination during timeout cleanup');
                       }
-                      if (_handoffGeneration == myGen + 1) {
+                      // Step 6: Guard rollback — only update intent if this specific
+                      // failed transfer is still current (no newer command arrived).
+                      if (_handoffGeneration == myGen + 1 &&
+                          _intendedState == PlaybackState.playing) {
                           _intendedState = PlaybackState.paused;
                           _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
                       }
@@ -169,13 +220,12 @@ class HybridPlaybackEngine implements PlaybackController {
                   }
               }
           } else {
-              // User paused/stopped — just stop the source, don't start destination.
-              await sourceEngine.pause(caller: 'handoff');
+              // User paused/stopped — source is already paused; set volume on destination.
               await destEngine.setVolume(_currentStatus.volume);
           }
           
       } catch (e) {
-          _log('Handoff failed: $e');
+          _log('Handoff failed unexpectedly: $e');
       } finally {
           if (_handoffGeneration == myGen) {
               _isTransferring = false;
@@ -237,10 +287,10 @@ class HybridPlaybackEngine implements PlaybackController {
   }
 
   @override
-  Future<void> pause({String caller = 'user'}) async {
+  Future<void> pause({String caller = 'user', bool failOnTimeout = false}) async {
       _intendedState = PlaybackState.paused;
       _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
-      await _activeEngine.pause(caller: caller);
+      await _activeEngine.pause(caller: caller, failOnTimeout: failOnTimeout);
   }
 
   @override

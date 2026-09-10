@@ -15,6 +15,10 @@ class NativeServicePlaybackEngine implements PlaybackController {
   final _eventController = StreamController<PlaybackEvent>.broadcast();
   PlaybackStatus _currentStatus = const PlaybackStatus();
   bool _disposed = false;
+
+  /// Monotonically increasing command ID. Incremented by every play() call.
+  /// Passed to the JS layer so stale cueVideo calls from pre-warms are rejected.
+  int _commandId = 0;
   
   NativeServicePlaybackEngine() {
     _channel.setMethodCallHandler(_handleMethodCall);
@@ -91,6 +95,9 @@ class NativeServicePlaybackEngine implements PlaybackController {
 
   @override
   Future<void> prepare(PlaybackTrack track, {Duration? position}) async {
+    // Capture commandId before awaiting — pre-warm uses current value.
+    // When play() later increments commandId, the JS-side cueVideo is rejected.
+    final id = _commandId;
     _updateStatus(_currentStatus.copyWith(
       track: track,
       state: PlaybackState.preparing,
@@ -99,7 +106,8 @@ class NativeServicePlaybackEngine implements PlaybackController {
     try {
       await _channel.invokeMethod('prepareVideo', {
         'videoId': track.id,
-        'startSeconds': position != null ? (position.inMilliseconds / 1000.0) : 0.0
+        'startSeconds': position != null ? (position.inMilliseconds / 1000.0) : 0.0,
+        'commandId': id,
       });
     } catch (e) {
       debugPrint('Error preparing video: $e');
@@ -108,18 +116,18 @@ class NativeServicePlaybackEngine implements PlaybackController {
 
   @override
   Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero}) async {
+    // Increment commandId BEFORE dispatching — invalidates any pending pre-warm cue.
+    final id = ++_commandId;
     _updateStatus(_currentStatus.copyWith(
       track: track,
       state: PlaybackState.preparing,
       isIFrameMode: true
     ));
     try {
-      // loadVideo(videoId, startSeconds) both loads AND starts playback.
-      // This guarantees the correct video plays even when switching tracks
-      // while already in background mode, without a separate prepare() call.
       await _channel.invokeMethod('loadVideo', {
         'videoId': track.id,
-        'startSeconds': startAt.inMilliseconds / 1000.0
+        'startSeconds': startAt.inMilliseconds / 1000.0,
+        'commandId': id,
       });
     } catch (e) {
       debugPrint('Error playing video: $e');
@@ -131,12 +139,12 @@ class NativeServicePlaybackEngine implements PlaybackController {
       play(track, startAt: position);
 
   @override
-  Future<void> pause({String caller = 'user'}) async {
+  Future<void> pause({String caller = 'user', bool failOnTimeout = false}) async {
     if (_currentStatus.state == PlaybackState.paused || _currentStatus.state == PlaybackState.idle) {
       return;
     }
     
-    // Subscribe *before* sending the command so a fast acknowledgment cannot be missed.
+    // Subscribe BEFORE sending the command so a fast acknowledgment is not missed.
     final pauseAck = statusStream
         .firstWhere((s) => s.state == PlaybackState.paused || s.state == PlaybackState.idle)
         .timeout(const Duration(seconds: 2));
@@ -145,23 +153,32 @@ class NativeServicePlaybackEngine implements PlaybackController {
       await _channel.invokeMethod('pauseVideo');
     } catch (e) {
       debugPrint('Error pausing video: $e');
-      // Optimistic fallback on platform error
+      if (failOnTimeout) {
+        throw TimeoutException('Source pause failed (platform error)', const Duration(seconds: 2));
+      }
       _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
       return;
     }
     
     try {
       await pauseAck;
-    } catch (_) {
-      debugPrint('Timeout waiting for pause acknowledgment in NativeService');
-      // If it times out, we enforce the state so the coordinator can continue with its own timeouts
+    } catch (e) {
+      // TimeoutException: ack didn't arrive within 2 s.
+      // StateError ("No element"): engine disposed while pause was pending.
+      debugPrint('NativeService: pause ack timeout/close (caller=$caller, failOnTimeout=$failOnTimeout): $e');
+      if (failOnTimeout && e is TimeoutException) {
+        throw TimeoutException('Source pause unconfirmed by WebView', const Duration(seconds: 2));
+      }
+      // Non-handoff callers get the optimistic fallback (user-facing pause, lock screen etc.)
       _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
     }
+
   }
 
   @override
   Future<void> resume() async {
-    _updateStatus(_currentStatus.copyWith(state: PlaybackState.playing));
+    // Do NOT emit playing optimistically — state must come from WebView onStateChange.
+    // The handoff coordinator's firstWhere(playing) requires real WebView confirmation.
     try {
       await _channel.invokeMethod('playVideo');
     } catch (e) {

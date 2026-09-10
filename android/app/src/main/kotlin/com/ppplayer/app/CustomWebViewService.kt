@@ -130,6 +130,11 @@ class CustomWebViewService : Service() {
                             Object.defineProperty(document, 'hidden', { get: () => false });
                             Object.defineProperty(document, 'visibilityState', { get: () => 'visible' });
 
+                            // Monotonic command ID allocated by Dart before each play() or prepare() call.
+                            // loadVideo: accepts only if id >= currentCommandId (reject stale loads).
+                            // cueVideo: accepts only if id === currentCommandId (reject superseded pre-warms).
+                            var currentCommandId = 0;
+
                             var tag = document.createElement('script');
                             tag.src = "https://www.youtube.com/iframe_api";
                             var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -172,13 +177,26 @@ class CustomWebViewService : Service() {
                                 NativeLog.onError(event.data);
                             }
 
-                            function loadVideo(videoId, startSeconds) {
+                            // Load and start playback. Rejects if id < currentCommandId
+                            // (a newer command already claimed the player).
+                            function loadVideo(videoId, startSeconds, id) {
+                                if (id < currentCommandId) {
+                                    NativeLog.log('loadVideo REJECTED stale id=' + id + ' current=' + currentCommandId);
+                                    return;
+                                }
+                                currentCommandId = id;
                                 if (player && player.loadVideoById) {
                                     player.loadVideoById({videoId: videoId, startSeconds: startSeconds});
                                 }
                             }
 
-                            function cueVideo(videoId, startSeconds) {
+                            // Pre-warm cue. Rejects if id !== currentCommandId
+                            // (a play() already claimed a newer id).
+                            function cueVideo(videoId, startSeconds, id) {
+                                if (id !== currentCommandId) {
+                                    NativeLog.log('cueVideo REJECTED stale id=' + id + ' current=' + currentCommandId);
+                                    return;
+                                }
                                 if (player && player.cueVideoById) {
                                     player.cueVideoById({videoId: videoId, startSeconds: startSeconds});
                                 }
@@ -266,13 +284,13 @@ class CustomWebViewService : Service() {
             .build()
     }
     
-    // Commands to send JS
-    fun loadVideo(videoId: String, startSeconds: Double = 0.0) {
-        runJs("loadVideo('$videoId', $startSeconds)")
+    // Commands to send JS — each includes the Dart-allocated commandId for staleness detection.
+    fun loadVideo(videoId: String, startSeconds: Double = 0.0, commandId: Int = 0) {
+        runJs("loadVideo('$videoId', $startSeconds, $commandId)")
     }
 
-    fun prepareVideo(videoId: String, startSeconds: Double = 0.0) {
-        runJs("cueVideo('$videoId', $startSeconds)")
+    fun prepareVideo(videoId: String, startSeconds: Double = 0.0, commandId: Int = 0) {
+        runJs("cueVideo('$videoId', $startSeconds, $commandId)")
     }
     
     fun playVideo() {
