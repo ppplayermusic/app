@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:media_kit/media_kit.dart' hide Track;
 import 'package:media_kit_video/media_kit_video.dart';
@@ -11,6 +10,11 @@ import '../models/playback_track.dart';
 import 'playback_controller.dart';
 
 class MediaKitPlaybackEngine implements PlaybackController {
+  
+  /// Informs the engine that the host activity is stopped (e.g., screen locked).
+  /// Used to block IFrame playback dispatches when the WebView is frozen.
+  static bool isActivityStopped = false;
+
   Player? _player;
   VideoController? _videoController;
   yt.YoutubePlayerController? _youtubeController;
@@ -25,6 +29,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
 
   PlaybackStatus _currentStatus = const PlaybackStatus();
+  PlaybackState? _intendedState;
 
   MediaKitPlaybackEngine() {
     _ensureMediaKitInitialized();
@@ -131,6 +136,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
       }
     }
 
+    _intendedState = PlaybackState.playing;
+
     if (myGen != _playGeneration) return;
 
     _updateStatus(_currentStatus.copyWith(
@@ -176,11 +183,17 @@ class MediaKitPlaybackEngine implements PlaybackController {
       // that calls playVideo() in response to a 'cued' state.
       _youtubeController!.listen((ytState) {
         if (!_currentStatus.isIFrameMode) return;
+        
         final gen = _playGeneration; // capture
         debugPrint('MediaKitPlaybackEngine: [BRIDGE gen $gen] -> ${ytState.playerState}');
 
         if (ytState.hasError && ytState.error != yt.YoutubeError.none) {
           debugPrint('MediaKitPlaybackEngine: [ERROR] YouTube IFrame error: ${ytState.error}');
+          
+          if (_currentStatus.state == PlaybackState.preparing) {
+             debugPrint('MediaKitPlaybackEngine: [BRIDGE] Ignoring error event while preparing new track (stale callback guard).');
+             return;
+          }
           
           if (ytState.error == yt.YoutubeError.videoNotFound ||
               ytState.error == yt.YoutubeError.notEmbeddable ||
@@ -199,20 +212,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
         switch (ytState.playerState) {
           case yt.PlayerState.cued:
-            // Video is loaded and ready. Call playVideo once per generation.
-            if (_lastPlayedGeneration != gen) {
-              _lastPlayedGeneration = gen;
-              debugPrint('MediaKitPlaybackEngine: [PLAY gen $gen] cued → playVideo()');
-              _youtubeController?.setVolume((_currentStatus.volume * 100).toInt());
-              _youtubeController?.playVideo();
-            }
-            break;
           case yt.PlayerState.unStarted:
-            // YouTube is ready but hasn't started. Try to play.
+            // Video is loaded and ready or hasn't started. Try to play.
             if (_lastPlayedGeneration != gen) {
-              _lastPlayedGeneration = gen;
-              _youtubeController?.setVolume((_currentStatus.volume * 100).toInt());
-              _youtubeController?.playVideo();
+              _dispatchIFramePlay(gen, ytState.playerState.name);
             }
             break;
           default:
@@ -227,6 +230,25 @@ class MediaKitPlaybackEngine implements PlaybackController {
           yt.PlayerState.ended => PlaybackState.ended,
           _ => _currentStatus.state,
         };
+
+        if (newState == PlaybackState.ended && _currentStatus.state == PlaybackState.preparing) {
+          debugPrint('MediaKitPlaybackEngine: [BRIDGE] Ignoring ended event while preparing new track (stale callback guard).');
+          return;
+        }
+
+        if (newState == PlaybackState.playing && _intendedState == PlaybackState.paused) {
+          debugPrint('MediaKitPlaybackEngine: [BRIDGE] Spurious playback detected while intended state is paused. Forcing pause.');
+          _youtubeController?.pauseVideo();
+          return;
+        }
+
+        if (newState == PlaybackState.paused && _intendedState == PlaybackState.playing) {
+          debugPrint('MediaKitPlaybackEngine: [BRIDGE] Spurious pause detected while intended state is playing (e.g., PiP transition). Forcing play.');
+          _youtubeController?.playVideo();
+          // We still allow the state to update to paused momentarily, 
+          // as it accurately reflects the IFrame's current state until it resumes.
+        }
+
         if (newState != _currentStatus.state) {
           _updateStatus(_currentStatus.copyWith(state: newState));
         }
@@ -255,23 +277,6 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
       final state = _currentStatus.state;
       debugPrint('MediaKitPlaybackEngine: [WATCHDOG gen $generation] $state tick=${timer.tick}');
-
-      try {
-        if (_youtubeController != null) {
-          // ignore: invalid_use_of_internal_member
-          final html = await _youtubeController!.webViewController.runJavaScriptReturningResult('document.documentElement.outerHTML');
-          // ignore: invalid_use_of_internal_member
-          final loc = await _youtubeController!.webViewController.runJavaScriptReturningResult('window.location.href');
-          debugPrint('MediaKitPlaybackEngine: [DOM] loc: $loc, html length: ${html.toString().length}, content start: ${html.toString().substring(0, html.toString().length > 100 ? 100 : html.toString().length)}');
-          try {
-            File('/Users/veneno/Projects/Apps/ppplayer/generated_player.html').writeAsStringSync(html.toString());
-          } catch(e) {
-            // Ignore file write errors.
-          }
-        }
-      } catch (e) {
-        debugPrint('MediaKitPlaybackEngine: [DOM ERROR] $e');
-      }
 
       if (state == PlaybackState.playing ||
           state == PlaybackState.buffering ||
@@ -311,6 +316,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
   @override
   Future<void> pause() async {
     debugPrint('MediaKitPlaybackEngine: pause() called');
+    _intendedState = PlaybackState.paused;
     if (_currentStatus.isIFrameMode) {
       await _youtubeController?.pauseVideo();
     } else {
@@ -318,11 +324,33 @@ class MediaKitPlaybackEngine implements PlaybackController {
     }
   }
 
+  void _dispatchIFramePlay(int expectedGeneration, String source) {
+    if (expectedGeneration != _playGeneration) {
+      debugPrint('MediaKitPlaybackEngine: [_dispatchIFramePlay] Stale dispatch from $source (gen $expectedGeneration).');
+      return;
+    }
+    if (isActivityStopped) {
+      debugPrint('MediaKitPlaybackEngine: [_dispatchIFramePlay] Blocked IFrame play ($source) because activity is stopped.');
+      _intendedState = PlaybackState.paused;
+      return;
+    }
+    if (_intendedState == PlaybackState.paused) {
+      debugPrint('MediaKitPlaybackEngine: [_dispatchIFramePlay] Blocked IFrame play ($source) because intended state is paused.');
+      return;
+    }
+
+    _lastPlayedGeneration = expectedGeneration;
+    debugPrint('MediaKitPlaybackEngine: [PLAY gen $expectedGeneration] $source → playVideo()');
+    _youtubeController?.setVolume((_currentStatus.volume * 100).toInt());
+    _youtubeController?.playVideo();
+  }
+
   @override
   Future<void> resume() async {
     debugPrint('MediaKitPlaybackEngine: resume() called');
+    _intendedState = PlaybackState.playing;
     if (_currentStatus.isIFrameMode) {
-      await _youtubeController?.playVideo();
+      _dispatchIFramePlay(_playGeneration, 'resume');
     } else {
       await _player?.play();
     }
@@ -330,6 +358,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
   @override
   Future<void> stop() async {
+    _intendedState = PlaybackState.paused;
     if (_currentStatus.isIFrameMode) {
       await _youtubeController?.pauseVideo();
       // We keep the controller alive to avoid recreating the platform view

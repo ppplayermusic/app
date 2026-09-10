@@ -52,6 +52,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     final isPlayerScreen = widget.location == '/player';
     final hasVideoId = ref.watch(playerProvider.select((s) => s.videoId != null));
     final loadError = ref.watch(playerProvider.select((s) => s.loadError));
+    final isPipMode = ref.watch(playerProvider.select((s) => s.isPipMode));
 
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
@@ -87,7 +88,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
             bottom: false,
             child: Row(
               children: [
-                if (isDesktop && !isPlayerScreen)
+                if (isDesktop && !isPlayerScreen && !isPipMode)
                   const _DesktopSidebar(),
                 Expanded(
                   child: Stack(
@@ -116,7 +117,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                       ),
                       Column(
                         children: [
-                          if (isDesktop && !isPlayerScreen) const _DesktopTopBar(),
+                          if (isDesktop && !isPlayerScreen && !isPipMode) const _DesktopTopBar(),
                           Expanded(
                             child: LayoutBuilder(
                               builder: (context, constraints) {
@@ -125,7 +126,14 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                             double renderW, renderH, renderTop, renderLeft, renderRadius;
                             bool showShadow;
 
-                            if (isPlayerScreen) {
+                            if (isPipMode) {
+                              renderW = constraints.maxWidth;
+                              renderH = constraints.maxHeight;
+                              renderTop = 0;
+                              renderLeft = 0;
+                              renderRadius = 0;
+                              showShadow = false;
+                            } else if (isPlayerScreen) {
                               if (isVideoView &&
                                   videoLayout.isVisible &&
                                   videoLayout.isReady) {
@@ -170,7 +178,11 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                             return Stack(
                               key: _stackKey,
                               children: [
-                                widget.child,
+                                Visibility(
+                                  visible: !isPipMode,
+                                  maintainState: true,
+                                  child: widget.child,
+                                ),
                                 // Always-mounted WebView — never removed or hidden via Opacity.
                                 // Audio plays uninterrupted on all tabs and when minimized.
                                 Builder(
@@ -198,14 +210,14 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                     }
 
                                     return AnimatedPositioned(
-                                      duration: const Duration(milliseconds: 120),
+                                      duration: isPipMode ? Duration.zero : const Duration(milliseconds: 120),
                                       curve: Curves.easeOutQuart,
                                       top: finalTop,
                                       left: finalLeft,
                                       width: renderW,
                                       height: renderH,
                                       child: AnimatedContainer(
-                                        duration: const Duration(milliseconds: 120),
+                                        duration: isPipMode ? Duration.zero : const Duration(milliseconds: 120),
                                         curve: Curves.easeOutQuart,
                                         decoration: BoxDecoration(
                                           color: Theme.of(context).colorScheme.surface,
@@ -222,21 +234,22 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                               ),
                                           ],
                                         ),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: Stack(
-                                          children: [
-                                            Consumer(
-                                              builder: (ctx, r, _) {
-                                                return RepaintBoundary(
-                                                  child: PlaybackView(
-                                                    controller: playbackEngine,
-                                                    status: playbackStatus,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-
-
+                                        // clipBehavior is permanently Clip.none.
+                                        // Toggling it (antiAlias ↔ none) remounts the
+                                        // entire child subtree, destroying the WebView.
+                                        // Rounded corners are provided by the BoxDecoration
+                                        // background. Child content is clipped by the
+                                        // ClipRRect below only when renderRadius > 0.
+                                        clipBehavior: Clip.none,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(renderRadius),
+                                          child: Stack(
+                                            children: [
+                                              // Stable WebView host — never remounts during PiP.
+                                              _StablePlaybackView(
+                                                controller: playbackEngine,
+                                                status: playbackStatus,
+                                              ),
 
                                             if (loadError != null)
                                               Positioned.fill(
@@ -366,9 +379,10 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                                   ),
                                                 ),
                                               ),
-                                          ],
-                                        ),
-                                      ),
+                                            ],
+                                          ),   // Stack
+                                        ),     // ClipRRect
+                                      ),       // AnimatedContainer
                                     );
                                   },
                                 ),
@@ -386,7 +400,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
         ),
       ),
           bottomNavigationBar:
-              isPlayerScreen
+              isPlayerScreen || isPipMode
                   ? null
                   : isDesktop
                       ? const _DesktopPlayerBar()
@@ -1820,3 +1834,39 @@ class _MeshPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _MeshPainter oldDelegate) => oldDelegate.primaryColor != primaryColor;
 }
+
+/// A stable wrapper around [PlaybackView] that survives parent rebuilds.
+///
+/// When [ScaffoldWithNav] rebuilds due to [isPipMode] changing, a normal
+/// stateless child would be remounted — recreating [YoutubePlayer] and
+/// calling [init()] again, which resets the video to paused.
+///
+/// This widget uses [AutomaticKeepAliveClientMixin] to keep its state alive
+/// across parent rebuilds, preventing [YoutubePlayer] from being remounted.
+class _StablePlaybackView extends StatefulWidget {
+  final PlaybackController controller;
+  final PlaybackStatus status;
+
+  const _StablePlaybackView({required this.controller, required this.status});
+
+  @override
+  State<_StablePlaybackView> createState() => _StablePlaybackViewState();
+}
+
+class _StablePlaybackViewState extends State<_StablePlaybackView>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); // required for AutomaticKeepAliveClientMixin
+    return RepaintBoundary(
+      child: PlaybackView(
+        controller: widget.controller,
+        status: widget.status,
+      ),
+    );
+  }
+}
+

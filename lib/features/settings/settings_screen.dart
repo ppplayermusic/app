@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -158,6 +159,16 @@ class SettingsScreen extends ConsumerWidget {
                   onChanged: (v) => ref.read(settingsProvider.notifier).toggleLowDataMode(),
                 ).animate(delay: 450.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
+                if (Platform.isAndroid) ...[
+                  TactileSwitchTile(
+                    title: 'Picture-in-Picture (PiP)',
+                    subtitle: 'Continue video playback in a small window',
+                    icon: Icons.picture_in_picture_alt_rounded,
+                    value: settings.continuePlaybackInPip,
+                    onChanged: (v) => ref.read(settingsProvider.notifier).toggleContinuePlaybackInPip(v),
+                  ).animate(delay: 480.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                  const SizedBox(height: 12),
+                ],
                 TactileSettingTile(
                   title: 'Clear Recently Played',
                   subtitle: 'Permanently remove listening history',

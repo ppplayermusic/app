@@ -265,29 +265,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        greetingText,
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -1.5,
-                          color: Theme.of(context).colorScheme.onSurface,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          greetingText,
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -1.5,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Your music is waiting.',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Your music is waiting.',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  if (MediaQuery.of(context).size.width < 600) // Show on mobile/tablet
+                    TactileIconButton(
+                      icon: Icons.settings_outlined,
+                      size: 28,
+                      onTap: () => context.push('/settings'),
+                      color: Theme.of(context).colorScheme.onSurface,
+                      hoverColor: Theme.of(context).colorScheme.primary,
+                      tooltip: 'Settings',
+                    ),
                 ],
               ),
             ),

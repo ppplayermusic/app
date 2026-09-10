@@ -7,6 +7,7 @@ import '../models/track.dart';
 import '../models/playback_queue.dart';
 import '../models/resolved_video_candidate.dart';
 import '../playback/playback_providers.dart';
+import '../playback/pip_handler.dart';
 import '../api/spotify_repository.dart';
 import '../services/settings_provider.dart';
 
@@ -24,6 +25,7 @@ class PlayerState {
     this.duration = Duration.zero,
     this.buffered = Duration.zero,
     this.volume = 1.0,
+    this.isPipMode = false,
   });
 
   final PlaybackQueue playbackQueue;
@@ -35,6 +37,7 @@ class PlayerState {
   final Duration duration;
   final Duration buffered;
   final double volume;
+  final bool isPipMode;
 
   // Shortcuts to avoid breaking UI that expects these on state
   List<Track> get queue => playbackQueue.tracks;
@@ -53,6 +56,7 @@ class PlayerState {
     Duration? duration,
     Duration? buffered,
     double? volume,
+    bool? isPipMode,
     bool clearLoadError = false,
   }) {
     return PlayerState(
@@ -65,6 +69,7 @@ class PlayerState {
       duration: duration ?? this.duration,
       buffered: buffered ?? this.buffered,
       volume: volume ?? this.volume,
+      isPipMode: isPipMode ?? this.isPipMode,
     );
   }
 }
@@ -101,6 +106,31 @@ class PlayerNotifier extends Notifier<PlayerState> {
       });
     });
 
+    ref.listen(settingsProvider, (previous, next) {
+      if (previous?.continuePlaybackInPip != next.continuePlaybackInPip) {
+        final isPlaying = state.isPlaying;
+        PipHandler.setPipEnabled(next.continuePlaybackInPip && isPlaying);
+      }
+    });
+
+    PipHandler.init();
+    PipHandler.onPipModeChanged = (isPipMode) {
+      state = state.copyWith(isPipMode: isPipMode);
+    };
+    PipHandler.onActivityStopped = () {
+      // In PiP mode the activity is stopped but playback continues
+      // in the floating PiP window — do NOT pause here.
+      if (!state.isPipMode) {
+        pause();
+      }
+    };
+
+    ref.listen(settingsProvider, (previous, next) {
+      if (previous?.continuePlaybackInPip != next.continuePlaybackInPip) {
+        PipHandler.setPipEnabled(next.continuePlaybackInPip && state.isPlaying);
+      }
+    });
+
     return const PlayerState();
   }
 
@@ -121,8 +151,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
       _isRecovering = false;
     }
 
+    final isPlaying = status.state == PlaybackState.playing || status.state == PlaybackState.buffering;
+    final pipEnabled = ref.read(settingsProvider).continuePlaybackInPip;
+    PipHandler.setPipEnabled(pipEnabled && isPlaying);
+
     state = state.copyWith(
-      isPlaying: status.isPlaying,
+      isPlaying: isPlaying,
       isLoadingVideo: status.state == PlaybackState.preparing || status.state == PlaybackState.buffering,
       loadError: displayError,
       videoId: status.activeVideoId,

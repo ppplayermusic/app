@@ -25,6 +25,7 @@ class SettingsState {
   final YoutubeSearchMethod youtubeSearchMethod;
   final YoutubeApiProviderType youtubeApiProvider;
   final bool autoplayEnabled;
+  final bool continuePlaybackInPip;
 
   SettingsState({
     required this.selectedCountry,
@@ -41,6 +42,7 @@ class SettingsState {
     this.youtubeSearchMethod = YoutubeSearchMethod.scraping,
     this.youtubeApiProvider = YoutubeApiProviderType.ppplayer,
     this.autoplayEnabled = true,
+    this.continuePlaybackInPip = false,
   });
 
   SettingsState copyWith({
@@ -58,6 +60,7 @@ class SettingsState {
     YoutubeSearchMethod? youtubeSearchMethod,
     YoutubeApiProviderType? youtubeApiProvider,
     bool? autoplayEnabled,
+    bool? continuePlaybackInPip,
   }) {
     return SettingsState(
       selectedCountry: selectedCountry ?? this.selectedCountry,
@@ -74,6 +77,7 @@ class SettingsState {
       youtubeSearchMethod: youtubeSearchMethod ?? this.youtubeSearchMethod,
       youtubeApiProvider: youtubeApiProvider ?? this.youtubeApiProvider,
       autoplayEnabled: autoplayEnabled ?? this.autoplayEnabled,
+      continuePlaybackInPip: continuePlaybackInPip ?? this.continuePlaybackInPip,
     );
   }
 }
@@ -106,6 +110,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
   static const _youtubeSearchMethodKey = 'youtube_search_method';
   static const _youtubeApiProviderKey = 'youtube_api_provider';
   static const _autoplayEnabledKey = 'autoplay_enabled';
+  static const _continuePlaybackInPipKey = 'continue_playback_in_pip';
 
   Future<void> _loadSettings() async {
     final box = await Hive.openBox(_boxName);
@@ -129,6 +134,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final youtubeSearchMethodIndex = box.get(_youtubeSearchMethodKey, defaultValue: YoutubeSearchMethod.scraping.index) as int;
     final youtubeApiProviderIndex = box.get(_youtubeApiProviderKey, defaultValue: YoutubeApiProviderType.ppplayer.index) as int;
     final autoplayEnabled = box.get(_autoplayEnabledKey, defaultValue: true) as bool;
+    final continuePlaybackInPip = box.get(_continuePlaybackInPipKey, defaultValue: false) as bool;
 
     state = state.copyWith(
       selectedCountry: country,
@@ -146,6 +152,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       youtubeSearchMethod: YoutubeSearchMethod.values[youtubeSearchMethodIndex.clamp(0, YoutubeSearchMethod.values.length - 1)],
       youtubeApiProvider: YoutubeApiProviderType.values[youtubeApiProviderIndex.clamp(0, YoutubeApiProviderType.values.length - 1)],
       autoplayEnabled: autoplayEnabled,
+      continuePlaybackInPip: continuePlaybackInPip,
       isLoaded: true,
     );
   }
@@ -212,6 +219,12 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final box = await Hive.openBox(_boxName);
     await box.put(_autoplayEnabledKey, enabled);
     state = state.copyWith(autoplayEnabled: enabled);
+  }
+
+  Future<void> toggleContinuePlaybackInPip(bool enabled) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put(_continuePlaybackInPipKey, enabled);
+    state = state.copyWith(continuePlaybackInPip: enabled);
   }
 
   Future<void> toggleVideo() async {
