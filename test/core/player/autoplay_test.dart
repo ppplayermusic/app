@@ -73,7 +73,7 @@ class FakePlaybackController implements PlaybackController {
   Future<void> play(PlaybackTrack track) async {}
 
   @override
-  Future<void> pause() async {}
+  Future<void> pause({String caller = 'user'}) async {}
 
   @override
   Future<void> resume() async {}

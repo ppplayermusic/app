@@ -97,7 +97,7 @@ class FakePlaybackController implements PlaybackController {
   Future<void> play(PlaybackTrack track) async => playedIds.add(track.id);
 
   @override
-  Future<void> pause() async {}
+  Future<void> pause({String caller = 'user'}) async {}
 
   @override
   Future<void> resume() async {}
@@ -268,20 +268,16 @@ void main() {
       final notifier = container.read(playerProvider.notifier);
       await notifier.playTrack(trackWith(youtubeVideoId: null));
 
-      expect(controller.playedIds, isEmpty);
-      expect(
-        container.read(playerProvider).loadError,
-        contains('Queue ended'),
-      );
+      expect(service.resolveCallCount, 1);
+      expect(controller.playedIds, isEmpty); // never reaches engine
+      expect(container.read(playerProvider).loadError, 'No YouTube video found for this track');
     });
 
     // ------------------------------------------------------------------
-    // Case D — Resolver throws.
+    // Case D — Network/Exception in resolver: must not crash, skip next.
     // ------------------------------------------------------------------
     test('Case D: resolver throws → no engine call, error set', () async {
-      final service = FakePlaybackService(
-        throwError: Exception('network error'),
-      );
+      final service = FakePlaybackService(throwError: Exception('network error'));
       final controller = FakePlaybackController();
       final container = makeContainer(service: service, controller: controller);
       addTearDown(container.dispose);
@@ -289,11 +285,9 @@ void main() {
       final notifier = container.read(playerProvider.notifier);
       await notifier.playTrack(trackWith(youtubeVideoId: null));
 
+      expect(service.resolveCallCount, 1);
       expect(controller.playedIds, isEmpty);
-      expect(
-        container.read(playerProvider).loadError,
-        contains('Queue ended'),
-      );
+      expect(container.read(playerProvider).loadError, 'Failed to resolve YouTube ID');
     });
 
     // ------------------------------------------------------------------
@@ -335,8 +329,53 @@ void main() {
       expect(controller.playedIds, [idB]);
     });
   });
-}
 
+  group('Preparing State Error Handling', () {
+    test('legitimate load failure during preparing triggers recovery', () async {
+      final fakeService = FakePlaybackService(
+        candidates: [
+          ResolvedVideoCandidate(videoId: 'vid_1', title: 'A', channel: 'C', confidenceScore: 1.0),
+          ResolvedVideoCandidate(videoId: 'vid_2', title: 'B', channel: 'C', confidenceScore: 1.0),
+        ],
+      );
+      final fakeController = FakePlaybackController();
+      
+      final container = makeContainer(service: fakeService, controller: fakeController);
+      
+      // Add a listener to ensure the provider is actively mounted
+      final sub = container.listen(playerProvider, (previous, next) {});
+      addTearDown(sub.close);
+      
+      final notifier = container.read(playerProvider.notifier);
+      
+      final track = trackWith(youtubeVideoId: null);
+      await notifier.playTrack(track);
+      
+      // Wait for play dispatch
+      await Future.delayed(const Duration(milliseconds: 50));
+      expect(fakeController.playedIds.length, 1);
+      
+      // Emit preparing
+      fakeController.emitStatus(const PlaybackStatus(
+        state: PlaybackState.preparing,
+      ));
+      
+      await Future.delayed(const Duration(milliseconds: 50));
+      
+      // Emit a legitimate fatal error during preparing
+      fakeController.emitStatus(const PlaybackStatus(
+        state: PlaybackState.error,
+        error: 'unavailable_media:videoNotFound',
+      ));
+      
+      await Future.delayed(const Duration(milliseconds: 100));
+      
+      // Should have advanced to candidate 2 automatically
+      expect(fakeController.playedIds.length, 2);
+      expect(notifier.state.currentTrack?.youtubeVideoId, 'vid_2'); // Now running candidate 2
+    });
+  });
+}
 // ---------------------------------------------------------------------------
 // Helper: service that blocks until a completer resolves.
 // ---------------------------------------------------------------------------

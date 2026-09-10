@@ -10,6 +10,7 @@ import '../playback/playback_providers.dart';
 import '../playback/pip_handler.dart';
 import '../api/spotify_repository.dart';
 import '../services/settings_provider.dart';
+import 'package:pp_playback_engine/pp_playback_engine.dart';
 
 export '../models/track.dart' show Track;
 export '../models/playback_queue.dart' show PlaybackQueue, RepeatMode;
@@ -83,6 +84,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
   int _currentCandidateIndex = 0;
   bool _isRecovering = false;
   bool _skipDebounce = false;
+  bool _lastPipEnabled = false;
   Timer? _saveTimer;
   bool _prefetchedNextTrackForCurrentLoad = false;
   
@@ -94,7 +96,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
     _initRestore();
     // Listen to the playback engine's status and sync it to our state
     ref.listen(playbackStatusProvider, (previous, next) {
-      next.whenData((status) {
+      if (next is AsyncData<PlaybackStatus>) {
+        final status = next.value;
         if (status.state == PlaybackState.ended) {
           if (!_skipDebounce) {
             _skipDebounce = true;
@@ -103,25 +106,27 @@ class PlayerNotifier extends Notifier<PlayerState> {
           }
         }
         _syncFromStatus(status);
-      });
-    });
-
-    ref.listen(settingsProvider, (previous, next) {
-      if (previous?.continuePlaybackInPip != next.continuePlaybackInPip) {
-        final isPlaying = state.isPlaying;
-        PipHandler.setPipEnabled(next.continuePlaybackInPip && isPlaying);
       }
     });
 
-    PipHandler.init();
     PipHandler.onPipModeChanged = (isPipMode) {
       state = state.copyWith(isPipMode: isPipMode);
     };
+
     PipHandler.onActivityStopped = () {
-      // In PiP mode the activity is stopped but playback continues
-      // in the floating PiP window — do NOT pause here.
-      if (!state.isPipMode) {
-        pause();
+      final status = ref.read(playbackStatusProvider).value;
+      final ts = DateTime.now().toIso8601String();
+      debugPrint('$ts PlayerNotifier: onActivityStopped '
+                 'isPlaying=${state.isPlaying} isIFrameMode=${status?.isIFrameMode} '
+                 'track=${state.currentTrack?.spotifyId}');
+      if (state.isPlaying && status?.isIFrameMode == true) {
+        if (!BackgroundPlaybackExperiment.enabled) {
+          debugPrint('$ts PlayerNotifier: pausing via onActivityStopped (caller=lifecycle/lock-screen)');
+          _controller.pause(caller: 'onActivityStopped/lock-screen');
+          state = state.copyWith(isPlaying: false);
+        } else {
+          debugPrint('$ts ${BackgroundPlaybackExperiment.tag} PlayerNotifier: NOT pausing onActivityStopped to observe native WebView behavior.');
+        }
       }
     };
 
@@ -153,7 +158,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     final isPlaying = status.state == PlaybackState.playing || status.state == PlaybackState.buffering;
     final pipEnabled = ref.read(settingsProvider).continuePlaybackInPip;
-    PipHandler.setPipEnabled(pipEnabled && isPlaying);
+    // Only call setPipEnabled when the desired state changes to avoid calling
+    // setPictureInPictureParams during non-foreground states (causes Android
+    // ensureValidPictureInPictureActivityParams to throw on Android 12+).
+    final wantPip = pipEnabled && isPlaying;
+    if (wantPip != _lastPipEnabled) {
+      _lastPipEnabled = wantPip;
+      PipHandler.setPipEnabled(wantPip);
+    }
 
     state = state.copyWith(
       isPlaying: isPlaying,

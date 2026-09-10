@@ -17,19 +17,22 @@ class PipHandler {
   static void init() {
     if (!kIsWeb && Platform.isAndroid) {
       _channel.setMethodCallHandler((call) async {
+        final ts = DateTime.now().toIso8601String();
         if (call.method == 'onPipModeChanged') {
           _isInPipMode = call.arguments as bool;
-          debugPrint('PipHandler: onPipModeChanged = $_isInPipMode');
+          debugPrint('$ts PipHandler: onPipModeChanged=$_isInPipMode activityStopped=$_isActivityStopped');
           onPipModeChanged?.call(_isInPipMode);
         } else if (call.method == 'onActivityStopped') {
-          debugPrint('PipHandler: onActivityStopped');
           _isActivityStopped = true;
           MediaKitPlaybackEngine.isActivityStopped = true;
+          debugPrint('$ts PipHandler: onActivityStopped '
+                    '(isActivityStopped=$_isActivityStopped isPipMode=$_isInPipMode)');
           onActivityStopped?.call();
         } else if (call.method == 'onActivityStarted') {
-          debugPrint('PipHandler: onActivityStarted');
           _isActivityStopped = false;
           MediaKitPlaybackEngine.isActivityStopped = false;
+          debugPrint('$ts PipHandler: onActivityStarted '
+                    '(isActivityStopped=$_isActivityStopped isPipMode=$_isInPipMode)');
           onActivityStarted?.call();
         }
       });

@@ -22,17 +22,27 @@ class MainActivity : AudioServiceActivity() {
                 isPipEnabled = call.argument<Boolean>("enabled") ?: false
                 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (isPipEnabled && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
-                        val params = PictureInPictureParams.Builder()
-                            .setAspectRatio(Rational(16, 9))
-                            .setAutoEnterEnabled(true)
-                            .build()
-                        setPictureInPictureParams(params)
-                    } else {
-                        val params = PictureInPictureParams.Builder()
-                            .setAutoEnterEnabled(false)
-                            .build()
-                        setPictureInPictureParams(params)
+                    // Guard: activity may be finishing (swiped away) when this
+                    // is called. setPictureInPictureParams throws an
+                    // IllegalStateException if the activity has no valid task.
+                    if (!isFinishing && !isDestroyed) {
+                        try {
+                            if (isPipEnabled && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+                                val params = PictureInPictureParams.Builder()
+                                    .setAspectRatio(Rational(16, 9))
+                                    .setAutoEnterEnabled(true)
+                                    .build()
+                                setPictureInPictureParams(params)
+                            } else {
+                                val params = PictureInPictureParams.Builder()
+                                    .setAutoEnterEnabled(false)
+                                    .build()
+                                setPictureInPictureParams(params)
+                            }
+                        } catch (e: Exception) {
+                            // Silently ignore — activity may be in a transient
+                            // state where PiP params cannot be updated.
+                        }
                     }
                 }
                 result.success(null)

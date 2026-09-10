@@ -18,6 +18,7 @@ import 'core/services/settings_provider.dart';
 import 'core/playback/media_sync_service.dart';
 import 'core/services/dock_menu_service.dart';
 import 'core/metrics/cache_metrics.dart';
+import 'core/playback/pip_handler.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Global access to the provider container for the [AudioHandler].
@@ -41,6 +42,8 @@ void main() async {
 
   // Request notification permissions for background service stability on Android 13+
   await _requestNotificationPermission();
+
+  PipHandler.init();
 
   // Init Hive for prefs/queue
   await Hive.initFlutter();
