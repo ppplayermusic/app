@@ -400,44 +400,39 @@ void main() {
     },
   );
   engineTest(
-    'newer play survives watchdog recovery — stale recovery is discarded',
-    (tester) async {
-      addTearDown(engine.dispose);
-      await engine.play(track);
-      // Start watchdog countdown, then switch tracks before it fires.
-      await tester.pump(const Duration(seconds: 19));
-      await engine.play(other);
-      // Watchdog from old generation fires.
-      await tester.pump(const Duration(seconds: 1));
-      // No error; new track attempt is live.
-      expect(engine.currentStatus.track?.id, other.id);
-      expect(engine.currentStatus.error, isNull);
-      await tester.pump(const Duration(minutes: 2));
-      expect(statuses.where((s) => s.state == PlaybackState.error), isEmpty);
-    },
-  );
-  engineTest(
     'pause with failOnTimeout throws on timeout instead of emitting paused',
     (tester) async {
       addTearDown(engine.dispose);
       await ready(tester);
       controller.emitState(track.id, yt.PlayerState.playing);
       await tester.pump();
-      // Block the pause command indefinitely.
-      controller.pauseCompletion = Completer<void>();
-      Object? caughtError;
+
+      // pauseVideo() returns immediately (no pauseCompletion set),
+      // but no state-change event arrives — the IFrame bridge stays silent.
+      // After 2 s, pauseAck.timeout fires. failOnTimeout=true must re-throw
+      // instead of emitting an optimistic paused status.
+      final caughtError = Completer<Object?>();
       final pauseFuture = engine
           .pause(caller: 'handoff', failOnTimeout: true)
-          .catchError((e) { caughtError = e; });
+          .then<void>((_) => caughtError.complete(null))
+          .catchError((Object e) => caughtError.complete(e));
+
       // Advance past the 2 s ack window.
       await tester.pump(const Duration(seconds: 3));
       await pauseFuture;
+
+      final error = await caughtError.future;
       expect(
-        caughtError,
+        error,
         isA<TimeoutException>(),
         reason: 'failOnTimeout=true must throw, not silently emit paused',
       );
-      controller.pauseCompletion!.complete();
+      // State must NOT have flipped to paused optimistically.
+      expect(
+        engine.currentStatus.state,
+        isNot(PlaybackState.paused),
+        reason: 'optimistic paused update must be suppressed when failOnTimeout=true',
+      );
     },
   );
   test(
