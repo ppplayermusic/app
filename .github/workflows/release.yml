@@ -148,7 +148,9 @@ jobs:
           cache: true
 
       - name: Install Dependencies
-        run: flutter pub get
+        run: |
+          mkdir -p build/ios/SourcePackages/
+          flutter pub get
 
       - name: Import macOS Certificate
         env:
