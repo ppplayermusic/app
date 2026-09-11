@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pp_image.dart';
 
-
 class PlaylistCover extends StatelessWidget {
   const PlaylistCover({
     super.key,
@@ -43,7 +42,9 @@ class PlaylistCover extends StatelessWidget {
         child: Icon(
           Icons.music_note,
           size: size * 0.4,
-          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
         ),
       );
     }
@@ -56,11 +57,7 @@ class PlaylistCover extends StatelessWidget {
       return Column(
         children: [
           Expanded(
-            child: Row(
-              children: [
-                Expanded(child: _Image(url: images[0])),
-              ],
-            ),
+            child: Row(children: [Expanded(child: _Image(url: images[0]))]),
           ),
           Expanded(
             child: Row(
@@ -103,9 +100,6 @@ class _Image extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PPImage(
-      imageUrl: url,
-      fit: BoxFit.cover,
-    );
+    return PPImage(imageUrl: url, fit: BoxFit.cover);
   }
 }

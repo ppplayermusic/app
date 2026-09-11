@@ -68,8 +68,13 @@ class PPPlayerSpotifyAuth implements SpotifyAuthHandler {
       final expiresIn = response.data['expires_in'] as int;
       _tokenExpiry = DateTime.now().add(Duration(seconds: expiresIn - 60));
     } on DioException catch (e) {
-      debugPrint('DioException in _performTokenRequest: ${e.message} ${e.response?.statusCode} ${e.response?.data}');
-      throw SpotifyAuthException('Failed to acquire PPPlayer token. Token server may be down.', e);
+      debugPrint(
+        'DioException in _performTokenRequest: ${e.message} ${e.response?.statusCode} ${e.response?.data}',
+      );
+      throw SpotifyAuthException(
+        'Failed to acquire PPPlayer token. Token server may be down.',
+        e,
+      );
     } catch (e) {
       debugPrint('Unexpected error in _performTokenRequest: $e');
       throw SpotifyAuthException('Unexpected error acquiring token: $e', e);
@@ -120,12 +125,17 @@ class CustomSpotifyAuth implements SpotifyAuthHandler {
     final clientId = await _secureStorage.readSpotifyClientId();
     final clientSecret = await _secureStorage.readSpotifyClientSecret();
 
-    if (clientId == null || clientId.isEmpty || clientSecret == null || clientSecret.isEmpty) {
-      throw SpotifyAuthException('Missing Custom Spotify Credentials. Please configure them in Settings.');
+    if (clientId == null ||
+        clientId.isEmpty ||
+        clientSecret == null ||
+        clientSecret.isEmpty) {
+      throw SpotifyAuthException(
+        'Missing Custom Spotify Credentials. Please configure them in Settings.',
+      );
     }
 
     final credentials = base64Encode(utf8.encode('$clientId:$clientSecret'));
-    
+
     try {
       final response = await _dio.post(
         'https://accounts.spotify.com/api/token',
@@ -145,24 +155,38 @@ class CustomSpotifyAuth implements SpotifyAuthHandler {
       if (e.response?.statusCode == 401 || e.response?.statusCode == 400) {
         throw SpotifyAuthException('Invalid Custom Spotify Credentials.', e);
       }
-      throw SpotifyAuthException('Failed to acquire custom token. Network error.', e);
+      throw SpotifyAuthException(
+        'Failed to acquire custom token. Network error.',
+        e,
+      );
     } catch (e) {
       throw SpotifyAuthException('Unexpected error acquiring token: $e', e);
     }
   }
 }
 
-final ppplayerSpotifyAuthProvider = Provider.family<PPPlayerSpotifyAuth, Dio>((ref, dio) {
+final ppplayerSpotifyAuthProvider = Provider.family<PPPlayerSpotifyAuth, Dio>((
+  ref,
+  dio,
+) {
   return PPPlayerSpotifyAuth(dio);
 });
 
-final customSpotifyAuthProvider = Provider.family<CustomSpotifyAuth, Dio>((ref, dio) {
+final customSpotifyAuthProvider = Provider.family<CustomSpotifyAuth, Dio>((
+  ref,
+  dio,
+) {
   final secureStorage = ref.watch(secureCredentialsProvider);
   return CustomSpotifyAuth(dio, secureStorage);
 });
 
-final spotifyAuthHandlerProvider = Provider.family<SpotifyAuthHandler, Dio>((ref, dio) {
-  final providerType = ref.watch(settingsProvider.select((s) => s.spotifyProvider));
+final spotifyAuthHandlerProvider = Provider.family<SpotifyAuthHandler, Dio>((
+  ref,
+  dio,
+) {
+  final providerType = ref.watch(
+    settingsProvider.select((s) => s.spotifyProvider),
+  );
   if (providerType == SpotifyProviderType.custom) {
     return ref.watch(customSpotifyAuthProvider(dio));
   } else {

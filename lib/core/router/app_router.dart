@@ -23,20 +23,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/home',
     routes: [
       ShellRoute(
-        builder: (context, state, child) => ScaffoldWithNav(
-          location: state.uri.path,
-          child: child,
-        ),
+        builder:
+            (context, state, child) =>
+                ScaffoldWithNav(location: state.uri.path, child: child),
         routes: [
           GoRoute(
             path: '/home',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: HomeScreen()),
+            pageBuilder:
+                (context, state) => const NoTransitionPage(child: HomeScreen()),
           ),
           GoRoute(
             path: '/discover',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: DiscoverScreen()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: DiscoverScreen()),
           ),
           GoRoute(
             path: '/recently-played',
@@ -44,33 +44,41 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/search',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: SearchScreen()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: SearchScreen()),
           ),
           GoRoute(
             path: '/library',
             pageBuilder: (context, state) {
               final filterStr = state.uri.queryParameters['filter'];
-              final filter = filterStr == 'playlists' 
-                ? LibraryFilter.playlists 
-                : LibraryFilter.all;
-              return NoTransitionPage(child: LibraryScreen(initialFilter: filter));
+              final filter =
+                  filterStr == 'playlists'
+                      ? LibraryFilter.playlists
+                      : LibraryFilter.all;
+              return NoTransitionPage(
+                child: LibraryScreen(initialFilter: filter),
+              );
             },
           ),
           GoRoute(
             path: '/artist/:id',
-            builder: (context, state) =>
-                ArtistScreen(artistId: state.pathParameters['id']!),
+            builder:
+                (context, state) =>
+                    ArtistScreen(artistId: state.pathParameters['id']!),
           ),
           GoRoute(
             path: '/album/:id',
-            builder: (context, state) =>
-                AlbumScreen(albumId: state.pathParameters['id']!),
+            builder:
+                (context, state) =>
+                    AlbumScreen(albumId: state.pathParameters['id']!),
           ),
           GoRoute(
             path: '/playlist/:id',
-            builder: (context, state) =>
-                PlaylistDetailScreen(playlistId: int.parse(state.pathParameters['id']!)),
+            builder:
+                (context, state) => PlaylistDetailScreen(
+                  playlistId: int.parse(state.pathParameters['id']!),
+                ),
           ),
           GoRoute(
             path: '/playlist/remote/:id',
@@ -82,18 +90,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/player',
-            pageBuilder: (context, state) => CustomTransitionPage(
-              child: const PlayerScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: animation.drive(
-                    Tween(begin: const Offset(0, 1), end: Offset.zero)
-                        .chain(CurveTween(curve: Curves.easeOutQuart)),
-                  ),
-                  child: child,
-                );
-              },
-            ),
+            pageBuilder:
+                (context, state) => CustomTransitionPage(
+                  child: const PlayerScreen(),
+                  transitionsBuilder: (
+                    context,
+                    animation,
+                    secondaryAnimation,
+                    child,
+                  ) {
+                    return SlideTransition(
+                      position: animation.drive(
+                        Tween(
+                          begin: const Offset(0, 1),
+                          end: Offset.zero,
+                        ).chain(CurveTween(curve: Curves.easeOutQuart)),
+                      ),
+                      child: child,
+                    );
+                  },
+                ),
           ),
           GoRoute(
             path: '/settings',
@@ -113,7 +129,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               final subtitle = state.uri.queryParameters['subtitle'];
               final artistId = state.uri.queryParameters['artistId'];
               final artistName = state.uri.queryParameters['artistName'];
-              
+
               final extra = state.extra as Map<String, dynamic>?;
               final color1 = extra?['color1'] as Color?;
               final color2 = extra?['color2'] as Color?;

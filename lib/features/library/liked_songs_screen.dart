@@ -42,22 +42,23 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
             stretch: true,
             elevation: 0,
             backgroundColor: Colors.transparent,
-            leading: _isSearching
-                ? TactileIconButton(
-                    icon: Icons.arrow_back,
-                    onTap: () {
-                      setState(() {
-                        _isSearching = false;
-                        _searchQuery = '';
-                        _searchController.clear();
-                      });
-                    },
-                  )
-                : TactileIconButton(
-                    icon: Icons.arrow_back_ios_new,
-                    size: 20,
-                    onTap: () => context.pop(),
-                  ).animate().fadeIn(duration: 400.ms),
+            leading:
+                _isSearching
+                    ? TactileIconButton(
+                      icon: Icons.arrow_back,
+                      onTap: () {
+                        setState(() {
+                          _isSearching = false;
+                          _searchQuery = '';
+                          _searchController.clear();
+                        });
+                      },
+                    )
+                    : TactileIconButton(
+                      icon: Icons.arrow_back_ios_new,
+                      size: 20,
+                      onTap: () => context.pop(),
+                    ).animate().fadeIn(duration: 400.ms),
             actions: [
               if (!_isSearching)
                 TactileIconButton(
@@ -80,28 +81,42 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                 ),
               const SizedBox(width: 8),
             ],
-            title: _isSearching
-                ? Container(
-                    height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
-                    ),
-                    child: TextField(
+            title:
+                _isSearching
+                    ? Container(
+                      height: 48,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.05),
+                        ),
+                      ),
+                      child: TextField(
                         controller: _searchController,
                         autofocus: true,
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 16,
+                        ),
                         cursorColor: Theme.of(context).colorScheme.primary,
                         decoration: InputDecoration(
                           hintText: 'Search liked songs...',
                           hintStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              fontSize: 15),
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontSize: 15,
+                          ),
                           border: InputBorder.none,
                           isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -109,110 +124,137 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                           });
                         },
                       ),
-                  ).animate().fadeIn().scale(begin: const Offset(0.95, 1))
-                : null,
-            flexibleSpace: _isSearching
-                ? ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                      child: Container(
-                        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
+                    ).animate().fadeIn().scale(begin: const Offset(0.95, 1))
+                    : null,
+            flexibleSpace:
+                _isSearching
+                    ? ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                        child: Container(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surface.withValues(alpha: 0.6),
+                        ),
                       ),
-                    ),
-                  )
-                : LayoutBuilder(
-                    builder: (context, constraints) {
-                      final colorScheme = Theme.of(context).colorScheme;
-                      final isCollapsed = constraints.maxHeight <=
-                          kToolbarHeight +
-                              MediaQuery.of(context).padding.top +
-                              10;
-                      return ClipRect(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                            sigmaX: isCollapsed ? 15 : 0,
-                            sigmaY: isCollapsed ? 15 : 0,
-                          ),
-                          child: FlexibleSpaceBar(
-                            stretchModes: const [
-                              StretchMode.zoomBackground,
-                              StretchMode.blurBackground,
-                            ],
-                            titlePadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            title: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 200),
-                              opacity: 1.0,
-                              child: Text(
-                                'Liked Songs',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: isCollapsed ? 18 : 32,
-                                  letterSpacing: -1.0,
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                  shadows: [
-                                    if (!isCollapsed)
-                                    Shadow(
-                                        color: colorScheme.scrim.withValues(alpha: 0.8),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 4)),
-                                  ],
+                    )
+                    : LayoutBuilder(
+                      builder: (context, constraints) {
+                        final colorScheme = Theme.of(context).colorScheme;
+                        final isCollapsed =
+                            constraints.maxHeight <=
+                            kToolbarHeight +
+                                MediaQuery.of(context).padding.top +
+                                10;
+                        return ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(
+                              sigmaX: isCollapsed ? 15 : 0,
+                              sigmaY: isCollapsed ? 15 : 0,
+                            ),
+                            child: FlexibleSpaceBar(
+                              stretchModes: const [
+                                StretchMode.zoomBackground,
+                                StretchMode.blurBackground,
+                              ],
+                              titlePadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              title: AnimatedOpacity(
+                                duration: const Duration(milliseconds: 200),
+                                opacity: 1.0,
+                                child: Text(
+                                  'Liked Songs',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: isCollapsed ? 18 : 32,
+                                    letterSpacing: -1.0,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    shadows: [
+                                      if (!isCollapsed)
+                                        Shadow(
+                                          color: colorScheme.scrim.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                          blurRadius: 20,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            background: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
+                              background: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                         colors: [
                                           Theme.of(context).colorScheme.primary,
-                                          Theme.of(context).colorScheme.primaryContainer,
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.primaryContainer,
                                           Theme.of(context).colorScheme.surface,
                                         ],
                                         stops: const [0.0, 0.4, 1.0],
                                       ),
                                     ),
                                     child: Center(
-                                      child: Icon(Icons.favorite,
-                                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1), size: 140)
-                                        .animate(
-                                            onPlay: (controller) =>
-                                                controller.repeat(reverse: true))
-                                        .scale(
+                                      child: Icon(
+                                            Icons.favorite,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.1),
+                                            size: 140,
+                                          )
+                                          .animate(
+                                            onPlay:
+                                                (controller) => controller
+                                                    .repeat(reverse: true),
+                                          )
+                                          .scale(
                                             begin: const Offset(1, 1),
                                             end: const Offset(1.15, 1.15),
                                             duration: 3.seconds,
-                                            curve: Curves.easeInOut)
-                                        .blurXY(begin: 0, end: 10, duration: 3.seconds),
+                                            curve: Curves.easeInOut,
+                                          )
+                                          .blurXY(
+                                            begin: 0,
+                                            end: 10,
+                                            duration: 3.seconds,
+                                          ),
+                                    ),
                                   ),
-                                ),
-                                // Lush Premium Gradient Overlay
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
+                                  // Lush Premium Gradient Overlay
+                                  DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
                                         colors: [
                                           Colors.transparent,
-                                          Theme.of(context).colorScheme.surface.withValues(alpha: 0.2),
-                                          Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
+                                          Theme.of(context).colorScheme.surface
+                                              .withValues(alpha: 0.2),
+                                          Theme.of(context).colorScheme.surface
+                                              .withValues(alpha: 0.6),
                                           Theme.of(context).colorScheme.surface,
                                         ],
                                         stops: const [0.0, 0.4, 0.7, 1.0],
                                       ),
                                     ),
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -228,10 +270,12 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                         return Text(
                           '$count tracks stored locally',
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              fontSize: 12,
-                              letterSpacing: 0.5,
-                              fontWeight: FontWeight.w600),
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.w600,
+                          ),
                         );
                       },
                     ).animate().fadeIn(duration: 400.ms),
@@ -264,7 +308,8 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                                    color: Theme.of(context).colorScheme.primary
+                                        .withValues(alpha: 0.3),
                                     blurRadius: 15,
                                     offset: const Offset(0, 8),
                                   ),
@@ -274,13 +319,22 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.play_arrow_rounded,
-                                        color: Theme.of(context).colorScheme.onPrimary, size: 32),
+                                    Icon(
+                                      Icons.play_arrow_rounded,
+                                      color:
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary,
+                                      size: 32,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       'PLAY ALL',
                                       style: TextStyle(
-                                        color: Theme.of(context).colorScheme.onPrimary,
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimary,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 1.5,
                                         fontSize: 14,
@@ -299,14 +353,18 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                             if (tracks.isNotEmpty && context.mounted) {
                               final modelTracks =
                                   tracks.map(model.Track.fromDb).toList();
-                              final notifier = ref.read(playerProvider.notifier);
-                              
+                              final notifier = ref.read(
+                                playerProvider.notifier,
+                              );
+
                               if (!ref.read(playerProvider).isShuffled) {
                                 notifier.toggleShuffle();
                               }
-                              
+
                               // Shuffle the list locally or just play with shuffle enabled
-                              final List<model.Track> shuffledList = List.from(modelTracks)..shuffle();
+                              final List<model.Track> shuffledList = List.from(
+                                modelTracks,
+                              )..shuffle();
                               notifier.playTracks(shuffledList);
                             }
                           },
@@ -314,10 +372,15 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                             height: 60,
                             width: 60,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Theme.of(context).colorScheme.outlineVariant,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.outlineVariant,
                               ),
                             ),
                             child: Icon(
@@ -331,7 +394,9 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                         TactileIconButton(
                           icon: Icons.more_vert_rounded,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.05),
                           size: 24,
                           onTap: () {},
                         ),
@@ -346,18 +411,26 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
           StreamBuilder<List<db.Track>>(
             stream: database.watchFavorites(),
             builder: (context, snap) {
-              if (snap.connectionState == ConnectionState.waiting && !snap.hasData) {
+              if (snap.connectionState == ConnectionState.waiting &&
+                  !snap.hasData) {
                 return SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)));
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                );
               }
               var dbTracks = snap.data ?? [];
-              
+
               if (_searchQuery.isNotEmpty) {
-                dbTracks = dbTracks.where((t) {
-                  final name = t.name.toLowerCase();
-                  final artist = t.artistName.toLowerCase();
-                  return name.contains(_searchQuery) || artist.contains(_searchQuery);
-                }).toList();
+                dbTracks =
+                    dbTracks.where((t) {
+                      final name = t.name.toLowerCase();
+                      final artist = t.artistName.toLowerCase();
+                      return name.contains(_searchQuery) ||
+                          artist.contains(_searchQuery);
+                    }).toList();
               }
 
               if (dbTracks.isEmpty) {
@@ -367,42 +440,63 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03),
-                          ),
-                          child: Icon(
-                            _searchQuery.isNotEmpty ? Icons.search_off_rounded : Icons.favorite_rounded,
-                            size: 64,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
-                          ),
-                        )
-                        .animate(onPlay: (c) => c.repeat(reverse: true))
-                        .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 2.seconds)
-                        .fadeIn(duration: 600.ms),
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.03),
+                              ),
+                              child: Icon(
+                                _searchQuery.isNotEmpty
+                                    ? Icons.search_off_rounded
+                                    : Icons.favorite_rounded,
+                                size: 64,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.1),
+                              ),
+                            )
+                            .animate(onPlay: (c) => c.repeat(reverse: true))
+                            .scale(
+                              begin: const Offset(1, 1),
+                              end: const Offset(1.1, 1.1),
+                              duration: 2.seconds,
+                            )
+                            .fadeIn(duration: 600.ms),
                         const SizedBox(height: 32),
                         Text(
-                          _searchQuery.isNotEmpty 
-                            ? 'Nothing matches your vibe'
-                            : 'Your collection is quiet',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
-                          ),
-                        ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1, end: 0),
+                              _searchQuery.isNotEmpty
+                                  ? 'Nothing matches your vibe'
+                                  : 'Your collection is quiet',
+                              style: TextStyle(
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: -0.5,
+                              ),
+                            )
+                            .animate()
+                            .fadeIn(delay: 200.ms)
+                            .slideY(begin: 0.1, end: 0),
                         const SizedBox(height: 8),
                         Text(
-                          _searchQuery.isNotEmpty 
-                            ? 'Try searching for something else'
-                            : 'Save tracks to see them here',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
-                            fontSize: 14,
-                          ),
-                        ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0),
+                              _searchQuery.isNotEmpty
+                                  ? 'Try searching for something else'
+                                  : 'Save tracks to see them here',
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.2),
+                                fontSize: 14,
+                              ),
+                            )
+                            .animate()
+                            .fadeIn(delay: 400.ms)
+                            .slideY(begin: 0.1, end: 0),
                       ],
                     ),
                   ),
@@ -414,22 +508,24 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
               return SliverPadding(
                 padding: const EdgeInsets.only(bottom: 120),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, i) {
-                      final track = tracks[i];
-                      return TrackTile(
-                        index: i + 1,
-                        track: track,
-                        onTap: () => ref
-                            .read(playerProvider.notifier)
-                            .playTrack(
-                              track,
-                              queue: tracks,
-                            ),
-                      ).animate(delay: (i * 40).ms).fadeIn(duration: 600.ms).slideX(begin: 0.08, end: 0, curve: Curves.easeOutCubic);
-                    },
-                    childCount: tracks.length,
-                  ),
+                  delegate: SliverChildBuilderDelegate((context, i) {
+                    final track = tracks[i];
+                    return TrackTile(
+                          index: i + 1,
+                          track: track,
+                          onTap:
+                              () => ref
+                                  .read(playerProvider.notifier)
+                                  .playTrack(track, queue: tracks),
+                        )
+                        .animate(delay: (i * 40).ms)
+                        .fadeIn(duration: 600.ms)
+                        .slideX(
+                          begin: 0.08,
+                          end: 0,
+                          curve: Curves.easeOutCubic,
+                        );
+                  }, childCount: tracks.length),
                 ),
               );
             },
@@ -440,4 +536,3 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
     );
   }
 }
-

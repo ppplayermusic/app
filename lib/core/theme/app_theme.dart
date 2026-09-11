@@ -68,7 +68,7 @@ class AppTheme {
 
   static ThemeData dark({Color primaryColor = crimsonRed}) {
     final base = ThemeData.dark(useMaterial3: true);
-    
+
     // Generate harmonious color scheme from seed
     final colorScheme = ColorScheme.fromSeed(
       seedColor: primaryColor,
@@ -111,7 +111,11 @@ class AppTheme {
         indicatorColor: primaryColor.withValues(alpha: 0.1),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const TextStyle(color: _onSurfaceColor, fontSize: 12, fontWeight: FontWeight.bold);
+            return const TextStyle(
+              color: _onSurfaceColor,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            );
           }
           return const TextStyle(color: _onSurfaceVariantColor, fontSize: 12);
         }),
@@ -151,9 +155,7 @@ class AppTheme {
         fontWeight: FontWeight.w600,
         color: _onSurfaceColor,
       ),
-      bodyMedium: base.bodyMedium?.copyWith(
-        color: _onSurfaceVariantColor,
-      ),
+      bodyMedium: base.bodyMedium?.copyWith(color: _onSurfaceVariantColor),
       labelSmall: base.labelSmall?.copyWith(
         color: _outlineColor,
         letterSpacing: 0.5,

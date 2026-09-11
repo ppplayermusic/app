@@ -15,8 +15,13 @@ class DiscoverSeedContext {
     required this.followedArtists,
   });
 
-  bool get hasData => recentTracks.isNotEmpty || favoriteTracks.isNotEmpty || followedArtists.isNotEmpty;
-  bool get hasRichData => recentTracks.length >= 3 && (favoriteTracks.isNotEmpty || followedArtists.isNotEmpty);
+  bool get hasData =>
+      recentTracks.isNotEmpty ||
+      favoriteTracks.isNotEmpty ||
+      followedArtists.isNotEmpty;
+  bool get hasRichData =>
+      recentTracks.length >= 3 &&
+      (favoriteTracks.isNotEmpty || followedArtists.isNotEmpty);
 }
 
 class DiscoverSeedBuilder {
@@ -31,13 +36,18 @@ class DiscoverSeedBuilder {
     return DiscoverSeedContext(
       recentTracks: recentDb.map((t) => Track.fromDb(t)).toList(),
       favoriteTracks: favoritesDb.map((t) => Track.fromDb(t)).toList(),
-      followedArtists: artistsDb.map((a) => Artist(
-        spotifyId: a.spotifyId,
-        name: a.name,
-        imageUrl: a.imageUrl,
-        imageSmall: a.imageSmall,
-        followers: a.followers,
-      )).toList(),
+      followedArtists:
+          artistsDb
+              .map(
+                (a) => Artist(
+                  spotifyId: a.spotifyId,
+                  name: a.name,
+                  imageUrl: a.imageUrl,
+                  imageSmall: a.imageSmall,
+                  followers: a.followers,
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -45,11 +55,14 @@ class DiscoverSeedBuilder {
   List<String> getMixedSeeds(DiscoverSeedContext ctx, {int maxSeeds = 5}) {
     final List<String> seeds = [];
     final random = Random(DateTime.now().hour); // Rotates every hour
-    
+
     // Attempt to mix 2 recent, 2 fav, 1 artist
-    final recentPool = ctx.recentTracks.map((t) => t.spotifyId).toList()..shuffle(random);
-    final favPool = ctx.favoriteTracks.map((t) => t.spotifyId).toList()..shuffle(random);
-    final artistPool = ctx.followedArtists.map((a) => a.spotifyId).toList()..shuffle(random);
+    final recentPool =
+        ctx.recentTracks.map((t) => t.spotifyId).toList()..shuffle(random);
+    final favPool =
+        ctx.favoriteTracks.map((t) => t.spotifyId).toList()..shuffle(random);
+    final artistPool =
+        ctx.followedArtists.map((a) => a.spotifyId).toList()..shuffle(random);
 
     if (recentPool.isNotEmpty) seeds.addAll(recentPool.take(2));
     if (favPool.isNotEmpty) seeds.addAll(favPool.take(2));
@@ -57,13 +70,19 @@ class DiscoverSeedBuilder {
 
     // If we don't have enough, fill with whatever is left
     if (seeds.length < maxSeeds) {
-       final remaining = [...recentPool.skip(2), ...favPool.skip(2), ...artistPool.skip(1)];
-       remaining.shuffle(random);
-       seeds.addAll(remaining.take(maxSeeds - seeds.length));
+      final remaining = [
+        ...recentPool.skip(2),
+        ...favPool.skip(2),
+        ...artistPool.skip(1),
+      ];
+      remaining.shuffle(random);
+      seeds.addAll(remaining.take(maxSeeds - seeds.length));
     }
 
     return seeds.take(maxSeeds).toList();
   }
 }
 
-final discoverSeedBuilderProvider = Provider((ref) => DiscoverSeedBuilder(ref.watch(db.appDatabaseProvider)));
+final discoverSeedBuilderProvider = Provider(
+  (ref) => DiscoverSeedBuilder(ref.watch(db.appDatabaseProvider)),
+);

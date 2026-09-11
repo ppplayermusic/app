@@ -99,14 +99,20 @@ class MediaKitPlaybackEngine implements PlaybackController {
       _armWatchdog(generation, loading: true);
       // Use the latest confirmed position for the current generation, falling back to
       // the original start offset when no position has been observed yet.
-      final recoveryStart = (_confirmedPositionGeneration == generation &&
-              _confirmedPlaybackPosition != null)
-          ? _confirmedPlaybackPosition!.inMilliseconds / 1000.0
-          : _currentStartSeconds;
-      unawaited(_load(generation, _currentStatus.track!.id, startSeconds: recoveryStart));
+      final recoveryStart =
+          (_confirmedPositionGeneration == generation &&
+                  _confirmedPlaybackPosition != null)
+              ? _confirmedPlaybackPosition!.inMilliseconds / 1000.0
+              : _currentStartSeconds;
+      unawaited(
+        _load(
+          generation,
+          _currentStatus.track!.id,
+          startSeconds: recoveryStart,
+        ),
+      );
     });
   }
-
 
   Timer? _watchdogTimer;
   Timer? _iframePositionTimer;
@@ -199,31 +205,39 @@ class MediaKitPlaybackEngine implements PlaybackController {
   @override
   Future<void> prepare(PlaybackTrack track, {Duration? position}) async {
     if (_disposed) return;
-    
+
     _attemptActive = false;
     _intentRevision++;
     _intendedState = PlaybackState.paused;
     _playGeneration++;
     final myGen = _playGeneration;
-    
-    _updateStatus(_currentStatus.copyWith(
-      track: track,
-      state: PlaybackState.preparing,
-      isIFrameMode: true
-    ));
-    
+
+    _updateStatus(
+      _currentStatus.copyWith(
+        track: track,
+        state: PlaybackState.preparing,
+        isIFrameMode: true,
+      ),
+    );
+
     // Initialize controller if needed
     if (_youtubeController == null) {
       await _enterIFrameMode(track.id, generation: myGen);
     }
-    
-    final ss = position?.inMilliseconds != null ? position!.inMilliseconds / 1000.0 : null;
+
+    final ss =
+        position?.inMilliseconds != null
+            ? position!.inMilliseconds / 1000.0
+            : null;
     _currentStartSeconds = ss;
     await _load(myGen, track.id, startSeconds: ss);
   }
 
   @override
-  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero}) async {
+  Future<void> play(
+    PlaybackTrack track, {
+    Duration startAt = Duration.zero,
+  }) async {
     if (_disposed) return;
     _attemptActive = false;
     _intentRevision++;
@@ -231,7 +245,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _playGeneration++;
     final myGen = _playGeneration;
 
-    debugPrint('ENGINE: play called for track ${track.id} (gen: $myGen, startAt: $startAt)');
+    debugPrint(
+      'ENGINE: play called for track ${track.id} (gen: $myGen, startAt: $startAt)',
+    );
 
     String testVideoId = track.id;
 
@@ -270,13 +286,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
     );
 
     // 2. Initialize or reuse IFrame controller
-    final ss = startAt.inMilliseconds > 0 ? startAt.inMilliseconds / 1000.0 : null;
+    final ss =
+        startAt.inMilliseconds > 0 ? startAt.inMilliseconds / 1000.0 : null;
     _currentStartSeconds = ss;
-    await _enterIFrameMode(
-      testVideoId,
-      generation: myGen,
-      startSeconds: ss,
-    );
+    await _enterIFrameMode(testVideoId, generation: myGen, startSeconds: ss);
   }
 
   Future<void> _enterIFrameMode(
@@ -494,7 +507,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
         (BackgroundPlaybackExperiment.enabled || !isActivityStopped);
     try {
       // We must use loadVideoById because cueVideoById throws YoutubeError.unknown
-      // for music videos due to YouTube API restrictions. 
+      // for music videos due to YouTube API restrictions.
       // However, loadVideoById starts playback automatically, bypassing our playVideo() guards.
       // Therefore, we must enforce the guard BEFORE loading.
       if (!eligible()) {
@@ -514,11 +527,15 @@ class MediaKitPlaybackEngine implements PlaybackController {
   }
 
   @override
-  Future<void> pause({String caller = 'user', bool failOnTimeout = false}) async {
-    if (_currentStatus.state == PlaybackState.paused || _currentStatus.state == PlaybackState.idle) {
+  Future<void> pause({
+    String caller = 'user',
+    bool failOnTimeout = false,
+  }) async {
+    if (_currentStatus.state == PlaybackState.paused ||
+        _currentStatus.state == PlaybackState.idle) {
       return;
     }
-    
+
     _diag(
       'ENGINE pause() caller=$caller failOnTimeout=$failOnTimeout '
       'intendedWas=$_intendedState gen=$_playGeneration',
@@ -528,7 +545,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _intendedState = PlaybackState.paused;
 
     final pauseAck = statusStream
-        .firstWhere((s) => s.state == PlaybackState.paused || s.state == PlaybackState.idle)
+        .firstWhere(
+          (s) =>
+              s.state == PlaybackState.paused || s.state == PlaybackState.idle,
+        )
         .timeout(const Duration(seconds: 2));
 
     if (!failOnTimeout) {
@@ -541,11 +561,16 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_currentStatus.isIFrameMode) {
       _latePauseGeneration = _playGeneration;
       try {
-        await _youtubeController?.pauseVideo().timeout(const Duration(seconds: 2));
+        await _youtubeController?.pauseVideo().timeout(
+          const Duration(seconds: 2),
+        );
       } catch (e) {
         debugPrint('MediaKitPlaybackEngine: pauseVideo failed/timed out: $e');
         if (failOnTimeout) {
-          throw TimeoutException('Source pause failed (IFrame error)', const Duration(seconds: 2));
+          throw TimeoutException(
+            'Source pause failed (IFrame error)',
+            const Duration(seconds: 2),
+          );
         }
         if (_intendedState == PlaybackState.paused) {
           _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
@@ -555,15 +580,20 @@ class MediaKitPlaybackEngine implements PlaybackController {
     } else {
       await _player?.pause();
     }
-    
+
     try {
       await pauseAck;
     } catch (e) {
       // TimeoutException: ack didn't arrive within 2 s.
       // StateError ("No element"): engine disposed while pause was pending.
-      debugPrint('MediaKit: pause ack timeout/close (caller=$caller, failOnTimeout=$failOnTimeout): $e');
+      debugPrint(
+        'MediaKit: pause ack timeout/close (caller=$caller, failOnTimeout=$failOnTimeout): $e',
+      );
       if (failOnTimeout && e is TimeoutException) {
-        throw TimeoutException('Source pause unconfirmed by IFrame', const Duration(seconds: 2));
+        throw TimeoutException(
+          'Source pause unconfirmed by IFrame',
+          const Duration(seconds: 2),
+        );
       }
       _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
     }
@@ -642,7 +672,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
         await _dispatchIFramePlay(_playGeneration, 'resume');
       } else if (_valid(_playGeneration)) {
         _armWatchdog(_playGeneration, loading: true);
-        await _load(_playGeneration, _currentStatus.track!.id, startSeconds: _currentStartSeconds);
+        await _load(
+          _playGeneration,
+          _currentStatus.track!.id,
+          startSeconds: _currentStartSeconds,
+        );
       }
     } else {
       await _player?.play();
@@ -787,7 +821,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
           _diag(
             'RENDERER gen=$generation position=$currentTime duration=$duration',
           );
-          final positionDuration = Duration(milliseconds: (currentTime * 1000).toInt());
+          final positionDuration = Duration(
+            milliseconds: (currentTime * 1000).toInt(),
+          );
           // Update the confirmed position for watchdog recovery —
           // validated by generation so stale polling cannot overwrite a newer attempt.
           if (_confirmedPositionGeneration == generation) {
@@ -800,7 +836,6 @@ class MediaKitPlaybackEngine implements PlaybackController {
             ),
           );
         }
-
       } catch (e) {
         // Ignore polling errors during transitions
       }

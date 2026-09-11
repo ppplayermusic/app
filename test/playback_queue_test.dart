@@ -4,9 +4,30 @@ import 'package:ppplayer/core/models/track.dart';
 
 void main() {
   group('PlaybackQueue', () {
-    final t1 = Track(spotifyId: '1', name: 't1', artistId: 'a1', artistName: 'a', albumId: 'b1', albumName: 'b');
-    final t2 = Track(spotifyId: '2', name: 't2', artistId: 'a1', artistName: 'a', albumId: 'b1', albumName: 'b');
-    final t3 = Track(spotifyId: '3', name: 't3', artistId: 'a1', artistName: 'a', albumId: 'b1', albumName: 'b');
+    final t1 = Track(
+      spotifyId: '1',
+      name: 't1',
+      artistId: 'a1',
+      artistName: 'a',
+      albumId: 'b1',
+      albumName: 'b',
+    );
+    final t2 = Track(
+      spotifyId: '2',
+      name: 't2',
+      artistId: 'a1',
+      artistName: 'a',
+      albumId: 'b1',
+      albumName: 'b',
+    );
+    final t3 = Track(
+      spotifyId: '3',
+      name: 't3',
+      artistId: 'a1',
+      artistName: 'a',
+      albumId: 'b1',
+      albumName: 'b',
+    );
     final tracks = [t1, t2, t3];
 
     test('next() goes to next index normally', () {
@@ -22,19 +43,31 @@ void main() {
     });
 
     test('next() wraps when repeat all', () {
-      var q = PlaybackQueue(tracks: tracks, currentIndex: 2, repeatMode: RepeatMode.all);
+      var q = PlaybackQueue(
+        tracks: tracks,
+        currentIndex: 2,
+        repeatMode: RepeatMode.all,
+      );
       q = q.next();
       expect(q.currentIndex, 0);
     });
 
     test('next() stays when repeat one', () {
-      var q = PlaybackQueue(tracks: tracks, currentIndex: 1, repeatMode: RepeatMode.one);
+      var q = PlaybackQueue(
+        tracks: tracks,
+        currentIndex: 1,
+        repeatMode: RepeatMode.one,
+      );
       q = q.next();
       expect(q.currentIndex, 1);
     });
 
     test('previous() goes to end if repeat all and at 0', () {
-      var q = PlaybackQueue(tracks: tracks, currentIndex: 0, repeatMode: RepeatMode.all);
+      var q = PlaybackQueue(
+        tracks: tracks,
+        currentIndex: 0,
+        repeatMode: RepeatMode.all,
+      );
       q = q.previous(Duration.zero);
       expect(q.currentIndex, 2);
     });

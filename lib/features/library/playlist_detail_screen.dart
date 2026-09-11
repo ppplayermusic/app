@@ -47,10 +47,10 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
 
   Future<void> _syncTracksIfNeeded(db.Playlist playlist) async {
     if (_isSyncing || _syncError != null) return;
-    
+
     // Check if it has a spotifyId and tracks but it's empty
     // Actually we should trigger this when allTracks is empty and it has a spotifyId
-    
+
     setState(() {
       _isSyncing = true;
       _syncError = null;
@@ -69,17 +69,21 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
       if (tracks.isNotEmpty) {
         final database = ref.read(db.appDatabaseProvider);
         await database.syncPlaylistTracks(
-          widget.playlistId, 
-          tracks.map((t) => db.TracksCompanion(
-            spotifyId: Value(t.spotifyId),
-            name: Value(t.name),
-            artistId: Value(t.artistId),
-            artistName: Value(t.artistName),
-            albumId: Value(t.albumId),
-            albumName: Value(t.albumName),
-            albumImage: Value(t.albumImage),
-            durationMs: Value(t.durationMs),
-          )).toList()
+          widget.playlistId,
+          tracks
+              .map(
+                (t) => db.TracksCompanion(
+                  spotifyId: Value(t.spotifyId),
+                  name: Value(t.name),
+                  artistId: Value(t.artistId),
+                  artistName: Value(t.artistName),
+                  albumId: Value(t.albumId),
+                  albumName: Value(t.albumName),
+                  albumImage: Value(t.albumImage),
+                  durationMs: Value(t.durationMs),
+                ),
+              )
+              .toList(),
         );
       }
     } catch (e) {
@@ -116,9 +120,9 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return StreamBuilder<db.Playlist?>(
-      stream: (database.select(database.playlists)
-            ..where((p) => p.id.equals(widget.playlistId)))
-          .watchSingleOrNull(),
+      stream:
+          (database.select(database.playlists)
+            ..where((p) => p.id.equals(widget.playlistId))).watchSingleOrNull(),
       builder: (context, playlistSnapshot) {
         final playlist = playlistSnapshot.data;
 
@@ -156,22 +160,31 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
           stream: database.watchPlaylistTracks(widget.playlistId),
           builder: (context, tracksSnapshot) {
             final allTracks = tracksSnapshot.data ?? [];
-            
+
             // Trigger sync if empty and has spotifyId
-            if (allTracks.isEmpty && playlist.spotifyId != null && !_isSyncing && _syncError == null) {
-              WidgetsBinding.instance.addPostFrameCallback((_) => _syncTracksIfNeeded(playlist));
+            if (allTracks.isEmpty &&
+                playlist.spotifyId != null &&
+                !_isSyncing &&
+                _syncError == null) {
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) => _syncTracksIfNeeded(playlist),
+              );
             }
 
             final query = _searchController.text.toLowerCase();
 
-            final filteredTracks = query.isEmpty
-                ? allTracks
-                : allTracks.where((track) {
-                    final titleMatch = track.name.toLowerCase().contains(query);
-                    final artistMatch =
-                        track.artistName.toLowerCase().contains(query);
-                    return titleMatch || artistMatch;
-                  }).toList();
+            final filteredTracks =
+                query.isEmpty
+                    ? allTracks
+                    : allTracks.where((track) {
+                      final titleMatch = track.name.toLowerCase().contains(
+                        query,
+                      );
+                      final artistMatch = track.artistName
+                          .toLowerCase()
+                          .contains(query);
+                      return titleMatch || artistMatch;
+                    }).toList();
 
             final modelTracks = filteredTracks.map(model.Track.fromDb).toList();
 
@@ -193,7 +206,10 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
   }
 
   Widget _buildSliverAppBar(
-      BuildContext context, db.Playlist playlist, List<db.Track> tracks) {
+    BuildContext context,
+    db.Playlist playlist,
+    List<db.Track> tracks,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return SliverAppBar(
       expandedHeight: 400,
@@ -282,22 +298,22 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
               child: Opacity(
                 opacity: 0.6,
                 child: Container(
-                  decoration: BoxDecoration(
-                    gradient: RadialGradient(
-                      center: const Alignment(-0.8, -0.6),
-                      radius: 1.5,
-                      colors: [
-                        colorScheme.primary,
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: const Alignment(-0.8, -0.6),
+                          radius: 1.5,
+                          colors: [colorScheme.primary, Colors.transparent],
+                        ),
+                      ),
+                    )
+                    .animate(onPlay: (c) => c.repeat(reverse: true))
+                    .scale(
                       begin: const Offset(1, 1),
                       end: const Offset(1.3, 1.3),
                       duration: 10.seconds,
                       curve: Curves.easeInOut,
-                    ).move(
+                    )
+                    .move(
                       begin: const Offset(-20, -20),
                       end: const Offset(20, 20),
                       duration: 12.seconds,
@@ -328,38 +344,46 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Hero(
-                    tag: 'playlist_art_${playlist.id}',
-                    child: Container(
-                      width: 180,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.shadow.withValues(alpha: 0.5),
-                            blurRadius: 30,
-                            offset: const Offset(0, 10),
+                        tag: 'playlist_art_${playlist.id}',
+                        child: Container(
+                          width: 180,
+                          height: 180,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.shadow.withValues(
+                                  alpha: 0.5,
+                                ),
+                                blurRadius: 30,
+                                offset: const Offset(0, 10),
+                              ),
+                              BoxShadow(
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.2,
+                                ),
+                                blurRadius: 40,
+                                spreadRadius: -5,
+                              ),
+                            ],
                           ),
-                          BoxShadow(
-                            color: colorScheme.primary.withValues(alpha: 0.2),
-                            blurRadius: 40,
-                            spreadRadius: -5,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: PlaylistCover(
+                              images:
+                                  tracks
+                                      .take(4)
+                                      .map((t) => t.albumImage)
+                                      .whereType<String>()
+                                      .toList(),
+                              size: 180,
+                            ),
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: PlaylistCover(
-                          images: tracks
-                              .take(4)
-                              .map((t) => t.albumImage)
-                              .whereType<String>()
-                              .toList(),
-                          size: 180,
                         ),
-                      ),
-                    ),
-                  ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9)),
+                      )
+                      .animate()
+                      .fadeIn(duration: 600.ms)
+                      .scale(begin: const Offset(0.9, 0.9)),
                   const SizedBox(height: 24),
                   Text(
                     'PLAYLIST',
@@ -403,7 +427,10 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
           decoration: InputDecoration(
             hintText: 'Search in playlist',
             hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-            prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurfaceVariant),
+            prefixIcon: Icon(
+              Icons.search_rounded,
+              color: colorScheme.onSurfaceVariant,
+            ),
             filled: true,
             fillColor: colorScheme.onSurface.withValues(alpha: 0.1),
             border: OutlineInputBorder(
@@ -417,8 +444,12 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
     );
   }
 
-  List<Widget> _buildBody(BuildContext context, db.Playlist playlist,
-      List<db.Track> allTracks, List<model.Track> modelTracks) {
+  List<Widget> _buildBody(
+    BuildContext context,
+    db.Playlist playlist,
+    List<db.Track> allTracks,
+    List<model.Track> modelTracks,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
 
     if (_isSyncing) {
@@ -431,8 +462,10 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
               children: [
                 CircularProgressIndicator(color: colorScheme.primary),
                 const SizedBox(height: 16),
-                Text('Fetching tracks...',
-                    style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                Text(
+                  'Fetching tracks...',
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
               ],
             ),
           ),
@@ -448,17 +481,25 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.playlist_add,
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4), size: 80),
+                Icon(
+                  Icons.playlist_add,
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                  size: 80,
+                ),
                 const SizedBox(height: 16),
-                Text('No tracks in this playlist yet.',
-                    style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                Text(
+                  'No tracks in this playlist yet.',
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
                 const SizedBox(height: 24),
                 TactileTap(
                   onTap: () => context.go('/search'),
                   hapticType: HapticFeedbackType.medium,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: colorScheme.primary,
                       borderRadius: BorderRadius.circular(20),
@@ -475,7 +516,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
               ],
             ),
           ),
-        )
+        ),
       ];
     }
 
@@ -488,7 +529,10 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             children: [
               Text(
                 'Playlist • ${allTracks.length} songs',
-                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 13,
+                ),
               ),
               const SizedBox(height: 16),
               Row(
@@ -496,23 +540,36 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                   if (playlist.spotifyId != null)
                     Consumer(
                       builder: (context, ref, _) {
-                        final statusAsync = ref.watch(favoritesStatusProvider((FavoriteType.playlist, playlist.spotifyId!)));
+                        final statusAsync = ref.watch(
+                          favoritesStatusProvider((
+                            FavoriteType.playlist,
+                            playlist.spotifyId!,
+                          )),
+                        );
                         final isLiked = statusAsync.value ?? false;
-                        
+
                         return TactileIconButton(
-                          icon: isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                          color: isLiked ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                          icon:
+                              isLiked
+                                  ? Icons.favorite_rounded
+                                  : Icons.favorite_border_rounded,
+                          color:
+                              isLiked
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurfaceVariant,
                           size: 28,
                           onTap: () {
-                            ref.read(favoritesControllerProvider.notifier).togglePlaylistLike(
-                              playlist.spotifyId!,
-                              playlist.name,
-                              playlist.imageUrl,
-                              isLiked,
-                            );
+                            ref
+                                .read(favoritesControllerProvider.notifier)
+                                .togglePlaylistLike(
+                                  playlist.spotifyId!,
+                                  playlist.name,
+                                  playlist.imageUrl,
+                                  isLiked,
+                                );
                           },
                         );
-                      }
+                      },
                     )
                   else
                     // For local-only playlists, we don't have a "favorite" state in the same way yet
@@ -538,7 +595,9 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                     size: 32,
                     onTap: () {
                       if (modelTracks.isNotEmpty) {
-                        ref.read(playerProvider.notifier).shuffleAndPlay(modelTracks);
+                        ref
+                            .read(playerProvider.notifier)
+                            .shuffleAndPlay(modelTracks);
                       }
                     },
                   ),
@@ -547,10 +606,9 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                     size: 56,
                     onTap: () {
                       if (modelTracks.isNotEmpty) {
-                        ref.read(playerProvider.notifier).playTrack(
-                              modelTracks.first,
-                              queue: modelTracks,
-                            );
+                        ref
+                            .read(playerProvider.notifier)
+                            .playTrack(modelTracks.first, queue: modelTracks);
                       }
                     },
                   ),
@@ -569,20 +627,28 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             child: TrackTile(
               index: index + 1,
               track: track,
-              onTap: () => ref.read(playerProvider.notifier).playTrack(
-                    track,
-                    queue: modelTracks,
-                  ),
+              onTap:
+                  () => ref
+                      .read(playerProvider.notifier)
+                      .playTrack(track, queue: modelTracks),
             ).animate().fadeIn(delay: (index * 30).ms).slideX(begin: 0.05),
           );
         },
         itemCount: modelTracks.length,
-        onReorderItem: (oldIndex, newIndex) =>
-            _onReorder(oldIndex, newIndex, modelTracks.map((t) => allTracks.firstWhere((at) => at.spotifyId == t.spotifyId)).toList()),
+        onReorderItem:
+            (oldIndex, newIndex) => _onReorder(
+              oldIndex,
+              newIndex,
+              modelTracks
+                  .map(
+                    (t) => allTracks.firstWhere(
+                      (at) => at.spotifyId == t.spotifyId,
+                    ),
+                  )
+                  .toList(),
+            ),
       ),
       const SliverToBoxAdapter(child: SizedBox(height: 120)),
     ];
   }
 }
-
-

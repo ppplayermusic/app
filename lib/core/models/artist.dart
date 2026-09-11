@@ -14,8 +14,7 @@ abstract class Artist with _$Artist {
     int? popularity,
   }) = _Artist;
 
-  factory Artist.fromJson(Map<String, dynamic> json) =>
-      _$ArtistFromJson(json);
+  factory Artist.fromJson(Map<String, dynamic> json) => _$ArtistFromJson(json);
 
   factory Artist.fromSpotify(Map<String, dynamic> json) {
     final images = (json['images'] as List?) ?? [];

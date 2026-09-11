@@ -4,10 +4,22 @@ import 'package:ppplayer/core/api/youtube_resolver.dart';
 void main() {
   group('YoutubeResolver unit tests', () {
     test('normalizeString removes diacritics and punctuation', () {
-      expect(YoutubeResolver.normalizeString('De Graça Ou Pagando'), 'de graca ou pagando');
-      expect(YoutubeResolver.normalizeString('Café & Croissant!'), 'cafe croissant');
-      expect(YoutubeResolver.normalizeString('Música: "É isso aí"'), 'musica e isso ai');
-      expect(YoutubeResolver.normalizeString('  Extra   spaces  '), 'extra spaces');
+      expect(
+        YoutubeResolver.normalizeString('De Graça Ou Pagando'),
+        'de graca ou pagando',
+      );
+      expect(
+        YoutubeResolver.normalizeString('Café & Croissant!'),
+        'cafe croissant',
+      );
+      expect(
+        YoutubeResolver.normalizeString('Música: "É isso aí"'),
+        'musica e isso ai',
+      );
+      expect(
+        YoutubeResolver.normalizeString('  Extra   spaces  '),
+        'extra spaces',
+      );
       expect(YoutubeResolver.normalizeString('Beyoncé'), 'beyonce');
     });
 
@@ -20,7 +32,7 @@ void main() {
         'De Graça Ou Pagando',
         180000,
       );
-      
+
       // Base: 1.0
       // Title contains: +0.5
       // Artist match: +0.5
@@ -39,7 +51,7 @@ void main() {
         'Song Name',
         180000,
       );
-      
+
       final originalScore = YoutubeResolver.calculateConfidence(
         'Song Name',
         'Some Channel',
@@ -61,7 +73,7 @@ void main() {
         'Song Name',
         180000,
       );
-      
+
       // Base: 1.0
       // Title match: +0.5
       // Artist match: +0.5
@@ -70,7 +82,7 @@ void main() {
       // Total ~ 2.7
       expect(score, greaterThan(2.5));
     });
-    
+
     test('calculateConfidence heavily penalizes different duration', () {
       final badDurationScore = YoutubeResolver.calculateConfidence(
         'Song Name',
@@ -80,7 +92,7 @@ void main() {
         'Song Name',
         180000, // 3 mins
       );
-      
+
       final goodDurationScore = YoutubeResolver.calculateConfidence(
         'Song Name',
         'Artist',
@@ -89,7 +101,7 @@ void main() {
         'Song Name',
         180000, // 3 mins
       );
-      
+
       expect(badDurationScore, lessThan(goodDurationScore));
     });
   });

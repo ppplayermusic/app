@@ -3,9 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 enum PlayerView { video, artwork, queue }
+
 enum PerformanceMode { high, balanced, powerSaver }
+
 enum SpotifyProviderType { ppplayer, custom }
+
 enum YoutubeSearchMethod { scraping, api }
+
 enum YoutubeApiProviderType { ppplayer, custom }
 
 class SettingsState {
@@ -77,7 +81,8 @@ class SettingsState {
       youtubeSearchMethod: youtubeSearchMethod ?? this.youtubeSearchMethod,
       youtubeApiProvider: youtubeApiProvider ?? this.youtubeApiProvider,
       autoplayEnabled: autoplayEnabled ?? this.autoplayEnabled,
-      continuePlaybackInPip: continuePlaybackInPip ?? this.continuePlaybackInPip,
+      continuePlaybackInPip:
+          continuePlaybackInPip ?? this.continuePlaybackInPip,
     );
   }
 }
@@ -87,8 +92,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
   SettingsState build() {
     _loadSettings();
     return SettingsState(
-      selectedCountry: 'US', 
-      showVideo: true, 
+      selectedCountry: 'US',
+      showVideo: true,
       themeIndex: 0,
       performanceMode: PerformanceMode.balanced,
       lowDataMode: false,
@@ -118,39 +123,79 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final showVideo = box.get(_showVideoKey, defaultValue: true) as bool;
     final playerViewIndex = box.get(_playerViewKey, defaultValue: 0) as int;
     final themeIndex = box.get(_themeIndexKey, defaultValue: 0) as int;
-    
+
     // Auto-detect default performance mode based on platform if not set
-    final performanceModeIndex = box.get(_performanceModeKey, defaultValue: -1) as int;
-    final PerformanceMode defaultMode = (defaultTargetPlatform == TargetPlatform.android)
-        ? PerformanceMode.balanced
-        : PerformanceMode.high;
+    final performanceModeIndex =
+        box.get(_performanceModeKey, defaultValue: -1) as int;
+    final PerformanceMode defaultMode =
+        (defaultTargetPlatform == TargetPlatform.android)
+            ? PerformanceMode.balanced
+            : PerformanceMode.high;
     final lowDataMode = box.get(_lowDataModeKey, defaultValue: false) as bool;
     final userName = box.get(_userNameKey, defaultValue: '') as String;
-    final userAvatarColorIndex = box.get(_userAvatarColorIndexKey, defaultValue: 0) as int;
+    final userAvatarColorIndex =
+        box.get(_userAvatarColorIndexKey, defaultValue: 0) as int;
     final userAvatarBase64 = box.get(_userAvatarPathKey) as String?;
 
     // Provider settings
-    final spotifyProviderIndex = box.get(_spotifyProviderKey, defaultValue: SpotifyProviderType.ppplayer.index) as int;
-    final youtubeSearchMethodIndex = box.get(_youtubeSearchMethodKey, defaultValue: YoutubeSearchMethod.scraping.index) as int;
-    final youtubeApiProviderIndex = box.get(_youtubeApiProviderKey, defaultValue: YoutubeApiProviderType.ppplayer.index) as int;
-    final autoplayEnabled = box.get(_autoplayEnabledKey, defaultValue: true) as bool;
-    final continuePlaybackInPip = box.get(_continuePlaybackInPipKey, defaultValue: false) as bool;
+    final spotifyProviderIndex =
+        box.get(
+              _spotifyProviderKey,
+              defaultValue: SpotifyProviderType.ppplayer.index,
+            )
+            as int;
+    final youtubeSearchMethodIndex =
+        box.get(
+              _youtubeSearchMethodKey,
+              defaultValue: YoutubeSearchMethod.scraping.index,
+            )
+            as int;
+    final youtubeApiProviderIndex =
+        box.get(
+              _youtubeApiProviderKey,
+              defaultValue: YoutubeApiProviderType.ppplayer.index,
+            )
+            as int;
+    final autoplayEnabled =
+        box.get(_autoplayEnabledKey, defaultValue: true) as bool;
+    final continuePlaybackInPip =
+        box.get(_continuePlaybackInPipKey, defaultValue: false) as bool;
 
     state = state.copyWith(
       selectedCountry: country,
       showVideo: showVideo,
-      playerView: PlayerView.values[playerViewIndex.clamp(0, PlayerView.values.length - 1)],
+      playerView:
+          PlayerView.values[playerViewIndex.clamp(
+            0,
+            PlayerView.values.length - 1,
+          )],
       themeIndex: themeIndex,
-      performanceMode: performanceModeIndex == -1 
-          ? defaultMode 
-          : PerformanceMode.values[performanceModeIndex.clamp(0, PerformanceMode.values.length - 1)],
+      performanceMode:
+          performanceModeIndex == -1
+              ? defaultMode
+              : PerformanceMode.values[performanceModeIndex.clamp(
+                0,
+                PerformanceMode.values.length - 1,
+              )],
       lowDataMode: lowDataMode,
       userName: userName,
       userAvatarColorIndex: userAvatarColorIndex,
       userAvatarBase64: userAvatarBase64,
-      spotifyProvider: SpotifyProviderType.values[spotifyProviderIndex.clamp(0, SpotifyProviderType.values.length - 1)],
-      youtubeSearchMethod: YoutubeSearchMethod.values[youtubeSearchMethodIndex.clamp(0, YoutubeSearchMethod.values.length - 1)],
-      youtubeApiProvider: YoutubeApiProviderType.values[youtubeApiProviderIndex.clamp(0, YoutubeApiProviderType.values.length - 1)],
+      spotifyProvider:
+          SpotifyProviderType.values[spotifyProviderIndex.clamp(
+            0,
+            SpotifyProviderType.values.length - 1,
+          )],
+      youtubeSearchMethod:
+          YoutubeSearchMethod.values[youtubeSearchMethodIndex.clamp(
+            0,
+            YoutubeSearchMethod.values.length - 1,
+          )],
+      youtubeApiProvider:
+          YoutubeApiProviderType.values[youtubeApiProviderIndex.clamp(
+            0,
+            YoutubeApiProviderType.values.length - 1,
+          )],
       autoplayEnabled: autoplayEnabled,
       continuePlaybackInPip: continuePlaybackInPip,
       isLoaded: true,
@@ -232,7 +277,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final newValue = !state.showVideo;
     await box.put(_showVideoKey, newValue);
     state = state.copyWith(showVideo: newValue);
-    
+
     if (newValue) {
       setPlayerView(PlayerView.video);
     } else if (state.playerView == PlayerView.video) {
@@ -251,7 +296,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final box = await Hive.openBox(_boxName);
     await box.put(_playerViewKey, view.index);
     state = state.copyWith(playerView: view);
-    
+
     if (view == PlayerView.video && !state.showVideo) {
       await box.put(_showVideoKey, true);
       state = state.copyWith(showVideo: true);
@@ -262,7 +307,9 @@ class SettingsNotifier extends Notifier<SettingsState> {
   }
 }
 
-final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);
+final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(
+  SettingsNotifier.new,
+);
 
 final selectedCountryProvider = Provider<String>((ref) {
   return ref.watch(settingsProvider).selectedCountry;

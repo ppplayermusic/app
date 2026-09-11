@@ -13,7 +13,7 @@ class VideoLayoutState {
   final DateTime updatedAt;
 
   VideoLayoutState({
-    this.size = Size.zero, 
+    this.size = Size.zero,
     this.position = Offset.zero,
     this.isReady = false,
     this.isVisible = false,
@@ -22,8 +22,8 @@ class VideoLayoutState {
   }) : updatedAt = updatedAt ?? DateTime.now();
 
   VideoLayoutState copyWith({
-    Size? size, 
-    Offset? position, 
+    Size? size,
+    Offset? position,
     bool? isReady,
     bool? isVisible,
     String? debugLabel,
@@ -46,8 +46,8 @@ class VideoLayoutNotifier extends Notifier<VideoLayoutState> {
 
   void updateLayout(Size size, Offset position, {String label = 'unknown'}) {
     state = state.copyWith(
-      size: size, 
-      position: position, 
+      size: size,
+      position: position,
       isReady: true,
       isVisible: true,
       debugLabel: label,
@@ -68,6 +68,7 @@ class VideoLayoutNotifier extends Notifier<VideoLayoutState> {
   }
 }
 
-final videoLayoutProvider = NotifierProvider<VideoLayoutNotifier, VideoLayoutState>(
-  VideoLayoutNotifier.new,
-);
+final videoLayoutProvider =
+    NotifierProvider<VideoLayoutNotifier, VideoLayoutState>(
+      VideoLayoutNotifier.new,
+    );

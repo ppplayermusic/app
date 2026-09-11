@@ -26,10 +26,10 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
     if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
 
     final adService = ref.read(adServiceProvider);
-    
+
     // Wait for the deferred initialization to complete.
     await adService.initialization;
-    
+
     if (!mounted) return;
 
     _bannerAd = adService.createBannerAd(

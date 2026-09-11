@@ -48,17 +48,31 @@ class CacheMetrics {
 
   void _printMetrics() {
     final int l1Total = l1Hits + l1StaleHits + l1Misses;
-    final String l1HitRate = l1Total > 0 ? '${((l1Hits + l1StaleHits) / l1Total * 100).toStringAsFixed(1)}%' : 'N/A';
+    final String l1HitRate =
+        l1Total > 0
+            ? '${((l1Hits + l1StaleHits) / l1Total * 100).toStringAsFixed(1)}%'
+            : 'N/A';
 
     final int l2Total = l2Hits + l2StaleHits + l2Misses;
-    final String l2HitRate = l2Total > 0 ? '${((l2Hits + l2StaleHits) / l2Total * 100).toStringAsFixed(1)}%' : 'N/A';
+    final String l2HitRate =
+        l2Total > 0
+            ? '${((l2Hits + l2StaleHits) / l2Total * 100).toStringAsFixed(1)}%'
+            : 'N/A';
 
     debugPrint('\n=== [CacheMetrics] ===');
-    debugPrint('L1   | fresh=$l1Hits stale=$l1StaleHits miss=$l1Misses (Hit Rate: $l1HitRate)');
-    debugPrint('L2   | fresh=$l2Hits stale=$l2StaleHits miss=$l2Misses (Hit Rate: $l2HitRate)');
-    debugPrint('Ops  | dedup=$dedupHits refresh=$backgroundRefreshes writes=$cacheWrites decodeFail=$decodeFailures');
+    debugPrint(
+      'L1   | fresh=$l1Hits stale=$l1StaleHits miss=$l1Misses (Hit Rate: $l1HitRate)',
+    );
+    debugPrint(
+      'L2   | fresh=$l2Hits stale=$l2StaleHits miss=$l2Misses (Hit Rate: $l2HitRate)',
+    );
+    debugPrint(
+      'Ops  | dedup=$dedupHits refresh=$backgroundRefreshes writes=$cacheWrites decodeFail=$decodeFailures',
+    );
     debugPrint('Net  | spotifyRequests=$spotifyRequests');
-    debugPrint('YT   | resolves=$youtubeResolutionRequests mappingHits=$youtubeCachedMappingHits negativeHits=$youtubeNegativeCacheHits forcedRetries=$youtubeForcedReresolutions');
+    debugPrint(
+      'YT   | resolves=$youtubeResolutionRequests mappingHits=$youtubeCachedMappingHits negativeHits=$youtubeNegativeCacheHits forcedRetries=$youtubeForcedReresolutions',
+    );
     debugPrint('======================\n');
   }
 }

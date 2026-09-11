@@ -14,19 +14,21 @@ void main(List<String> args) async {
   final dbFile = File('test_real_db.sqlite');
 
   final db = AppDatabase.forTesting(NativeDatabase(dbFile));
-  
+
   // Real network client but we'll monitor requests
   final dio = Dio();
   int requestCount = 0;
-  dio.interceptors.add(InterceptorsWrapper(
-    onRequest: (options, handler) {
-      if (options.path.contains('spotify.com')) {
-        requestCount++;
-        print('NETWORK REQUEST: ${options.uri}');
-      }
-      return handler.next(options);
-    }
-  ));
+  dio.interceptors.add(
+    InterceptorsWrapper(
+      onRequest: (options, handler) {
+        if (options.path.contains('spotify.com')) {
+          requestCount++;
+          print('NETWORK REQUEST: ${options.uri}');
+        }
+        return handler.next(options);
+      },
+    ),
+  );
 
   final auth = PPPlayerSpotifyAuth(dio);
   final client = SpotifyClient(dio, auth, market: 'US');
@@ -43,10 +45,12 @@ void main(List<String> args) async {
   print('Phase ${isPhase2 ? 2 : 1} Starting...');
 
   try {
-    final artistResult = await repo.watchArtist('0TnOYISbd1XYRBk9myaseg').firstWhere((r) => r.data.isNotEmpty); // Pitbull
+    final artistResult = await repo
+        .watchArtist('0TnOYISbd1XYRBk9myaseg')
+        .firstWhere((r) => r.data.isNotEmpty); // Pitbull
     final artist = artistResult.data;
     print('Got Artist: ${artist['name']}');
-    
+
     if (!isPhase2) {
       if (requestCount == 0) {
         print('ERROR: Phase 1 should have made a network request!');
@@ -56,10 +60,14 @@ void main(List<String> args) async {
       exit(0);
     } else {
       if (requestCount > 0) {
-        print('ERROR: Phase 2 made $requestCount network requests! Expected 0 (L2 Hit).');
+        print(
+          'ERROR: Phase 2 made $requestCount network requests! Expected 0 (L2 Hit).',
+        );
         exit(1);
       }
-      print('Phase 2: Made 0 network requests. L2 Hit verified across process boundaries!');
+      print(
+        'Phase 2: Made 0 network requests. L2 Hit verified across process boundaries!',
+      );
       exit(0);
     }
   } catch (e) {

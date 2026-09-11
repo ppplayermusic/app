@@ -21,7 +21,11 @@ class PlaybackQueue {
 
   factory PlaybackQueue.fromJson(Map<String, dynamic> json) {
     return PlaybackQueue(
-      tracks: (json['tracks'] as List<dynamic>?)?.map((e) => Track.fromJson(e as Map<String, dynamic>)).toList() ?? const [],
+      tracks:
+          (json['tracks'] as List<dynamic>?)
+              ?.map((e) => Track.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       currentIndex: json['currentIndex'] as int? ?? 0,
       repeatMode: RepeatMode.values[json['repeatMode'] as int? ?? 0],
       isShuffled: json['isShuffled'] as bool? ?? false,
@@ -83,7 +87,7 @@ class PlaybackQueue {
         nextIdx = 0;
       } else {
         // Stop playback by moving to an out-of-bounds index
-        return copyWith(currentIndex: tracks.length); 
+        return copyWith(currentIndex: tracks.length);
       }
     }
 
@@ -117,7 +121,7 @@ class PlaybackQueue {
     final random = Random().nextInt(10000);
     final uniqueId = '${track.spotifyId}_${timestamp}_$random';
     final t = track.copyWith(queueItemId: uniqueId);
-    
+
     final newTracks = List<Track>.from(tracks);
     if (t.queueOrigin != QueueItemOrigin.autoplay) {
       int insertIndex = newTracks.length;
@@ -131,7 +135,7 @@ class PlaybackQueue {
     } else {
       newTracks.add(t);
     }
-    
+
     return copyWith(tracks: newTracks);
   }
 
@@ -141,7 +145,8 @@ class PlaybackQueue {
     final timestamp = DateTime.now().microsecondsSinceEpoch;
     final random = Random().nextInt(10000);
     final uniqueId = '${track.spotifyId}_${timestamp}_$random';
-    final newTracks = [...tracks]..insert(insertIdx, track.copyWith(queueItemId: uniqueId));
+    final newTracks = [...tracks]
+      ..insert(insertIdx, track.copyWith(queueItemId: uniqueId));
     return copyWith(tracks: newTracks);
   }
 
@@ -163,7 +168,10 @@ class PlaybackQueue {
 
     return copyWith(
       tracks: newTracks,
-      currentIndex: newIndex.clamp(0, newTracks.isEmpty ? 0 : newTracks.length - 1),
+      currentIndex: newIndex.clamp(
+        0,
+        newTracks.isEmpty ? 0 : newTracks.length - 1,
+      ),
     );
   }
 
@@ -171,9 +179,12 @@ class PlaybackQueue {
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }
-    
-    if (oldIndex < 0 || oldIndex >= tracks.length || newIndex < 0 || newIndex > tracks.length) {
-       return this;
+
+    if (oldIndex < 0 ||
+        oldIndex >= tracks.length ||
+        newIndex < 0 ||
+        newIndex > tracks.length) {
+      return this;
     }
 
     final newTracks = [...tracks];

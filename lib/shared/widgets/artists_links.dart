@@ -26,22 +26,22 @@ class ArtistsLinks extends StatelessWidget {
       TextSpan(
         children: [
           for (var i = 0; i < names.length; i++) ...[
-            if (i > 0)
-              TextSpan(text: ', ', style: style),
+            if (i > 0) TextSpan(text: ', ', style: style),
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
               child: HoverText(
                 text: toUpperCase ? names[i].toUpperCase() : names[i],
                 style: style,
                 onTap: () {
-                  final id = i < ids.length ? ids[i] : (ids.isNotEmpty ? ids[0] : '');
+                  final id =
+                      i < ids.length ? ids[i] : (ids.isNotEmpty ? ids[0] : '');
                   if (id.isNotEmpty) {
                     context.push('/artist/$id');
                   }
                 },
               ),
             ),
-          ]
+          ],
         ],
       ),
       maxLines: 1,

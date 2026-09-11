@@ -18,10 +18,8 @@ class Tracks extends Table {
   // Cached YouTube video ID after first resolve — avoids re-querying API
   TextColumn get youtubeVideoId => text().nullable()();
   DateTimeColumn get youtubeResolvedAt => dateTime().nullable()();
-  IntColumn get playCount =>
-      integer().withDefault(const Constant(0))();
-  BoolColumn get isFavorite =>
-      boolean().withDefault(const Constant(false))();
+  IntColumn get playCount => integer().withDefault(const Constant(0))();
+  BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   DateTimeColumn get lastPlayedAt => dateTime().nullable()();
 
   @override
@@ -34,8 +32,7 @@ class Artists extends Table {
   TextColumn get imageUrl => text().nullable()();
   TextColumn get imageSmall => text().nullable()();
   IntColumn get followers => integer().nullable()();
-  BoolColumn get isFollowed =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isFollowed => boolean().withDefault(const Constant(false))();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 
   @override
@@ -50,8 +47,7 @@ class Albums extends Table {
   TextColumn get imageUrl => text().nullable()();
   TextColumn get releaseDate => text().nullable()();
   IntColumn get totalTracks => integer().nullable()();
-  BoolColumn get isLiked =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isLiked => boolean().withDefault(const Constant(false))();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 
   @override
@@ -71,8 +67,7 @@ class Radios extends Table {
   TextColumn get seedType => text()(); // artist, track, genre
   TextColumn get title => text()();
   TextColumn get imageUrl => text().nullable()();
-  BoolColumn get isFollowed =>
-      boolean().withDefault(const Constant(true))();
+  BoolColumn get isFollowed => boolean().withDefault(const Constant(true))();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 
   @override
@@ -102,7 +97,17 @@ class CatalogCacheEntries extends Table {
 
 // --- Database ---
 
-@DriftDatabase(tables: [Tracks, Artists, Albums, Playlists, PlaylistTracks, Radios, CatalogCacheEntries])
+@DriftDatabase(
+  tables: [
+    Tracks,
+    Artists,
+    Albums,
+    Playlists,
+    PlaylistTracks,
+    Radios,
+    CatalogCacheEntries,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -113,42 +118,48 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onUpgrade: (m, from, to) async {
-          if (from < 2) {
-            await m.createTable(playlists);
-            await m.createTable(playlistTracks);
-          }
-          if (from < 3) {
-            await m.addColumn(tracks, tracks.lastPlayedAt);
-          }
-          if (from < 4) {
-            await m.addColumn(artists, artists.isFollowed);
-            await m.addColumn(albums, albums.isLiked);
-            await m.addColumn(playlists, playlists.spotifyId);
-            await m.addColumn(playlists, playlists.imageUrl);
-          }
-          if (from < 5) {
-            await m.addColumn(artists, artists.updatedAt);
-            await m.addColumn(albums, albums.updatedAt);
-            await customStatement('UPDATE artists SET updated_at = ? WHERE is_followed = 1', [DateTime.now().millisecondsSinceEpoch]);
-            await customStatement('UPDATE albums SET updated_at = ? WHERE is_liked = 1', [DateTime.now().millisecondsSinceEpoch]);
-          }
-          if (from < 6) {
-            await m.createTable(radios);
-          }
-          if (from < 7) {
-            try {
-              await m.createTable(catalogCacheEntries);
-            } catch (_) {}
-            try {
-              await m.addColumn(tracks, tracks.youtubeResolvedAt);
-            } catch (_) {}
-            try {
-              await m.addColumn(tracks, tracks.youtubeVideoId);
-            } catch (_) {}
-          }
-        },
-      );
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(playlists);
+        await m.createTable(playlistTracks);
+      }
+      if (from < 3) {
+        await m.addColumn(tracks, tracks.lastPlayedAt);
+      }
+      if (from < 4) {
+        await m.addColumn(artists, artists.isFollowed);
+        await m.addColumn(albums, albums.isLiked);
+        await m.addColumn(playlists, playlists.spotifyId);
+        await m.addColumn(playlists, playlists.imageUrl);
+      }
+      if (from < 5) {
+        await m.addColumn(artists, artists.updatedAt);
+        await m.addColumn(albums, albums.updatedAt);
+        await customStatement(
+          'UPDATE artists SET updated_at = ? WHERE is_followed = 1',
+          [DateTime.now().millisecondsSinceEpoch],
+        );
+        await customStatement(
+          'UPDATE albums SET updated_at = ? WHERE is_liked = 1',
+          [DateTime.now().millisecondsSinceEpoch],
+        );
+      }
+      if (from < 6) {
+        await m.createTable(radios);
+      }
+      if (from < 7) {
+        try {
+          await m.createTable(catalogCacheEntries);
+        } catch (_) {}
+        try {
+          await m.addColumn(tracks, tracks.youtubeResolvedAt);
+        } catch (_) {}
+        try {
+          await m.addColumn(tracks, tracks.youtubeVideoId);
+        } catch (_) {}
+      }
+    },
+  );
 
   // --- Track queries ---
 
@@ -176,22 +187,23 @@ class AppDatabase extends _$AppDatabase {
       into(tracks).insertOnConflictUpdate(entry);
 
   Future<void> cacheYoutubeId(String spotifyId, String? videoId) =>
-      (update(tracks)..where((t) => t.spotifyId.equals(spotifyId)))
-          .write(TracksCompanion(youtubeVideoId: Value(videoId)));
+      (update(tracks)..where(
+        (t) => t.spotifyId.equals(spotifyId),
+      )).write(TracksCompanion(youtubeVideoId: Value(videoId)));
 
-  Future<void> toggleFavorite(String spotifyId, bool value) =>
-      (update(tracks)..where((t) => t.spotifyId.equals(spotifyId)))
-          .write(TracksCompanion(isFavorite: Value(value)));
+  Future<void> toggleFavorite(String spotifyId, bool value) => (update(tracks)
+    ..where(
+      (t) => t.spotifyId.equals(spotifyId),
+    )).write(TracksCompanion(isFavorite: Value(value)));
 
   Stream<bool> watchTrackFavorite(String spotifyId) {
-    return (select(tracks)..where((t) => t.spotifyId.equals(spotifyId)))
-        .watchSingleOrNull()
-        .map((t) => t?.isFavorite ?? false);
+    return (select(tracks)..where(
+      (t) => t.spotifyId.equals(spotifyId),
+    )).watchSingleOrNull().map((t) => t?.isFavorite ?? false);
   }
 
   Stream<List<Track>> watchFavorites() {
-    return (select(tracks)..where((t) => t.isFavorite.equals(true)))
-        .watch();
+    return (select(tracks)..where((t) => t.isFavorite.equals(true))).watch();
   }
 
   Future<void> recordPlay(TracksCompanion companion) async {
@@ -209,7 +221,12 @@ class AppDatabase extends _$AppDatabase {
   Future<void> upsertArtist(ArtistsCompanion entry) =>
       into(artists).insertOnConflictUpdate(entry);
 
-  Future<void> toggleArtistFollow(String spotifyId, bool value, {String? name, String? imageUrl}) async {
+  Future<void> toggleArtistFollow(
+    String spotifyId,
+    bool value, {
+    String? name,
+    String? imageUrl,
+  }) async {
     final companion = ArtistsCompanion(
       spotifyId: Value(spotifyId),
       isFollowed: Value(value),
@@ -221,8 +238,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Stream<Artist?> watchArtist(String spotifyId) =>
-      (select(artists)..where((a) => a.spotifyId.equals(spotifyId)))
-          .watchSingleOrNull();
+      (select(artists)
+        ..where((a) => a.spotifyId.equals(spotifyId))).watchSingleOrNull();
 
   Future<List<Artist>> getFollowedArtists() =>
       (select(artists)..where((a) => a.isFollowed.equals(true))).get();
@@ -230,7 +247,9 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<Artist>> watchFollowedArtists({bool sortByRecent = true}) {
     final query = select(artists)..where((a) => a.isFollowed.equals(true));
     if (sortByRecent) {
-      query.orderBy([(a) => OrderingTerm.desc(a.updatedAt, nulls: NullsOrder.last)]);
+      query.orderBy([
+        (a) => OrderingTerm.desc(a.updatedAt, nulls: NullsOrder.last),
+      ]);
     } else {
       query.orderBy([(a) => OrderingTerm.asc(a.name)]);
     }
@@ -239,7 +258,13 @@ class AppDatabase extends _$AppDatabase {
 
   // --- Radio queries ---
 
-  Future<void> toggleRadioFollow(String seedId, String seedType, bool value, {String? title, String? imageUrl}) async {
+  Future<void> toggleRadioFollow(
+    String seedId,
+    String seedType,
+    bool value, {
+    String? title,
+    String? imageUrl,
+  }) async {
     final companion = RadiosCompanion(
       seedId: Value(seedId),
       seedType: Value(seedType),
@@ -252,8 +277,9 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Stream<Radio?> watchRadio(String seedId, String seedType) =>
-      (select(radios)..where((r) => r.seedId.equals(seedId) & r.seedType.equals(seedType)))
-          .watchSingleOrNull();
+      (select(radios)..where(
+        (r) => r.seedId.equals(seedId) & r.seedType.equals(seedType),
+      )).watchSingleOrNull();
 
   Future<List<Radio>> getFollowedRadios() =>
       (select(radios)..where((r) => r.isFollowed.equals(true))).get();
@@ -261,7 +287,9 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<Radio>> watchFollowedRadios({bool sortByRecent = true}) {
     final query = select(radios)..where((r) => r.isFollowed.equals(true));
     if (sortByRecent) {
-      query.orderBy([(r) => OrderingTerm.desc(r.updatedAt, nulls: NullsOrder.last)]);
+      query.orderBy([
+        (r) => OrderingTerm.desc(r.updatedAt, nulls: NullsOrder.last),
+      ]);
     } else {
       query.orderBy([(r) => OrderingTerm.asc(r.title)]);
     }
@@ -273,7 +301,14 @@ class AppDatabase extends _$AppDatabase {
   Future<void> upsertAlbum(AlbumsCompanion entry) =>
       into(albums).insertOnConflictUpdate(entry);
 
-  Future<void> toggleAlbumLike(String spotifyId, bool value, {String? name, String? artistId, String? artistName, String? imageUrl}) async {
+  Future<void> toggleAlbumLike(
+    String spotifyId,
+    bool value, {
+    String? name,
+    String? artistId,
+    String? artistName,
+    String? imageUrl,
+  }) async {
     final companion = AlbumsCompanion(
       spotifyId: Value(spotifyId),
       isLiked: Value(value),
@@ -287,8 +322,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Stream<Album?> watchAlbum(String spotifyId) =>
-      (select(albums)..where((a) => a.spotifyId.equals(spotifyId)))
-          .watchSingleOrNull();
+      (select(albums)
+        ..where((a) => a.spotifyId.equals(spotifyId))).watchSingleOrNull();
 
   Future<List<Album>> getLikedAlbums() =>
       (select(albums)..where((a) => a.isLiked.equals(true))).get();
@@ -296,7 +331,9 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<Album>> watchLikedAlbums({bool sortByRecent = true}) {
     final query = select(albums)..where((a) => a.isLiked.equals(true));
     if (sortByRecent) {
-      query.orderBy([(a) => OrderingTerm.desc(a.updatedAt, nulls: NullsOrder.last)]);
+      query.orderBy([
+        (a) => OrderingTerm.desc(a.updatedAt, nulls: NullsOrder.last),
+      ]);
     } else {
       query.orderBy([(a) => OrderingTerm.asc(a.name)]);
     }
@@ -318,74 +355,110 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<Track>> getPlaylistTracks(int playlistId) async {
-    final query = select(tracks).join([
-      innerJoin(playlistTracks,
-          playlistTracks.trackSpotifyId.equalsExp(tracks.spotifyId)),
-    ])
-      ..where(playlistTracks.playlistId.equals(playlistId))
-      ..orderBy([OrderingTerm.asc(playlistTracks.position)]);
+    final query =
+        select(tracks).join([
+            innerJoin(
+              playlistTracks,
+              playlistTracks.trackSpotifyId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(playlistTracks.playlistId.equals(playlistId))
+          ..orderBy([OrderingTerm.asc(playlistTracks.position)]);
 
     final rows = await query.get();
     return rows.map((row) => row.readTable(tracks)).toList();
   }
 
   Stream<List<Track>> watchPlaylistTracks(int playlistId) {
-    final query = select(tracks).join([
-      innerJoin(playlistTracks,
-          playlistTracks.trackSpotifyId.equalsExp(tracks.spotifyId)),
-    ])
-      ..where(playlistTracks.playlistId.equals(playlistId))
-      ..orderBy([OrderingTerm.asc(playlistTracks.position)]);
+    final query =
+        select(tracks).join([
+            innerJoin(
+              playlistTracks,
+              playlistTracks.trackSpotifyId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(playlistTracks.playlistId.equals(playlistId))
+          ..orderBy([OrderingTerm.asc(playlistTracks.position)]);
 
-    return query.watch().map((rows) => rows.map((row) => row.readTable(tracks)).toList());
+    return query.watch().map(
+      (rows) => rows.map((row) => row.readTable(tracks)).toList(),
+    );
   }
 
-  Future<int> createPlaylist(String name, {String? spotifyId, String? imageUrl}) =>
-      into(playlists).insert(PlaylistsCompanion(
-        name: Value(name),
-        spotifyId: Value(spotifyId),
-        imageUrl: Value(imageUrl),
-      ));
+  Future<int> createPlaylist(
+    String name, {
+    String? spotifyId,
+    String? imageUrl,
+  }) => into(playlists).insert(
+    PlaylistsCompanion(
+      name: Value(name),
+      spotifyId: Value(spotifyId),
+      imageUrl: Value(imageUrl),
+    ),
+  );
 
-  Future<void> togglePlaylistLike(String spotifyId, bool value, {String? name, String? imageUrl}) async {
+  Future<void> togglePlaylistLike(
+    String spotifyId,
+    bool value, {
+    String? name,
+    String? imageUrl,
+  }) async {
     if (value) {
       // Like: create/add to playlists table if not exists
-      final existing = await (select(playlists)..where((p) => p.spotifyId.equals(spotifyId))).getSingleOrNull();
+      final existing =
+          await (select(playlists)
+            ..where((p) => p.spotifyId.equals(spotifyId))).getSingleOrNull();
       if (existing == null) {
-        await createPlaylist(name ?? 'Unnamed Playlist', spotifyId: spotifyId, imageUrl: imageUrl);
+        await createPlaylist(
+          name ?? 'Unnamed Playlist',
+          spotifyId: spotifyId,
+          imageUrl: imageUrl,
+        );
       }
     } else {
       // Unlike: remove from playlists table
-      await (delete(playlists)..where((p) => p.spotifyId.equals(spotifyId))).go();
+      await (delete(playlists)
+        ..where((p) => p.spotifyId.equals(spotifyId))).go();
     }
   }
 
   Stream<bool> watchPlaylistIsFavorite(String spotifyId) {
-    return (select(playlists)..where((p) => p.spotifyId.equals(spotifyId)))
-        .watch()
-        .map((list) => list.isNotEmpty);
+    return (select(playlists)..where(
+      (p) => p.spotifyId.equals(spotifyId),
+    )).watch().map((list) => list.isNotEmpty);
   }
 
   Future<void> deletePlaylist(int id) async {
     await (delete(playlists)..where((p) => p.id.equals(id))).go();
-    await (delete(playlistTracks)..where((pt) => pt.playlistId.equals(id))).go();
+    await (delete(playlistTracks)
+      ..where((pt) => pt.playlistId.equals(id))).go();
   }
 
   Future<void> addToPlaylist(int playlistId, String spotifyId) async {
     // Get current max position
-    final maxPosQuery = selectOnly(playlistTracks)
-      ..addColumns([playlistTracks.position.max()])
-      ..where(playlistTracks.playlistId.equals(playlistId));
-    final maxPos = await maxPosQuery.map((row) => row.read(playlistTracks.position.max())).getSingleOrNull() ?? 0;
+    final maxPosQuery =
+        selectOnly(playlistTracks)
+          ..addColumns([playlistTracks.position.max()])
+          ..where(playlistTracks.playlistId.equals(playlistId));
+    final maxPos =
+        await maxPosQuery
+            .map((row) => row.read(playlistTracks.position.max()))
+            .getSingleOrNull() ??
+        0;
 
-    await into(playlistTracks).insert(PlaylistTracksCompanion(
-      playlistId: Value(playlistId),
-      trackSpotifyId: Value(spotifyId),
-      position: Value(maxPos + 1),
-    ));
+    await into(playlistTracks).insert(
+      PlaylistTracksCompanion(
+        playlistId: Value(playlistId),
+        trackSpotifyId: Value(spotifyId),
+        position: Value(maxPos + 1),
+      ),
+    );
   }
 
-  Future<void> syncPlaylistTracks(int playlistId, List<TracksCompanion> trackCompanions) async {
+  Future<void> syncPlaylistTracks(
+    int playlistId,
+    List<TracksCompanion> trackCompanions,
+  ) async {
     await transaction(() async {
       // 1. Ensure all tracks exist in the main tracks table
       for (final companion in trackCompanions) {
@@ -393,27 +466,33 @@ class AppDatabase extends _$AppDatabase {
       }
 
       // 2. Clear existing links for this playlist
-      await (delete(playlistTracks)..where((pt) => pt.playlistId.equals(playlistId))).go();
+      await (delete(playlistTracks)
+        ..where((pt) => pt.playlistId.equals(playlistId))).go();
 
       // 3. Rebuild the playlist structure with correct ordering
       for (int i = 0; i < trackCompanions.length; i++) {
-        await into(playlistTracks).insert(PlaylistTracksCompanion(
-          playlistId: Value(playlistId),
-          trackSpotifyId: Value(trackCompanions[i].spotifyId.value),
-          position: Value(i),
-        ));
+        await into(playlistTracks).insert(
+          PlaylistTracksCompanion(
+            playlistId: Value(playlistId),
+            trackSpotifyId: Value(trackCompanions[i].spotifyId.value),
+            position: Value(i),
+          ),
+        );
       }
     });
   }
 
-  Future<void> reorderTracks(int playlistId, List<String> trackIdsInOrder) async {
+  Future<void> reorderTracks(
+    int playlistId,
+    List<String> trackIdsInOrder,
+  ) async {
     await transaction(() async {
       for (int i = 0; i < trackIdsInOrder.length; i++) {
-        await (update(playlistTracks)
-              ..where((pt) =>
-                  pt.playlistId.equals(playlistId) &
-                  pt.trackSpotifyId.equals(trackIdsInOrder[i])))
-            .write(PlaylistTracksCompanion(position: Value(i)));
+        await (update(playlistTracks)..where(
+          (pt) =>
+              pt.playlistId.equals(playlistId) &
+              pt.trackSpotifyId.equals(trackIdsInOrder[i]),
+        )).write(PlaylistTracksCompanion(position: Value(i)));
       }
     });
   }

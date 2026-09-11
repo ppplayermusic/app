@@ -44,7 +44,9 @@ class SpotifyRepository {
     );
   }
 
-  Stream<CacheResult<List<Map<String, dynamic>>>> watchRelatedArtists(String artistId) {
+  Stream<CacheResult<List<Map<String, dynamic>>>> watchRelatedArtists(
+    String artistId,
+  ) {
     return _cache.watchOrFetch(
       key: CacheKeyBuilder.relatedArtists(artistId),
       resourceType: ResourceType.relatedArtists,
@@ -81,7 +83,11 @@ class SpotifyRepository {
       key: CacheKeyBuilder.playlistTracks(playlistId, market),
       resourceType: ResourceType.playlistTracks,
       fetch: () => _client.getPlaylistTracks(playlistId),
-      decode: (json) => (jsonDecode(json) as List).map((e) => Track.fromJson(e as Map<String, dynamic>)).toList(),
+      decode:
+          (json) =>
+              (jsonDecode(json) as List)
+                  .map((e) => Track.fromJson(e as Map<String, dynamic>))
+                  .toList(),
       encode: (data) => jsonEncode(data.map((t) => t.toJson()).toList()),
     );
   }
@@ -97,9 +103,16 @@ class SpotifyRepository {
     );
   }
 
-  Stream<CacheResult<List<Map<String, dynamic>>>> watchBrowseCategories({int limit = 20, int offset = 0}) {
+  Stream<CacheResult<List<Map<String, dynamic>>>> watchBrowseCategories({
+    int limit = 20,
+    int offset = 0,
+  }) {
     return _cache.watchOrFetch(
-      key: CacheKeyBuilder.browseCategories(market, limit: limit, offset: offset),
+      key: CacheKeyBuilder.browseCategories(
+        market,
+        limit: limit,
+        offset: offset,
+      ),
       resourceType: ResourceType.browseCategories,
       fetch: () => _client.getBrowseCategories(limit: limit, offset: offset),
       decode: (json) => (jsonDecode(json) as List).cast<Map<String, dynamic>>(),
@@ -107,11 +120,25 @@ class SpotifyRepository {
     );
   }
 
-  Stream<CacheResult<List<Map<String, dynamic>>>> watchCategoryPlaylists(String categoryId, {int limit = 20, int offset = 0}) {
+  Stream<CacheResult<List<Map<String, dynamic>>>> watchCategoryPlaylists(
+    String categoryId, {
+    int limit = 20,
+    int offset = 0,
+  }) {
     return _cache.watchOrFetch(
-      key: CacheKeyBuilder.categoryPlaylists(categoryId, market, limit: limit, offset: offset),
+      key: CacheKeyBuilder.categoryPlaylists(
+        categoryId,
+        market,
+        limit: limit,
+        offset: offset,
+      ),
       resourceType: ResourceType.categoryPlaylists,
-      fetch: () => _client.getCategoryPlaylists(categoryId, limit: limit, offset: offset),
+      fetch:
+          () => _client.getCategoryPlaylists(
+            categoryId,
+            limit: limit,
+            offset: offset,
+          ),
       decode: (json) => (jsonDecode(json) as List).cast<Map<String, dynamic>>(),
       encode: (data) => jsonEncode(data),
     );
@@ -127,12 +154,33 @@ class SpotifyRepository {
     );
   }
 
-  Stream<CacheResult<List<Track>>> watchRecommendations({String? seedArtistId, String? seedTrackId, String? seedGenres, int limit = 20}) {
+  Stream<CacheResult<List<Track>>> watchRecommendations({
+    String? seedArtistId,
+    String? seedTrackId,
+    String? seedGenres,
+    int limit = 20,
+  }) {
     return _cache.watchOrFetch(
-      key: CacheKeyBuilder.recommendations(market, seedArtistId: seedArtistId, seedTrackId: seedTrackId, seedGenres: seedGenres, limit: limit),
+      key: CacheKeyBuilder.recommendations(
+        market,
+        seedArtistId: seedArtistId,
+        seedTrackId: seedTrackId,
+        seedGenres: seedGenres,
+        limit: limit,
+      ),
       resourceType: ResourceType.recommendations,
-      fetch: () => _client.getRecommendations(seedArtistId: seedArtistId, seedTrackId: seedTrackId, seedGenres: seedGenres, limit: limit),
-      decode: (json) => (jsonDecode(json) as List).map((e) => Track.fromJson(e as Map<String, dynamic>)).toList(),
+      fetch:
+          () => _client.getRecommendations(
+            seedArtistId: seedArtistId,
+            seedTrackId: seedTrackId,
+            seedGenres: seedGenres,
+            limit: limit,
+          ),
+      decode:
+          (json) =>
+              (jsonDecode(json) as List)
+                  .map((e) => Track.fromJson(e as Map<String, dynamic>))
+                  .toList(),
       encode: (data) => jsonEncode(data.map((t) => t.toJson()).toList()),
     );
   }
@@ -143,28 +191,36 @@ class SpotifyRepository {
       key: CacheKeyBuilder.popularTracks(market, limit: limit),
       resourceType: ResourceType.popularTracks,
       fetch: () => _client.getPopularTracks(limit: limit),
-      decode: (json) => (jsonDecode(json) as List).map((e) => Track.fromJson(e as Map<String, dynamic>)).toList(),
+      decode:
+          (json) =>
+              (jsonDecode(json) as List)
+                  .map((e) => Track.fromJson(e as Map<String, dynamic>))
+                  .toList(),
       encode: (data) => jsonEncode(data.map((t) => t.toJson()).toList()),
     );
   }
 
-  Stream<CacheResult<List<Map<String, dynamic>>>> watchPopularArtists(List<String> artistIds) {
+  Stream<CacheResult<List<Map<String, dynamic>>>> watchPopularArtists(
+    List<String> artistIds,
+  ) {
     // We sort the IDs to ensure cache key stability
     final sortedIds = List<String>.from(artistIds)..sort();
     return _cache.watchOrFetch(
       key: 'popular-artists:${sortedIds.join(',')}',
-      resourceType: ResourceType.artist, 
+      resourceType: ResourceType.artist,
       fetch: () => _client.getMultipleArtists(sortedIds),
       decode: (json) => (jsonDecode(json) as List).cast<Map<String, dynamic>>(),
       encode: (data) => jsonEncode(data),
     );
   }
 
-  Stream<CacheResult<List<Map<String, dynamic>>>> watchPopularAlbums(List<String> albumIds) {
+  Stream<CacheResult<List<Map<String, dynamic>>>> watchPopularAlbums(
+    List<String> albumIds,
+  ) {
     final sortedIds = List<String>.from(albumIds)..sort();
     return _cache.watchOrFetch(
       key: 'popular-albums:${sortedIds.join(',')}:$market',
-      resourceType: ResourceType.album, 
+      resourceType: ResourceType.album,
       fetch: () => _client.getMultipleAlbums(sortedIds),
       decode: (json) => (jsonDecode(json) as List).cast<Map<String, dynamic>>(),
       encode: (data) => jsonEncode(data),
@@ -175,10 +231,19 @@ class SpotifyRepository {
   // We'll leave `getMultipleAlbums` etc for direct client calls if they don't map cleanly to resources right now.
 
   // --- Search ---
-  Stream<CacheResult<Map<String, dynamic>>> watchSearch(String query, {int limit = 20}) {
+  Stream<CacheResult<Map<String, dynamic>>> watchSearch(
+    String query, {
+    int limit = 20,
+  }) {
     final normalizedQuery = query.trim().toLowerCase();
     return _cache.watchOrFetch(
-      key: CacheKeyBuilder.search(normalizedQuery, 'track,artist,album,playlist', market, limit: limit, offset: 0),
+      key: CacheKeyBuilder.search(
+        normalizedQuery,
+        'track,artist,album,playlist',
+        market,
+        limit: limit,
+        offset: 0,
+      ),
       resourceType: ResourceType.search,
       fetch: () => _client.search(query.trim(), limit: limit),
       decode: (json) => jsonDecode(json) as Map<String, dynamic>,

@@ -25,14 +25,16 @@ class AdaptiveBlur extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final performanceMode = ref.watch(settingsProvider).performanceMode;
     final isLowPerformance = performanceMode == PerformanceMode.powerSaver;
-    
+
     // If explicitly disabled or in powerSaver mode, don't use BackdropFilter
     if (!enabled || isLowPerformance) {
       return ClipRRect(
         borderRadius: borderRadius ?? BorderRadius.zero,
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: fallbackOpacity),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: fallbackOpacity),
           ),
           child: child,
         ),
@@ -46,7 +48,9 @@ class AdaptiveBlur extends ConsumerWidget {
         filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.02),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.02),
           ),
           child: child,
         ),

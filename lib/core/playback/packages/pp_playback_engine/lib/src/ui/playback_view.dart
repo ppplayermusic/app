@@ -22,7 +22,9 @@ class PlaybackView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (status.isIFrameMode && controller.youtubeController != null) {
-      debugPrint('PlaybackView: Building YouTube player for ${status.activeVideoId}');
+      debugPrint(
+        'PlaybackView: Building YouTube player for ${status.activeVideoId}',
+      );
       return ColoredBox(
         color: Colors.black,
         child: AspectRatio(
@@ -38,7 +40,8 @@ class PlaybackView extends StatelessWidget {
                   key: const ValueKey('pp_youtube_iframe'),
                   controller: controller.youtubeController!,
                 ),
-                if (status.state == PlaybackState.preparing || status.state == PlaybackState.buffering)
+                if (status.state == PlaybackState.preparing ||
+                    status.state == PlaybackState.buffering)
                   const Center(
                     child: CircularProgressIndicator(
                       strokeWidth: 2,

@@ -26,10 +26,12 @@ class _SpotifyCredentialsForm extends ConsumerStatefulWidget {
   const _SpotifyCredentialsForm();
 
   @override
-  ConsumerState<_SpotifyCredentialsForm> createState() => _SpotifyCredentialsFormState();
+  ConsumerState<_SpotifyCredentialsForm> createState() =>
+      _SpotifyCredentialsFormState();
 }
 
-class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm> {
+class _SpotifyCredentialsFormState
+    extends ConsumerState<_SpotifyCredentialsForm> {
   final _clientIdController = TextEditingController();
   final _clientSecretController = TextEditingController();
   bool _isLoading = true;
@@ -76,7 +78,9 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
         _clientSecretController.clear();
       });
       // Revert to PPPlayer provider so it doesn't fail trying to use empty credentials
-      ref.read(settingsProvider.notifier).setSpotifyProvider(SpotifyProviderType.ppplayer);
+      ref
+          .read(settingsProvider.notifier)
+          .setSpotifyProvider(SpotifyProviderType.ppplayer);
     }
   }
 
@@ -100,14 +104,24 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Use Custom API Key', style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold)),
+            Text(
+              'Use Custom API Key',
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Switch.adaptive(
               value: isCustom,
               activeTrackColor: colorScheme.primary,
               onChanged: (v) {
-                ref.read(settingsProvider.notifier).setSpotifyProvider(
-                  v ? SpotifyProviderType.custom : SpotifyProviderType.ppplayer,
-                );
+                ref
+                    .read(settingsProvider.notifier)
+                    .setSpotifyProvider(
+                      v
+                          ? SpotifyProviderType.custom
+                          : SpotifyProviderType.ppplayer,
+                    );
               },
             ),
           ],
@@ -115,7 +129,10 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
         const SizedBox(height: 8),
         Text(
           'Your credentials are stored locally on this device in the OS secure credential store and are never sent to PPPlayer.',
-          style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12),
+          style: TextStyle(
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
+            fontSize: 12,
+          ),
         ),
         const SizedBox(height: 24),
         TextField(
@@ -141,7 +158,8 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
         const SizedBox(height: 24),
         Row(
           children: [
-            if (_clientIdController.text.isNotEmpty || _clientSecretController.text.isNotEmpty)
+            if (_clientIdController.text.isNotEmpty ||
+                _clientSecretController.text.isNotEmpty)
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8.0),
@@ -154,10 +172,13 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
                         color: colorScheme.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Text('Clear', style: TextStyle(
-                        color: colorScheme.error, 
-                        fontWeight: FontWeight.bold,
-                      )),
+                      child: Text(
+                        'Clear',
+                        style: TextStyle(
+                          color: colorScheme.error,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -170,15 +191,34 @@ class _SpotifyCredentialsFormState extends ConsumerState<_SpotifyCredentialsForm
                   height: 54,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isCustom ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.1),
+                    color:
+                        isCustom
+                            ? colorScheme.primary
+                            : colorScheme.onSurface.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: _isSaving 
-                    ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2))
-                    : Text('Save Credentials', style: TextStyle(
-                        color: isCustom ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.5), 
-                        fontWeight: FontWeight.bold,
-                      )),
+                  child:
+                      _isSaving
+                          ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: colorScheme.onPrimary,
+                              strokeWidth: 2,
+                            ),
+                          )
+                          : Text(
+                            'Save Credentials',
+                            style: TextStyle(
+                              color:
+                                  isCustom
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurface.withValues(
+                                        alpha: 0.5,
+                                      ),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                 ),
               ),
             ),
@@ -200,10 +240,12 @@ class _YoutubeCredentialsForm extends ConsumerStatefulWidget {
   const _YoutubeCredentialsForm();
 
   @override
-  ConsumerState<_YoutubeCredentialsForm> createState() => _YoutubeCredentialsFormState();
+  ConsumerState<_YoutubeCredentialsForm> createState() =>
+      _YoutubeCredentialsFormState();
 }
 
-class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm> {
+class _YoutubeCredentialsFormState
+    extends ConsumerState<_YoutubeCredentialsForm> {
   final _apiKeyController = TextEditingController();
   bool _isLoading = true;
   bool _isSaving = false;
@@ -243,7 +285,9 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
         _apiKeyController.clear();
       });
       // Revert to PPPlayer provider so it doesn't fail trying to use empty credentials
-      ref.read(settingsProvider.notifier).setYoutubeApiProvider(YoutubeApiProviderType.ppplayer);
+      ref
+          .read(settingsProvider.notifier)
+          .setYoutubeApiProvider(YoutubeApiProviderType.ppplayer);
     }
   }
 
@@ -251,8 +295,10 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final settings = ref.watch(settingsProvider);
-    final isScraping = settings.youtubeSearchMethod == YoutubeSearchMethod.scraping;
-    final isCustomApi = settings.youtubeApiProvider == YoutubeApiProviderType.custom;
+    final isScraping =
+        settings.youtubeSearchMethod == YoutubeSearchMethod.scraping;
+    final isCustomApi =
+        settings.youtubeApiProvider == YoutubeApiProviderType.custom;
 
     if (_isLoading) {
       return const SizedBox(
@@ -265,16 +311,28 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Search Strategy', style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(
+          'Search Strategy',
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
         const SizedBox(height: 16),
         SegmentedButton<YoutubeSearchMethod>(
           segments: const [
-            ButtonSegment(value: YoutubeSearchMethod.scraping, label: Text('Scraping')),
+            ButtonSegment(
+              value: YoutubeSearchMethod.scraping,
+              label: Text('Scraping'),
+            ),
             ButtonSegment(value: YoutubeSearchMethod.api, label: Text('API')),
           ],
           selected: {settings.youtubeSearchMethod},
           onSelectionChanged: (set) {
-            ref.read(settingsProvider.notifier).setYoutubeSearchMethod(set.first);
+            ref
+                .read(settingsProvider.notifier)
+                .setYoutubeSearchMethod(set.first);
           },
           style: SegmentedButton.styleFrom(
             backgroundColor: colorScheme.surface,
@@ -286,7 +344,10 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
         AnimatedCrossFade(
           firstChild: Text(
             'Scraping uses no API quota and requires no credentials, but can be slightly slower or less reliable.',
-            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14),
+            style: TextStyle(
+              color: colorScheme.onSurface.withValues(alpha: 0.6),
+              fontSize: 14,
+            ),
           ),
           secondChild: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -294,14 +355,24 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Use Custom API Key', style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold)),
+                  Text(
+                    'Use Custom API Key',
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   Switch.adaptive(
                     value: isCustomApi,
                     activeTrackColor: colorScheme.primary,
                     onChanged: (v) {
-                      ref.read(settingsProvider.notifier).setYoutubeApiProvider(
-                        v ? YoutubeApiProviderType.custom : YoutubeApiProviderType.ppplayer,
-                      );
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setYoutubeApiProvider(
+                            v
+                                ? YoutubeApiProviderType.custom
+                                : YoutubeApiProviderType.ppplayer,
+                          );
                     },
                   ),
                 ],
@@ -309,7 +380,10 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
               const SizedBox(height: 8),
               Text(
                 'Your credentials are stored locally on this device in the OS secure credential store and are never sent to PPPlayer.',
-                style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12),
+                style: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  fontSize: 12,
+                ),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -319,7 +393,9 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
                 style: TextStyle(color: colorScheme.onSurface),
                 decoration: InputDecoration(
                   labelText: 'YouTube Data API v3 Key',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -338,10 +414,13 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
                               color: colorScheme.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: Text('Clear', style: TextStyle(
-                              color: colorScheme.error, 
-                              fontWeight: FontWeight.bold,
-                            )),
+                            child: Text(
+                              'Clear',
+                              style: TextStyle(
+                                color: colorScheme.error,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -349,20 +428,42 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
                   Expanded(
                     flex: 2,
                     child: TactileTap(
-                      onTap: isCustomApi && !_isSaving ? _saveCredentials : null,
+                      onTap:
+                          isCustomApi && !_isSaving ? _saveCredentials : null,
                       child: Container(
                         height: 54,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isCustomApi ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.1),
+                          color:
+                              isCustomApi
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurface.withValues(
+                                    alpha: 0.1,
+                                  ),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: _isSaving 
-                          ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: colorScheme.onPrimary, strokeWidth: 2))
-                          : Text('Save Credentials', style: TextStyle(
-                              color: isCustomApi ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.5), 
-                              fontWeight: FontWeight.bold,
-                            )),
+                        child:
+                            _isSaving
+                                ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: colorScheme.onPrimary,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : Text(
+                                  'Save Credentials',
+                                  style: TextStyle(
+                                    color:
+                                        isCustomApi
+                                            ? colorScheme.onPrimary
+                                            : colorScheme.onSurface.withValues(
+                                              alpha: 0.5,
+                                            ),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                       ),
                     ),
                   ),
@@ -370,7 +471,8 @@ class _YoutubeCredentialsFormState extends ConsumerState<_YoutubeCredentialsForm
               ),
             ],
           ),
-          crossFadeState: isScraping ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+          crossFadeState:
+              isScraping ? CrossFadeState.showFirst : CrossFadeState.showSecond,
           duration: 300.ms,
           sizeCurve: Curves.easeOutCubic,
         ),

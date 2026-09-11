@@ -16,13 +16,12 @@ class DockMenuService {
 
   void init() {
     _channel.setMethodCallHandler(_handleMethodCall);
-    
+
     // Listen to player state to update the dock menu
     ref.listen<PlayerState>(playerProvider, (previous, next) {
-      if (previous?.isPlaying != next.isPlaying || 
-          previous?.isShuffled != next.isShuffled || 
+      if (previous?.isPlaying != next.isPlaying ||
+          previous?.isShuffled != next.isShuffled ||
           previous?.repeatMode != next.repeatMode) {
-        
         _updateNativeState(
           isPlaying: next.isPlaying,
           isShuffle: next.isShuffled,
@@ -50,7 +49,7 @@ class DockMenuService {
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     final player = ref.read(playerProvider.notifier);
-    
+
     switch (call.method) {
       case 'playPause':
         player.togglePlay();

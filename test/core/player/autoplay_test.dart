@@ -81,13 +81,17 @@ class FakePlaybackController implements PlaybackController {
   @override
   PlaybackStatus get currentStatus => const PlaybackStatus();
 
-
+  @override
+  Future<void> play(
+    PlaybackTrack track, {
+    Duration startAt = Duration.zero,
+  }) async {}
 
   @override
-  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero}) async {}
-
-  @override
-  Future<void> pause({String caller = 'user', bool failOnTimeout = false}) async {}
+  Future<void> pause({
+    String caller = 'user',
+    bool failOnTimeout = false,
+  }) async {}
 
   @override
   Future<void> prepare(PlaybackTrack track, {Duration? position}) async {}

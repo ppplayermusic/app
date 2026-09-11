@@ -31,9 +31,15 @@ void main() {
     });
 
     test('rejects if ID matches spotify fallback', () {
-      expect(YoutubeIdValidator.isValid('nUsrYVxrDwI', spotifyId: 'nUsrYVxrDwI'), isFalse);
+      expect(
+        YoutubeIdValidator.isValid('nUsrYVxrDwI', spotifyId: 'nUsrYVxrDwI'),
+        isFalse,
+      );
       // Valid if it doesn't match
-      expect(YoutubeIdValidator.isValid('nUsrYVxrDwI', spotifyId: 'someSpotifyId'), isTrue);
+      expect(
+        YoutubeIdValidator.isValid('nUsrYVxrDwI', spotifyId: 'someSpotifyId'),
+        isTrue,
+      );
     });
   });
 }

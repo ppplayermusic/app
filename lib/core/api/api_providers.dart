@@ -5,16 +5,18 @@ const bool _kDebugMode = !bool.fromEnvironment('dart.vm.product');
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
-  
+
   if (_kDebugMode) {
-    dio.interceptors.add(LogInterceptor(
-      requestHeader: true,
-      requestBody: false,
-      responseHeader: false,
-      responseBody: false,
-      error: true,
-    ));
+    dio.interceptors.add(
+      LogInterceptor(
+        requestHeader: true,
+        requestBody: false,
+        responseHeader: false,
+        responseBody: false,
+        error: true,
+      ),
+    );
   }
-  
+
   return dio;
 });

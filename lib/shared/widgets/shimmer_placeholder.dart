@@ -48,19 +48,23 @@ class ShimmerPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
-      height: height,
-      margin: margin,
-      decoration: BoxDecoration(
-        color: color ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-    )
+          width: width,
+          height: height,
+          margin: margin,
+          decoration: BoxDecoration(
+            color:
+                color ??
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+        )
         .animate(onPlay: (controller) => controller.repeat())
         .shimmer(
           duration: 1500.ms,
           curve: Curves.easeInOut,
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: 0.05),
         );
   }
 }
@@ -99,9 +103,10 @@ class SectionShimmer extends StatelessWidget {
           childAspectRatio: childAspectRatio,
         ),
         itemCount: count,
-        itemBuilder: (_, i) => const ShimmerPlaceholder(borderRadius: 16)
-            .animate(delay: (i * 30).ms)
-            .fadeIn(duration: 400.ms),
+        itemBuilder:
+            (_, i) => const ShimmerPlaceholder(
+              borderRadius: 16,
+            ).animate(delay: (i * 30).ms).fadeIn(duration: 400.ms),
       );
     }
 
@@ -113,10 +118,11 @@ class SectionShimmer extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           itemCount: count,
           separatorBuilder: (_, _) => SizedBox(width: spacing),
-          itemBuilder: (_, i) => ShimmerPlaceholder.card(
-            width: 160,
-            height: height,
-          ).animate(delay: (i * 30).ms).fadeIn(duration: 400.ms),
+          itemBuilder:
+              (_, i) => ShimmerPlaceholder.card(
+                width: 160,
+                height: height,
+              ).animate(delay: (i * 30).ms).fadeIn(duration: 400.ms),
         ),
       );
     } else {
@@ -126,9 +132,12 @@ class SectionShimmer extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: count,
         separatorBuilder: (_, _) => SizedBox(height: spacing),
-        itemBuilder: (_, i) => ShimmerPlaceholder.tile(
-          height: height == 200 ? 72 : height,
-        ).animate(delay: (i * 30).ms).fadeIn(duration: 400.ms).slideX(begin: 0.1, end: 0),
+        itemBuilder:
+            (_, i) =>
+                ShimmerPlaceholder.tile(height: height == 200 ? 72 : height)
+                    .animate(delay: (i * 30).ms)
+                    .fadeIn(duration: 400.ms)
+                    .slideX(begin: 0.1, end: 0),
       );
     }
   }
@@ -172,7 +181,10 @@ class SliverSectionShimmer extends StatelessWidget {
             (_, i) => const ShimmerPlaceholder(borderRadius: 20)
                 .animate(delay: (i * 40).ms)
                 .fadeIn(duration: 500.ms)
-                .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0)),
+                .scale(
+                  begin: const Offset(0.9, 0.9),
+                  end: const Offset(1.0, 1.0),
+                ),
             childCount: count,
           ),
         ),
@@ -184,42 +196,61 @@ class SliverSectionShimmer extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => Padding(
-            padding: EdgeInsets.only(bottom: spacing),
-            child: Row(
-              children: [
-                ShimmerPlaceholder(
-                  width: tileHeight,
-                  height: tileHeight,
-                  borderRadius: isCircular ? 100 : borderRadius,
+                padding: EdgeInsets.only(bottom: spacing),
+                child: Row(
+                  children: [
+                    ShimmerPlaceholder(
+                      width: tileHeight,
+                      height: tileHeight,
+                      borderRadius: isCircular ? 100 : borderRadius,
+                    ),
+                    if (!isCircular) ...[
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const ShimmerPlaceholder(
+                              height: 16,
+                              width: 140,
+                              borderRadius: 4,
+                            ),
+                            const SizedBox(height: 8),
+                            const ShimmerPlaceholder(
+                              height: 12,
+                              width: 80,
+                              borderRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ] else ...[
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const ShimmerPlaceholder(
+                              height: 18,
+                              width: 160,
+                              borderRadius: 4,
+                            ),
+                            const SizedBox(height: 6),
+                            const ShimmerPlaceholder(
+                              height: 14,
+                              width: 60,
+                              borderRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                if (!isCircular) ...[
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const ShimmerPlaceholder(height: 16, width: 140, borderRadius: 4),
-                        const SizedBox(height: 8),
-                        const ShimmerPlaceholder(height: 12, width: 80, borderRadius: 4),
-                      ],
-                    ),
-                  ),
-                ] else ...[
-                   const SizedBox(width: 16),
-                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const ShimmerPlaceholder(height: 18, width: 160, borderRadius: 4),
-                        const SizedBox(height: 6),
-                        const ShimmerPlaceholder(height: 14, width: 60, borderRadius: 4),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ).animate(delay: (i * 40).ms).fadeIn(duration: 500.ms).slideX(begin: 0.1, end: 0),
+              )
+              .animate(delay: (i * 40).ms)
+              .fadeIn(duration: 500.ms)
+              .slideX(begin: 0.1, end: 0),
           childCount: count,
         ),
       ),
@@ -244,7 +275,10 @@ class AlbumDetailsShimmer extends StatelessWidget {
                   height: 260,
                   width: 260,
                   borderRadius: 24,
-                ).animate().scale(duration: 600.ms, begin: const Offset(0.9, 0.9)),
+                ).animate().scale(
+                  duration: 600.ms,
+                  begin: const Offset(0.9, 0.9),
+                ),
                 const SizedBox(height: 48),
                 const ShimmerPlaceholder(
                   height: 40,
@@ -266,11 +300,23 @@ class AlbumDetailsShimmer extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Row(
               children: [
-                const ShimmerPlaceholder(width: 44, height: 44, borderRadius: 22),
+                const ShimmerPlaceholder(
+                  width: 44,
+                  height: 44,
+                  borderRadius: 22,
+                ),
                 const SizedBox(width: 20),
-                const ShimmerPlaceholder(width: 44, height: 44, borderRadius: 22),
+                const ShimmerPlaceholder(
+                  width: 44,
+                  height: 44,
+                  borderRadius: 22,
+                ),
                 const Spacer(),
-                const ShimmerPlaceholder(width: 68, height: 68, borderRadius: 34),
+                const ShimmerPlaceholder(
+                  width: 68,
+                  height: 68,
+                  borderRadius: 34,
+                ),
               ],
             ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
           ),
@@ -293,7 +339,9 @@ class ArtistDetailsShimmer extends StatelessWidget {
           child: Container(
             height: 400,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.05),
             ),
             child: Stack(
               children: [
@@ -304,10 +352,13 @@ class ArtistDetailsShimmer extends StatelessWidget {
                   child: Column(
                     children: [
                       const ShimmerPlaceholder(
-                        height: 56,
-                        width: 280,
-                        borderRadius: 16,
-                      ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.5, end: 0),
+                            height: 56,
+                            width: 280,
+                            borderRadius: 16,
+                          )
+                          .animate()
+                          .fadeIn(delay: 300.ms)
+                          .slideY(begin: 0.5, end: 0),
                     ],
                   ),
                 ),
@@ -323,12 +374,24 @@ class ArtistDetailsShimmer extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const ShimmerPlaceholder(width: 100, height: 40, borderRadius: 20),
+                    const ShimmerPlaceholder(
+                      width: 100,
+                      height: 40,
+                      borderRadius: 20,
+                    ),
                     const SizedBox(width: 12),
-                    const ShimmerPlaceholder(width: 100, height: 40, borderRadius: 20),
+                    const ShimmerPlaceholder(
+                      width: 100,
+                      height: 40,
+                      borderRadius: 20,
+                    ),
                   ],
                 ),
-                const ShimmerPlaceholder(width: 72, height: 72, borderRadius: 36),
+                const ShimmerPlaceholder(
+                  width: 72,
+                  height: 72,
+                  borderRadius: 36,
+                ),
               ],
             ),
           ),
@@ -346,12 +409,8 @@ class ArtistDetailsShimmer extends StatelessWidget {
             child: ShimmerPlaceholder(height: 20, width: 100, borderRadius: 4),
           ),
         ),
-        const SliverToBoxAdapter(
-          child: SectionShimmer(height: 220),
-        ),
+        const SliverToBoxAdapter(child: SectionShimmer(height: 220)),
       ],
     );
   }
 }
-
-

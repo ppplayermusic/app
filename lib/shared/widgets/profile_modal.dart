@@ -8,7 +8,11 @@ import '../../core/theme/app_theme.dart';
 import 'tactile_buttons.dart';
 import 'premium_modals.dart';
 
-void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissible = true}) {
+void showEditProfileModal(
+  BuildContext context,
+  WidgetRef ref, {
+  bool isDismissible = true,
+}) {
   final colorScheme = Theme.of(context).colorScheme;
   final settingsNotifier = ref.read(settingsProvider.notifier);
   final settings = ref.read(settingsProvider);
@@ -23,7 +27,7 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
     child: StatefulBuilder(
       builder: (context, setState) {
         final themeColor = AppTheme.themeColors[settings.themeIndex];
-        
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,18 +41,28 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
                     decoration: BoxDecoration(
                       color: AppTheme.themeColors[selectedColorIndex],
                       shape: BoxShape.circle,
-                      image: selectedAvatarBase64 != null && selectedAvatarBase64!.isNotEmpty
-                          ? DecorationImage(
-                              image: MemoryImage(base64Decode(selectedAvatarBase64!)),
-                              fit: BoxFit.cover,
-                            )
-                          : null,
+                      image:
+                          selectedAvatarBase64 != null &&
+                                  selectedAvatarBase64!.isNotEmpty
+                              ? DecorationImage(
+                                image: MemoryImage(
+                                  base64Decode(selectedAvatarBase64!),
+                                ),
+                                fit: BoxFit.cover,
+                              )
+                              : null,
                     ),
-                    child: selectedAvatarBase64 == null || selectedAvatarBase64!.isEmpty
-                        ? const Center(
-                            child: Icon(Icons.person, size: 40, color: Colors.white),
-                          )
-                        : null,
+                    child:
+                        selectedAvatarBase64 == null ||
+                                selectedAvatarBase64!.isEmpty
+                            ? const Center(
+                              child: Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Colors.white,
+                              ),
+                            )
+                            : null,
                   ),
                   Positioned(
                     bottom: 0,
@@ -56,7 +70,9 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
                     child: TactileTap(
                       onTap: () async {
                         final picker = ImagePicker();
-                        final image = await picker.pickImage(source: ImageSource.gallery);
+                        final image = await picker.pickImage(
+                          source: ImageSource.gallery,
+                        );
                         if (image != null) {
                           final bytes = await image.readAsBytes();
                           final base64String = base64Encode(bytes);
@@ -71,7 +87,11 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
                           color: themeColor,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
+                        child: const Icon(
+                          Icons.camera_alt,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -138,14 +158,30 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
                         color: color,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isSelected ? colorScheme.onSurface : Colors.transparent,
+                          color:
+                              isSelected
+                                  ? colorScheme.onSurface
+                                  : Colors.transparent,
                           width: 3,
                         ),
-                        boxShadow: isSelected
-                            ? [BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 10, spreadRadius: 1)]
-                            : [],
+                        boxShadow:
+                            isSelected
+                                ? [
+                                  BoxShadow(
+                                    color: color.withValues(alpha: 0.5),
+                                    blurRadius: 10,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                                : [],
                       ),
-                      child: isSelected ? Icon(Icons.check_rounded, color: colorScheme.surface) : null,
+                      child:
+                          isSelected
+                              ? Icon(
+                                Icons.check_rounded,
+                                color: colorScheme.surface,
+                              )
+                              : null,
                     ),
                   );
                 },
@@ -169,7 +205,13 @@ void showEditProfileModal(BuildContext context, WidgetRef ref, {bool isDismissib
                   color: themeColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Text('Save Changes', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  'Save Changes',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],

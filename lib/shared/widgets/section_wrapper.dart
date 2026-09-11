@@ -33,7 +33,7 @@ class SectionWrapper<T> extends StatelessWidget {
     return asyncValue.when(
       data: (data) {
         if (data.isEmpty) return const SizedBox.shrink();
-        
+
         return Padding(
           padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
           child: Column(
@@ -49,19 +49,21 @@ class SectionWrapper<T> extends StatelessWidget {
           ),
         ).animate().fadeIn(duration: 400.ms);
       },
-      loading: () =>
-          loadingWidget ??
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: ShimmerPlaceholder(height: 120),
-          ),
-      error: (e, _) =>
-          errorWidget ??
-          _SectionErrorWidget(
-            title: title,
-            topPadding: topPadding,
-            onRetry: onRetry,
-          ),
+      loading:
+          () =>
+              loadingWidget ??
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: ShimmerPlaceholder(height: 120),
+              ),
+      error:
+          (e, _) =>
+              errorWidget ??
+              _SectionErrorWidget(
+                title: title,
+                topPadding: topPadding,
+                onRetry: onRetry,
+              ),
     );
   }
 }
@@ -89,9 +91,7 @@ class _SectionErrorWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: colorScheme.outline.withValues(alpha: 0.2),
-          ),
+          border: Border.all(color: colorScheme.outline.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
@@ -128,7 +128,10 @@ class _SectionErrorWidget extends StatelessWidget {
               TextButton(
                 onPressed: onRetry,
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   foregroundColor: colorScheme.primary,
@@ -161,7 +164,9 @@ class _DefaultHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.5),
                   blurRadius: 8,
                 ),
               ],
@@ -182,4 +187,3 @@ class _DefaultHeader extends StatelessWidget {
     );
   }
 }
-

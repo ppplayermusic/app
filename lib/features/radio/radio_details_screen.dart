@@ -11,26 +11,30 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
 
-final radioTracksProvider = FutureProvider.family<List<Track>, ({String type, String id})>((ref, arg) async {
+final radioTracksProvider = FutureProvider.family<
+  List<Track>,
+  ({String type, String id})
+>((ref, arg) async {
   final repo = ref.watch(spotifyRepositoryProvider);
   try {
-    final cacheResult = await repo.watchRecommendations(
-      seedArtistId: arg.type == 'artist' ? arg.id : null,
-      seedTrackId: arg.type == 'track' ? arg.id : null,
-      seedGenres: arg.type == 'genre' ? arg.id : null,
-      limit: 50,
-    ).first;
+    final cacheResult =
+        await repo
+            .watchRecommendations(
+              seedArtistId: arg.type == 'artist' ? arg.id : null,
+              seedTrackId: arg.type == 'track' ? arg.id : null,
+              seedGenres: arg.type == 'genre' ? arg.id : null,
+              limit: 50,
+            )
+            .first;
     final tracks = cacheResult.data;
-    
+
     if (tracks.isNotEmpty) return tracks;
-    
+
     // Fallback 1: Try a safe genre seed
-    final fallbackCacheResult = await repo.watchRecommendations(
-      seedGenres: 'pop',
-      limit: 50,
-    ).first;
+    final fallbackCacheResult =
+        await repo.watchRecommendations(seedGenres: 'pop', limit: 50).first;
     final fallbackTracks = fallbackCacheResult.data;
-    
+
     if (fallbackTracks.isNotEmpty) return fallbackTracks;
 
     // Fallback 2: Ultimate fallback to popular tracks
@@ -67,7 +71,9 @@ class RadioDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tracksAsync = ref.watch(radioTracksProvider((type: seedType, id: seedId)));
+    final tracksAsync = ref.watch(
+      radioTracksProvider((type: seedType, id: seedId)),
+    );
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -101,8 +107,9 @@ class RadioDetailsScreen extends ConsumerWidget {
             flexibleSpace: LayoutBuilder(
               builder: (context, constraints) {
                 final topPadding = MediaQuery.of(context).padding.top;
-                final isCollapsed = constraints.maxHeight <= kToolbarHeight + topPadding + 10;
-                
+                final isCollapsed =
+                    constraints.maxHeight <= kToolbarHeight + topPadding + 10;
+
                 return FlexibleSpaceBar(
                   stretchModes: const [
                     StretchMode.zoomBackground,
@@ -111,63 +118,66 @@ class RadioDetailsScreen extends ConsumerWidget {
                   centerTitle: true,
                   expandedTitleScale: 1.0,
                   titlePadding: EdgeInsets.zero,
-                  title: isCollapsed
-                      ? ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                            child: Container(
-                              width: double.infinity,
-                              height: kToolbarHeight + topPadding,
-                              padding: EdgeInsets.only(top: topPadding),
-                              color: colorScheme.surface.withValues(alpha: 0.6),
-                              alignment: Alignment.center,
-                              child: Text(
-                                title,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 17,
-                                  letterSpacing: -0.5,
-                                  color: colorScheme.onSurface,
+                  title:
+                      isCollapsed
+                          ? ClipRect(
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                              child: Container(
+                                width: double.infinity,
+                                height: kToolbarHeight + topPadding,
+                                padding: EdgeInsets.only(top: topPadding),
+                                color: colorScheme.surface.withValues(
+                                  alpha: 0.6,
                                 ),
-                              ).animate().fadeIn(duration: 200.ms),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 17,
+                                    letterSpacing: -0.5,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ).animate().fadeIn(duration: 200.ms),
+                              ),
                             ),
-                          ),
-                        )
-                      : null,
+                          )
+                          : null,
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
-                      PPImage(
-                        imageUrl: imageUrl,
-                        fit: BoxFit.cover,
-                      ),
-                      
+                      PPImage(imageUrl: imageUrl, fit: BoxFit.cover),
+
                       // Ambient Mesh Pulsing Overlay
                       Positioned.fill(
                         child: Opacity(
                           opacity: 0.6,
                           child: Container(
-                            decoration: BoxDecoration(
-                              gradient: RadialGradient(
-                                center: const Alignment(-0.8, -0.6),
-                                radius: 1.5,
-                                colors: [
-                                  Theme.of(context).colorScheme.primary,
-                                  Colors.transparent,
-                                ],
+                                decoration: BoxDecoration(
+                                  gradient: RadialGradient(
+                                    center: const Alignment(-0.8, -0.6),
+                                    radius: 1.5,
+                                    colors: [
+                                      Theme.of(context).colorScheme.primary,
+                                      Colors.transparent,
+                                    ],
+                                  ),
+                                ),
+                              )
+                              .animate(onPlay: (c) => c.repeat(reverse: true))
+                              .scale(
+                                begin: const Offset(1, 1),
+                                end: const Offset(1.3, 1.3),
+                                duration: 10.seconds,
+                                curve: Curves.easeInOut,
+                              )
+                              .move(
+                                begin: const Offset(-20, -20),
+                                end: const Offset(20, 20),
+                                duration: 12.seconds,
+                                curve: Curves.easeInOut,
                               ),
-                            ),
-                          ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
-                            begin: const Offset(1, 1),
-                            end: const Offset(1.3, 1.3),
-                            duration: 10.seconds,
-                            curve: Curves.easeInOut,
-                          ).move(
-                            begin: const Offset(-20, -20),
-                            end: const Offset(20, 20),
-                            duration: 12.seconds,
-                            curve: Curves.easeInOut,
-                          ),
                         ),
                       ),
 
@@ -187,54 +197,69 @@ class RadioDetailsScreen extends ConsumerWidget {
                         ),
                       ),
 
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 48,
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 200),
-                              opacity: isCollapsed ? 0.0 : 1.0,
-                              child: Center(
-                                child: Container(
-                                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
-                                        blurRadius: 40,
-                                        spreadRadius: 0,
-                                      ),
-                                    ],
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 48,
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: isCollapsed ? 0.0 : 1.0,
+                          child: Center(
+                            child: Container(
+                              constraints: BoxConstraints(
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.85,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Theme.of(context).colorScheme.primary
+                                        .withValues(alpha: 0.15),
+                                    blurRadius: 40,
+                                    spreadRadius: 0,
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(24),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                                        decoration: BoxDecoration(
-                                          color: colorScheme.surface.withValues(alpha: 0.3),
-                                          borderRadius: BorderRadius.circular(24),
-                                          border: Border.all(
-                                            color: colorScheme.onSurface.withValues(alpha: 0.15),
-                                            width: 0.5,
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(24),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(
+                                    sigmaX: 16,
+                                    sigmaY: 16,
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 20,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.surface.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                      borderRadius: BorderRadius.circular(24),
+                                      border: Border.all(
+                                        color: colorScheme.onSurface.withValues(
+                                          alpha: 0.15,
+                                        ),
+                                        width: 0.5,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'RADIO',
+                                          style: TextStyle(
+                                            color: colorScheme.onSurface
+                                                .withValues(alpha: 0.5),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: 4.0,
                                           ),
                                         ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              'RADIO',
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface.withValues(alpha: 0.5),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w900,
-                                                letterSpacing: 4.0,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
+                                        const SizedBox(height: 8),
+                                        Text(
                                               title,
                                               textAlign: TextAlign.center,
                                               maxLines: 2,
@@ -247,22 +272,31 @@ class RadioDetailsScreen extends ConsumerWidget {
                                                 height: 1.0,
                                                 shadows: [
                                                   Shadow(
-                                                    color: colorScheme.shadow.withValues(alpha: 0.45),
+                                                    color: colorScheme.shadow
+                                                        .withValues(
+                                                          alpha: 0.45,
+                                                        ),
                                                     blurRadius: 30,
                                                     offset: const Offset(0, 15),
                                                   ),
                                                 ],
                                               ),
-                                            ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.95, 0.95), curve: Curves.easeOutCubic),
-                                          ],
-                                        ),
-                                      ),
+                                            )
+                                            .animate()
+                                            .fadeIn(duration: 600.ms)
+                                            .scale(
+                                              begin: const Offset(0.95, 0.95),
+                                              curve: Curves.easeOutCubic,
+                                            ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -276,63 +310,86 @@ class RadioDetailsScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                                width: 0.5,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.radio_rounded, color: Theme.of(context).colorScheme.primary, size: 12),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'RADIO STATION',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 2.0,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(
+                                    color: Theme.of(context).colorScheme.primary
+                                        .withValues(alpha: 0.2),
+                                    width: 0.5,
                                   ),
                                 ),
-                              ],
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.radio_rounded,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 12,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'RADIO STATION',
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 2.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Based on your taste',
-                        style: TextStyle(
-                          color: colorScheme.onSurface.withValues(alpha: 0.3),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
+                          const SizedBox(width: 16),
+                          Text(
+                            'Based on your taste',
+                            style: TextStyle(
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.3,
+                              ),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      )
+                      .animate()
+                      .fadeIn(delay: 400.ms)
+                      .slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
                   const SizedBox(height: 16),
                   Text(
-                    subtitle ?? 'A curated mix featuring $title and other artists you like.',
-                    style: TextStyle(
-                      color: colorScheme.onSurface.withValues(alpha: 0.65),
-                      fontSize: 15,
-                      height: 1.5,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: -0.1,
-                    ),
-                  ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
+                        subtitle ??
+                            'A curated mix featuring $title and other artists you like.',
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.65),
+                          fontSize: 15,
+                          height: 1.5,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: -0.1,
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(delay: 200.ms)
+                      .slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
                   const SizedBox(height: 32),
                   _buildSectionHeader(context, 'CURATED TRACKS'),
                   const SizedBox(height: 24),
@@ -345,22 +402,37 @@ class RadioDetailsScreen extends ConsumerWidget {
                           // Radio Follow Station Button
                           Consumer(
                             builder: (context, ref, child) {
-                              final statusAsync = ref.watch(favoritesStatusProvider((FavoriteType.radio, "$seedId:$seedType")));
+                              final statusAsync = ref.watch(
+                                favoritesStatusProvider((
+                                  FavoriteType.radio,
+                                  "$seedId:$seedType",
+                                )),
+                              );
                               final isFollowed = statusAsync.value ?? false;
-                              
+
                               return TactileIconButton(
-                                icon: isFollowed ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                                icon:
+                                    isFollowed
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_border_rounded,
                                 size: 28,
-                                color: isFollowed ? Theme.of(context).colorScheme.primary : colorScheme.onSurfaceVariant,
+                                color:
+                                    isFollowed
+                                        ? Theme.of(context).colorScheme.primary
+                                        : colorScheme.onSurfaceVariant,
                                 padding: const EdgeInsets.all(12),
                                 onTap: () {
-                                  ref.read(favoritesControllerProvider.notifier).toggleRadioFollow(
-                                    seedId: seedId,
-                                    seedType: seedType,
-                                    title: title,
-                                    imageUrl: imageUrl,
-                                    isCurrentlyFollowed: isFollowed,
-                                  );
+                                  ref
+                                      .read(
+                                        favoritesControllerProvider.notifier,
+                                      )
+                                      .toggleRadioFollow(
+                                        seedId: seedId,
+                                        seedType: seedType,
+                                        title: title,
+                                        imageUrl: imageUrl,
+                                        isCurrentlyFollowed: isFollowed,
+                                      );
                                 },
                               );
                             },
@@ -374,7 +446,9 @@ class RadioDetailsScreen extends ConsumerWidget {
                             onTap: () {
                               final tracks = tracksAsync.asData?.value;
                               if (tracks != null && tracks.isNotEmpty) {
-                                ref.read(playerProvider.notifier).shuffleAndPlay(tracks);
+                                ref
+                                    .read(playerProvider.notifier)
+                                    .shuffleAndPlay(tracks);
                               }
                             },
                           ),
@@ -386,10 +460,16 @@ class RadioDetailsScreen extends ConsumerWidget {
                         onTap: () {
                           final tracks = tracksAsync.asData?.value;
                           if (tracks != null && tracks.isNotEmpty) {
-                            ref.read(playerProvider.notifier).playTracks(tracks);
+                            ref
+                                .read(playerProvider.notifier)
+                                .playTracks(tracks);
                           }
                         },
-                      ).animate().scale(delay: 300.ms, curve: Curves.easeOutBack, duration: 500.ms),
+                      ).animate().scale(
+                        delay: 300.ms,
+                        curve: Curves.easeOutBack,
+                        duration: 500.ms,
+                      ),
                     ],
                   ).animate(delay: 300.ms).fadeIn(),
                 ],
@@ -397,72 +477,103 @@ class RadioDetailsScreen extends ConsumerWidget {
             ),
           ),
           tracksAsync.when(
-            data: (tracks) => tracks.isEmpty 
-              ? SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.music_off_rounded, size: 64, color: colorScheme.onSurface.withValues(alpha: 0.1)),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No tracks found for this radio.',
-                          style: TextStyle(
-                            color: colorScheme.onSurface.withValues(alpha: 0.5),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+            data:
+                (tracks) =>
+                    tracks.isEmpty
+                        ? SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.music_off_rounded,
+                                  size: 64,
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No tracks found for this radio.',
+                                  style: TextStyle(
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Try another station or check your connection.',
+                                  style: TextStyle(
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                        : SliverPadding(
+                          padding: const EdgeInsets.only(bottom: 120),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              final track = tracks[index];
+                              return TrackTile(
+                                    index: index + 1,
+                                    track: track,
+                                    showMore: false,
+                                    onTap:
+                                        () => ref
+                                            .read(playerProvider.notifier)
+                                            .playTrack(track, queue: tracks),
+                                  )
+                                  .animate(delay: (200 + index * 40).ms)
+                                  .fadeIn(duration: 400.ms)
+                                  .slideX(
+                                    begin: 0.05,
+                                    end: 0,
+                                    curve: Curves.easeOutCubic,
+                                  );
+                            }, childCount: tracks.length),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Try another station or check your connection.',
-                          style: TextStyle(
-                            color: colorScheme.onSurface.withValues(alpha: 0.3),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : SliverPadding(
-                  padding: const EdgeInsets.only(bottom: 120),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final track = tracks[index];
-                        return TrackTile(
-                          index: index + 1,
-                          track: track,
-                          showMore: false,
-                          onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: tracks),
-                        ).animate(delay: (200 + index * 40).ms).fadeIn(duration: 400.ms).slideX(begin: 0.05, end: 0, curve: Curves.easeOutCubic);
-                      },
-                      childCount: tracks.length,
-                    ),
-                  ),
-                ),
             loading: () => const _RadioShimmerSliver(),
-            error: (e, _) => SliverFillRemaining(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, size: 48, color: colorScheme.onSurface.withValues(alpha: 0.24)),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Error loading radio results.\nCheck your connection and try again.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+            error:
+                (e, _) => SliverFillRemaining(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 0.24,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Error loading radio results.\nCheck your connection and try again.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
           ),
         ],
       ),
@@ -477,9 +588,16 @@ class RadioDetailsScreen extends ConsumerWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1), width: 0.5),
+            border: Border.all(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.1),
+              width: 0.5,
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -492,7 +610,9 @@ class RadioDetailsScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(1),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.5),
                       blurRadius: 10,
                       spreadRadius: 1,
                     ),
@@ -525,66 +645,68 @@ class _RadioShimmerSliver extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final colorScheme = Theme.of(context).colorScheme;
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  Container(
-                    width: 32,
-                    height: 14,
-                    decoration: BoxDecoration(
-                      color: colorScheme.onSurface.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(2),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final colorScheme = Theme.of(context).colorScheme;
+          return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onSurface.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: colorScheme.onSurface.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(4),
+                    const SizedBox(width: 12),
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onSurface.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: colorScheme.onSurface.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(2),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.05,
+                              ),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: 150,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: colorScheme.onSurface.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(2),
+                          const SizedBox(height: 8),
+                          Container(
+                            width: 150,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.05,
+                              ),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ).animate(onPlay: (c) => c.repeat()).shimmer(
-              duration: 1200.ms,
-              color: colorScheme.onSurface.withValues(alpha: 0.05),
-            );
-          },
-          childCount: 15,
-        ),
+                  ],
+                ),
+              )
+              .animate(onPlay: (c) => c.repeat())
+              .shimmer(
+                duration: 1200.ms,
+                color: colorScheme.onSurface.withValues(alpha: 0.05),
+              );
+        }, childCount: 15),
       ),
     );
   }
 }
-

@@ -24,7 +24,12 @@ class DiscoverScreen extends ConsumerWidget {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.only(left: 32.0, top: 56.0, right: 32.0, bottom: 24.0),
+                padding: const EdgeInsets.only(
+                  left: 32.0,
+                  top: 56.0,
+                  right: 32.0,
+                  bottom: 24.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,102 +60,135 @@ class DiscoverScreen extends ConsumerWidget {
                 if (content.sections.isEmpty) {
                   return SliverFillRemaining(
                     child: Center(
-                      child: Text('Nothing to discover right now.', style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                      child: Text(
+                        'Nothing to discover right now.',
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
                     ),
                   );
                 }
                 return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final section = content.sections[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (section.subtitle != null) ...[
-                                    Text(
-                                      section.subtitle!.toUpperCase(),
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 1.2,
-                                        color: colorScheme.primary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                  ],
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final section = content.sections[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 32,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (section.subtitle != null) ...[
                                   Text(
-                                    section.title,
+                                    section.subtitle!.toUpperCase(),
                                     style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: -0.5,
-                                      color: colorScheme.onSurface,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.2,
+                                      color: colorScheme.primary,
                                     ),
                                   ),
+                                  const SizedBox(height: 4),
                                 ],
+                                Text(
+                                  section.title,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: -0.5,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          if (section.tracks.isNotEmpty)
+                            SizedBox(
+                              height: 230,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: section.tracks.length,
+                                padding: const EdgeInsets.only(left: 16),
+                                itemBuilder: (context, i) {
+                                  final track = section.tracks[i];
+                                  return _DiscoverTrackCard(
+                                        track: track,
+                                        onTap:
+                                            () => ref
+                                                .read(playerProvider.notifier)
+                                                .playTrack(
+                                                  track,
+                                                  queue: section.tracks,
+                                                ),
+                                      )
+                                      .animate()
+                                      .fadeIn(delay: (i * 50).ms)
+                                      .slideX(begin: 0.05);
+                                },
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            if (section.tracks.isNotEmpty)
-                              SizedBox(
-                                height: 230,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: section.tracks.length,
-                                  padding: const EdgeInsets.only(left: 16),
-                                  itemBuilder: (context, i) {
-                                    final track = section.tracks[i];
-                                    return _DiscoverTrackCard(
-                                      track: track,
-                                      onTap: () => ref.read(playerProvider.notifier).playTrack(track, queue: section.tracks),
-                                    ).animate().fadeIn(delay: (i * 50).ms).slideX(begin: 0.05);
-                                  },
-                                ),
-                              ),
-                          ],
-                        ),
-                      );
-                    },
-                    childCount: content.sections.length,
-                  ),
+                        ],
+                      ),
+                    );
+                  }, childCount: content.sections.length),
                 );
               },
-              loading: () => const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      SectionShimmer(height: 230, childAspectRatio: 1, isGrid: false, count: 4),
-                      SizedBox(height: 32),
-                      SectionShimmer(height: 230, childAspectRatio: 1, isGrid: false, count: 4),
-                    ],
-                  ),
-                ),
-              ),
-              error: (err, stack) => SliverFillRemaining(
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.error_outline, size: 48, color: colorScheme.error),
-                      const SizedBox(height: 16),
-                      Text('Failed to load recommendations', style: TextStyle(color: colorScheme.onSurface)),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: () => ref.invalidate(discoverContentProvider),
-                        child: const Text('Try Again'),
+              loading:
+                  () => const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          SectionShimmer(
+                            height: 230,
+                            childAspectRatio: 1,
+                            isGrid: false,
+                            count: 4,
+                          ),
+                          SizedBox(height: 32),
+                          SectionShimmer(
+                            height: 230,
+                            childAspectRatio: 1,
+                            isGrid: false,
+                            count: 4,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+              error:
+                  (err, stack) => SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: colorScheme.error,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Failed to load recommendations',
+                            style: TextStyle(color: colorScheme.onSurface),
+                          ),
+                          const SizedBox(height: 16),
+                          TextButton(
+                            onPressed:
+                                () => ref.invalidate(discoverContentProvider),
+                            child: const Text('Try Again'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
             ),
           ],
         ),
@@ -194,9 +232,21 @@ class _DiscoverTrackCard extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: track.albumImage != null
-                        ? PPImage(imageUrl: track.albumImage!, width: 150, height: 150, fit: BoxFit.cover)
-                        : Container(color: colorScheme.surfaceContainerHighest, child: Icon(Icons.music_note, color: colorScheme.onSurfaceVariant)),
+                    child:
+                        track.albumImage != null
+                            ? PPImage(
+                              imageUrl: track.albumImage!,
+                              width: 150,
+                              height: 150,
+                              fit: BoxFit.cover,
+                            )
+                            : Container(
+                              color: colorScheme.surfaceContainerHighest,
+                              child: Icon(
+                                Icons.music_note,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -204,14 +254,20 @@ class _DiscoverTrackCard extends StatelessWidget {
                   track.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   track.artistName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),

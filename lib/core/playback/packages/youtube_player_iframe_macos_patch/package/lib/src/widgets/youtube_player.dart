@@ -143,7 +143,9 @@ class _YoutubePlayerState extends State<YoutubePlayer>
       _updateBackgroundColor(widget.backgroundColor);
     });
 
-    debugPrint("YoutubePlayer: calling init()"); await _controller.init(); debugPrint("YoutubePlayer: init() completed!");
+    debugPrint("YoutubePlayer: calling init()");
+    await _controller.init();
+    debugPrint("YoutubePlayer: init() completed!");
   }
 
   @override

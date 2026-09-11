@@ -404,26 +404,25 @@ void main() {
       await tester.pump();
       controller.emitState(track.id, yt.PlayerState.playing);
       await tester.pump();
-      
+
       // Progress position
       await tester.pump(const Duration(seconds: 1));
-      
+
       // Pause, then resume to arm the watchdog again for the same generation.
       await engine.pause();
       controller.emitState(track.id, yt.PlayerState.paused);
       await tester.pump();
-      
+
       // FakeYoutubeController.currentTime returns 12.0, so the confirmed position is 12s.
       await engine.resume();
-      
+
       // Simulate stall on resume: no playing event emitted.
       // Watchdog should fire and load with startSeconds=12.0 (currentTime),
       // not 10.0 (the original startAt).
       await tester.pump(const Duration(seconds: 20));
       expect(controller.count('load'), 2);
-      final recoveryCmd = controller.commands
-          .where((c) => c.name == 'load')
-          .last;
+      final recoveryCmd =
+          controller.commands.where((c) => c.name == 'load').last;
       // FakeYoutubeController.currentTime returns 12.0 (see fake definition).
       expect(
         recoveryCmd.parameters['startSeconds'],
@@ -440,9 +439,8 @@ void main() {
       // Never emit playing — watchdog fires without a confirmed position.
       await tester.pump(const Duration(seconds: 20));
       expect(controller.count('load'), 2);
-      final recoveryCmd = controller.commands
-          .where((c) => c.name == 'load')
-          .last;
+      final recoveryCmd =
+          controller.commands.where((c) => c.name == 'load').last;
       expect(
         recoveryCmd.parameters['startSeconds'],
         30.0,
@@ -482,7 +480,8 @@ void main() {
       expect(
         engine.currentStatus.state,
         isNot(PlaybackState.paused),
-        reason: 'optimistic paused update must be suppressed when failOnTimeout=true',
+        reason:
+            'optimistic paused update must be suppressed when failOnTimeout=true',
       );
     },
   );
@@ -493,14 +492,14 @@ void main() {
       final native = FakeNativePlayer();
       engine = MediaKitPlaybackEngine(nativePlayer: native);
       MediaKitPlaybackEngine.isActivityStopped = true;
-      
+
       await engine.resume();
-      
+
       // Wait for the stream to update the engine state to playing
       await Future.delayed(Duration.zero);
-      
+
       await engine.pause();
-      
+
       expect(native.plays, 1);
       expect(native.pauses, 1);
       expect(controller.count('play'), 0);

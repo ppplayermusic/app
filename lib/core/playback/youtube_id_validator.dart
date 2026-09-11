@@ -7,9 +7,11 @@ class YoutubeIdValidator {
     if (id == null) return false;
     if (id.length != 11) return false;
     if (id == spotifyId) return false; // Must not be the spotify fallback
-    if (id.contains('http://') || id.contains('https://')) return false; // Must not be a URL
-    if (!_validCharsRegex.hasMatch(id)) return false; // Must contain valid chars only
-    
+    if (id.contains('http://') || id.contains('https://'))
+      return false; // Must not be a URL
+    if (!_validCharsRegex.hasMatch(id))
+      return false; // Must contain valid chars only
+
     return true;
   }
 }

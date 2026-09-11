@@ -246,7 +246,8 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
 
   /// Loads the player with default [params].
   @internal
-  Future<void> init() async { debugPrint("YoutubePlayerController: init() start");
+  Future<void> init() async {
+    debugPrint("YoutubePlayerController: init() start");
     await load(
       params: params,
       baseUrl: kIsWeb ? Uri.base.origin : params.origin,
@@ -275,7 +276,8 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     };
 
     String generatedHtml = await _buildPlayerHTML(playerData);
-    debugPrint("YoutubePlayerController: generatedHtml length = ${generatedHtml.length}");
+    debugPrint(
+        "YoutubePlayerController: generatedHtml length = ${generatedHtml.length}");
     await webViewController.loadHtmlString(
       generatedHtml,
       baseUrl: baseUrl,
@@ -651,7 +653,8 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
       featureName = params['feature'];
     } else if (path == '/watch') {
       featureName = 'emb_info';
-    } else if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) {
+    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
       return NavigationDecision.navigate;
     }
 

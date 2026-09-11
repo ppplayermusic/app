@@ -36,7 +36,8 @@ class PPImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        errorBuilder: (context, error, stackTrace) => _buildErrorWidget(context),
+        errorBuilder:
+            (context, error, stackTrace) => _buildErrorWidget(context),
       );
     } else {
       image = CachedNetworkImage(
@@ -45,16 +46,15 @@ class PPImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        placeholder: (context, url) => placeholder ?? _buildPlaceholder(context),
-        errorWidget: (context, url, error) => errorWidget ?? _buildErrorWidget(context),
+        placeholder:
+            (context, url) => placeholder ?? _buildPlaceholder(context),
+        errorWidget:
+            (context, url, error) => errorWidget ?? _buildErrorWidget(context),
       );
     }
 
     if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius!,
-        child: image,
-      );
+      return ClipRRect(borderRadius: borderRadius!, child: image);
     }
 
     return image;
@@ -64,7 +64,9 @@ class PPImage extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.1),
+      color: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.1),
     );
   }
 
@@ -72,10 +74,14 @@ class PPImage extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.1),
+      color: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.1),
       child: Icon(
         Icons.music_note_rounded,
-        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+        color: Theme.of(
+          context,
+        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
       ),
     );
   }
@@ -88,8 +94,10 @@ class PPImage extends StatelessWidget {
     if (imageUrl.startsWith('asset:')) {
       return AssetImage(imageUrl.substring(6));
     } else {
-      return CachedNetworkImageProvider(imageUrl, cacheManager: PPImageCacheManager.instance);
+      return CachedNetworkImageProvider(
+        imageUrl,
+        cacheManager: PPImageCacheManager.instance,
+      );
     }
   }
 }
-

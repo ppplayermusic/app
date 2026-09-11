@@ -156,28 +156,39 @@ class PromotionTile extends StatelessWidget {
   Widget _buildImageFrame(BuildContext context, double width, double height) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: imageUrl != null && imageUrl!.startsWith('http')
-          ? PPImage(
-              imageUrl: imageUrl!,
-              width: width,
-              height: height,
-              fit: BoxFit.cover,
-            )
-          : Container(
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
-                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      child:
+          imageUrl != null && imageUrl!.startsWith('http')
+              ? PPImage(
+                imageUrl: imageUrl!,
+                width: width,
+                height: height,
+                fit: BoxFit.cover,
+              )
+              : Container(
+                width: width,
+                height: height,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.35),
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.1),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Icon(
+                  Icons.stars_rounded,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.8),
+                  size: 32,
                 ),
               ),
-              child: Icon(Icons.stars_rounded, color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8), size: 32),
-            ),
     );
   }
 
@@ -201,7 +212,11 @@ class PromotionTile extends StatelessWidget {
     );
   }
 
-  Widget _buildCTA(BuildContext context, ColorScheme colorScheme, {required bool isCompact}) {
+  Widget _buildCTA(
+    BuildContext context,
+    ColorScheme colorScheme, {
+    required bool isCompact,
+  }) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isCompact ? 16 : 12,

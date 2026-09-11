@@ -191,10 +191,12 @@ class _ContentContextMenuOverlay extends ConsumerStatefulWidget {
   final ContextMenuTarget target;
 
   @override
-  ConsumerState<_ContentContextMenuOverlay> createState() => _ContentContextMenuOverlayState();
+  ConsumerState<_ContentContextMenuOverlay> createState() =>
+      _ContentContextMenuOverlayState();
 }
 
-class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuOverlay> {
+class _ContentContextMenuOverlayState
+    extends ConsumerState<_ContentContextMenuOverlay> {
   // Submenu state: null, 'playlist', or 'share'
   String? _activeSubmenu;
   Offset _submenuAnchorOffset = Offset.zero;
@@ -232,8 +234,17 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
       top = top - estimatedHeight;
     }
 
-    left = left.clamp(12.0, (screenSize.width - menuWidth - 12.0).clamp(12.0, double.infinity));
-    top = top.clamp(padding.top + 8.0, (screenSize.height - estimatedHeight - 12.0).clamp(padding.top + 8.0, double.infinity));
+    left = left.clamp(
+      12.0,
+      (screenSize.width - menuWidth - 12.0).clamp(12.0, double.infinity),
+    );
+    top = top.clamp(
+      padding.top + 8.0,
+      (screenSize.height - estimatedHeight - 12.0).clamp(
+        padding.top + 8.0,
+        double.infinity,
+      ),
+    );
 
     return Stack(
       children: [
@@ -276,7 +287,10 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 6,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -344,9 +358,10 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
-                child: _activeSubmenu == 'playlist'
-                    ? _buildPlaylistSubmenuContent(context)
-                    : _buildShareSubmenuContent(context),
+                child:
+                    _activeSubmenu == 'playlist'
+                        ? _buildPlaylistSubmenuContent(context)
+                        : _buildShareSubmenuContent(context),
               ),
             ),
           ),
@@ -362,17 +377,31 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
     return switch (widget.target) {
       TrackContextTarget target => _buildTrackMenuItems(context, ref, target),
       AlbumContextTarget target => _buildAlbumMenuItems(context, ref, target),
-      PlaylistContextTarget target => _buildPlaylistMenuItems(context, ref, target),
+      PlaylistContextTarget target => _buildPlaylistMenuItems(
+        context,
+        ref,
+        target,
+      ),
       ArtistContextTarget target => _buildArtistMenuItems(context, ref, target),
       RadioContextTarget target => _buildRadioMenuItems(context, ref, target),
     };
   }
 
   // --- Track Items ---
-  List<Widget> _buildTrackMenuItems(BuildContext context, WidgetRef ref, TrackContextTarget target) {
+  List<Widget> _buildTrackMenuItems(
+    BuildContext context,
+    WidgetRef ref,
+    TrackContextTarget target,
+  ) {
     final track = target.track;
     final colorScheme = Theme.of(context).colorScheme;
-    final isFav = ref.watch(favoritesStatusProvider((FavoriteType.track, track.spotifyId))).value ?? track.isFavorite;
+    final isFav =
+        ref
+            .watch(
+              favoritesStatusProvider((FavoriteType.track, track.spotifyId)),
+            )
+            .value ??
+        track.isFavorite;
 
     return [
       _ContextMenuItem(
@@ -409,7 +438,9 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           label: 'Remove from queue',
           onTap: () {
             Navigator.of(context).pop();
-            _container.read(playerProvider.notifier).removeFromQueue(target.queueIndex!);
+            _container
+                .read(playerProvider.notifier)
+                .removeFromQueue(target.queueIndex!);
             _showToast('Removed from queue');
           },
         ),
@@ -420,8 +451,12 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
         label: isFav ? 'Remove from Liked Songs' : 'Save to your Liked Songs',
         onTap: () {
           Navigator.of(context).pop();
-          _container.read(favoritesControllerProvider.notifier).toggleTrackFavorite(track, isFav);
-          _showToast(isFav ? 'Removed from Liked Songs' : 'Saved to your Liked Songs');
+          _container
+              .read(favoritesControllerProvider.notifier)
+              .toggleTrackFavorite(track, isFav);
+          _showToast(
+            isFav ? 'Removed from Liked Songs' : 'Saved to your Liked Songs',
+          );
         },
       ),
       _ContextMenuItem(
@@ -503,9 +538,17 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
   }
 
   // --- Album Items ---
-  List<Widget> _buildAlbumMenuItems(BuildContext context, WidgetRef ref, AlbumContextTarget target) {
+  List<Widget> _buildAlbumMenuItems(
+    BuildContext context,
+    WidgetRef ref,
+    AlbumContextTarget target,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isLiked = ref.watch(favoritesStatusProvider((FavoriteType.album, target.id))).value ?? false;
+    final isLiked =
+        ref
+            .watch(favoritesStatusProvider((FavoriteType.album, target.id)))
+            .value ??
+        false;
 
     return [
       _ContextMenuItem(
@@ -514,10 +557,23 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
         onTap: () async {
           Navigator.of(context).pop();
           try {
-            debugPrint('[ContentContextMenu] Fetching album tracks for ${target.id} (${target.name})');
-            final tracks = (await _container.read(spotifyRepositoryProvider).watchAlbum(target.id).first).data['tracks']?['items']?.map((t) => Track.fromSpotify(t as Map<String,dynamic>))?.toList()?.cast<Track>() ?? <Track>[];
+            debugPrint(
+              '[ContentContextMenu] Fetching album tracks for ${target.id} (${target.name})',
+            );
+            final tracks =
+                (await _container
+                        .read(spotifyRepositoryProvider)
+                        .watchAlbum(target.id)
+                        .first)
+                    .data['tracks']?['items']
+                    ?.map((t) => Track.fromSpotify(t as Map<String, dynamic>))
+                    ?.toList()
+                    ?.cast<Track>() ??
+                <Track>[];
             if (tracks.isNotEmpty) {
-              _container.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+              _container
+                  .read(playerProvider.notifier)
+                  .playTrack(tracks.first, queue: tracks);
             } else {
               _showToast('Album has no tracks');
             }
@@ -533,25 +589,41 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
         onTap: () async {
           Navigator.of(context).pop();
           try {
-            final tracks = (await _container.read(spotifyRepositoryProvider).watchAlbum(target.id).first).data['tracks']?['items']?.map((t) => Track.fromSpotify(t as Map<String,dynamic>))?.toList()?.cast<Track>() ?? <Track>[];
+            final tracks =
+                (await _container
+                        .read(spotifyRepositoryProvider)
+                        .watchAlbum(target.id)
+                        .first)
+                    .data['tracks']?['items']
+                    ?.map((t) => Track.fromSpotify(t as Map<String, dynamic>))
+                    ?.toList()
+                    ?.cast<Track>() ??
+                <Track>[];
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).addTracksToQueue(tracks);
               _showToast('Added ${tracks.length} tracks to queue');
             }
           } catch (e, stack) {
-            debugPrint('[ContentContextMenu] Error adding album to queue: $e\n$stack');
+            debugPrint(
+              '[ContentContextMenu] Error adding album to queue: $e\n$stack',
+            );
             _showToast('Could not add to queue: $e');
           }
         },
       ),
       const _ContextMenuDivider(),
       _ContextMenuItem(
-        icon: isLiked ? Icons.bookmark_added_rounded : Icons.bookmark_add_outlined,
+        icon:
+            isLiked
+                ? Icons.bookmark_added_rounded
+                : Icons.bookmark_add_outlined,
         iconColor: isLiked ? colorScheme.primary : null,
         label: isLiked ? 'Remove from Your Library' : 'Add to Your Library',
         onTap: () {
           Navigator.of(context).pop();
-          _container.read(favoritesControllerProvider.notifier).toggleAlbumLike(
+          _container
+              .read(favoritesControllerProvider.notifier)
+              .toggleAlbumLike(
                 target.id,
                 target.name,
                 target.artistId,
@@ -559,7 +631,9 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
                 target.imageUrl,
                 isLiked,
               );
-          _showToast(isLiked ? 'Removed from Your Library' : 'Saved to Your Library');
+          _showToast(
+            isLiked ? 'Removed from Your Library' : 'Saved to Your Library',
+          );
         },
       ),
       _ContextMenuItem(
@@ -608,11 +682,24 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
   }
 
   // --- Playlist Items ---
-  List<Widget> _buildPlaylistMenuItems(BuildContext context, WidgetRef ref, PlaylistContextTarget target) {
+  List<Widget> _buildPlaylistMenuItems(
+    BuildContext context,
+    WidgetRef ref,
+    PlaylistContextTarget target,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isLiked = target.isLocal
-        ? true
-        : (ref.watch(favoritesStatusProvider((FavoriteType.playlist, target.id))).value ?? false);
+    final isLiked =
+        target.isLocal
+            ? true
+            : (ref
+                    .watch(
+                      favoritesStatusProvider((
+                        FavoriteType.playlist,
+                        target.id,
+                      )),
+                    )
+                    .value ??
+                false);
 
     return [
       _ContextMenuItem(
@@ -623,18 +710,29 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           try {
             List<Track> tracks;
             if (target.isLocal && target.localId != null) {
-              final raw = await _container.read(db.appDatabaseProvider).getPlaylistTracks(target.localId!);
+              final raw = await _container
+                  .read(db.appDatabaseProvider)
+                  .getPlaylistTracks(target.localId!);
               tracks = raw.map(Track.fromDb).toList();
             } else {
-              tracks = (await _container.read(spotifyRepositoryProvider).watchPlaylistTracks(target.id).first).data;
+              tracks =
+                  (await _container
+                          .read(spotifyRepositoryProvider)
+                          .watchPlaylistTracks(target.id)
+                          .first)
+                      .data;
             }
             if (tracks.isNotEmpty) {
-              _container.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+              _container
+                  .read(playerProvider.notifier)
+                  .playTrack(tracks.first, queue: tracks);
             } else {
               _showToast('Playlist has no tracks');
             }
           } catch (e, stack) {
-            debugPrint('[ContentContextMenu] Error playing playlist: $e\n$stack');
+            debugPrint(
+              '[ContentContextMenu] Error playing playlist: $e\n$stack',
+            );
             _showToast('Error playing playlist: $e');
           }
         },
@@ -647,45 +745,67 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           try {
             List<Track> tracks;
             if (target.isLocal && target.localId != null) {
-              final raw = await _container.read(db.appDatabaseProvider).getPlaylistTracks(target.localId!);
+              final raw = await _container
+                  .read(db.appDatabaseProvider)
+                  .getPlaylistTracks(target.localId!);
               tracks = raw.map(Track.fromDb).toList();
             } else {
-              tracks = (await _container.read(spotifyRepositoryProvider).watchPlaylistTracks(target.id).first).data;
+              tracks =
+                  (await _container
+                          .read(spotifyRepositoryProvider)
+                          .watchPlaylistTracks(target.id)
+                          .first)
+                      .data;
             }
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).addTracksToQueue(tracks);
               _showToast('Added ${tracks.length} tracks to queue');
             }
           } catch (e, stack) {
-            debugPrint('[ContentContextMenu] Error adding playlist to queue: $e\n$stack');
+            debugPrint(
+              '[ContentContextMenu] Error adding playlist to queue: $e\n$stack',
+            );
             _showToast('Error adding to queue: $e');
           }
         },
       ),
       const _ContextMenuDivider(),
       _ContextMenuItem(
-        icon: target.isLocal
-            ? Icons.delete_outline_rounded
-            : (isLiked ? Icons.bookmark_added_rounded : Icons.bookmark_add_outlined),
-        iconColor: target.isLocal
-            ? colorScheme.error
-            : (isLiked ? colorScheme.primary : null),
-        label: target.isLocal
-            ? 'Delete playlist'
-            : (isLiked ? 'Remove from Your Library' : 'Add to Your Library'),
+        icon:
+            target.isLocal
+                ? Icons.delete_outline_rounded
+                : (isLiked
+                    ? Icons.bookmark_added_rounded
+                    : Icons.bookmark_add_outlined),
+        iconColor:
+            target.isLocal
+                ? colorScheme.error
+                : (isLiked ? colorScheme.primary : null),
+        label:
+            target.isLocal
+                ? 'Delete playlist'
+                : (isLiked
+                    ? 'Remove from Your Library'
+                    : 'Add to Your Library'),
         onTap: () async {
           Navigator.of(context).pop();
           if (target.isLocal && target.localId != null) {
-            await _container.read(db.appDatabaseProvider).deletePlaylist(target.localId!);
+            await _container
+                .read(db.appDatabaseProvider)
+                .deletePlaylist(target.localId!);
             _showToast('Deleted ${target.name}');
           } else {
-            await _container.read(favoritesControllerProvider.notifier).togglePlaylistLike(
+            await _container
+                .read(favoritesControllerProvider.notifier)
+                .togglePlaylistLike(
                   target.id,
                   target.name,
                   target.imageUrl,
                   isLiked,
                 );
-            _showToast(isLiked ? 'Removed from Your Library' : 'Saved to Your Library');
+            _showToast(
+              isLiked ? 'Removed from Your Library' : 'Saved to Your Library',
+            );
           }
         },
       ),
@@ -699,7 +819,9 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
               _parentContext.push('/playlist/${target.localId}');
             } else {
               final encodedName = Uri.encodeComponent(target.name);
-              _parentContext.push('/playlist/remote/${target.id}?name=$encodedName');
+              _parentContext.push(
+                '/playlist/remote/${target.id}?name=$encodedName',
+              );
             }
           }
         },
@@ -727,9 +849,17 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
   }
 
   // --- Artist Items ---
-  List<Widget> _buildArtistMenuItems(BuildContext context, WidgetRef ref, ArtistContextTarget target) {
+  List<Widget> _buildArtistMenuItems(
+    BuildContext context,
+    WidgetRef ref,
+    ArtistContextTarget target,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isFollowed = ref.watch(favoritesStatusProvider((FavoriteType.artist, target.id))).value ?? false;
+    final isFollowed =
+        ref
+            .watch(favoritesStatusProvider((FavoriteType.artist, target.id)))
+            .value ??
+        false;
 
     return [
       _ContextMenuItem(
@@ -738,33 +868,56 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
         onTap: () async {
           Navigator.of(context).pop();
           try {
-            debugPrint('[ContentContextMenu] Fetching top tracks for artist ${target.id} (${target.name})');
-            final rawTracks = (await _container.read(spotifyRepositoryProvider).watchArtistTopTracks(target.id).first).data;
-            final tracks = rawTracks.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
+            debugPrint(
+              '[ContentContextMenu] Fetching top tracks for artist ${target.id} (${target.name})',
+            );
+            final rawTracks =
+                (await _container
+                        .read(spotifyRepositoryProvider)
+                        .watchArtistTopTracks(target.id)
+                        .first)
+                    .data;
+            final tracks =
+                rawTracks
+                    .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
+                    .toList();
             if (tracks.isNotEmpty) {
-              _container.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+              _container
+                  .read(playerProvider.notifier)
+                  .playTrack(tracks.first, queue: tracks);
             } else {
               _showToast('No tracks found for ${target.name}');
             }
           } catch (e, stack) {
-            debugPrint('[ContentContextMenu] Error playing artist ${target.name}: $e\n$stack');
+            debugPrint(
+              '[ContentContextMenu] Error playing artist ${target.name}: $e\n$stack',
+            );
             _showToast('Could not play artist: $e');
           }
         },
       ),
       _ContextMenuItem(
-        icon: isFollowed ? Icons.person_remove_outlined : Icons.person_add_outlined,
+        icon:
+            isFollowed
+                ? Icons.person_remove_outlined
+                : Icons.person_add_outlined,
         iconColor: isFollowed ? colorScheme.primary : null,
         label: isFollowed ? 'Unfollow' : 'Follow',
         onTap: () {
           Navigator.of(context).pop();
-          _container.read(favoritesControllerProvider.notifier).toggleArtistFollow(
+          _container
+              .read(favoritesControllerProvider.notifier)
+              .toggleArtistFollow(
                 target.id,
                 target.name,
                 target.imageUrl,
                 isFollowed,
               );
-          _showToast(isFollowed ? 'Unfollowed ${target.name}' : 'Following ${target.name}');
+          _showToast(
+            isFollowed
+                ? 'Unfollowed ${target.name}'
+                : 'Following ${target.name}',
+          );
         },
       ),
       _ContextMenuItem(
@@ -775,7 +928,9 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           final encodedTitle = Uri.encodeComponent(target.name);
           final encodedImage = Uri.encodeComponent(target.imageUrl ?? '');
           if (_parentContext.mounted) {
-            _parentContext.push('/radio/artist/${target.id}?title=$encodedTitle&imageUrl=$encodedImage');
+            _parentContext.push(
+              '/radio/artist/${target.id}?title=$encodedTitle&imageUrl=$encodedImage',
+            );
           }
         },
       ),
@@ -808,10 +963,18 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
   }
 
   // --- Radio Items ---
-  List<Widget> _buildRadioMenuItems(BuildContext context, WidgetRef ref, RadioContextTarget target) {
+  List<Widget> _buildRadioMenuItems(
+    BuildContext context,
+    WidgetRef ref,
+    RadioContextTarget target,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     final radioKey = '${target.seedId}:${target.seedType}';
-    final isFollowed = ref.watch(favoritesStatusProvider((FavoriteType.radio, radioKey))).value ?? false;
+    final isFollowed =
+        ref
+            .watch(favoritesStatusProvider((FavoriteType.radio, radioKey)))
+            .value ??
+        false;
 
     return [
       _ContextMenuItem(
@@ -821,13 +984,21 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           Navigator.of(context).pop();
           final parentContext = _parentContext;
           try {
-            debugPrint('[ContentContextMenu] Fetching radio station tracks for ${target.seedType}:${target.seedId}');
+            debugPrint(
+              '[ContentContextMenu] Fetching radio station tracks for ${target.seedType}:${target.seedId}',
+            );
             final repo = _container.read(spotifyRepositoryProvider);
-            final cacheResult = await repo.watchRecommendations(
-              seedArtistId: target.seedType == 'artist' ? target.seedId : null,
-              seedTrackId: target.seedType == 'track' ? target.seedId : null,
-              seedGenres: target.seedType == 'genre' ? target.seedId : null,
-            ).first;
+            final cacheResult =
+                await repo
+                    .watchRecommendations(
+                      seedArtistId:
+                          target.seedType == 'artist' ? target.seedId : null,
+                      seedTrackId:
+                          target.seedType == 'track' ? target.seedId : null,
+                      seedGenres:
+                          target.seedType == 'genre' ? target.seedId : null,
+                    )
+                    .first;
             final tracks = cacheResult.data;
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).playTracks(tracks);
@@ -835,33 +1006,48 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
               if (parentContext.mounted) {
                 final encodedTitle = Uri.encodeComponent(target.title);
                 final encodedImage = Uri.encodeComponent(target.imageUrl ?? '');
-                parentContext.push('/radio/${target.seedType}/${target.seedId}?title=$encodedTitle&imageUrl=$encodedImage');
+                parentContext.push(
+                  '/radio/${target.seedType}/${target.seedId}?title=$encodedTitle&imageUrl=$encodedImage',
+                );
               }
             }
           } catch (e, stack) {
-            debugPrint('[ContentContextMenu] Error playing radio station: $e\n$stack');
+            debugPrint(
+              '[ContentContextMenu] Error playing radio station: $e\n$stack',
+            );
             if (parentContext.mounted) {
               final encodedTitle = Uri.encodeComponent(target.title);
               final encodedImage = Uri.encodeComponent(target.imageUrl ?? '');
-              parentContext.push('/radio/${target.seedType}/${target.seedId}?title=$encodedTitle&imageUrl=$encodedImage');
+              parentContext.push(
+                '/radio/${target.seedType}/${target.seedId}?title=$encodedTitle&imageUrl=$encodedImage',
+              );
             }
           }
         },
       ),
       _ContextMenuItem(
-        icon: isFollowed ? Icons.bookmark_added_rounded : Icons.bookmark_add_outlined,
+        icon:
+            isFollowed
+                ? Icons.bookmark_added_rounded
+                : Icons.bookmark_add_outlined,
         iconColor: isFollowed ? colorScheme.primary : null,
         label: isFollowed ? 'Unfollow Station' : 'Follow Station',
         onTap: () {
           Navigator.of(context).pop();
-          _container.read(favoritesControllerProvider.notifier).toggleRadioFollow(
+          _container
+              .read(favoritesControllerProvider.notifier)
+              .toggleRadioFollow(
                 seedId: target.seedId,
                 seedType: target.seedType,
                 title: target.title,
                 imageUrl: target.imageUrl,
                 isCurrentlyFollowed: isFollowed,
               );
-          _showToast(isFollowed ? 'Station removed from Library' : 'Station saved to Library');
+          _showToast(
+            isFollowed
+                ? 'Station removed from Library'
+                : 'Station saved to Library',
+          );
         },
       ),
       const _ContextMenuDivider(),
@@ -870,7 +1056,9 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
         label: 'Share',
         onTap: () {
           Navigator.of(context).pop();
-          _copyToClipboard('https://ppplayer.com/radio/${target.seedType}/${target.seedId}');
+          _copyToClipboard(
+            'https://ppplayer.com/radio/${target.seedType}/${target.seedId}',
+          );
         },
       ),
     ];
@@ -925,7 +1113,16 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
         await database.addToPlaylist(playlist.id, target.track.spotifyId);
         _showToast('Added to ${playlist.name}');
       } else if (widget.target case AlbumContextTarget target) {
-        final tracks = (await _container.read(spotifyRepositoryProvider).watchAlbum(target.id).first).data['tracks']?['items']?.map((t) => Track.fromSpotify(t as Map<String,dynamic>))?.toList()?.cast<Track>() ?? <Track>[];
+        final tracks =
+            (await _container
+                    .read(spotifyRepositoryProvider)
+                    .watchAlbum(target.id)
+                    .first)
+                .data['tracks']?['items']
+                ?.map((t) => Track.fromSpotify(t as Map<String, dynamic>))
+                ?.toList()
+                ?.cast<Track>() ??
+            <Track>[];
         for (final t in tracks) {
           await database.addToPlaylist(playlist.id, t.spotifyId);
         }
@@ -936,7 +1133,12 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
           final raw = await database.getPlaylistTracks(target.localId!);
           tracks = raw.map(Track.fromDb).toList();
         } else {
-          tracks = (await _container.read(spotifyRepositoryProvider).watchPlaylistTracks(target.id).first).data;
+          tracks =
+              (await _container
+                      .read(spotifyRepositoryProvider)
+                      .watchPlaylistTracks(target.id)
+                      .first)
+                  .data;
         }
         for (final t in tracks) {
           await database.addToPlaylist(playlist.id, t.spotifyId);
@@ -975,15 +1177,22 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
                 decoration: InputDecoration(
                   hintText: 'My Playlist',
                   hintStyle: TextStyle(
-                    color: dialogColorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    color: dialogColorScheme.onSurfaceVariant.withValues(
+                      alpha: 0.4,
+                    ),
                   ),
                   filled: true,
-                  fillColor: dialogColorScheme.onSurface.withValues(alpha: 0.05),
+                  fillColor: dialogColorScheme.onSurface.withValues(
+                    alpha: 0.05,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 18,
+                  ),
                 ),
               ),
               const SizedBox(height: 28),
@@ -991,14 +1200,21 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
                 children: [
                   Expanded(
                     child: TactileTap(
-                      onTap: () => Navigator.of(dialogContext, rootNavigator: true).pop(),
+                      onTap:
+                          () =>
+                              Navigator.of(
+                                dialogContext,
+                                rootNavigator: true,
+                              ).pop(),
                       child: Container(
                         height: 48,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: dialogColorScheme.outlineVariant.withValues(alpha: 0.3),
+                            color: dialogColorScheme.outlineVariant.withValues(
+                              alpha: 0.3,
+                            ),
                           ),
                         ),
                         child: Text(
@@ -1020,9 +1236,14 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
                         if (name.isNotEmpty) {
                           final newId = await database.createPlaylist(name);
                           if (dialogContext.mounted) {
-                            Navigator.of(dialogContext, rootNavigator: true).pop();
+                            Navigator.of(
+                              dialogContext,
+                              rootNavigator: true,
+                            ).pop();
                           }
-                          final playlist = await (database.select(database.playlists)..where((p) => p.id.equals(newId))).getSingle();
+                          final playlist =
+                              await (database.select(database.playlists)
+                                ..where((p) => p.id.equals(newId))).getSingle();
                           await _addItemToPlaylist(playlist);
                         }
                       },
@@ -1039,7 +1260,9 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color: dialogColorScheme.primary.withValues(alpha: 0.3),
+                              color: dialogColorScheme.primary.withValues(
+                                alpha: 0.3,
+                              ),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -1068,25 +1291,27 @@ class _ContentContextMenuOverlayState extends ConsumerState<_ContentContextMenuO
   Widget _buildShareSubmenuContent(BuildContext context) {
     final (url, id) = switch (widget.target) {
       TrackContextTarget target => (
-          'https://open.spotify.com/track/${target.track.spotifyId}',
-          target.track.spotifyId,
-        ),
+        'https://open.spotify.com/track/${target.track.spotifyId}',
+        target.track.spotifyId,
+      ),
       AlbumContextTarget target => (
-          'https://open.spotify.com/album/${target.id}',
-          target.id,
-        ),
+        'https://open.spotify.com/album/${target.id}',
+        target.id,
+      ),
       PlaylistContextTarget target => (
-          target.isLocal ? 'ppplayer://playlist/${target.localId}' : 'https://open.spotify.com/playlist/${target.id}',
-          target.id,
-        ),
+        target.isLocal
+            ? 'ppplayer://playlist/${target.localId}'
+            : 'https://open.spotify.com/playlist/${target.id}',
+        target.id,
+      ),
       ArtistContextTarget target => (
-          'https://open.spotify.com/artist/${target.id}',
-          target.id,
-        ),
+        'https://open.spotify.com/artist/${target.id}',
+        target.id,
+      ),
       RadioContextTarget target => (
-          'https://ppplayer.com/radio/${target.seedType}/${target.seedId}',
-          target.seedId,
-        ),
+        'https://ppplayer.com/radio/${target.seedType}/${target.seedId}',
+        target.seedId,
+      ),
     };
 
     return Column(
@@ -1186,16 +1411,19 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
     final colorScheme = theme.colorScheme;
 
     final isCustomColor = widget.iconColor != null;
-    final defaultIconColor = _isHovered ? colorScheme.onSurface : colorScheme.onSurfaceVariant;
+    final defaultIconColor =
+        _isHovered ? colorScheme.onSurface : colorScheme.onSurfaceVariant;
     final iconColor = widget.iconColor ?? defaultIconColor;
 
-    final Color hoverBg = isCustomColor
-        ? widget.iconColor!.withValues(alpha: 0.12)
-        : colorScheme.onSurface.withValues(alpha: 0.08);
+    final Color hoverBg =
+        isCustomColor
+            ? widget.iconColor!.withValues(alpha: 0.12)
+            : colorScheme.onSurface.withValues(alpha: 0.08);
 
-    final Color hoverBorder = isCustomColor
-        ? widget.iconColor!.withValues(alpha: 0.22)
-        : colorScheme.outlineVariant.withValues(alpha: 0.20);
+    final Color hoverBorder =
+        isCustomColor
+            ? widget.iconColor!.withValues(alpha: 0.22)
+            : colorScheme.outlineVariant.withValues(alpha: 0.20);
 
     return MouseRegion(
       onEnter: (event) {
@@ -1232,11 +1460,7 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
                 scale: _isHovered ? 1.08 : 1.0,
                 duration: const Duration(milliseconds: 140),
                 curve: Curves.easeOutCubic,
-                child: Icon(
-                  widget.icon,
-                  size: 19,
-                  color: iconColor,
-                ),
+                child: Icon(widget.icon, size: 19, color: iconColor),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1244,11 +1468,13 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
                   duration: const Duration(milliseconds: 140),
                   curve: Curves.easeOutCubic,
                   style: TextStyle(
-                    color: _isHovered
-                        ? (isCustomColor && widget.iconColor == colorScheme.error
-                            ? colorScheme.error
-                            : colorScheme.onSurface)
-                        : colorScheme.onSurface.withValues(alpha: 0.9),
+                    color:
+                        _isHovered
+                            ? (isCustomColor &&
+                                    widget.iconColor == colorScheme.error
+                                ? colorScheme.error
+                                : colorScheme.onSurface)
+                            : colorScheme.onSurface.withValues(alpha: 0.9),
                     fontSize: 13.5,
                     fontWeight: _isHovered ? FontWeight.w600 : FontWeight.w500,
                     letterSpacing: -0.2,
@@ -1268,9 +1494,10 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
                   child: Icon(
                     Icons.chevron_right_rounded,
                     size: 18,
-                    color: _isHovered
-                        ? colorScheme.onSurface
-                        : colorScheme.onSurfaceVariant,
+                    color:
+                        _isHovered
+                            ? colorScheme.onSurface
+                            : colorScheme.onSurfaceVariant,
                   ),
                 ),
             ],

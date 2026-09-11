@@ -5,11 +5,7 @@ class AnimatedEqualizer extends StatefulWidget {
   final Color color;
   final double size;
 
-  const AnimatedEqualizer({
-    super.key,
-    required this.color,
-    this.size = 16.0,
-  });
+  const AnimatedEqualizer({super.key, required this.color, this.size = 16.0});
 
   @override
   State<AnimatedEqualizer> createState() => _AnimatedEqualizerState();

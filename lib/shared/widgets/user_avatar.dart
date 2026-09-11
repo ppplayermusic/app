@@ -17,7 +17,8 @@ class UserAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (settings.userAvatarBase64 != null && settings.userAvatarBase64!.isNotEmpty) {
+    if (settings.userAvatarBase64 != null &&
+        settings.userAvatarBase64!.isNotEmpty) {
       return SizedBox(
         width: size,
         height: size,
@@ -29,7 +30,7 @@ class UserAvatarWidget extends StatelessWidget {
         ),
       );
     }
-    
+
     if (settings.userName.isEmpty) {
       return SizedBox(
         width: size,
@@ -39,7 +40,7 @@ class UserAvatarWidget extends StatelessWidget {
         ),
       );
     }
-    
+
     return Container(
       width: size,
       height: size,
@@ -49,7 +50,12 @@ class UserAvatarWidget extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          settings.userName.trim().split(RegExp(r'\s+')).map((e) => e.isNotEmpty ? e[0].toUpperCase() : '').take(2).join(),
+          settings.userName
+              .trim()
+              .split(RegExp(r'\s+'))
+              .map((e) => e.isNotEmpty ? e[0].toUpperCase() : '')
+              .take(2)
+              .join(),
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.w900,

@@ -50,7 +50,7 @@ class SpotifyClient {
       int rateLimitRetries = 0;
       int transientRetries = 0;
       late Response response;
-      
+
       while (true) {
         try {
           response = await _dio.get(
@@ -68,7 +68,10 @@ class SpotifyClient {
         } on DioException catch (e) {
           final status = e.response?.statusCode;
           if (status == 401) {
-            throw SpotifyAuthException('Auth failed (401) in paginated search', e);
+            throw SpotifyAuthException(
+              'Auth failed (401) in paginated search',
+              e,
+            );
           }
           if (status == 429) {
             if (rateLimitRetries >= 1) rethrow; // bound rate limit retries
@@ -105,11 +108,19 @@ class SpotifyClient {
   }
 
   Future<List<Track>> searchTracks(String query, {int limit = 20}) async {
-    final items = await _paginatedSearch(query, 'track', 'tracks', limit: limit);
+    final items = await _paginatedSearch(
+      query,
+      'track',
+      'tracks',
+      limit: limit,
+    );
     return items.map((j) => Track.fromSpotify(j)).toList();
   }
 
-  Future<List<Map<String, dynamic>>> searchPlaylists(String query, {int limit = 20}) async {
+  Future<List<Map<String, dynamic>>> searchPlaylists(
+    String query, {
+    int limit = 20,
+  }) async {
     return _paginatedSearch(query, 'playlist', 'playlists', limit: limit);
   }
 
@@ -122,7 +133,9 @@ class SpotifyClient {
     return response.data as Map<String, dynamic>;
   }
 
-  Future<List<Map<String, dynamic>>> getMultipleArtists(List<String> ids) async {
+  Future<List<Map<String, dynamic>>> getMultipleArtists(
+    List<String> ids,
+  ) async {
     if (ids.isEmpty) return [];
     final response = await _dio.get(
       '$_baseUrl/artists',
@@ -143,8 +156,10 @@ class SpotifyClient {
     return items;
   }
 
-  Future<List<dynamic>> getArtistAlbums(String artistId,
-      {int limit = 20}) async {
+  Future<List<dynamic>> getArtistAlbums(
+    String artistId, {
+    int limit = 20,
+  }) async {
     final response = await _dio.get(
       '$_baseUrl/artists/$artistId/albums',
       queryParameters: {
@@ -182,10 +197,7 @@ class SpotifyClient {
     if (ids.isEmpty) return [];
     final response = await _dio.get(
       '$_baseUrl/albums',
-      queryParameters: {
-        'ids': ids.join(','),
-        'market': market,
-      },
+      queryParameters: {'ids': ids.join(','), 'market': market},
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['albums'] as List?) ?? [];
@@ -194,7 +206,8 @@ class SpotifyClient {
 
   Future<List<Track>> getAlbumTracks(String albumId) async {
     final album = await getAlbum(albumId);
-    final imageUrl = ((album['images'] as List?)?.firstOrNull?['url'] as String?);
+    final imageUrl =
+        ((album['images'] as List?)?.firstOrNull?['url'] as String?);
     final response = await _dio.get(
       '$_baseUrl/albums/$albumId/tracks',
       queryParameters: {'market': market},
@@ -209,7 +222,9 @@ class SpotifyClient {
         'album': {
           'id': albumId,
           'name': album['name'],
-          'images': [{'url': imageUrl}],
+          'images': [
+            {'url': imageUrl},
+          ],
         },
       });
     }).toList();
@@ -217,14 +232,19 @@ class SpotifyClient {
 
   Future<List<Map<String, dynamic>>> getNewReleases({int limit = 10}) async {
     final year = DateTime.now().year;
-    final items = await _paginatedSearch('year:${year - 1}-$year', 'album', 'albums', limit: limit);
-    
+    final items = await _paginatedSearch(
+      'year:${year - 1}-$year',
+      'album',
+      'albums',
+      limit: limit,
+    );
+
     items.sort((a, b) {
       final dateA = a['release_date'] as String? ?? '';
       final dateB = b['release_date'] as String? ?? '';
       return dateB.compareTo(dateA);
     });
-    
+
     return items;
   }
 
@@ -236,15 +256,17 @@ class SpotifyClient {
   }) async {
     try {
       String? targetArtistId = seedArtistId?.split(',').first;
-      
-      if (targetArtistId == null && seedTrackId != null && seedTrackId.isNotEmpty) {
+
+      if (targetArtistId == null &&
+          seedTrackId != null &&
+          seedTrackId.isNotEmpty) {
         final track = await getTrack(seedTrackId.split(',').first);
         targetArtistId = track.artistId.split(',').first;
       }
 
       if (targetArtistId != null && targetArtistId.isNotEmpty) {
         final List<Track> artistTracks = [];
-        
+
         // Tier 1: Original Artist
         try {
           final topTracksData = await getArtistTopTracks(targetArtistId);
@@ -252,54 +274,65 @@ class SpotifyClient {
               .map((t) => Track.fromSpotify(t as Map<String, dynamic>))
               .where((t) => t.artistId.split(',').contains(targetArtistId));
           artistTracks.addAll(topTracks);
-          
+
           final albumsData = await getArtistAlbums(targetArtistId, limit: 3);
           final albumFutures = albumsData.map((a) {
             final albumId = (a as Map<String, dynamic>)['id'] as String;
             return getAlbumTracks(albumId);
           });
-          
+
           final albumsTracks = await Future.wait(albumFutures);
           for (final tracks in albumsTracks) {
-            artistTracks.addAll(tracks.where((t) => t.artistId.split(',').contains(targetArtistId)));
+            artistTracks.addAll(
+              tracks.where(
+                (t) => t.artistId.split(',').contains(targetArtistId),
+              ),
+            );
           }
         } catch (e) {
           debugPrint('Failed to fetch artist tracks: $e');
         }
-        
+
         artistTracks.shuffle();
-        
+
         final List<Track> allTracks = [...artistTracks];
-        
+
         // Tier 2: Related Artists
         if (allTracks.length < limit * 2) {
           try {
-             final relatedArtists = await getRelatedArtists(targetArtistId);
-             final relatedFutures = relatedArtists.take(5).map((a) => getArtistTopTracks(a['id'] as String));
-             final relatedTracksData = await Future.wait(relatedFutures);
-             
-             final List<Track> relatedTracks = [];
-             for (final data in relatedTracksData) {
-                relatedTracks.addAll(data.map((t) => Track.fromSpotify(t as Map<String, dynamic>)));
-             }
-             relatedTracks.shuffle();
-             allTracks.addAll(relatedTracks);
+            final relatedArtists = await getRelatedArtists(targetArtistId);
+            final relatedFutures = relatedArtists
+                .take(5)
+                .map((a) => getArtistTopTracks(a['id'] as String));
+            final relatedTracksData = await Future.wait(relatedFutures);
+
+            final List<Track> relatedTracks = [];
+            for (final data in relatedTracksData) {
+              relatedTracks.addAll(
+                data.map((t) => Track.fromSpotify(t as Map<String, dynamic>)),
+              );
+            }
+            relatedTracks.shuffle();
+            allTracks.addAll(relatedTracks);
           } catch (e) {
             debugPrint('Failed to fetch related artist tracks: $e');
           }
         }
-        
+
         final uniqueTracks = <String, Track>{};
         for (final t in allTracks) {
           if (!uniqueTracks.containsKey(t.spotifyId)) {
-             uniqueTracks[t.spotifyId] = t;
+            uniqueTracks[t.spotifyId] = t;
           }
         }
-        
+
         final results = uniqueTracks.values.take(limit).toList();
         if (results.isNotEmpty) return results;
       } else if (seedGenres != null && seedGenres.isNotEmpty) {
-        final items = await searchTracks('genre:${seedGenres.split(',').first}', limit: limit);
+        final items = await searchTracks(
+          'genre:${seedGenres.split(',').first}',
+          limit: limit,
+        );
         if (items.isNotEmpty) return items;
       }
     } catch (e) {
@@ -309,14 +342,13 @@ class SpotifyClient {
   }
 
   // --- Playlists ---
-  Future<List<Map<String, dynamic>>> getFeaturedPlaylists({int limit = 20}) async {
+  Future<List<Map<String, dynamic>>> getFeaturedPlaylists({
+    int limit = 20,
+  }) async {
     try {
       final response = await _dio.get(
         '$_baseUrl/browse/featured-playlists',
-        queryParameters: {
-          'limit': limit,
-          'country': market,
-        },
+        queryParameters: {'limit': limit, 'country': market},
         options: Options(headers: await _authHeaders()),
       );
       final items = (response.data['playlists']['items'] as List?) ?? [];
@@ -345,13 +377,13 @@ class SpotifyClient {
     }
   }
 
-  Future<List<Track>> getPlaylistTracks(String playlistId, {int limit = 20}) async {
+  Future<List<Track>> getPlaylistTracks(
+    String playlistId, {
+    int limit = 20,
+  }) async {
     final response = await _dio.get(
       '$_baseUrl/playlists/$playlistId/tracks',
-      queryParameters: {
-        'limit': limit,
-        'market': market,
-      },
+      queryParameters: {'limit': limit, 'market': market},
       options: Options(headers: await _authHeaders()),
     );
     final items = (response.data['items'] as List?) ?? [];
@@ -362,7 +394,11 @@ class SpotifyClient {
       if (trackData is! Map<String, dynamic>) continue;
       if (trackData['id'] == null || trackData['name'] == null) continue;
       try {
-        tracks.add(Track.fromSpotify(_sanitizeData(Map<String, dynamic>.from(trackData))));
+        tracks.add(
+          Track.fromSpotify(
+            _sanitizeData(Map<String, dynamic>.from(trackData)),
+          ),
+        );
       } catch (e) {
         debugPrint('SpotifyClient: Skipped invalid track: $e');
       }
@@ -381,7 +417,8 @@ class SpotifyClient {
       id: 'pop',
       label: 'Pop',
       searchQueries: ['genre:pop', 'pop', 'dance pop'],
-      iconUrl: 'https://t.scdn.co/media/derived/pop-274x274_447148649685019f5e2a03a39e78ba52_0_0_274_274.jpg',
+      iconUrl:
+          'https://t.scdn.co/media/derived/pop-274x274_447148649685019f5e2a03a39e78ba52_0_0_274_274.jpg',
     ),
     CategoryDefinition(
       id: 'hiphop',
@@ -399,28 +436,38 @@ class SpotifyClient {
       id: 'mood',
       label: 'Mood',
       searchQueries: ['mood', 'feel good', 'sad'],
-      iconUrl: 'https://t.scdn.co/media/original/mood-274x274_976986a31ac8c49794cbdc7246fd5ad7_274x274.jpg',
+      iconUrl:
+          'https://t.scdn.co/media/original/mood-274x274_976986a31ac8c49794cbdc7246fd5ad7_274x274.jpg',
     ),
     CategoryDefinition(
       id: 'workout',
       label: 'Workout',
       searchQueries: ['workout', 'gym', 'running'],
-      iconUrl: 'https://t.scdn.co/media/derived/workout-274x274_62db200ee12fbe9bdf9753df28d65a88_0_0_274_274.jpg',
+      iconUrl:
+          'https://t.scdn.co/media/derived/workout-274x274_62db200ee12fbe9bdf9753df28d65a88_0_0_274_274.jpg',
     ),
     CategoryDefinition(
       id: 'chill',
       label: 'Chill',
       searchQueries: ['chill', 'relax', 'lo-fi'],
-      iconUrl: 'https://t.scdn.co/media/derived/chill-274x274_4c46374f007813dd10b37e8d8fd35b4b_0_0_274_274.jpg',
+      iconUrl:
+          'https://t.scdn.co/media/derived/chill-274x274_4c46374f007813dd10b37e8d8fd35b4b_0_0_274_274.jpg',
     ),
   ];
 
-  Future<List<Map<String, dynamic>>> getBrowseCategories({int limit = 20, int offset = 0}) async {
+  Future<List<Map<String, dynamic>>> getBrowseCategories({
+    int limit = 20,
+    int offset = 0,
+  }) async {
     // PPPlayer owns the categories to prevent reliance on removed Spotify endpoints
     return _ppplayerCategories.map((c) => c.toJson()).toList();
   }
 
-  Future<List<Map<String, dynamic>>> getCategoryPlaylists(String categoryId, {int limit = 20, int offset = 0}) async {
+  Future<List<Map<String, dynamic>>> getCategoryPlaylists(
+    String categoryId, {
+    int limit = 20,
+    int offset = 0,
+  }) async {
     final category = _ppplayerCategories.firstWhere(
       (c) => c.id == categoryId,
       orElse: () => _ppplayerCategories.first,
@@ -428,7 +475,10 @@ class SpotifyClient {
 
     final playlists = <Map<String, dynamic>>[];
     final seenIds = <String>{};
-    final fetchLimit = (limit / category.searchQueries.length).ceil().clamp(5, 10);
+    final fetchLimit = (limit / category.searchQueries.length).ceil().clamp(
+      5,
+      10,
+    );
 
     for (final q in category.searchQueries) {
       if (playlists.length >= limit) break;
@@ -485,7 +535,9 @@ class SpotifyClient {
     }
 
     if (allFailed) {
-      throw Exception('Failed to load popular tracks after trying all queries.');
+      throw Exception(
+        'Failed to load popular tracks after trying all queries.',
+      );
     }
 
     return tracks.take(limit).toList();
@@ -509,7 +561,6 @@ class SpotifyClient {
     return items.whereType<Map<String, dynamic>>().toList();
   }
 
-
   Future<List<String>> getAvailableGenreSeeds() async {
     try {
       final response = await _dio.get(
@@ -521,30 +572,52 @@ class SpotifyClient {
       if (e is SpotifyAuthException) rethrow;
       // Fallback to a set of universally safe seeds
       return const [
-        'pop', 'rock', 'hip-hop', 'edm', 'indie', 'alternative', 
-        'chill', 'dance', 'electronic', 'jazz', 'classical', 
-        'r-n-b', 'country', 'metal', 'funk', 'soul', 'reggae'
+        'pop',
+        'rock',
+        'hip-hop',
+        'edm',
+        'indie',
+        'alternative',
+        'chill',
+        'dance',
+        'electronic',
+        'jazz',
+        'classical',
+        'r-n-b',
+        'country',
+        'metal',
+        'funk',
+        'soul',
+        'reggae',
       ];
     }
   }
 
   List<Map<String, dynamic>> _filterAndSanitizeItems(List<dynamic> items) {
-    return items.whereType<Map<String, dynamic>>().where((item) {
-      final id = item['id'];
-      final name = (item['name'] as String?)?.toLowerCase() ?? '';
-      
-      // Filter out invalid items (like null placeholders from Spotify API)
-      if (id == null || name.trim().isEmpty) return false;
-      
-      return !name.contains('spotify sessions') && !name.contains('spotify singles');
-    }).map(_sanitizeData).toList();
+    return items
+        .whereType<Map<String, dynamic>>()
+        .where((item) {
+          final id = item['id'];
+          final name = (item['name'] as String?)?.toLowerCase() ?? '';
+
+          // Filter out invalid items (like null placeholders from Spotify API)
+          if (id == null || name.trim().isEmpty) return false;
+
+          return !name.contains('spotify sessions') &&
+              !name.contains('spotify singles');
+        })
+        .map(_sanitizeData)
+        .toList();
   }
 
   Map<String, dynamic> _sanitizeData(Map<String, dynamic> data) {
     final sanitized = Map<String, dynamic>.from(data);
-    
+
     if (sanitized['name'] is String) {
-      sanitized['name'] = (sanitized['name'] as String).replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer');
+      sanitized['name'] = (sanitized['name'] as String).replaceAll(
+        RegExp(r'Spotify', caseSensitive: false),
+        'PPPlayer',
+      );
     }
     if (sanitized['description'] is String) {
       sanitized['description'] = (sanitized['description'] as String)
@@ -552,61 +625,74 @@ class SpotifyClient {
           .replaceAll(RegExp(r'<[^>]*>', multiLine: true), '');
     }
     if (sanitized['message'] is String) {
-      sanitized['message'] = (sanitized['message'] as String).replaceAll(RegExp(r'Spotify', caseSensitive: false), 'PPPlayer');
+      sanitized['message'] = (sanitized['message'] as String).replaceAll(
+        RegExp(r'Spotify', caseSensitive: false),
+        'PPPlayer',
+      );
     }
-    
+
     return sanitized;
   }
 
-  Future<List<Map<String, dynamic>>> _enrichPlaylistsWithCollage(List<Map<String, dynamic>> playlists) async {
-    return await Future.wait(playlists.map((playlist) async {
-      try {
-        final ownerId = playlist['owner']?['id'] as String?;
-        if (ownerId == 'spotify') {
-          final playlistId = playlist['id'] as String;
-          // Fetch up to 3 tracks to create a collage cover
-          final tracks = await getPlaylistTracks(playlistId, limit: 3);
-          final trackImages = tracks
-              .map((t) => t.albumImage)
-              .whereType<String>()
-              .take(3)
-              .toList();
-              
-          if (trackImages.isNotEmpty) {
-            playlist['images'] = trackImages.map((url) => {'url': url}).toList();
+  Future<List<Map<String, dynamic>>> _enrichPlaylistsWithCollage(
+    List<Map<String, dynamic>> playlists,
+  ) async {
+    return await Future.wait(
+      playlists.map((playlist) async {
+        try {
+          final ownerId = playlist['owner']?['id'] as String?;
+          if (ownerId == 'spotify') {
+            final playlistId = playlist['id'] as String;
+            // Fetch up to 3 tracks to create a collage cover
+            final tracks = await getPlaylistTracks(playlistId, limit: 3);
+            final trackImages =
+                tracks
+                    .map((t) => t.albumImage)
+                    .whereType<String>()
+                    .take(3)
+                    .toList();
+
+            if (trackImages.isNotEmpty) {
+              playlist['images'] =
+                  trackImages.map((url) => {'url': url}).toList();
+            }
           }
+        } catch (e) {
+          if (e is SpotifyAuthException) rethrow;
+          // Fallback to original image
         }
-      } catch (e) {
-        if (e is SpotifyAuthException) rethrow;
-        // Fallback to original image
-      }
-      return playlist;
-    }));
+        return playlist;
+      }),
+    );
   }
 }
 
 final spotifyClientProvider = Provider<SpotifyClient>((ref) {
   final market = ref.watch(selectedCountryProvider);
   final dio = Dio();
-  
+
   if (kDebugMode) {
-    dio.interceptors.add(LogInterceptor(
-      requestHeader: true,
-      requestBody: false, // Security: redact credentials
-      responseHeader: false,
-      responseBody: false, // Security: redact tokens
-      error: true,
-    ));
+    dio.interceptors.add(
+      LogInterceptor(
+        requestHeader: true,
+        requestBody: false, // Security: redact credentials
+        responseHeader: false,
+        responseBody: false, // Security: redact tokens
+        error: true,
+      ),
+    );
   }
-  
+
   final metrics = ref.watch(cacheMetricsProvider);
-  dio.interceptors.add(InterceptorsWrapper(
-    onRequest: (options, handler) {
-      metrics.spotifyRequests++;
-      handler.next(options);
-    }
-  ));
-  
+  dio.interceptors.add(
+    InterceptorsWrapper(
+      onRequest: (options, handler) {
+        metrics.spotifyRequests++;
+        handler.next(options);
+      },
+    ),
+  );
+
   final authHandler = ref.watch(spotifyAuthHandlerProvider(dio));
   return SpotifyClient(dio, authHandler, market: market);
 });
@@ -618,7 +704,7 @@ class CategoryDefinition {
     required this.searchQueries,
     required this.iconUrl,
   });
-  
+
   final String id;
   final String label;
   final List<String> searchQueries;
@@ -627,6 +713,8 @@ class CategoryDefinition {
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': label,
-    'icons': [{'url': iconUrl}],
+    'icons': [
+      {'url': iconUrl},
+    ],
   };
 }

@@ -71,7 +71,10 @@ class PlaybackStatus {
       hasVideo: hasVideo ?? this.hasVideo,
       isIFrameMode: isIFrameMode ?? this.isIFrameMode,
       activeVideoId: activeVideoId ?? this.activeVideoId,
-      error: clearError ? null : (identical(error, _sentinel) ? this.error : error as String?),
+      error:
+          clearError
+              ? null
+              : (identical(error, _sentinel) ? this.error : error as String?),
       volume: volume ?? this.volume,
       speed: speed ?? this.speed,
       generation: generation ?? this.generation,
@@ -79,7 +82,8 @@ class PlaybackStatus {
   }
 
   @override
-  String toString() => 'PlaybackStatus(state: $state, position: $position, iframe: $isIFrameMode)';
+  String toString() =>
+      'PlaybackStatus(state: $state, position: $position, iframe: $isIFrameMode)';
 }
 
 const Object _sentinel = Object();

@@ -59,9 +59,7 @@ void main() async {
 
   // Initialize the container first (needed by builder)
   globalContainer = ProviderContainer(
-    overrides: [
-      appDatabaseProvider.overrideWithValue(appDatabase),
-    ],
+    overrides: [appDatabaseProvider.overrideWithValue(appDatabase)],
   );
 
   // Configure AudioSession for background playback & audio focus
@@ -70,7 +68,7 @@ void main() async {
 
   // Initialize the audio handler bridge
   final PpPlayerAudioHandler handler;
-  
+
   if (!kIsWeb && Platform.isMacOS) {
     // macOS: WebKit provides its own Now Playing integration for the YouTube iframe.
     // If we register audio_service, it creates a duplicate card in the Control Center.
@@ -79,14 +77,12 @@ void main() async {
     handler = PpPlayerAudioHandler(() => globalContainer);
   } else {
     handler = await AudioService.init(
-      builder: () => PpPlayerAudioHandler(
-        () => globalContainer,
-      ),
+      builder: () => PpPlayerAudioHandler(() => globalContainer),
       config: const AudioServiceConfig(
         androidNotificationChannelId: 'com.ppplayer.app.playback',
         androidNotificationChannelName: 'Music Playback',
         androidNotificationOngoing: true,
-        androidStopForegroundOnPause: true, 
+        androidStopForegroundOnPause: true,
         androidNotificationIcon: 'mipmap/ic_launcher',
         androidResumeOnClick: true,
       ),
@@ -105,12 +101,12 @@ void main() async {
 
   // Initialize background media sync service
   globalContainer.read(mediaSyncServiceProvider);
-  
+
   // Initialize native dock menu service for macOS
   if (!kIsWeb && Platform.isMacOS) {
     globalContainer.read(dockMenuServiceProvider);
   }
-  
+
   if (kDebugMode) {
     globalContainer.read(cacheMetricsProvider).startLogging();
   }
@@ -147,8 +143,8 @@ class AppScrollBehavior extends MaterialScrollBehavior {
 
   @override
   Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.trackpad,
-      };
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.trackpad,
+  };
 }

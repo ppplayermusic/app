@@ -60,7 +60,8 @@ class PlaybackService {
   /// Gets recommendations for high-level radio.
   Future<List<Track>> getRadioTracks(String artistId) async {
     try {
-      final cacheResult = await _spotifyRepo.watchRecommendations(seedArtistId: artistId).first;
+      final cacheResult =
+          await _spotifyRepo.watchRecommendations(seedArtistId: artistId).first;
       return cacheResult.data;
     } catch (_) {
       return [];
@@ -71,10 +72,14 @@ class PlaybackService {
   final Map<String, List<ResolvedVideoCandidate>> _prefetchedCandidates = {};
 
   /// Resolves video candidates for a track.
-  Future<List<ResolvedVideoCandidate>> resolveCandidates(Track track, String? regionCode) async {
+  Future<List<ResolvedVideoCandidate>> resolveCandidates(
+    Track track,
+    String? regionCode,
+  ) async {
     // Check 10-minute negative cache
     if (_negativeCache.containsKey(track.spotifyId)) {
-      if (DateTime.now().difference(_negativeCache[track.spotifyId]!) < const Duration(minutes: 10)) {
+      if (DateTime.now().difference(_negativeCache[track.spotifyId]!) <
+          const Duration(minutes: 10)) {
         _metrics.youtubeNegativeCacheHits++;
         return [];
       } else {

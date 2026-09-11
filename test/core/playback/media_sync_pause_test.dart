@@ -97,7 +97,7 @@ void main() {
                 .parameters['videoId'],
             expectedId,
           );
-          
+
           if (entry == 'restore') {
             expect(
               renderer.commands

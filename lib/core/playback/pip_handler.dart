@@ -9,19 +9,25 @@ class PipHandler {
   static bool _isActivityStopped = false;
   static bool get isActivityStopped => _isActivityStopped;
   static bool get isInPipMode => _isInPipMode;
-  
+
   static final List<void Function(bool)> _pipModeListeners = [];
   static final List<void Function()> _activityStoppedListeners = [];
   static final List<void Function()> _activityStartedListeners = [];
 
-  static void addPipModeListener(void Function(bool) listener) => _pipModeListeners.add(listener);
-  static void removePipModeListener(void Function(bool) listener) => _pipModeListeners.remove(listener);
+  static void addPipModeListener(void Function(bool) listener) =>
+      _pipModeListeners.add(listener);
+  static void removePipModeListener(void Function(bool) listener) =>
+      _pipModeListeners.remove(listener);
 
-  static void addActivityStoppedListener(void Function() listener) => _activityStoppedListeners.add(listener);
-  static void removeActivityStoppedListener(void Function() listener) => _activityStoppedListeners.remove(listener);
+  static void addActivityStoppedListener(void Function() listener) =>
+      _activityStoppedListeners.add(listener);
+  static void removeActivityStoppedListener(void Function() listener) =>
+      _activityStoppedListeners.remove(listener);
 
-  static void addActivityStartedListener(void Function() listener) => _activityStartedListeners.add(listener);
-  static void removeActivityStartedListener(void Function() listener) => _activityStartedListeners.remove(listener);
+  static void addActivityStartedListener(void Function() listener) =>
+      _activityStartedListeners.add(listener);
+  static void removeActivityStartedListener(void Function() listener) =>
+      _activityStartedListeners.remove(listener);
 
   static void init() {
     if (!kIsWeb && Platform.isAndroid) {
@@ -29,23 +35,29 @@ class PipHandler {
         final ts = DateTime.now().toIso8601String();
         if (call.method == 'onPipModeChanged') {
           _isInPipMode = call.arguments as bool;
-          debugPrint('$ts PipHandler: onPipModeChanged=$_isInPipMode activityStopped=$_isActivityStopped');
+          debugPrint(
+            '$ts PipHandler: onPipModeChanged=$_isInPipMode activityStopped=$_isActivityStopped',
+          );
           for (final l in _pipModeListeners) {
             l(_isInPipMode);
           }
         } else if (call.method == 'onActivityStopped') {
           _isActivityStopped = true;
           MediaKitPlaybackEngine.isActivityStopped = true;
-          debugPrint('$ts PipHandler: onActivityStopped '
-                    '(isActivityStopped=$_isActivityStopped isPipMode=$_isInPipMode)');
+          debugPrint(
+            '$ts PipHandler: onActivityStopped '
+            '(isActivityStopped=$_isActivityStopped isPipMode=$_isInPipMode)',
+          );
           for (final l in _activityStoppedListeners) {
             l();
           }
         } else if (call.method == 'onActivityStarted') {
           _isActivityStopped = false;
           MediaKitPlaybackEngine.isActivityStopped = false;
-          debugPrint('$ts PipHandler: onActivityStarted '
-                    '(isActivityStopped=$_isActivityStopped isPipMode=$_isInPipMode)');
+          debugPrint(
+            '$ts PipHandler: onActivityStarted '
+            '(isActivityStopped=$_isActivityStopped isPipMode=$_isInPipMode)',
+          );
           for (final l in _activityStartedListeners) {
             l();
           }

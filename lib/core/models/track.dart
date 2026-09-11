@@ -3,11 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'track.freezed.dart';
 part 'track.g.dart';
 
-enum QueueItemOrigin {
-  context,
-  user,
-  autoplay,
-}
+enum QueueItemOrigin { context, user, autoplay }
 
 @freezed
 abstract class Track with _$Track {
@@ -54,15 +50,26 @@ abstract class Track with _$Track {
     return Track(
       spotifyId: (json['id'] as String?) ?? '',
       name: (json['name'] as String?) ?? 'Unknown Title',
-      artistId: artists.isNotEmpty
-          ? artists.map((a) => (a is Map ? a['id']?.toString() : null) ?? '').where((id) => id.isNotEmpty).join(',')
-          : '',
-      artistName: artists.isNotEmpty
-          ? artists.map((a) => (a is Map ? a['name']?.toString() : null) ?? '').where((n) => n.isNotEmpty).join(', ')
-          : 'Unknown Artist',
+      artistId:
+          artists.isNotEmpty
+              ? artists
+                  .map((a) => (a is Map ? a['id']?.toString() : null) ?? '')
+                  .where((id) => id.isNotEmpty)
+                  .join(',')
+              : '',
+      artistName:
+          artists.isNotEmpty
+              ? artists
+                  .map((a) => (a is Map ? a['name']?.toString() : null) ?? '')
+                  .where((n) => n.isNotEmpty)
+                  .join(', ')
+              : 'Unknown Artist',
       albumId: album['id']?.toString(),
       albumName: album['name']?.toString(),
-      albumImage: images.isNotEmpty && images[0] is Map ? (images[0] as Map)['url']?.toString() : null,
+      albumImage:
+          images.isNotEmpty && images[0] is Map
+              ? (images[0] as Map)['url']?.toString()
+              : null,
       durationMs: json['duration_ms'] as int?,
     );
   }

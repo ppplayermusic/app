@@ -22,7 +22,7 @@ void main() {
 
   test('Concurrent requests for the same key are deduplicated', () async {
     int fetchCount = 0;
-    
+
     Future<String> fetch() async {
       fetchCount++;
       await Future.delayed(const Duration(milliseconds: 50));
@@ -30,23 +30,25 @@ void main() {
     }
 
     final futures = List.generate(10, (_) {
-      return repository.watchOrFetch<String>(
-        key: 'dedup_test',
-        resourceType: ResourceType.artist,
-        fetch: fetch,
-        decode: (json) => json,
-        encode: (data) => data,
-      ).first;
+      return repository
+          .watchOrFetch<String>(
+            key: 'dedup_test',
+            resourceType: ResourceType.artist,
+            fetch: fetch,
+            decode: (json) => json,
+            encode: (data) => data,
+          )
+          .first;
     });
 
     final results = await Future.wait(futures);
     expect(results.length, 10);
     expect(fetchCount, 1);
   });
-  
+
   test('Failed futures are removed from _inFlight', () async {
     int fetchCount = 0;
-    
+
     Future<String> fetch() async {
       fetchCount++;
       await Future.delayed(const Duration(milliseconds: 10));
@@ -54,26 +56,30 @@ void main() {
     }
 
     try {
-      await repository.watchOrFetch<String>(
-        key: 'fail_test',
-        resourceType: ResourceType.artist,
-        fetch: fetch,
-        decode: (json) => json,
-        encode: (data) => data,
-      ).first;
+      await repository
+          .watchOrFetch<String>(
+            key: 'fail_test',
+            resourceType: ResourceType.artist,
+            fetch: fetch,
+            decode: (json) => json,
+            encode: (data) => data,
+          )
+          .first;
     } catch (_) {}
 
     expect(fetchCount, 1);
 
     // Second fetch should be allowed
     try {
-      await repository.watchOrFetch<String>(
-        key: 'fail_test',
-        resourceType: ResourceType.artist,
-        fetch: fetch,
-        decode: (json) => json,
-        encode: (data) => data,
-      ).first;
+      await repository
+          .watchOrFetch<String>(
+            key: 'fail_test',
+            resourceType: ResourceType.artist,
+            fetch: fetch,
+            decode: (json) => json,
+            encode: (data) => data,
+          )
+          .first;
     } catch (_) {}
 
     expect(fetchCount, 2);

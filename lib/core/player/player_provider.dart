@@ -139,7 +139,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
         'track=${state.currentTrack?.spotifyId}',
       );
       if (state.isPlaying && status?.isIFrameMode == true) {
-        if (!BackgroundPlaybackExperiment.enabled && defaultTargetPlatform != TargetPlatform.android) {
+        if (!BackgroundPlaybackExperiment.enabled &&
+            defaultTargetPlatform != TargetPlatform.android) {
           debugPrint(
             '$ts PlayerNotifier: pausing via onActivityStopped (caller=lifecycle/lock-screen)',
           );
@@ -405,7 +406,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
       if (candidates.isNotEmpty) {
         _currentCandidates = candidates;
         _currentCandidateIndex = 0;
-        await _attemptCurrentCandidate(myGen, targetTrack, q, position: position);
+        await _attemptCurrentCandidate(
+          myGen,
+          targetTrack,
+          q,
+          position: position,
+        );
       } else {
         await _controller.stop();
         if (_disposed || myGen != _playbackGeneration) return;

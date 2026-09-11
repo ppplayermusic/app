@@ -20,51 +20,61 @@ void main() {
     await db.close();
   });
 
-  test('Fresh repository/container + reopened DB persistence verification', () async {
-    final mockSpotify = MockSpotifyClient();
-    
-    // Setup first instance
-    final container1 = ProviderContainer(
-      overrides: [
-        appDatabaseProvider.overrideWithValue(db),
-        spotifyClientProvider.overrideWithValue(mockSpotify),
-      ],
-    );
+  test(
+    'Fresh repository/container + reopened DB persistence verification',
+    () async {
+      final mockSpotify = MockSpotifyClient();
 
-    when(mockSpotify.getArtist('test_artist_1'))
-        .thenAnswer((_) async => {'id': 'test_artist_1', 'name': 'Mock Artist'});
+      // Setup first instance
+      final container1 = ProviderContainer(
+        overrides: [
+          appDatabaseProvider.overrideWithValue(db),
+          spotifyClientProvider.overrideWithValue(mockSpotify),
+        ],
+      );
 
-    final repo1 = container1.read(spotifyRepositoryProvider);
-    
-    // Populate cache
-    final data1 = await repo1.watchArtist('test_artist_1').firstWhere((r) => r.data.isNotEmpty);
-    expect(data1.data['name'], 'Mock Artist');
-    
-    // Verify network call was made
-    verify(mockSpotify.getArtist('test_artist_1')).called(1);
+      when(
+        mockSpotify.getArtist('test_artist_1'),
+      ).thenAnswer((_) async => {'id': 'test_artist_1', 'name': 'Mock Artist'});
 
-    // Dispose first instance (simulates memory clearing)
-    container1.dispose();
+      final repo1 = container1.read(spotifyRepositoryProvider);
 
-    // Setup second instance with SAME database
-    final container2 = ProviderContainer(
-      overrides: [
-        appDatabaseProvider.overrideWithValue(db), // Same DB instance (simulates persistent storage)
-        spotifyClientProvider.overrideWithValue(mockSpotify),
-      ],
-    );
+      // Populate cache
+      final data1 = await repo1
+          .watchArtist('test_artist_1')
+          .firstWhere((r) => r.data.isNotEmpty);
+      expect(data1.data['name'], 'Mock Artist');
 
-    final repo2 = container2.read(spotifyRepositoryProvider);
+      // Verify network call was made
+      verify(mockSpotify.getArtist('test_artist_1')).called(1);
 
-    // Fetch same resource
-    final data2 = await repo2.watchArtist('test_artist_1').firstWhere((r) => r.data.isNotEmpty);
-    
-    // Verify it was returned
-    expect(data2.data['name'], 'Mock Artist');
+      // Dispose first instance (simulates memory clearing)
+      container1.dispose();
 
-    // Verify NO additional network call was made! (L2 Hit)
-    verifyNever(mockSpotify.getArtist('test_artist_1'));
-    
-    container2.dispose();
-  });
+      // Setup second instance with SAME database
+      final container2 = ProviderContainer(
+        overrides: [
+          appDatabaseProvider.overrideWithValue(
+            db,
+          ), // Same DB instance (simulates persistent storage)
+          spotifyClientProvider.overrideWithValue(mockSpotify),
+        ],
+      );
+
+      final repo2 = container2.read(spotifyRepositoryProvider);
+
+      // Fetch same resource
+      final data2 = await repo2
+          .watchArtist('test_artist_1')
+          .firstWhere((r) => r.data.isNotEmpty);
+
+      // Verify it was returned
+      expect(data2.data['name'], 'Mock Artist');
+
+      // Verify NO additional network call was made! (L2 Hit)
+      verifyNever(mockSpotify.getArtist('test_artist_1'));
+
+      container2.dispose();
+    },
+  );
 }

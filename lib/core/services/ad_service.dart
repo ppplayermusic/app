@@ -7,12 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AdService {
   AdService() {
     // Defer Ad initialization to reduce startup pressure on Android.
-    _initializationFuture = Future.delayed(const Duration(seconds: 15), () async {
-      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-        return MobileAds.instance.initialize();
-      }
-      return InitializationStatus({});
-    });
+    _initializationFuture = Future.delayed(
+      const Duration(seconds: 15),
+      () async {
+        if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+          return MobileAds.instance.initialize();
+        }
+        return InitializationStatus({});
+      },
+    );
   }
 
   late final Future<InitializationStatus> _initializationFuture;
@@ -52,19 +55,22 @@ class AdService {
         'title': 'Premium Headphones',
         'subtitle': 'Experience pure sound with NoiseCancelling 3.0',
         'cta': 'Shop now',
-        'image': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
+        'image':
+            'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
       },
       {
         'title': 'Artist Spotlight: Wavey',
         'subtitle': 'Check out the new album "Ocean Drift"',
         'cta': 'Listen',
-        'image': 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200',
+        'image':
+            'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200',
       },
-       {
+      {
         'title': 'Coffee & Lo-fi',
         'subtitle': 'Relax with our curated workstation playlist.',
         'cta': 'Explore',
-        'image': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200',
+        'image':
+            'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200',
       },
     ];
   }

@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audio_service/audio_service.dart';
 import '../cache/image_cache_manager.dart';
@@ -18,18 +17,14 @@ class MediaSyncService {
 
   void _init() {
     // Listen to playback status and update system media controls
-    _subscription = ref.listen(
-      playbackStatusProvider,
-      (previous, next) {
-        switch (next) {
-          case AsyncData(:final value):
-            _handleStatusUpdate(value);
-          default:
-            break;
-        }
-      },
-      fireImmediately: true,
-    );
+    _subscription = ref.listen(playbackStatusProvider, (previous, next) {
+      switch (next) {
+        case AsyncData(:final value):
+          _handleStatusUpdate(value);
+        default:
+          break;
+      }
+    }, fireImmediately: true);
   }
 
   engine.PlaybackStatus? _lastStatus;
@@ -60,12 +55,14 @@ class MediaSyncService {
     final now = DateTime.now();
     final stateChanged = _lastStatus?.state != currentStatus.state;
     final playingChanged = _lastStatus?.isPlaying != currentStatus.isPlaying;
-    
+
     // Only update OS if state/playing changed OR if we haven't updated for 1 second
-    if (stateChanged || playingChanged || now.difference(_lastUpdateTime).inSeconds >= 1) {
+    if (stateChanged ||
+        playingChanged ||
+        now.difference(_lastUpdateTime).inSeconds >= 1) {
       _lastUpdateTime = now;
       _lastStatus = currentStatus;
-      
+
       handler.updatePlaybackState(
         playing: currentStatus.isPlaying,
         position: currentStatus.position,
@@ -103,10 +100,14 @@ class MediaSyncService {
   ) async {
     try {
       // 1. Check if already cached locally
-      final fileInfo = await PPImageCacheManager.instance.getFileFromCache(artworkUrl);
+      final fileInfo = await PPImageCacheManager.instance.getFileFromCache(
+        artworkUrl,
+      );
       if (fileInfo != null) {
         if (_lastTrackId == trackId) {
-          ref.read(audioHandlerProvider).updateMetadata(
+          ref
+              .read(audioHandlerProvider)
+              .updateMetadata(
                 id: track.id,
                 title: track.title,
                 artist: track.artist ?? '',
@@ -120,9 +121,11 @@ class MediaSyncService {
 
       // 2. If not yet cached, fetch and save to cache
       final file = await PPImageCacheManager.instance.getSingleFile(artworkUrl);
-      
+
       if (file.existsSync() && _lastTrackId == trackId) {
-        ref.read(audioHandlerProvider).updateMetadata(
+        ref
+            .read(audioHandlerProvider)
+            .updateMetadata(
               id: track.id,
               title: track.title,
               artist: track.artist ?? '',

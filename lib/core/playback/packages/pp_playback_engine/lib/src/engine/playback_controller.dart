@@ -16,13 +16,13 @@ abstract class PlaybackController {
   Future<void> seekTo(Duration position);
   Future<void> setVolume(double volume);
   Future<void> setSpeed(double speed);
-  
+
   /// A platform-specific renderer (e.g. VideoController for media_kit)
   dynamic get renderer;
-  
+
   YoutubePlayerController? get youtubeController;
-  
+
   Future<void> prepare(PlaybackTrack track, {Duration? position});
-  
+
   void dispose();
 }

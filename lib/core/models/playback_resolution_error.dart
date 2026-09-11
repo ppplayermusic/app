@@ -5,7 +5,7 @@ enum PlaybackResolutionError {
   candidateRejected,
   timeout,
   networkFailure,
-  allCandidatesExhausted
+  allCandidatesExhausted,
 }
 
 extension PlaybackResolutionErrorExtension on PlaybackResolutionError {

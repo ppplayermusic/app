@@ -28,17 +28,17 @@ extension TrackToPlayback on Track {
 /// The primary playback controller used by the app.
 final playbackControllerProvider = Provider<PlaybackController>((ref) {
   final PlaybackController engine;
-  
+
   if (defaultTargetPlatform == TargetPlatform.android) {
     engine = HybridPlaybackEngine();
   } else {
     engine = MediaKitPlaybackEngine();
   }
-  
+
   ref.onDispose(() {
     engine.dispose();
   });
-  
+
   return engine;
 });
 
