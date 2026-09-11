@@ -8,8 +8,16 @@ class AppDelegate: FlutterAppDelegate {
   private var isPlaying = false
   private var isShuffle = false
   private var repeatMode = "none"
+  private var activityToken: NSObjectProtocol?
+
 
   override func applicationDidFinishLaunching(_ notification: Notification) {
+    // Prevent App Nap so the next song can start automatically when minimized
+    activityToken = ProcessInfo.processInfo.beginActivity(
+      options: .userInitiatedAllowingIdleSystemSleep,
+      reason: "Continuous background audio playback"
+    )
+
     if let controller = mainFlutterWindow?.contentViewController as? FlutterViewController {
       methodChannel = FlutterMethodChannel(name: "com.ppplayer/dock_menu", binaryMessenger: controller.engine.binaryMessenger)
       
