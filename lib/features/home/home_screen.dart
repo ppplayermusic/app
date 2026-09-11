@@ -665,8 +665,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               }
 
                               final trackIndex = index > 4 ? index - 1 : index;
-                              if (trackIndex >= tracks.length)
+                              if (trackIndex >= tracks.length) {
                                 return const SizedBox.shrink();
+                              }
 
                               final track = tracks[trackIndex];
                               return _AlbumCard(

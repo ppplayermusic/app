@@ -533,8 +533,9 @@ class _TrackResults extends ConsumerWidget {
         }
 
         final trackIndex = i - (i / 9).floor() - 1;
-        if (trackIndex >= tracks.length || trackIndex < 0)
+        if (trackIndex >= tracks.length || trackIndex < 0) {
           return const SizedBox.shrink();
+        }
 
         return TrackTile(
               track: tracks[trackIndex],
@@ -576,8 +577,9 @@ class _ArtistResults extends ConsumerWidget {
         }
 
         final artistIndex = i - (i / 9).floor();
-        if (artistIndex >= items.length || artistIndex < 0)
+        if (artistIndex >= items.length || artistIndex < 0) {
           return const SizedBox.shrink();
+        }
 
         final a = items[artistIndex] as Map<String, dynamic>;
         final images = (a['images'] as List?) ?? [];

@@ -211,8 +211,9 @@ class TrackTile extends ConsumerStatefulWidget {
                                               playlists[i].id,
                                               track.spotifyId,
                                             );
-                                            if (context.mounted)
+                                            if (context.mounted) {
                                               Navigator.of(context).pop();
+                                            }
                                             if (context.mounted) {
                                               ScaffoldMessenger.of(
                                                 context,
