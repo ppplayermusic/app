@@ -175,7 +175,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -k "" $KEYCHAIN_PATH
           
           # Set as default to ensure codesign picks it up
-          security list-keychains -d user -s $KEYCHAIN_PATH
+          security list-keychains -d user -s $KEYCHAIN_PATH $(security list-keychains -d user | tr -d '"')
 
       - name: Configure Xcode for Distribution Signing
         run: |
