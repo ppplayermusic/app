@@ -2,17 +2,41 @@ name: PPPlayer Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   validate-and-test:
     name: Validate Version & Run Tests
     runs-on: ubuntu-latest
+    outputs:
+      is_new_version: ${{ steps.version_check.outputs.is_new_version }}
+      version: ${{ steps.version_check.outputs.version }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Check for New Version
+        id: version_check
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //g' | tr -d ' ' | tr -d '\r' | awk -F'+' '{print $1}')
+          TAG="v$VERSION"
+          echo "version=$TAG" >> $GITHUB_OUTPUT
+          
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+             echo "Manual trigger. Proceeding with build."
+             echo "is_new_version=true" >> $GITHUB_OUTPUT
+             exit 0
+          fi
+          
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG"; then
+            echo "Release $TAG already exists. Skipping."
+            echo "is_new_version=false" >> $GITHUB_OUTPUT
+          else
+            echo "New version detected: $TAG. Proceeding with release."
+            echo "is_new_version=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -33,40 +57,12 @@ jobs:
       - name: Run Tests
         run: flutter test
 
-      - name: Validate Version Matching
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          TAG_NAME="${GITHUB_REF_NAME}"
-          TAG_VERSION="${TAG_NAME#v}"
-          
-          # Remove suffix (e.g. -test, -rc1) to get base version string
-          BASE_VERSION=$(echo "$TAG_VERSION" | cut -d'-' -f1)
-          
-          # Extract pubspec.yaml version (format: 1.0.4+5)
-          PUBSPEC_VERSION_FULL=$(grep '^version: ' pubspec.yaml | cut -d' ' -f2 | tr -d '\r')
-          PUBSPEC_BASE_VERSION=$(echo "$PUBSPEC_VERSION_FULL" | cut -d'+' -f1)
-          PUBSPEC_BUILD_NUMBER=$(echo "$PUBSPEC_VERSION_FULL" | cut -d'+' -f2)
-          
-          if [ "$BASE_VERSION" != "$PUBSPEC_BASE_VERSION" ]; then
-             echo "::error::Tag version ($BASE_VERSION) does not match pubspec.yaml version ($PUBSPEC_BASE_VERSION)!"
-             exit 1
-          fi
-          
-          # Fetch highest build number from old ppplayer repo to ensure strict incrementation
-          echo "Fetching releases from old ppplayer repository..."
-          # Since it's public now, gh can read it without auth, but we pass GITHUB_TOKEN just in case
-          PREV_TAG=$(gh release list --repo ppplayermusic/ppplayer --exclude-drafts --limit 1 | awk '{print $1}' || echo "")
-          
-          if [ -n "$PREV_TAG" ]; then
-             # Try to parse build number from old release if we can, or just warn
-             echo "Highest previous release in root repo was $PREV_TAG. Please ensure versionCode $PUBSPEC_BUILD_NUMBER is strictly greater than the one in $PREV_TAG."
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   build-android:
     name: Build Android App
     needs: validate-and-test
+    if: needs.validate-and-test.outputs.is_new_version == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -130,6 +126,7 @@ jobs:
   build-macos:
     name: Build macOS App
     needs: validate-and-test
+    if: needs.validate-and-test.outputs.is_new_version == 'true'
     runs-on: macos-14
     steps:
       - name: Checkout Repository
@@ -260,9 +257,8 @@ jobs:
 
   publish-release:
     name: Publish GitHub Release
-    needs: [build-android, build-macos]
-    # IMPORTANT: Ensure this ONLY runs on actual tag pushes, not workflow_dispatch manual runs!
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: [validate-and-test, build-android, build-macos]
+    if: needs.validate-and-test.outputs.is_new_version == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write # Scope: only the publish job has write access to create the release
@@ -309,7 +305,7 @@ jobs:
       - name: Extract Release Notes from CHANGELOG.md
         id: extract_notes
         run: |
-          TAG_NAME="${GITHUB_REF_NAME}"
+          TAG_NAME="${{ needs.validate-and-test.outputs.version }}"
           TAG_VERSION="${TAG_NAME#v}"
           
           # Remove suffix (e.g. -test) for changelog extraction
@@ -328,7 +324,7 @@ jobs:
         id: prerelease_check
         run: |
           # If the tag contains a hyphen (e.g., v1.0.4-test), mark as prerelease
-          if [[ "${GITHUB_REF_NAME}" == *"-"* ]]; then
+          if [[ "${{ needs.validate-and-test.outputs.version }}" == *"-"* ]]; then
             echo "is_prerelease=true" >> $GITHUB_OUTPUT
             echo "make_latest=false" >> $GITHUB_OUTPUT
           else
@@ -339,7 +335,8 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ github.ref_name }}
+          tag_name: ${{ needs.validate-and-test.outputs.version }}
+          name: ${{ needs.validate-and-test.outputs.version }}
           body_path: extracted_notes.md
           prerelease: ${{ steps.prerelease_check.outputs.is_prerelease }}
           make_latest: ${{ steps.prerelease_check.outputs.make_latest }}
