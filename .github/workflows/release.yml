@@ -177,6 +177,11 @@ jobs:
           # Set as default to ensure codesign picks it up
           security list-keychains -d user -s $KEYCHAIN_PATH
 
+      - name: Configure Xcode for Distribution Signing
+        run: |
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development";/CODE_SIGN_IDENTITY = "Developer ID Application";/g' macos/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=macosx\*\]" = "Apple Development";/"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";/g' macos/Runner.xcodeproj/project.pbxproj
+
       - name: Build Release macOS
         run: flutter build macos --release
 
