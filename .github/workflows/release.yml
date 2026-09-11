@@ -217,10 +217,24 @@ jobs:
              exit 1
           fi
           
+          # Find the exact signing identity
+          IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | awk '{print $2}')
+          
+          if [ -z "$IDENTITY" ]; then
+             echo "::error::Developer ID Application certificate not found in keychain!"
+             exit 1
+          fi
+          
+          echo "Deep signing the App with Hardened Runtime and Secure Timestamp..."
+          codesign --force --deep --options runtime --timestamp --entitlements ../../../../../macos/Runner/Release.entitlements --sign "$IDENTITY" PPPlayer.app
+          
           # Create DMG
           npm install -g create-dmg
           create-dmg PPPlayer.app || true # Fallback if create-dmg fails on CI runner due to styling issues
           mv *.dmg PPPlayer-macOS.dmg || { echo "DMG creation failed"; exit 1; }
+          
+          echo "Signing the DMG..."
+          codesign --force --timestamp --sign "$IDENTITY" PPPlayer-macOS.dmg
           
           echo "Submitting DMG for notarization..."
           xcrun notarytool submit PPPlayer-macOS.dmg \
