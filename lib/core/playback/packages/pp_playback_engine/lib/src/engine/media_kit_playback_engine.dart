@@ -118,17 +118,17 @@ class MediaKitPlaybackEngine implements PlaybackController {
   PlaybackState? _intendedState;
 
   void _ensureMediaKitInitialized() {
-    if (_player != null) return;
-
-    try {
-      MediaKit.ensureInitialized();
-      _player = Player();
-      _videoController = VideoController(_player!);
-    } catch (e) {
-      debugPrint(
-        'MediaKitPlaybackEngine: Test environment detected, skipping MediaKit Player initialization.',
-      );
-      return;
+    if (_player == null) {
+      try {
+        MediaKit.ensureInitialized();
+        _player = Player();
+        _videoController = VideoController(_player!);
+      } catch (e) {
+        debugPrint(
+          'MediaKitPlaybackEngine: Test environment detected, skipping MediaKit Player initialization.',
+        );
+        return;
+      }
     }
 
     _subscriptions.addAll([
@@ -519,16 +519,25 @@ class MediaKitPlaybackEngine implements PlaybackController {
         .firstWhere((s) => s.state == PlaybackState.paused || s.state == PlaybackState.idle)
         .timeout(const Duration(seconds: 2));
 
+    if (!failOnTimeout) {
+      // Optimistically update the state so the UI and OS MediaSession reflect
+      // the paused state immediately, rather than waiting for the JS bridge
+      // (which may be suspended by the OS and never fire the event).
+      _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+    }
+
     if (_currentStatus.isIFrameMode) {
       _latePauseGeneration = _playGeneration;
       try {
-        await _youtubeController?.pauseVideo();
+        await _youtubeController?.pauseVideo().timeout(const Duration(seconds: 2));
       } catch (e) {
         debugPrint('MediaKitPlaybackEngine: pauseVideo failed/timed out: $e');
         if (failOnTimeout) {
           throw TimeoutException('Source pause failed (IFrame error)', const Duration(seconds: 2));
         }
-        _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+        if (_intendedState == PlaybackState.paused) {
+          _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+        }
         return;
       }
     } else {

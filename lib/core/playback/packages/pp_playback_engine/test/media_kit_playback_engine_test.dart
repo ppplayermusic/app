@@ -1,22 +1,62 @@
 import 'dart:async';
-import 'package:media_kit/media_kit.dart' show Player;
+import 'package:media_kit/media_kit.dart' show Player, PlayerStream;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pp_playback_engine/pp_playback_engine.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
 import 'fake_youtube_controller.dart';
 
+class FakePlayerStream extends Fake implements PlayerStream {
+  final _playingController = StreamController<bool>.broadcast();
+  final _positionController = StreamController<Duration>.broadcast();
+  final _durationController = StreamController<Duration>.broadcast();
+  final _bufferController = StreamController<Duration>.broadcast();
+  final _completedController = StreamController<bool>.broadcast();
+  final _errorController = StreamController<String>.broadcast();
+  final _bufferingController = StreamController<bool>.broadcast();
+
+  @override
+  Stream<bool> get playing => _playingController.stream;
+  @override
+  Stream<Duration> get position => _positionController.stream;
+  @override
+  Stream<Duration> get duration => _durationController.stream;
+  @override
+  Stream<Duration> get buffer => _bufferController.stream;
+  @override
+  Stream<bool> get completed => _completedController.stream;
+  @override
+  Stream<String> get error => _errorController.stream;
+  @override
+  Stream<bool> get buffering => _bufferingController.stream;
+}
+
 class FakeNativePlayer extends Fake implements Player {
   int plays = 0;
   int pauses = 0;
+  final fakeStream = FakePlayerStream();
+
+  @override
+  PlayerStream get stream => fakeStream;
+
   @override
   Future<void> play() async {
     plays++;
+    fakeStream._playingController.add(true);
   }
 
   @override
   Future<void> pause() async {
     pauses++;
+    fakeStream._playingController.add(false);
   }
+
+  @override
+  Future<void> stop() async {
+    fakeStream._playingController.add(false);
+  }
+
+  @override
+  Future<void> seek(Duration position) async {}
 
   @override
   Future<void> dispose() async {}
@@ -364,9 +404,20 @@ void main() {
       await tester.pump();
       controller.emitState(track.id, yt.PlayerState.playing);
       await tester.pump();
-      // Simulate stall: IFrame position has moved to 42 s.
-      // We fake this by reading what the engine exposes via FakeYoutubeController.currentTime (=12.0)
-      // then triggering the watchdog. The engine should load with startSeconds=12.0 (currentTime),
+      
+      // Progress position
+      await tester.pump(const Duration(seconds: 1));
+      
+      // Pause, then resume to arm the watchdog again for the same generation.
+      await engine.pause();
+      controller.emitState(track.id, yt.PlayerState.paused);
+      await tester.pump();
+      
+      // FakeYoutubeController.currentTime returns 12.0, so the confirmed position is 12s.
+      await engine.resume();
+      
+      // Simulate stall on resume: no playing event emitted.
+      // Watchdog should fire and load with startSeconds=12.0 (currentTime),
       // not 10.0 (the original startAt).
       await tester.pump(const Duration(seconds: 20));
       expect(controller.count('load'), 2);
@@ -442,8 +493,14 @@ void main() {
       final native = FakeNativePlayer();
       engine = MediaKitPlaybackEngine(nativePlayer: native);
       MediaKitPlaybackEngine.isActivityStopped = true;
+      
       await engine.resume();
+      
+      // Wait for the stream to update the engine state to playing
+      await Future.delayed(Duration.zero);
+      
       await engine.pause();
+      
       expect(native.plays, 1);
       expect(native.pauses, 1);
       expect(controller.count('play'), 0);
