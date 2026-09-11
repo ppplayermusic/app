@@ -37,8 +37,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
 
-  // Load environment variables
-  await dotenv.load(fileName: '.env');
+  // Load environment variables (wrap in try-catch in case it's missing)
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    debugPrint('Warning: .env file not found or could not be loaded. Relying on --dart-define or defaults.');
+  }
 
   // Request notification permissions for background service stability on Android 13+
   await _requestNotificationPermission();

@@ -4,6 +4,11 @@ All notable changes to PPPlayer will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-09-11
+
+### Fixed
+- Fixed a critical bug causing the app to crash on a blank screen on fresh installations due to a missing environment configuration file.
+
 ## [1.0.5] - 2026-09-11
 
 ### Fixed
