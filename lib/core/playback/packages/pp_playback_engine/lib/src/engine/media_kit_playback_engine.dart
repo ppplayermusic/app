@@ -775,8 +775,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
           _diag(
             'RENDERER gen=$generation position=$currentTime duration=$duration',
           );
-          final positionDuration = Duration(seconds: currentTime.toInt());
-          // Update the confirmed position for watchdog recovery \u2014
+          final positionDuration = Duration(milliseconds: (currentTime * 1000).toInt());
+          // Update the confirmed position for watchdog recovery —
           // validated by generation so stale polling cannot overwrite a newer attempt.
           if (_confirmedPositionGeneration == generation) {
             _confirmedPlaybackPosition = positionDuration;
@@ -784,7 +784,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
           _updateStatus(
             _currentStatus.copyWith(
               position: positionDuration,
-              duration: Duration(seconds: duration.toInt()),
+              duration: Duration(milliseconds: (duration * 1000).toInt()),
             ),
           );
         }

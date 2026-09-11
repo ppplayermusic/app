@@ -89,6 +89,7 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
         playing: playing,
         updatePosition: position,
         bufferedPosition: bufferedPosition,
+        speed: playing ? 1.0 : 0.0,
       ),
     );
   }
