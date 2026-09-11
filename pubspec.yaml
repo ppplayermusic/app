@@ -42,6 +42,8 @@ dependencies:
 
   pp_playback_engine:
     path: lib/core/playback/packages/pp_playback_engine
+  youtube_player_iframe:
+    path: lib/core/playback/packages/youtube_player_iframe_macos_patch/package
   flutter_secure_storage: ^11.0.0
   package_info_plus: ^10.2.1
 

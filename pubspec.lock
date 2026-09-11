@@ -1748,7 +1748,7 @@ packages:
     source: hosted
     version: "1.0.3"
   youtube_player_iframe:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "lib/core/playback/packages/youtube_player_iframe_macos_patch/package"
       relative: true
