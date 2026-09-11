@@ -82,31 +82,32 @@ void main() {
             }
           }
           final expectedId = entry == 'queue' ? 'videoBBBBBB' : 'videoAAAAAA';
+          expect(renderer.count('cue'), 0);
+          expect(renderer.count('load'), 0);
+          expect(renderer.count('play'), 0);
+
+          MediaKitPlaybackEngine.isActivityStopped = false;
+          notifier.resume();
+          await Future<void>(() {});
+
           expect(
             renderer.commands
-                .where((c) => c.name == 'cue')
+                .where((c) => c.name == 'load')
                 .last
                 .parameters['videoId'],
             expectedId,
           );
-          renderer.emitState(expectedId, yt.PlayerState.cued);
-          await Future<void>(() {});
-          expect(renderer.count('load'), 0);
-          expect(renderer.count('play'), 0);
+          
           if (entry == 'restore') {
-            expect(renderer.count('seek'), 0);
             expect(
               renderer.commands
-                  .where((c) => c.name == 'cue')
+                  .where((c) => c.name == 'load')
                   .last
                   .parameters['startSeconds'],
               5.0,
             );
           }
-          MediaKitPlaybackEngine.isActivityStopped = false;
-          notifier.resume();
-          await Future<void>(() {});
-          expect(renderer.count('play'), 1);
+          expect(renderer.count('play'), 0);
         } finally {
           subscription.close();
           container.dispose();

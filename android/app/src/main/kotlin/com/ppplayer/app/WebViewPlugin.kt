@@ -24,9 +24,12 @@ class WebViewPlugin : FlutterPlugin, MethodCallHandler {
             }
         }
         
-        fun sendStateChange(state: Int) {
+        fun sendStateChange(state: Int, commandId: Int) {
             mainHandler.post {
-                methodChannel?.invokeMethod("onStateChange", state)
+                methodChannel?.invokeMethod("onStateChange", mapOf(
+                    "state" to state,
+                    "commandId" to commandId
+                ))
             }
         }
         

@@ -63,6 +63,7 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
     required bool playing,
     required Duration position,
     required Duration bufferedPosition,
+    double speed = 1.0,
     AudioProcessingState processingState = AudioProcessingState.ready,
   }) {
     debugPrint(
@@ -89,7 +90,7 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
         playing: playing,
         updatePosition: position,
         bufferedPosition: bufferedPosition,
-        speed: playing ? 1.0 : 0.0,
+        speed: speed,
       ),
     );
   }

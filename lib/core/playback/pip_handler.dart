@@ -30,19 +30,25 @@ class PipHandler {
         if (call.method == 'onPipModeChanged') {
           _isInPipMode = call.arguments as bool;
           debugPrint('$ts PipHandler: onPipModeChanged=$_isInPipMode activityStopped=$_isActivityStopped');
-          for (final l in _pipModeListeners) l(_isInPipMode);
+          for (final l in _pipModeListeners) {
+            l(_isInPipMode);
+          }
         } else if (call.method == 'onActivityStopped') {
           _isActivityStopped = true;
           MediaKitPlaybackEngine.isActivityStopped = true;
           debugPrint('$ts PipHandler: onActivityStopped '
                     '(isActivityStopped=$_isActivityStopped isPipMode=$_isInPipMode)');
-          for (final l in _activityStoppedListeners) l();
+          for (final l in _activityStoppedListeners) {
+            l();
+          }
         } else if (call.method == 'onActivityStarted') {
           _isActivityStopped = false;
           MediaKitPlaybackEngine.isActivityStopped = false;
           debugPrint('$ts PipHandler: onActivityStarted '
                     '(isActivityStopped=$_isActivityStopped isPipMode=$_isInPipMode)');
-          for (final l in _activityStartedListeners) l();
+          for (final l in _activityStartedListeners) {
+            l();
+          }
         }
       });
     }
@@ -61,12 +67,16 @@ class PipHandler {
   @visibleForTesting
   static void simulateActivityStopped() {
     _isActivityStopped = true;
-    for (final l in _activityStoppedListeners) l();
+    for (final l in _activityStoppedListeners) {
+      l();
+    }
   }
 
   @visibleForTesting
   static void simulateActivityStarted() {
     _isActivityStopped = false;
-    for (final l in _activityStartedListeners) l();
+    for (final l in _activityStartedListeners) {
+      l();
+    }
   }
 }

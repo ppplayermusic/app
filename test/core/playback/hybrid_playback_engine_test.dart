@@ -41,7 +41,7 @@ class MockPlaybackEngine implements PlaybackController {
   }
   
   @override
-  Future<void> play(PlaybackTrack track) async {
+  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero}) async {
     callLog.add('play(${track.id})');
     updateStatus(_currentStatus.copyWith(state: PlaybackState.buffering));
     if (playCompleter != null) {
@@ -51,7 +51,7 @@ class MockPlaybackEngine implements PlaybackController {
   }
   
   @override
-  Future<void> pause({String caller = 'user'}) async {
+  Future<void> pause({String caller = 'user', bool failOnTimeout = false}) async {
     callLog.add('pause(caller: $caller)');
     if (pauseCompleter != null) {
       await pauseCompleter!.future;

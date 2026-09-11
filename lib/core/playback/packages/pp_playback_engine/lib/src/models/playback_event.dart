@@ -16,12 +16,14 @@ class PlaybackEvent {
   final PlaybackTrack? track;
   final Duration? position;
   final String? message;
+  final int? generation;
 
   const PlaybackEvent({
     required this.type,
     this.track,
     this.position,
     this.message,
+    this.generation,
   });
 
   @override

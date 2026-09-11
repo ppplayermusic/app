@@ -70,6 +70,7 @@ class MediaSyncService {
         playing: currentStatus.isPlaying,
         position: currentStatus.position,
         bufferedPosition: currentStatus.buffered,
+        speed: currentStatus.speed,
         processingState: _mapToAudioProcessingState(currentStatus.state),
       );
     }

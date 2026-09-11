@@ -78,8 +78,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
   void _armWatchdog(int generation, {required bool loading}) {
     _watchdogTimer?.cancel();
     _watchdogTimer = Timer(Duration(seconds: _recoveryUsed ? 10 : 20), () {
-      if (!_valid(generation) || _intendedState != PlaybackState.playing)
+      if (!_valid(generation) || _intendedState != PlaybackState.playing) {
         return;
+      }
       if (_currentStatus.state == PlaybackState.playing) return;
       if (!BackgroundPlaybackExperiment.enabled && isActivityStopped) return;
       if (_recoveryUsed) {
@@ -216,7 +217,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
       await _enterIFrameMode(track.id, generation: myGen);
     }
     
-    await _load(myGen, track.id, startSeconds: position?.inMilliseconds != null ? position!.inMilliseconds / 1000.0 : null);
+    final ss = position?.inMilliseconds != null ? position!.inMilliseconds / 1000.0 : null;
+    _currentStartSeconds = ss;
+    await _load(myGen, track.id, startSeconds: ss);
   }
 
   @override
@@ -262,6 +265,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
         hasVideo: true,
         // Pivot immediately so the UI builds the platform view
         isIFrameMode: true,
+        generation: myGen,
       ),
     );
 
@@ -400,6 +404,14 @@ class MediaKitPlaybackEngine implements PlaybackController {
               );
               return;
             }
+
+            _eventController.add(
+              PlaybackEvent(
+                type: PlaybackEventType.trackEnded,
+                track: _currentStatus.track,
+                generation: gen,
+              ),
+            );
           }
 
           if ((newState == PlaybackState.playing ||
@@ -630,7 +642,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
         await _dispatchIFramePlay(_playGeneration, 'resume');
       } else if (_valid(_playGeneration)) {
         _armWatchdog(_playGeneration, loading: true);
-        await _load(_playGeneration, _currentStatus.track!.id);
+        await _load(_playGeneration, _currentStatus.track!.id, startSeconds: _currentStartSeconds);
       }
     } else {
       await _player?.play();
@@ -742,8 +754,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
         'activityStopped=$isActivityStopped',
       );
     }
-    _currentStatus = status;
-    _statusController.add(status);
+    _currentStatus = status.copyWith(generation: _playGeneration);
+    _statusController.add(_currentStatus);
 
     // Manage IFrame position polling
     if (status.isIFrameMode && status.state == PlaybackState.playing) {

@@ -170,7 +170,7 @@ class CustomWebViewService : Service() {
                             }
 
                             function onPlayerStateChange(event) {
-                                NativeLog.onStateChange(event.data);
+                                NativeLog.onStateChange(event.data, currentCommandId);
                             }
 
                             function onPlayerError(event) {
@@ -328,9 +328,9 @@ class CustomWebViewService : Service() {
         }
 
         @JavascriptInterface
-        fun onStateChange(state: Int) {
-            Log.d(TAG, "JS onStateChange: $state")
-            WebViewPlugin.sendStateChange(state)
+        fun onStateChange(state: Int, commandId: Int) {
+            Log.d(TAG, "JS onStateChange: $state, commandId: $commandId")
+            WebViewPlugin.sendStateChange(state, commandId)
         }
 
         @JavascriptInterface

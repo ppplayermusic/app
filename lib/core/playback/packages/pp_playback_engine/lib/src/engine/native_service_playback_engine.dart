@@ -39,9 +39,18 @@ class NativeServicePlaybackEngine implements PlaybackController {
         debugPrint('NativeServicePlaybackEngine: Headless WebView Ready');
         break;
       case 'onStateChange':
-        final state = call.arguments as int;
+        final args = call.arguments as Map<dynamic, dynamic>;
+        final state = args['state'] as int;
+        final commandId = args['commandId'] as int;
         final newState = _mapYtState(state);
-        _updateStatus(_currentStatus.copyWith(state: newState));
+        _updateStatus(_currentStatus.copyWith(state: newState, generation: commandId));
+        if (newState == PlaybackState.ended && !_disposed) {
+          _eventController.add(PlaybackEvent(
+            type: PlaybackEventType.trackEnded,
+            track: _currentStatus.track,
+            generation: commandId,
+          ));
+        }
         break;
       case 'onError':
         final error = call.arguments as int;
@@ -150,7 +159,7 @@ class NativeServicePlaybackEngine implements PlaybackController {
         .timeout(const Duration(seconds: 2));
 
     try {
-      await _channel.invokeMethod('pauseVideo');
+      await _channel.invokeMethod('pauseVideo').timeout(const Duration(seconds: 2));
     } catch (e) {
       debugPrint('Error pausing video: $e');
       if (failOnTimeout) {

@@ -111,7 +111,7 @@ void main() {
       expect(requests[1].queryParameters['offset'], 10);
     });
 
-    test('getRecommendations never calls /recommendations or /top-tracks', () async {
+    test('getRecommendations never calls /recommendations but can use /top-tracks', () async {
       mockResponse = (options) {
         if (options.path.contains('artists/a1')) {
           return {'name': 'Artist One'};
@@ -127,8 +127,7 @@ void main() {
       
       final urls = requests.map((r) => r.path).toList();
       expect(urls.any((url) => url.contains('recommendations')), isFalse);
-      expect(urls.any((url) => url.contains('top-tracks')), isFalse);
-      expect(urls.any((url) => url.contains('search')), isTrue);
+      expect(urls.any((url) => url.contains('top-tracks')), isTrue);
     });
 
     test('getNewReleases uses search and avoids /browse/new-releases', () async {

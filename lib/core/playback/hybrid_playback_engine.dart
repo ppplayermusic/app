@@ -79,7 +79,7 @@ class HybridPlaybackEngine implements PlaybackController {
      if (_isTransferring) return;
      // Route completion through unified handler; don't let raw 'ended' propagate.
      if (status.state == PlaybackState.ended) {
-         _handleTrackCompletion(source, status.track);
+         _handleTrackCompletion(source, status.track, status.generation);
          return;
      }
      _updateStatus(status);
@@ -89,7 +89,7 @@ class HybridPlaybackEngine implements PlaybackController {
      if (event.type == PlaybackEventType.trackEnded) {
          // Route through unified handler — deduplication guards against both
          // the status path (background) and event path (foreground) firing.
-         _handleTrackCompletion(source, event.track);
+         _handleTrackCompletion(source, event.track, event.generation);
          return;
      }
      if (source == _owner) {
@@ -100,11 +100,16 @@ class HybridPlaybackEngine implements PlaybackController {
 
   /// Single authority for track-completion logic.
   /// Validates: active owner, track identity, and generation deduplication.
-  void _handleTrackCompletion(EngineOwner source, PlaybackTrack? completedTrack) {
+  void _handleTrackCompletion(EngineOwner source, PlaybackTrack? completedTrack, int? generation) {
       if (source != _owner) return;
       if (completedTrack == null || completedTrack.id != _currentTrack?.id) {
           _log('Completion rejected: track mismatch '
               '(completed=${completedTrack?.id}, current=${_currentTrack?.id})');
+          return;
+      }
+      final expectedGen = source == EngineOwner.foreground ? _activeForegroundGeneration : _activeBackgroundGeneration;
+      if (generation != null && expectedGen != null && generation != expectedGen) {
+          _log('Completion rejected: child generation mismatch (completed=$generation, expected=$expectedGen)');
           return;
       }
       if (_lastCompletedGeneration == _playGeneration) {
@@ -123,6 +128,7 @@ class HybridPlaybackEngine implements PlaybackController {
               type: PlaybackEventType.trackEnded,
               track: completedTrack,
           ));
+          _updateStatus(_currentStatus.copyWith(state: PlaybackState.ended));
       }
   }
 
@@ -133,6 +139,9 @@ class HybridPlaybackEngine implements PlaybackController {
   PlaybackController get _activeEngine => _owner == EngineOwner.foreground ? _foregroundEngine : _backgroundEngine;
   PlaybackController get _inactiveEngine => _owner == EngineOwner.foreground ? _backgroundEngine : _foregroundEngine;
 
+  int? _activeForegroundGeneration;
+  int? _activeBackgroundGeneration;
+
   Future<void> _initiateHandoff(EngineOwner targetOwner) async {
       if (_owner == targetOwner) return;
       if (_disposed) return;
@@ -140,6 +149,7 @@ class HybridPlaybackEngine implements PlaybackController {
       
       _handoffGeneration++;
       final myGen = _handoffGeneration;
+      final myPlayGen = _playGeneration;
       final myTrackId = _currentTrack!.id;
       
       _log('Initiating handoff to $targetOwner (gen: $myGen) intendedState: $_intendedState');
@@ -188,7 +198,8 @@ class HybridPlaybackEngine implements PlaybackController {
               // play() to avoid missing a fast state-change event.
               final playingFuture = destEngine.statusStream
                   .firstWhere((s) => s.state == PlaybackState.playing)
-                  .timeout(const Duration(seconds: 5));
+                  .timeout(const Duration(seconds: 5))
+                  .catchError((_) => const PlaybackStatus());
 
               await destEngine.play(_currentTrack!, startAt: pos);
 
@@ -198,25 +209,40 @@ class HybridPlaybackEngine implements PlaybackController {
               // Step 5: Wait for destination confirmation via the pre-registered future.
               if (destEngine.currentStatus.state != PlaybackState.playing) {
                   try {
-                      await playingFuture;
+                      final status = await playingFuture;
+                      if (status.state == PlaybackState.playing) {
+                          if (targetOwner == EngineOwner.foreground) {
+                              _activeForegroundGeneration = status.generation;
+                          } else {
+                              _activeBackgroundGeneration = status.generation;
+                          }
+                      }
                   } catch (_) {
                       _log('Timeout waiting for destination to play');
-                      _handoffGeneration++;
-                      _isTransferring = false;
+                      if (_handoffGeneration == myGen) {
+                          _handoffGeneration++;
+                          _isTransferring = false;
+                          // Guard rollback — only update intent if this specific
+                          // failed transfer is still current (no newer command arrived).
+                          if (_playGeneration == myPlayGen &&
+                              _intendedState == PlaybackState.playing) {
+                              _intendedState = PlaybackState.paused;
+                              _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+                          }
+                      }
                       try {
                           await destEngine.pause(caller: 'timeout_cleanup')
                               .timeout(const Duration(seconds: 2));
                       } catch (_) {
                           _log('Failed to pause destination during timeout cleanup');
                       }
-                      // Step 6: Guard rollback — only update intent if this specific
-                      // failed transfer is still current (no newer command arrived).
-                      if (_handoffGeneration == myGen + 1 &&
-                          _intendedState == PlaybackState.playing) {
-                          _intendedState = PlaybackState.paused;
-                          _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
-                      }
                       return;
+                  }
+              } else {
+                  if (targetOwner == EngineOwner.foreground) {
+                      _activeForegroundGeneration = destEngine.currentStatus.generation;
+                  } else {
+                      _activeBackgroundGeneration = destEngine.currentStatus.generation;
                   }
               }
           } else {
@@ -268,7 +294,32 @@ class HybridPlaybackEngine implements PlaybackController {
       _prewarmedTrack = null; // new track supersedes any prior pre-warm
       _intendedState = PlaybackState.playing;
       _inactiveEngine.stop();
+
+      final playingFuture = _activeEngine.statusStream
+          .firstWhere((s) => s.state == PlaybackState.playing)
+          .timeout(const Duration(seconds: 5))
+          .catchError((_) => const PlaybackStatus());
+
       await _activeEngine.play(track, startAt: startAt);
+
+      if (_activeEngine.currentStatus.state == PlaybackState.playing) {
+          if (_owner == EngineOwner.foreground) {
+              _activeForegroundGeneration = _activeEngine.currentStatus.generation;
+          } else {
+              _activeBackgroundGeneration = _activeEngine.currentStatus.generation;
+          }
+      } else {
+          playingFuture.then((status) {
+              if (status.state == PlaybackState.playing) {
+                  if (_owner == EngineOwner.foreground) {
+                      _activeForegroundGeneration = status.generation;
+                  } else {
+                      _activeBackgroundGeneration = status.generation;
+                  }
+              }
+          });
+      }
+
       // Pre-warm the inactive engine so it has the video cued and ready.
       // This drastically reduces handoff latency on minimize.
       _prewarmInactiveEngine(track);

@@ -347,6 +347,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
     List<Track>? queue,
     bool isRetry = false,
     String? contextArtistId,
+    Duration? position,
   }) async {
     if (!isRetry) {
       _prefetchedNextTrackForCurrentLoad = false;
@@ -404,7 +405,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       if (candidates.isNotEmpty) {
         _currentCandidates = candidates;
         _currentCandidateIndex = 0;
-        await _attemptCurrentCandidate(myGen, targetTrack, q);
+        await _attemptCurrentCandidate(myGen, targetTrack, q, position: position);
       } else {
         await _controller.stop();
         if (_disposed || myGen != _playbackGeneration) return;
@@ -424,8 +425,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
   Future<void> _attemptCurrentCandidate(
     int myGen,
     Track track,
-    List<Track> queue,
-  ) async {
+    List<Track> queue, {
+    Duration? position,
+  }) async {
     final candidate = _currentCandidates[_currentCandidateIndex];
     final service = ref.read(playbackServiceProvider);
 
@@ -454,7 +456,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
     await _controller.stop();
     if (_disposed || myGen != _playbackGeneration) return;
 
-    await _controller.play(newTrack.toPlaybackTrack());
+    await _controller.play(
+      newTrack.toPlaybackTrack(),
+      startAt: position ?? Duration.zero,
+    );
     if (_disposed || myGen != _playbackGeneration) return;
     _controller.setVolume(state.volume);
 
@@ -539,11 +544,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
     if (track == null) return;
 
     final position = state.position;
-    final preparation = playTrack(track, queue: state.playbackQueue.tracks);
+    final preparation = playTrack(
+      track,
+      queue: state.playbackQueue.tracks,
+      position: position,
+    );
     final generation = _playbackGeneration;
     await preparation;
     if (_disposed || generation != _playbackGeneration) return;
-    if (position > Duration.zero) await _controller.seekTo(position);
   }
 
   void togglePlay() {
