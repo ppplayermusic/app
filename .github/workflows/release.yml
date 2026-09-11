@@ -202,12 +202,12 @@ jobs:
       - name: Package DMG & Notarize
         working-directory: build/macos/Build/Products/Release
         env:
-          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
-          APPSTORE_API_ISSUER_ID: ${{ secrets.APPSTORE_API_ISSUER_ID }}
-          APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APP_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
         run: |
-          if [ -z "$APPSTORE_API_KEY_ID" ] || [ -z "$APPSTORE_API_ISSUER_ID" ] || [ -z "$APPSTORE_API_PRIVATE_KEY" ]; then
-             echo "::error::Notarization secrets missing. Strict signing requires APPSTORE_API_KEY_ID, APPSTORE_API_ISSUER_ID, and APPSTORE_API_PRIVATE_KEY."
+          if [ -z "$APPLE_ID" ] || [ -z "$APP_SPECIFIC_PASSWORD" ] || [ -z "$TEAM_ID" ]; then
+             echo "::error::Notarization secrets missing. Strict signing requires APPLE_ID, APP_SPECIFIC_PASSWORD, and TEAM_ID."
              exit 1
           fi
           
@@ -216,15 +216,11 @@ jobs:
           create-dmg PPPlayer.app || true # Fallback if create-dmg fails on CI runner due to styling issues
           mv *.dmg PPPlayer-macOS.dmg || { echo "DMG creation failed"; exit 1; }
           
-          # Prepare AuthKey.p8
-          AUTH_KEY_PATH=$RUNNER_TEMP/AuthKey_${APPSTORE_API_KEY_ID}.p8
-          echo -n "$APPSTORE_API_PRIVATE_KEY" | base64 --decode > $AUTH_KEY_PATH
-          
           echo "Submitting DMG for notarization..."
           xcrun notarytool submit PPPlayer-macOS.dmg \
-            --key "$AUTH_KEY_PATH" \
-            --key-id "$APPSTORE_API_KEY_ID" \
-            --issuer "$APPSTORE_API_ISSUER_ID" \
+            --apple-id "$APPLE_ID" \
+            --password "$APP_SPECIFIC_PASSWORD" \
+            --team-id "$TEAM_ID" \
             --wait
             
           echo "Stapling notarization ticket to DMG..."
