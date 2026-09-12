@@ -863,7 +863,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (_frozenPositionTicks >= _frozenTicksThreshold) {
           _diag(
             'RENDERER gen=$generation synthetic end-of-track: '
-            'pos=$currentTime dur=$duration frozen=${_frozenPositionTicks} ticks',
+            'pos=$currentTime dur=$duration frozen=$_frozenPositionTicks ticks',
           );
           timer.cancel();
           _iframePositionTimer = null;
