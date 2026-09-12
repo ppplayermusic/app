@@ -82,7 +82,18 @@ void main() {
             }
           }
           final expectedId = entry == 'queue' ? 'videoBBBBBB' : 'videoAAAAAA';
-          expect(renderer.count('cue'), 0);
+          
+          if (entry == 'restore') {
+            expect(renderer.count('cue'), 1);
+            expect(
+              renderer.commands.where((c) => c.name == 'cue').last.parameters['startSeconds'],
+              5.0,
+            );
+            renderer.emitState(expectedId, yt.PlayerState.cued);
+            await Future<void>(() {});
+          } else {
+            expect(renderer.count('cue'), 0);
+          }
           expect(renderer.count('load'), 0);
           expect(renderer.count('play'), 0);
 
@@ -90,24 +101,18 @@ void main() {
           notifier.resume();
           await Future<void>(() {});
 
-          expect(
-            renderer.commands
-                .where((c) => c.name == 'load')
-                .last
-                .parameters['videoId'],
-            expectedId,
-          );
-
           if (entry == 'restore') {
+            // Restore successfully cued, so resume just plays the video.
+            expect(renderer.count('play'), 1);
+            expect(renderer.count('load'), 0);
+          } else {
+            // Background plays were blocked, so foreground resume triggers a full load.
             expect(
-              renderer.commands
-                  .where((c) => c.name == 'load')
-                  .last
-                  .parameters['startSeconds'],
-              5.0,
+              renderer.commands.where((c) => c.name == 'load').last.parameters['videoId'],
+              expectedId,
             );
+            expect(renderer.count('play'), 0);
           }
-          expect(renderer.count('play'), 0);
         } finally {
           subscription.close();
           container.dispose();
