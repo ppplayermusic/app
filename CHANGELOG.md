@@ -2,7 +2,13 @@
 
 All notable changes to PPPlayer will be documented in this file.
 
-## [Unreleased]
+## [1.1.2] - 2026-09-12
+
+### Added
+- Added Arabic and Chinese (Simplified & Traditional) localizations.
+
+### Fixed
+- Fixed an issue on macOS where the YouTube video player would shift off-center when resizing the application window.
 
 ## [1.1.1] - 2026-09-12
 

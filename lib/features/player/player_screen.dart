@@ -33,11 +33,25 @@ class PlayerScreen extends ConsumerStatefulWidget {
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   final GlobalKey _videoSlotKey = GlobalKey(debugLabel: 'player_video_slot');
   double? _dragValue;
+  Size? _lastWindowSize;
 
   @override
   void initState() {
     super.initState();
     _scheduleLayoutUpdates();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Re-measure immediately on every window resize (macOS / desktop).
+    final windowSize = MediaQuery.sizeOf(context);
+    if (_lastWindowSize != null && _lastWindowSize != windowSize) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _updateVideoLayout('resize');
+      });
+    }
+    _lastWindowSize = windowSize;
   }
 
   void _scheduleLayoutUpdates() {
@@ -397,15 +411,25 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                       );
                                                     }
 
-                                                    return Container(
-                                                      key: _videoSlotKey,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.black,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              24,
-                                                            ),
-                                                      ),
+                                                    return LayoutBuilder(
+                                                      builder: (context, _) {
+                                                        // Fire on every reflow of the slot itself
+                                                        // (e.g. after AspectRatio recalculates on resize).
+                                                        WidgetsBinding.instance
+                                                            .addPostFrameCallback(
+                                                              (_) => _updateVideoLayout('slot_reflow'),
+                                                            );
+                                                        return Container(
+                                                          key: _videoSlotKey,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.black,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  24,
+                                                                ),
+                                                          ),
+                                                        );
+                                                      },
                                                     );
                                                   },
                                                 )

@@ -21,6 +21,12 @@
         pointer-events: inherit;
       }
 
+      .embed-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+
       .embed-container iframe,
       .embed-container object,
       .embed-container embed {
@@ -95,9 +101,6 @@
             },
           },
         });
-        if (player && typeof player.setSize === 'function') {
-          player.setSize(window.innerWidth, window.innerHeight);
-        }
         var wakelock = document.getElementById('pp-wakelock');
         if (wakelock) {
            wakelock.volume = 0.01;
@@ -125,12 +128,6 @@
           console.error("[YT] bridge error:", e);
         }
       }, false);
-
-      window.onresize = function () {
-        if (player && typeof player.setSize === 'function') {
-          player.setSize(window.innerWidth, window.innerHeight);
-        }
-      };
 
       function sendPlatformMessage(message) {
         switch(platform) {
