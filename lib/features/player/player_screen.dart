@@ -3,6 +3,7 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ppplayer/core/cache/image_cache_manager.dart';
@@ -68,8 +69,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
     if (track == null) {
       return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        body: const Center(child: Text('No track playing')),
+        backgroundColor: Colors.black,
+        body: Center(child: Text(AppLocalizations.of(context)!.noTrackPlaying)),
       );
     }
 
@@ -79,7 +80,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       } else {
         ref
             .read(videoLayoutProvider.notifier)
-            .setVisible(false, label: 'player_screen_view_switch');
+            .setVisible(false, label: AppLocalizations.of(context)!.playerscreenviewswitch);
       }
     });
 
@@ -226,7 +227,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   _ToggleTab(
-                                    label: 'VIDEO',
+                                    label: AppLocalizations.of(context)!.video,
                                     isActive: isVideoView,
                                     onTap:
                                         () => ref
@@ -234,7 +235,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                             .setPlayerView(PlayerView.video),
                                   ),
                                   _ToggleTab(
-                                    label: 'ARTWORK',
+                                    label: AppLocalizations.of(context)!.artwork,
                                     isActive:
                                         settings.playerView ==
                                         PlayerView.artwork,
@@ -244,7 +245,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                             .setPlayerView(PlayerView.artwork),
                                   ),
                                   _ToggleTab(
-                                    label: 'QUEUE',
+                                    label: AppLocalizations.of(context)!.queue,
                                     isActive: isQueueView,
                                     onTap:
                                         () => ref
@@ -271,7 +272,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                 alpha: 0.8,
                               ),
                               hoverColor: colorScheme.primary,
-                              tooltip: 'More options',
+                              tooltip: AppLocalizations.of(context)!.moreOptions,
                               onTap: () {
                                 final renderBox =
                                     btnContext.findRenderObject() as RenderBox?;
@@ -874,7 +875,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                                 .primary
                                                             : colorScheme
                                                                 .onSurface,
-                                                    tooltip: 'Shuffle',
+                                                    tooltip: AppLocalizations.of(context)!.shuffle,
                                                     onTap:
                                                         playerNotifier
                                                             .toggleShuffle,
@@ -886,7 +887,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                         colorScheme.onSurface,
                                                     hoverColor:
                                                         colorScheme.primary,
-                                                    tooltip: 'Previous',
+                                                    tooltip: AppLocalizations.of(context)!.previous,
                                                     onTap:
                                                         playerNotifier
                                                             .skipPrevious,
@@ -906,7 +907,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                         colorScheme.onSurface,
                                                     hoverColor:
                                                         colorScheme.primary,
-                                                    tooltip: 'Next',
+                                                    tooltip: AppLocalizations.of(context)!.next,
                                                     onTap:
                                                         playerNotifier.skipNext,
                                                   ),

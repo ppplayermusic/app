@@ -1,3 +1,4 @@
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -539,28 +540,28 @@ class _BottomNavBar extends StatelessWidget {
               _NavBarItem(
                 icon: Icons.home_outlined,
                 activeIcon: Icons.home,
-                label: 'Home',
+                label: AppLocalizations.of(context)!.home,
                 isSelected: currentIndex == 0,
                 onTap: () => context.go('/home'),
               ),
               _NavBarItem(
                 icon: Icons.explore_outlined,
                 activeIcon: Icons.explore,
-                label: 'Discover',
+                label: AppLocalizations.of(context)!.discover,
                 isSelected: currentIndex == 1,
                 onTap: () => context.go('/discover'),
               ),
               _NavBarItem(
                 icon: Icons.search_outlined,
                 activeIcon: Icons.search,
-                label: 'Search',
+                label: AppLocalizations.of(context)!.search,
                 isSelected: currentIndex == 2,
                 onTap: () => context.go('/search'),
               ),
               _NavBarItem(
                 icon: Icons.library_music_outlined,
                 activeIcon: Icons.library_music,
-                label: 'Library',
+                label: AppLocalizations.of(context)!.library,
                 isSelected: currentIndex == 3,
                 onTap: () => context.go('/library'),
               ),
@@ -760,7 +761,7 @@ class _MiniPlayerBar extends ConsumerWidget {
                                       .skipPrevious(),
                           size: 24,
                           hoverColor: colorScheme.primary,
-                          tooltip: 'Previous',
+                          tooltip: AppLocalizations.of(context)!.previous,
                         ),
                         TactilePlayerPlayPauseButton(
                           isPlaying: playerState.isPlaying,
@@ -779,7 +780,7 @@ class _MiniPlayerBar extends ConsumerWidget {
                                   ref.read(playerProvider.notifier).skipNext(),
                           size: 24,
                           hoverColor: colorScheme.primary,
-                          tooltip: 'Next',
+                          tooltip: AppLocalizations.of(context)!.next,
                         ),
                         const SizedBox(width: 4),
                         TactileIconButton(
@@ -871,28 +872,28 @@ class _DesktopSidebar extends ConsumerWidget {
                 _SidebarItem(
                   icon: Icons.home_outlined,
                   activeIcon: Icons.home,
-                  label: 'Home',
+                  label: AppLocalizations.of(context)!.home,
                   isSelected: currentIndex == 0,
                   onTap: () => context.go('/home'),
                 ),
                 _SidebarItem(
                   icon: Icons.explore_outlined,
                   activeIcon: Icons.explore,
-                  label: 'Discover',
+                  label: AppLocalizations.of(context)!.discover,
                   isSelected: currentIndex == 1,
                   onTap: () => context.go('/discover'),
                 ),
                 _SidebarItem(
                   icon: Icons.search_outlined,
                   activeIcon: Icons.search,
-                  label: 'Search',
+                  label: AppLocalizations.of(context)!.search,
                   isSelected: currentIndex == 2,
                   onTap: () => context.go('/search'),
                 ),
                 _SidebarItem(
                   icon: Icons.library_music_outlined,
                   activeIcon: Icons.library_music,
-                  label: 'Library',
+                  label: AppLocalizations.of(context)!.library,
                   isSelected:
                       currentIndex == 3 &&
                       GoRouterState.of(context).uri.queryParameters['filter'] !=
@@ -918,21 +919,21 @@ class _DesktopSidebar extends ConsumerWidget {
                 _SidebarItem(
                   icon: Icons.favorite_border,
                   activeIcon: Icons.favorite,
-                  label: 'Favorites',
+                  label: AppLocalizations.of(context)!.favorites,
                   isSelected: location.startsWith('/liked-songs'),
                   onTap: () => context.push('/liked-songs'),
                 ),
                 _SidebarItem(
                   icon: Icons.history,
                   activeIcon: Icons.history,
-                  label: 'Recently Played',
+                  label: AppLocalizations.of(context)!.recentlyPlayed,
                   isSelected: location.startsWith('/recently-played'),
                   onTap: () => context.push('/recently-played'),
                 ),
                 _SidebarItem(
                   icon: Icons.queue_music,
                   activeIcon: Icons.queue_music,
-                  label: 'Playlists',
+                  label: AppLocalizations.of(context)!.playlists,
                   isSelected:
                       location.startsWith('/library') &&
                       GoRouterState.of(context).uri.queryParameters['filter'] ==
@@ -963,12 +964,12 @@ class _DesktopSidebar extends ConsumerWidget {
                         padding: const EdgeInsets.all(4),
                         color: colorScheme.onSurface.withValues(alpha: 0.6),
                         hoverColor: colorScheme.primary,
-                        tooltip: 'New Playlist',
+                        tooltip: AppLocalizations.of(context)!.newPlaylist,
                         onTap: () async {
                           final nameController = TextEditingController();
                           await showPremiumModal(
                             context: context,
-                            title: 'New Playlist',
+                            title: AppLocalizations.of(context)!.newPlaylist,
                             child: Builder(
                               builder: (modalContext) {
                                 final modalColors =
@@ -984,7 +985,7 @@ class _DesktopSidebar extends ConsumerWidget {
                                         color: modalColors.onSurface,
                                       ),
                                       decoration: InputDecoration(
-                                        hintText: 'Playlist Name',
+                                        hintText: AppLocalizations.of(context)!.playlistName,
                                         filled: true,
                                         fillColor: modalColors
                                             .surfaceContainerHighest
@@ -1094,7 +1095,7 @@ class _DesktopSidebar extends ConsumerWidget {
                               ),
                               child: _MockPlaylistItem(
                                 title: p.name,
-                                subtitle: 'Playlist',
+                                subtitle: AppLocalizations.of(context)!.playlist,
                                 imageUrl:
                                     p.imageUrl ??
                                     'https://ui-avatars.com/api/?name=${Uri.encodeComponent(p.name)}&background=random',
@@ -1485,7 +1486,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
                                 playerState.isShuffled
                                     ? colorScheme.primary
                                     : colorScheme.onSurface,
-                            tooltip: 'Shuffle',
+                            tooltip: AppLocalizations.of(context)!.shuffle,
                           ),
                           const SizedBox(width: 16),
                           TactileIconButton(
@@ -1500,7 +1501,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
                               alpha: 0.85,
                             ),
                             hoverColor: colorScheme.primary,
-                            tooltip: 'Previous',
+                            tooltip: AppLocalizations.of(context)!.previous,
                           ),
                           const SizedBox(width: 16),
                           TactilePlayerPlayPauseButton(
@@ -1526,7 +1527,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
                               alpha: 0.85,
                             ),
                             hoverColor: colorScheme.primary,
-                            tooltip: 'Next',
+                            tooltip: AppLocalizations.of(context)!.next,
                           ),
                           const SizedBox(width: 16),
                           TactileIconButton(
@@ -1632,7 +1633,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
                                 alpha: 0.7,
                               ),
                               hoverColor: colorScheme.primary,
-                              tooltip: 'Queue',
+                              tooltip: AppLocalizations.of(context)!.queueTooltip,
                             ),
                           ],
                         ),
@@ -2050,7 +2051,7 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
                             fontSize: 14,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Search music, artists, albums...',
+                            hintText: AppLocalizations.of(context)!.searchHint,
                             hintStyle: TextStyle(
                               color: colorScheme.onSurface.withValues(
                                 alpha: 0.5,

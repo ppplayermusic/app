@@ -1,4 +1,189 @@
 {
   "@@locale": "en",
-  "appTitle": "PPPlayer"
+  "appTitle": "PPPlayer",
+  "titleSubtitle": "{title}, {subtitle}",
+  "@titleSubtitle": {
+    "placeholders": {
+      "title": {},
+      "subtitle": {}
+    }
+  },
+  "albums": "ALBUMS",
+  "api": "API",
+  "artists": "ARTISTS",
+  "artwork": "ARTWORK",
+  "appVersion": "App version",
+  "artist": "Artist",
+  "artistsYouFollow": "Artists you follow",
+  "autoplay": "Autoplay",
+  "becauseYouListenedTo": "Because you listened to",
+  "browseAll": "Browse all",
+  "cancel": "Cancel",
+  "clearAppCache": "Clear App Cache?",
+  "clearCache": "Clear Cache",
+  "clearHistory": "Clear History?",
+  "clearRecentlyPlayed": "Clear Recently Played",
+  "contentMarket": "Content Market",
+  "continueListening": "Continue Listening",
+  "continueVideoPlaybackInASmallWindow": "Continue video playback in a small window",
+  "create": "Create",
+  "createAPlaylistToGetStarted": "Create a playlist to get started",
+  "currentSelectedcountry": "Current: {country}",
+  "@currentSelectedcountry": {
+    "placeholders": {
+      "country": {}
+    }
+  },
+  "deletePlaylist": "Delete Playlist",
+  "editProfile": "Edit Profile",
+  "errorLoadingMarkets": "Error loading markets: {err}",
+  "@errorLoadingMarkets": {
+    "placeholders": {
+      "err": {}
+    }
+  },
+  "error": "Error: {error}",
+  "@error": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "explore": "Explore {genre}",
+  "@explore": {
+    "placeholders": {
+      "genre": {}
+    }
+  },
+  "fansAlsoLike": "FANS ALSO LIKE",
+  "featuringTouppercase": "FEATURING {artist}",
+  "@featuringTouppercase": {
+    "placeholders": {
+      "artist": {}
+    }
+  },
+  "featuredPlaylists": "Featured Playlists",
+  "followArtistsToSeeThemHere": "Follow artists to see them here",
+  "followStationsToSeeThemHere": "Follow stations to see them here",
+  "forceAudioonlyStreamsToSaveData": "Force audio-only streams to save data",
+  "freesUpSpaceAndForcesFreshDataOnNextLoad": "Frees up space and forces fresh data on next load",
+  "fromYourFavorites": "From your favorites",
+  "goBack": "Go Back",
+  "inspiredByName": "Inspired by {name}",
+  "@inspiredByName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "keepPlayingSimilarTracksWhenQueueEnds": "Keep playing similar tracks when queue ends",
+  "library": "Library",
+  "likeAlbumsToSeeThemHere": "Like albums to see them here",
+  "likedSongs": "Liked Songs",
+  "lowDataMode": "Low Data Mode",
+  "madeForYou": "Made For You",
+  "moreLikeName": "More like {name}",
+  "@moreLikeName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "moreOptions": "More options",
+  "nameYourMasterpiece": "Name your masterpiece...",
+  "newPlaylist": "New Playlist",
+  "newReleases": "New Releases",
+  "next": "Next",
+  "noAlbumsFound": "No albums found",
+  "noArtistsFollowed": "No artists followed",
+  "noArtistsFound": "No artists found",
+  "noLikedAlbums": "No liked albums",
+  "noPlaylistsFound": "No playlists found",
+  "noPlaylistsYet": "No playlists yet",
+  "noResultsFound": "No results found",
+  "noStationsFollowed": "No stations followed",
+  "noTrackPlaying": "No track playing",
+  "noTracksFound": "No tracks found",
+  "playlists": "PLAYLISTS",
+  "popular": "POPULAR",
+  "permanentlyRemoveListeningHistory": "Permanently remove listening history",
+  "pictureinpicturePip": "Picture-in-Picture (PiP)",
+  "popularAlbums": "Popular Albums",
+  "popularArtists": "Popular Artists",
+  "popularGenres": "Popular Genres",
+  "popularSongs": "Popular Songs",
+  "popularTracks": "Popular Tracks",
+  "popularHitsRightNow": "Popular hits right now",
+  "previous": "Previous",
+  "queue": "QUEUE",
+  "recentSearches": "Recent searches",
+  "recommendedForYou": "Recommended for You",
+  "scraping": "Scraping",
+  "search": "Search",
+  "searchInAlbum": "Search in album...",
+  "searchInLibrary": "Search in library...",
+  "searchInPlaylist": "Search in playlist",
+  "searchLikedSongs": "Search liked songs...",
+  "searchPopularSongs": "Search popular songs...",
+  "selectMarket": "Select Market",
+  "settings": "Settings",
+  "showVideoPlayer": "Show Video Player",
+  "shuffle": "Shuffle",
+  "spotifyCredentials": "Spotify Credentials",
+  "suggestedStations": "Suggested Stations",
+  "tracks": "TRACKS",
+  "trending": "Trending",
+  "tryAgain": "Try Again",
+  "tryADifferentSearchTerm": "Try a different search term",
+  "useYoutubePlayerWhenAvailable": "Use YouTube player when available",
+  "video": "VIDEO",
+  "whatDoYouWantToListenTo": "What do you want to listen to?",
+  "youtubeCredentials": "YouTube Credentials",
+  "yourLibrary": "Your Library",
+  "playerscreenviewswitch": "player_screen_view_switch",
+  "addToPlaylist": "Add to playlist",
+  "addToQueue": "Add to queue",
+  "copyId": "Copy ID",
+  "copyLink": "Copy link",
+  "discover": "Discover",
+  "enterYourName": "Enter your name",
+  "favorites": "Favorites",
+  "goToAlbum": "Go to album",
+  "goToArtist": "Go to artist",
+  "goToArtistRadio": "Go to artist radio",
+  "goToPlaylist": "Go to playlist",
+  "goToSongRadio": "Go to song radio",
+  "home": "Home",
+  "myAwesomePlaylist": "My Awesome Playlist",
+  "myPlaylist": "My Playlist",
+  "newPlaylist1": "New playlist",
+  "play": "Play",
+  "playStation": "Play Station",
+  "playNext": "Play next",
+  "playlist": "Playlist",
+  "playlistName": "Playlist Name",
+  "playlists1": "Playlists",
+  "queue1": "Queue",
+  "recentlyPlayed": "Recently Played",
+  "removeFromQueue": "Remove from queue",
+  "retry": "Retry",
+  "searchMusicArtistsAlbums": "Search music, artists, albums...",
+  "share": "Share",
+  "featuringArtist": "FEATURING {artistName}",
+  "@featuringArtist": {
+    "placeholders": {
+      "artistName": {
+        "type": "String"
+      }
+    }
+  },
+  "currentCountry": "Current: {country}",
+  "@currentCountry": {
+    "placeholders": {
+      "country": {
+        "type": "String"
+      }
+    }
+  },
+  "queueTooltip": "Queue",
+  "searchHint": "Search music, artists, albums...",
+  "language": "Language",
+  "systemDefault": "System Default"
 }

@@ -1,3 +1,4 @@
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -136,7 +137,7 @@ class _SectionErrorWidget extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   foregroundColor: colorScheme.primary,
                 ),
-                child: const Text('Retry', style: TextStyle(fontSize: 13)),
+                child: Text(AppLocalizations.of(context)!.retry, style: TextStyle(fontSize: 13)),
               ),
             ],
           ],

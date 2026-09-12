@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
@@ -253,7 +254,7 @@ class _TactilePlayerPlayPauseButtonState
     final primaryThemeColor = widget.activeGlowColor ?? colorScheme.primary;
 
     final String tooltipMessage =
-        widget.tooltip ?? (widget.isPlaying ? 'Pause' : 'Play');
+        widget.tooltip ?? (widget.isPlaying ? 'Pause' : AppLocalizations.of(context)!.play);
 
     Widget buttonContent = AnimatedBuilder(
       animation: Listenable.merge([_transitionController, _loopController]),

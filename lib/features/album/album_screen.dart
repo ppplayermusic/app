@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import '../../shared/widgets/pp_image.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -160,7 +161,7 @@ class _AlbumScreenState extends ConsumerState<AlbumScreen> {
                                   controller: _searchController,
                                   autofocus: true,
                                   decoration: InputDecoration(
-                                    hintText: 'Search in album...',
+                                    hintText: AppLocalizations.of(context)!.searchInAlbum,
                                     prefixIcon: Icon(
                                       Icons.search_rounded,
                                       color: colorScheme.onSurface.withValues(

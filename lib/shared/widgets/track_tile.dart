@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'pp_image.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -259,7 +260,7 @@ class TrackTile extends ConsumerStatefulWidget {
     final controller = TextEditingController();
     showPremiumModal<void>(
       context: context,
-      title: 'New Playlist',
+      title: AppLocalizations.of(context)!.newPlaylist,
       child: Builder(
         builder:
             (dialogContext) => Column(
@@ -273,7 +274,7 @@ class TrackTile extends ConsumerStatefulWidget {
                     fontSize: 18,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'My Awesome Playlist',
+                    hintText: AppLocalizations.of(context)!.myAwesomePlaylist,
                     hintStyle: TextStyle(
                       color: Theme.of(
                         dialogContext,
@@ -312,7 +313,7 @@ class TrackTile extends ConsumerStatefulWidget {
                             ),
                           ),
                           child: Text(
-                            'Cancel',
+                            AppLocalizations.of(context)!.cancel,
                             style: TextStyle(
                               color:
                                   Theme.of(
@@ -352,7 +353,7 @@ class TrackTile extends ConsumerStatefulWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
-                            'Create',
+                            AppLocalizations.of(context)!.create,
                             style: TextStyle(
                               color:
                                   Theme.of(dialogContext).colorScheme.onPrimary,

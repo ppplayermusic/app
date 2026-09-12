@@ -1,3 +1,4 @@
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../core/api/spotify_repository.dart';
@@ -335,7 +336,7 @@ class GenreDetailsScreen extends ConsumerWidget {
           ),
           SliverToBoxAdapter(
             child: SectionWrapper<Map<String, dynamic>>(
-              title: 'Featured Playlists',
+              title: AppLocalizations.of(context)!.featuredPlaylists,
               asyncValue: playlistsAsync,
               builder:
                   (playlists) => _PlaylistList(
@@ -347,7 +348,7 @@ class GenreDetailsScreen extends ConsumerWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
           SliverToBoxAdapter(
             child: SectionWrapper<Track>(
-              title: 'Popular Songs',
+              title: AppLocalizations.of(context)!.popularSongs,
               asyncValue: tracksAsync,
               builder:
                   (tracks) => Padding(

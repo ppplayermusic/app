@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import '../../shared/widgets/pp_image.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -539,7 +540,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
               ),
               SliverToBoxAdapter(
                 child: SectionWrapper<dynamic>(
-                  title: 'POPULAR',
+                  title: AppLocalizations.of(context)!.popular,
                   asyncValue: tracksAsync,
                   builder: (items) {
                     var tracks =
@@ -592,7 +593,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                       controller: _searchController,
                                       autofocus: true,
                                       decoration: InputDecoration(
-                                        hintText: 'Search popular songs...',
+                                        hintText: AppLocalizations.of(context)!.searchPopularSongs,
                                         prefixIcon: Icon(
                                           Icons.search_rounded,
                                           color: colorScheme.onSurface
@@ -692,7 +693,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
               ),
               SliverToBoxAdapter(
                 child: SectionWrapper<dynamic>(
-                  title: 'ALBUMS',
+                  title: AppLocalizations.of(context)!.albums,
                   asyncValue: albumsAsync,
                   builder:
                       (items) => SizedBox(
@@ -719,7 +720,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
               ),
               SliverToBoxAdapter(
                 child: SectionWrapper<Map<String, dynamic>>(
-                  title: 'FANS ALSO LIKE',
+                  title: AppLocalizations.of(context)!.fansAlsoLike,
                   asyncValue: relatedAsync,
                   builder:
                       (artists) => SizedBox(
@@ -747,7 +748,7 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
               ),
               SliverToBoxAdapter(
                 child: SectionWrapper<Map<String, dynamic>>(
-                  title: 'FEATURING ${artistName.toUpperCase()}',
+                  title: AppLocalizations.of(context)!.featuringArtist(artistName.toUpperCase()),
                   asyncValue: playlistsAsync,
                   builder:
                       (playlists) => SizedBox(

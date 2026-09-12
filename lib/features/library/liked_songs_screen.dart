@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -106,7 +107,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                         ),
                         cursorColor: Theme.of(context).colorScheme.primary,
                         decoration: InputDecoration(
-                          hintText: 'Search liked songs...',
+                          hintText: AppLocalizations.of(context)!.searchLikedSongs,
                           hintStyle: TextStyle(
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,

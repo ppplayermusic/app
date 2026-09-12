@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/services/secure_credentials_service.dart';
@@ -9,7 +10,7 @@ import '../../../shared/widgets/tactile_buttons.dart';
 void showSpotifyCredentialsModal(BuildContext context) {
   showPremiumModal(
     context: context,
-    title: 'Spotify Credentials',
+    title: AppLocalizations.of(context)!.spotifyCredentials,
     child: const _SpotifyCredentialsForm(),
   );
 }
@@ -17,7 +18,7 @@ void showSpotifyCredentialsModal(BuildContext context) {
 void showYoutubeCredentialsModal(BuildContext context) {
   showPremiumModal(
     context: context,
-    title: 'YouTube Credentials',
+    title: AppLocalizations.of(context)!.youtubeCredentials,
     child: const _YoutubeCredentialsForm(),
   );
 }
@@ -321,12 +322,12 @@ class _YoutubeCredentialsFormState
         ),
         const SizedBox(height: 16),
         SegmentedButton<YoutubeSearchMethod>(
-          segments: const [
+          segments: [
             ButtonSegment(
               value: YoutubeSearchMethod.scraping,
-              label: Text('Scraping'),
+              label: Text(AppLocalizations.of(context)!.scraping),
             ),
-            ButtonSegment(value: YoutubeSearchMethod.api, label: Text('API')),
+            ButtonSegment(value: YoutubeSearchMethod.api, label: Text(AppLocalizations.of(context)!.api)),
           ],
           selected: {settings.youtubeSearchMethod},
           onSelectionChanged: (set) {

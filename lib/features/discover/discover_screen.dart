@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/player/player_provider.dart';
@@ -70,6 +71,38 @@ class DiscoverScreen extends ConsumerWidget {
                 return SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final section = content.sections[index];
+
+                    String getLocalizedTitle(BuildContext context, String title) {
+                      switch (title) {
+                        case 'Made For You': return AppLocalizations.of(context)!.madeForYou;
+                        case 'Because you listened to': return AppLocalizations.of(context)!.becauseYouListenedTo;
+                        case 'From your favorites': return AppLocalizations.of(context)!.fromYourFavorites;
+                        case 'Artists you follow': return AppLocalizations.of(context)!.artistsYouFollow;
+                        case 'Recommended for You': return AppLocalizations.of(context)!.recommendedForYou;
+                        case 'Trending': return AppLocalizations.of(context)!.trending;
+                        default: 
+                          if (title.startsWith('Explore ')) {
+                             return AppLocalizations.of(context)!.explore(title.substring(8));
+                          }
+                          return title;
+                      }
+                    }
+
+                    String? getLocalizedSubtitle(BuildContext context, String? subtitle) {
+                      if (subtitle == null) return null;
+                      switch (subtitle) {
+                        case 'Popular hits right now': return AppLocalizations.of(context)!.popularHitsRightNow;
+                        default: 
+                          if (subtitle.startsWith('More like ')) {
+                             return AppLocalizations.of(context)!.moreLikeName(subtitle.substring(10));
+                          }
+                          if (subtitle.startsWith('Inspired by ')) {
+                             return AppLocalizations.of(context)!.inspiredByName(subtitle.substring(12));
+                          }
+                          return subtitle;
+                      }
+                    }
+
                     return Padding(
                       padding: const EdgeInsets.only(
                         left: 16,
@@ -86,7 +119,7 @@ class DiscoverScreen extends ConsumerWidget {
                               children: [
                                 if (section.subtitle != null) ...[
                                   Text(
-                                    section.subtitle!.toUpperCase(),
+                                    getLocalizedSubtitle(context, section.subtitle)!.toUpperCase(),
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
@@ -97,7 +130,7 @@ class DiscoverScreen extends ConsumerWidget {
                                   const SizedBox(height: 4),
                                 ],
                                 Text(
-                                  section.title,
+                                  getLocalizedTitle(context, section.title),
                                   style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
@@ -183,7 +216,7 @@ class DiscoverScreen extends ConsumerWidget {
                           TextButton(
                             onPressed:
                                 () => ref.invalidate(discoverContentProvider),
-                            child: const Text('Try Again'),
+                            child: Text(AppLocalizations.of(context)!.tryAgain),
                           ),
                         ],
                       ),

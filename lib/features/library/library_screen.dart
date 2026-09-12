@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +31,7 @@ class LibraryScreen extends ConsumerStatefulWidget {
     final ctrl = TextEditingController();
     showPremiumModal<void>(
       context: context,
-      title: 'New Playlist',
+      title: AppLocalizations.of(context)!.newPlaylist,
       child: Builder(
         builder:
             (dialogContext) => Column(
@@ -44,7 +45,7 @@ class LibraryScreen extends ConsumerStatefulWidget {
                     fontSize: 18,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Name your masterpiece...',
+                    hintText: AppLocalizations.of(context)!.nameYourMasterpiece,
                     hintStyle: TextStyle(
                       color: Theme.of(
                         dialogContext,
@@ -83,7 +84,7 @@ class LibraryScreen extends ConsumerStatefulWidget {
                             ),
                           ),
                           child: Text(
-                            'Cancel',
+                            AppLocalizations.of(context)!.cancel,
                             style: TextStyle(
                               color:
                                   Theme.of(
@@ -121,7 +122,7 @@ class LibraryScreen extends ConsumerStatefulWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
-                            'Create',
+                            AppLocalizations.of(context)!.create,
                             style: TextStyle(
                               color:
                                   Theme.of(dialogContext).colorScheme.onPrimary,
@@ -220,7 +221,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       controller: _searchController,
                       autofocus: true,
                       decoration: InputDecoration(
-                        hintText: 'Search in library...',
+                        hintText: AppLocalizations.of(context)!.searchInLibrary,
                         border: InputBorder.none,
                         hintStyle: TextStyle(
                           color: colorScheme.onSurface.withValues(alpha: 0.5),
@@ -242,7 +243,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
-                          'Library',
+                          AppLocalizations.of(context)!.library,
                           style: TextStyle(
                             color: colorScheme.onSurface,
                             fontWeight: FontWeight.w900,
@@ -342,7 +343,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                   const SizedBox(width: 14),
                                   Expanded(
                                     child: Text(
-                                      'Your Library',
+                                      AppLocalizations.of(context)!.yourLibrary,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         color: colorScheme.onSurface,
@@ -813,19 +814,19 @@ class _PlaylistsGrid extends StatelessWidget {
 
         if (playlists.isEmpty) {
           if (searchQuery.isNotEmpty) {
-            return const SliverToBoxAdapter(
+            return SliverToBoxAdapter(
               child: _EmptyState(
                 icon: Icons.search_off_rounded,
-                title: 'No results found',
-                subtitle: 'Try a different search term',
+                title: AppLocalizations.of(context)!.noResultsFound,
+                subtitle: AppLocalizations.of(context)!.tryADifferentSearchTerm,
               ),
             );
           }
           return SliverToBoxAdapter(
             child: _EmptyState(
               icon: Icons.playlist_add_rounded,
-              title: 'No playlists yet',
-              subtitle: 'Create a playlist to get started',
+              title: AppLocalizations.of(context)!.noPlaylistsYet,
+              subtitle: AppLocalizations.of(context)!.createAPlaylistToGetStarted,
               buttonText: 'Create Playlist',
               onPressed:
                   () =>
@@ -969,7 +970,7 @@ class _PlaylistCard extends StatelessWidget {
   void _confirmDelete(BuildContext context, db.Playlist playlist) {
     showPremiumModal<void>(
       context: context,
-      title: 'Delete Playlist',
+      title: AppLocalizations.of(context)!.deletePlaylist,
       child: Builder(
         builder: (dialogContext) {
           final colorScheme = Theme.of(dialogContext).colorScheme;
@@ -999,7 +1000,7 @@ class _PlaylistCard extends StatelessWidget {
                           border: Border.all(color: colorScheme.outlineVariant),
                         ),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
                           style: TextStyle(
                             color: colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.bold,
@@ -1225,19 +1226,19 @@ class _ArtistsSliverList extends StatelessWidget {
 
         if (artists.isEmpty) {
           if (searchQuery.isNotEmpty) {
-            return const SliverToBoxAdapter(
+            return SliverToBoxAdapter(
               child: _EmptyState(
                 icon: Icons.search_off_rounded,
-                title: 'No results found',
-                subtitle: 'Try a different search term',
+                title: AppLocalizations.of(context)!.noResultsFound,
+                subtitle: AppLocalizations.of(context)!.tryADifferentSearchTerm,
               ),
             );
           }
           return SliverToBoxAdapter(
             child: _EmptyState(
               icon: Icons.person_add_rounded,
-              title: 'No artists followed',
-              subtitle: 'Follow artists to see them here',
+              title: AppLocalizations.of(context)!.noArtistsFollowed,
+              subtitle: AppLocalizations.of(context)!.followArtistsToSeeThemHere,
               buttonText: 'Discover Artists',
               onPressed: () => context.push('/search'),
             ),
@@ -1404,19 +1405,19 @@ class _AlbumsSliverGrid extends StatelessWidget {
 
         if (albums.isEmpty) {
           if (searchQuery.isNotEmpty) {
-            return const SliverToBoxAdapter(
+            return SliverToBoxAdapter(
               child: _EmptyState(
                 icon: Icons.search_off_rounded,
-                title: 'No results found',
-                subtitle: 'Try a different search term',
+                title: AppLocalizations.of(context)!.noResultsFound,
+                subtitle: AppLocalizations.of(context)!.tryADifferentSearchTerm,
               ),
             );
           }
           return SliverToBoxAdapter(
             child: _EmptyState(
               icon: Icons.album_rounded,
-              title: 'No liked albums',
-              subtitle: 'Like albums to see them here',
+              title: AppLocalizations.of(context)!.noLikedAlbums,
+              subtitle: AppLocalizations.of(context)!.likeAlbumsToSeeThemHere,
               buttonText: 'Discover Albums',
               onPressed: () => context.push('/search'),
             ),
@@ -1735,19 +1736,19 @@ class _RadiosSliverGrid extends StatelessWidget {
 
         if (radios.isEmpty) {
           if (searchQuery.isNotEmpty) {
-            return const SliverToBoxAdapter(
+            return SliverToBoxAdapter(
               child: _EmptyState(
                 icon: Icons.search_off_rounded,
-                title: 'No results found',
-                subtitle: 'Try a different search term',
+                title: AppLocalizations.of(context)!.noResultsFound,
+                subtitle: AppLocalizations.of(context)!.tryADifferentSearchTerm,
               ),
             );
           }
           return SliverToBoxAdapter(
             child: _EmptyState(
               icon: Icons.radio_rounded,
-              title: 'No stations followed',
-              subtitle: 'Follow stations to see them here',
+              title: AppLocalizations.of(context)!.noStationsFollowed,
+              subtitle: AppLocalizations.of(context)!.followStationsToSeeThemHere,
               buttonText: 'Discover Music',
               onPressed: () => context.push('/search'),
             ),

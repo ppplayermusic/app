@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,7 +23,7 @@ void showEditProfileModal(
 
   showPremiumModal(
     context: context,
-    title: 'Edit Profile',
+    title: AppLocalizations.of(context)!.editProfile,
     isDismissible: isDismissible,
     child: StatefulBuilder(
       builder: (context, setState) {
@@ -112,7 +113,7 @@ void showEditProfileModal(
             TextField(
               controller: nameController,
               decoration: InputDecoration(
-                hintText: 'Enter your name',
+                hintText: AppLocalizations.of(context)!.enterYourName,
                 filled: true,
                 fillColor: colorScheme.onSurface.withValues(alpha: 0.05),
                 border: OutlineInputBorder(

@@ -20,7 +20,7 @@ import 'core/services/dock_menu_service.dart';
 import 'core/metrics/cache_metrics.dart';
 import 'core/playback/pip_handler.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 
 /// Global access to the provider container for the [AudioHandler].
 late ProviderContainer globalContainer;
@@ -140,6 +140,7 @@ class PpPlayerApp extends ConsumerWidget {
       scrollBehavior: const AppScrollBehavior(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      locale: settings.languageCode != null ? Locale(settings.languageCode!) : null,
       routerConfig: router,
     );
   }

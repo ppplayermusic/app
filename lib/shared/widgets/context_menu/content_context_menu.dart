@@ -1,3 +1,4 @@
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../core/api/spotify_repository.dart';
@@ -406,7 +407,7 @@ class _ContentContextMenuOverlayState
     return [
       _ContextMenuItem(
         icon: Icons.play_arrow_rounded,
-        label: 'Play',
+        label: AppLocalizations.of(context)!.play,
         onTap: () {
           Navigator.of(context).pop();
           debugPrint('[ContentContextMenu] Playing track: ${track.name}');
@@ -415,7 +416,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.playlist_play_rounded,
-        label: 'Play next',
+        label: AppLocalizations.of(context)!.playNext,
         onTap: () {
           Navigator.of(context).pop();
           _container.read(playerProvider.notifier).playNext(track);
@@ -424,7 +425,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.queue_music_rounded,
-        label: 'Add to queue',
+        label: AppLocalizations.of(context)!.addToQueue,
         onTap: () {
           Navigator.of(context).pop();
           _container.read(playerProvider.notifier).addToQueue(track);
@@ -435,7 +436,7 @@ class _ContentContextMenuOverlayState
         _ContextMenuItem(
           icon: Icons.remove_circle_outline_rounded,
           iconColor: colorScheme.error,
-          label: 'Remove from queue',
+          label: AppLocalizations.of(context)!.removeFromQueue,
           onTap: () {
             Navigator.of(context).pop();
             _container
@@ -461,7 +462,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.playlist_add_rounded,
-        label: 'Add to playlist',
+        label: AppLocalizations.of(context)!.addToPlaylist,
         hasSubmenu: true,
         onHoverTrigger: (offset) {
           setState(() {
@@ -484,7 +485,7 @@ class _ContentContextMenuOverlayState
       if (track.artistId.isNotEmpty)
         _ContextMenuItem(
           icon: Icons.person_outline_rounded,
-          label: 'Go to artist',
+          label: AppLocalizations.of(context)!.goToArtist,
           onTap: () {
             Navigator.of(context).pop();
             final firstArtistId = track.artistId.split(',').first.trim();
@@ -496,7 +497,7 @@ class _ContentContextMenuOverlayState
       if (track.albumId != null && track.albumId!.isNotEmpty)
         _ContextMenuItem(
           icon: Icons.album_outlined,
-          label: 'Go to album',
+          label: AppLocalizations.of(context)!.goToAlbum,
           onTap: () {
             Navigator.of(context).pop();
             if (_parentContext.mounted) {
@@ -506,7 +507,7 @@ class _ContentContextMenuOverlayState
         ),
       _ContextMenuItem(
         icon: Icons.radio_rounded,
-        label: 'Go to song radio',
+        label: AppLocalizations.of(context)!.goToSongRadio,
         onTap: () {
           Navigator.of(context).pop();
           final encodedTitle = Uri.encodeComponent(track.name);
@@ -522,7 +523,7 @@ class _ContentContextMenuOverlayState
       const _ContextMenuDivider(),
       _ContextMenuItem(
         icon: Icons.share_outlined,
-        label: 'Share',
+        label: AppLocalizations.of(context)!.share,
         hasSubmenu: true,
         onHoverTrigger: (offset) {
           setState(() {
@@ -553,7 +554,7 @@ class _ContentContextMenuOverlayState
     return [
       _ContextMenuItem(
         icon: Icons.play_arrow_rounded,
-        label: 'Play',
+        label: AppLocalizations.of(context)!.play,
         onTap: () async {
           Navigator.of(context).pop();
           try {
@@ -585,7 +586,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.queue_music_rounded,
-        label: 'Add to queue',
+        label: AppLocalizations.of(context)!.addToQueue,
         onTap: () async {
           Navigator.of(context).pop();
           try {
@@ -638,7 +639,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.playlist_add_rounded,
-        label: 'Add to playlist',
+        label: AppLocalizations.of(context)!.addToPlaylist,
         hasSubmenu: true,
         onHoverTrigger: (offset) {
           setState(() {
@@ -655,7 +656,7 @@ class _ContentContextMenuOverlayState
       if (target.artistId.isNotEmpty)
         _ContextMenuItem(
           icon: Icons.person_outline_rounded,
-          label: 'Go to artist',
+          label: AppLocalizations.of(context)!.goToArtist,
           onTap: () {
             Navigator.of(context).pop();
             if (_parentContext.mounted) {
@@ -666,7 +667,7 @@ class _ContentContextMenuOverlayState
       const _ContextMenuDivider(),
       _ContextMenuItem(
         icon: Icons.share_outlined,
-        label: 'Share',
+        label: AppLocalizations.of(context)!.share,
         hasSubmenu: true,
         onHoverTrigger: (offset) {
           setState(() {
@@ -704,7 +705,7 @@ class _ContentContextMenuOverlayState
     return [
       _ContextMenuItem(
         icon: Icons.play_arrow_rounded,
-        label: 'Play',
+        label: AppLocalizations.of(context)!.play,
         onTap: () async {
           Navigator.of(context).pop();
           try {
@@ -739,7 +740,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.queue_music_rounded,
-        label: 'Add to queue',
+        label: AppLocalizations.of(context)!.addToQueue,
         onTap: () async {
           Navigator.of(context).pop();
           try {
@@ -811,7 +812,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.queue_music_rounded,
-        label: 'Go to playlist',
+        label: AppLocalizations.of(context)!.goToPlaylist,
         onTap: () {
           Navigator.of(context).pop();
           if (_parentContext.mounted) {
@@ -829,7 +830,7 @@ class _ContentContextMenuOverlayState
       const _ContextMenuDivider(),
       _ContextMenuItem(
         icon: Icons.share_outlined,
-        label: 'Share',
+        label: AppLocalizations.of(context)!.share,
         hasSubmenu: true,
         onHoverTrigger: (offset) {
           setState(() {
@@ -864,7 +865,7 @@ class _ContentContextMenuOverlayState
     return [
       _ContextMenuItem(
         icon: Icons.play_arrow_rounded,
-        label: 'Play',
+        label: AppLocalizations.of(context)!.play,
         onTap: () async {
           Navigator.of(context).pop();
           try {
@@ -922,7 +923,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.radio_rounded,
-        label: 'Go to artist radio',
+        label: AppLocalizations.of(context)!.goToArtistRadio,
         onTap: () {
           Navigator.of(context).pop();
           final encodedTitle = Uri.encodeComponent(target.name);
@@ -936,7 +937,7 @@ class _ContentContextMenuOverlayState
       ),
       _ContextMenuItem(
         icon: Icons.person_outline_rounded,
-        label: 'Go to artist',
+        label: AppLocalizations.of(context)!.goToArtist,
         onTap: () {
           Navigator.of(context).pop();
           if (_parentContext.mounted) {
@@ -947,7 +948,7 @@ class _ContentContextMenuOverlayState
       const _ContextMenuDivider(),
       _ContextMenuItem(
         icon: Icons.share_outlined,
-        label: 'Share',
+        label: AppLocalizations.of(context)!.share,
         hasSubmenu: true,
         onHoverTrigger: (offset) {
           setState(() {
@@ -979,7 +980,7 @@ class _ContentContextMenuOverlayState
     return [
       _ContextMenuItem(
         icon: Icons.play_arrow_rounded,
-        label: 'Play Station',
+        label: AppLocalizations.of(context)!.playStation,
         onTap: () async {
           Navigator.of(context).pop();
           final parentContext = _parentContext;
@@ -1053,7 +1054,7 @@ class _ContentContextMenuOverlayState
       const _ContextMenuDivider(),
       _ContextMenuItem(
         icon: Icons.share_outlined,
-        label: 'Share',
+        label: AppLocalizations.of(context)!.share,
         onTap: () {
           Navigator.of(context).pop();
           _copyToClipboard(
@@ -1083,7 +1084,7 @@ class _ContentContextMenuOverlayState
             _ContextMenuItem(
               icon: Icons.add_rounded,
               iconColor: colorScheme.primary,
-              label: 'New playlist',
+              label: AppLocalizations.of(context)!.newPlaylist,
               onTap: () async {
                 Navigator.of(context).pop();
                 await _promptCreatePlaylist();
@@ -1159,7 +1160,7 @@ class _ContentContextMenuOverlayState
 
     showPremiumModal<void>(
       context: _parentContext,
-      title: 'New Playlist',
+      title: AppLocalizations.of(context)!.newPlaylist,
       child: Builder(
         builder: (dialogContext) {
           final dialogColorScheme = Theme.of(dialogContext).colorScheme;
@@ -1175,7 +1176,7 @@ class _ContentContextMenuOverlayState
                   fontWeight: FontWeight.w600,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'My Playlist',
+                  hintText: AppLocalizations.of(context)!.myPlaylist,
                   hintStyle: TextStyle(
                     color: dialogColorScheme.onSurfaceVariant.withValues(
                       alpha: 0.4,
@@ -1320,7 +1321,7 @@ class _ContentContextMenuOverlayState
       children: [
         _ContextMenuItem(
           icon: Icons.link_rounded,
-          label: 'Copy link',
+          label: AppLocalizations.of(context)!.copyLink,
           onTap: () {
             Navigator.of(context).pop();
             _copyToClipboard(url);
@@ -1328,7 +1329,7 @@ class _ContentContextMenuOverlayState
         ),
         _ContextMenuItem(
           icon: Icons.tag_rounded,
-          label: 'Copy ID',
+          label: AppLocalizations.of(context)!.copyId,
           onTap: () {
             Navigator.of(context).pop();
             _copyToClipboard(id);

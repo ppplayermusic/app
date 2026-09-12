@@ -16,6 +16,7 @@
     <application
         android:label="PPPLAYER"
         android:name="${applicationName}"
+        android:localeConfig="@xml/locales_config"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name="com.ppplayer.app.MainActivity"

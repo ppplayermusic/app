@@ -30,6 +30,7 @@ class SettingsState {
   final YoutubeApiProviderType youtubeApiProvider;
   final bool autoplayEnabled;
   final bool continuePlaybackInPip;
+  final String? languageCode;
 
   SettingsState({
     required this.selectedCountry,
@@ -47,6 +48,7 @@ class SettingsState {
     this.youtubeApiProvider = YoutubeApiProviderType.ppplayer,
     this.autoplayEnabled = true,
     this.continuePlaybackInPip = false,
+    this.languageCode,
   });
 
   SettingsState copyWith({
@@ -65,6 +67,7 @@ class SettingsState {
     YoutubeApiProviderType? youtubeApiProvider,
     bool? autoplayEnabled,
     bool? continuePlaybackInPip,
+    String? languageCode,
   }) {
     return SettingsState(
       selectedCountry: selectedCountry ?? this.selectedCountry,
@@ -83,6 +86,7 @@ class SettingsState {
       autoplayEnabled: autoplayEnabled ?? this.autoplayEnabled,
       continuePlaybackInPip:
           continuePlaybackInPip ?? this.continuePlaybackInPip,
+      languageCode: languageCode ?? this.languageCode,
     );
   }
 }
@@ -116,6 +120,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
   static const _youtubeApiProviderKey = 'youtube_api_provider';
   static const _autoplayEnabledKey = 'autoplay_enabled';
   static const _continuePlaybackInPipKey = 'continue_playback_in_pip';
+  static const _languageCodeKey = 'language_code';
 
   Future<void> _loadSettings() async {
     final box = await Hive.openBox(_boxName);
@@ -160,6 +165,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
         box.get(_autoplayEnabledKey, defaultValue: true) as bool;
     final continuePlaybackInPip =
         box.get(_continuePlaybackInPipKey, defaultValue: false) as bool;
+    final languageCode = box.get(_languageCodeKey) as String?;
 
     state = state.copyWith(
       selectedCountry: country,
@@ -198,6 +204,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
           )],
       autoplayEnabled: autoplayEnabled,
       continuePlaybackInPip: continuePlaybackInPip,
+      languageCode: languageCode,
       isLoaded: true,
     );
   }
@@ -206,6 +213,16 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final box = await Hive.openBox(_boxName);
     await box.put(_performanceModeKey, mode.index);
     state = state.copyWith(performanceMode: mode);
+  }
+
+  Future<void> setLanguageCode(String? code) async {
+    final box = await Hive.openBox(_boxName);
+    if (code == null) {
+      await box.delete(_languageCodeKey);
+    } else {
+      await box.put(_languageCodeKey, code);
+    }
+    state = state.copyWith(languageCode: code);
   }
 
   Future<void> setCountry(String country) async {

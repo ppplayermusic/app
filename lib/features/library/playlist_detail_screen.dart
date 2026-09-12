@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import '../../core/api/spotify_repository.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -148,7 +149,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.pop(),
-                    child: const Text('Go Back'),
+                    child: Text(AppLocalizations.of(context)!.goBack),
                   ),
                 ],
               ),
@@ -425,7 +426,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
           autofocus: true,
           style: TextStyle(color: colorScheme.onSurface),
           decoration: InputDecoration(
-            hintText: 'Search in playlist',
+            hintText: AppLocalizations.of(context)!.searchInPlaylist,
             hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
             prefixIcon: Icon(
               Icons.search_rounded,

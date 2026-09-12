@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class SettingsScreen extends ConsumerWidget {
               color: colorScheme.onSurface,
             ),
             title: Text(
-              'Settings',
+              AppLocalizations.of(context)!.settings,
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 fontSize: 22,
@@ -98,7 +99,7 @@ class SettingsScreen extends ConsumerWidget {
                     .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSettingTile(
-                      title: 'Edit Profile',
+                      title: AppLocalizations.of(context)!.editProfile,
                       subtitle:
                           settings.userName.isEmpty
                               ? 'Set your name and avatar'
@@ -116,8 +117,8 @@ class SettingsScreen extends ConsumerWidget {
                     .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSettingTile(
-                      title: 'Content Market',
-                      subtitle: 'Current: ${settings.selectedCountry}',
+                      title: AppLocalizations.of(context)!.contentMarket,
+                      subtitle: AppLocalizations.of(context)!.currentCountry(settings.selectedCountry),
                       icon: Icons.public_rounded,
                       onTap: () => _showCountryPicker(context, ref),
                     )
@@ -125,9 +126,21 @@ class SettingsScreen extends ConsumerWidget {
                     .fadeIn(duration: 400.ms)
                     .slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
+                TactileSettingTile(
+                      title: AppLocalizations.of(context)!.language,
+                      subtitle: settings.languageCode == null 
+                          ? AppLocalizations.of(context)!.systemDefault 
+                          : _getLanguageName(settings.languageCode, context),
+                      icon: Icons.language_rounded,
+                      onTap: () => _showLanguagePicker(context, ref),
+                    )
+                    .animate(delay: 250.ms)
+                    .fadeIn(duration: 400.ms)
+                    .slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 12),
                 TactileSwitchTile(
-                      title: 'Show Video Player',
-                      subtitle: 'Use YouTube player when available',
+                      title: AppLocalizations.of(context)!.showVideoPlayer,
+                      subtitle: AppLocalizations.of(context)!.useYoutubePlayerWhenAvailable,
                       icon: Icons.smart_display_rounded,
                       value: settings.showVideo,
                       onChanged:
@@ -146,7 +159,7 @@ class SettingsScreen extends ConsumerWidget {
                     .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSettingTile(
-                      title: 'Spotify Credentials',
+                      title: AppLocalizations.of(context)!.spotifyCredentials,
                       subtitle:
                           settings.spotifyProvider == SpotifyProviderType.custom
                               ? 'Custom Provider'
@@ -159,11 +172,11 @@ class SettingsScreen extends ConsumerWidget {
                     .slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSettingTile(
-                      title: 'YouTube Credentials',
+                      title: AppLocalizations.of(context)!.youtubeCredentials,
                       subtitle:
                           settings.youtubeSearchMethod ==
                                   YoutubeSearchMethod.scraping
-                              ? 'Scraping'
+                              ? AppLocalizations.of(context)!.scraping
                               : (settings.youtubeApiProvider ==
                                       YoutubeApiProviderType.custom
                                   ? 'Custom Provider'
@@ -181,8 +194,8 @@ class SettingsScreen extends ConsumerWidget {
                     .slideX(begin: -0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSwitchTile(
-                      title: 'Autoplay',
-                      subtitle: 'Keep playing similar tracks when queue ends',
+                      title: AppLocalizations.of(context)!.autoplay,
+                      subtitle: AppLocalizations.of(context)!.keepPlayingSimilarTracksWhenQueueEnds,
                       icon: Icons.all_inclusive_rounded,
                       value: settings.autoplayEnabled,
                       onChanged:
@@ -195,8 +208,8 @@ class SettingsScreen extends ConsumerWidget {
                     .slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSwitchTile(
-                      title: 'Low Data Mode',
-                      subtitle: 'Force audio-only streams to save data',
+                      title: AppLocalizations.of(context)!.lowDataMode,
+                      subtitle: AppLocalizations.of(context)!.forceAudioonlyStreamsToSaveData,
                       icon: Icons.data_usage_rounded,
                       value: settings.lowDataMode,
                       onChanged:
@@ -211,8 +224,8 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 if (Platform.isAndroid) ...[
                   TactileSwitchTile(
-                        title: 'Picture-in-Picture (PiP)',
-                        subtitle: 'Continue video playback in a small window',
+                        title: AppLocalizations.of(context)!.pictureinpicturePip,
+                        subtitle: AppLocalizations.of(context)!.continueVideoPlaybackInASmallWindow,
                         icon: Icons.picture_in_picture_alt_rounded,
                         value: settings.continuePlaybackInPip,
                         onChanged:
@@ -226,8 +239,8 @@ class SettingsScreen extends ConsumerWidget {
                   const SizedBox(height: 12),
                 ],
                 TactileSettingTile(
-                      title: 'Clear Recently Played',
-                      subtitle: 'Permanently remove listening history',
+                      title: AppLocalizations.of(context)!.clearRecentlyPlayed,
+                      subtitle: AppLocalizations.of(context)!.permanentlyRemoveListeningHistory,
                       icon: Icons.history_rounded,
                       color: colorScheme.error.withValues(alpha: 0.8),
                       onTap: () => _showClearHistoryConfirm(context, ref),
@@ -237,9 +250,9 @@ class SettingsScreen extends ConsumerWidget {
                     .slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 12),
                 TactileSettingTile(
-                      title: 'Clear Cache',
+                      title: AppLocalizations.of(context)!.clearCache,
                       subtitle:
-                          'Frees up space and forces fresh data on next load',
+                          AppLocalizations.of(context)!.freesUpSpaceAndForcesFreshDataOnNextLoad,
                       icon: Icons.delete_outline_rounded,
                       color: colorScheme.error.withValues(alpha: 0.8),
                       onTap: () => _showClearCacheConfirm(context, ref),
@@ -257,7 +270,7 @@ class SettingsScreen extends ConsumerWidget {
                       builder: (context, ref, _) {
                         final versionAsync = ref.watch(appVersionProvider);
                         return TactileSettingTile(
-                          title: 'App version',
+                          title: AppLocalizations.of(context)!.appVersion,
                           subtitle: versionAsync.when(
                             data: (version) => version,
                             loading: () => 'Loading...',
@@ -429,7 +442,7 @@ class SettingsScreen extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     showPremiumModal(
       context: context,
-      title: 'Clear App Cache?',
+      title: AppLocalizations.of(context)!.clearAppCache,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -457,7 +470,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                     child: Text(
-                      'Cancel',
+                      AppLocalizations.of(context)!.cancel,
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
@@ -499,7 +512,7 @@ class SettingsScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
-                            'Clear Cache',
+                            AppLocalizations.of(context)!.clearCache,
                             style: TextStyle(
                               color: colorScheme.onError,
                               fontWeight: FontWeight.bold,
@@ -520,7 +533,7 @@ class SettingsScreen extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     showPremiumModal(
       context: context,
-      title: 'Clear History?',
+      title: AppLocalizations.of(context)!.clearHistory,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -548,7 +561,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                     child: Text(
-                      'Cancel',
+                      AppLocalizations.of(context)!.cancel,
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
@@ -591,11 +604,157 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  String _getLanguageName(String? code, BuildContext context) {
+    switch (code) {
+      case 'en': return 'English';
+      case 'es': return 'Español';
+      case 'fr': return 'Français';
+      case 'de': return 'Deutsch';
+      case 'pt': return 'Português';
+      case 'it': return 'Italiano';
+      case 'ja': return '日本語';
+      case 'ko': return '한국어';
+      case 'zh': return '中文';
+      case 'hi': return 'हिन्दी';
+      case 'ru': return 'Русский';
+      case 'ar': return 'العربية';
+      default: return AppLocalizations.of(context)!.systemDefault;
+    }
+  }
+
+  void _showLanguagePicker(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final supportedLocales = [
+      {'code': null, 'name': AppLocalizations.of(context)!.systemDefault},
+      {'code': 'en', 'name': 'English'},
+      {'code': 'es', 'name': 'Español'},
+      {'code': 'fr', 'name': 'Français'},
+      {'code': 'de', 'name': 'Deutsch'},
+      {'code': 'pt', 'name': 'Português'},
+      {'code': 'it', 'name': 'Italiano'},
+      {'code': 'ja', 'name': '日本語'},
+      {'code': 'ko', 'name': '한국어'},
+      {'code': 'zh', 'name': '中文'},
+      {'code': 'hi', 'name': 'हिन्दी'},
+      {'code': 'ru', 'name': 'Русский'},
+      {'code': 'ar', 'name': 'العربية'},
+    ];
+
+    showPremiumModal(
+      context: context,
+      title: AppLocalizations.of(context)!.language,
+      child: SizedBox(
+        height: 450,
+        child: Consumer(
+          builder: (context, ref, _) {
+            final settings = ref.watch(settingsProvider);
+            final currentLanguage = settings.languageCode;
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              itemCount: supportedLocales.length,
+              itemBuilder: (context, index) {
+                final locale = supportedLocales[index];
+                final code = locale['code'];
+                final name = locale['name']!;
+                final isSelected = code == currentLanguage;
+                final themeColor = AppTheme.themeColors[settings.themeIndex];
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: TactileTap(
+                    onTap: () {
+                      ref.read(settingsProvider.notifier).setLanguageCode(code);
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            isSelected
+                                ? colorScheme.onSurface.withValues(
+                                  alpha: 0.1,
+                                )
+                                : colorScheme.onSurface.withValues(
+                                  alpha: 0.03,
+                                ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color:
+                              isSelected
+                                  ? themeColor.withValues(alpha: 0.5)
+                                  : colorScheme.onSurface.withValues(
+                                    alpha: 0.1,
+                                  ),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color:
+                                  isSelected
+                                      ? themeColor
+                                      : Colors.transparent,
+                              border: Border.all(
+                                color:
+                                    isSelected
+                                        ? themeColor
+                                        : colorScheme.onSurface.withValues(
+                                          alpha: 0.3,
+                                        ),
+                                width: 2,
+                              ),
+                            ),
+                            child:
+                                isSelected
+                                    ? Icon(
+                                      Icons.check_rounded,
+                                      size: 16,
+                                      color: colorScheme.surface,
+                                    )
+                                    : null,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight:
+                                    isSelected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   void _showCountryPicker(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     showPremiumModal(
       context: context,
-      title: 'Select Market',
+      title: AppLocalizations.of(context)!.selectMarket,
       child: SizedBox(
         height: 450,
         child: Consumer(
@@ -714,7 +873,7 @@ class SettingsScreen extends ConsumerWidget {
               },
               error:
                   (err, _) =>
-                      Center(child: Text('Error loading markets: $err')),
+                      Center(child: Text(AppLocalizations.of(context)!.errorLoadingMarkets(err.toString()))),
             );
           },
         ),

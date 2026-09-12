@@ -19,6 +19,7 @@ import '../../shared/widgets/context_menu/content_context_menu.dart';
 import 'package:ppplayer/core/providers/recent_searches_provider.dart';
 import 'package:ppplayer/core/providers/search_provider.dart';
 import 'package:ppplayer/core/api/spotify_repository.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 
 final searchResultsProvider = StreamProvider.autoDispose.family<
   Map<String, dynamic>,
@@ -114,11 +115,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
       dividerColor: Colors.transparent,
       overlayColor: WidgetStateProperty.all(Colors.transparent),
       labelPadding: const EdgeInsets.symmetric(horizontal: 8),
-      tabs: const [
-        Tab(text: 'TRACKS'),
-        Tab(text: 'ARTISTS'),
-        Tab(text: 'ALBUMS'),
-        Tab(text: 'PLAYLISTS'),
+      tabs: [
+        Tab(text: AppLocalizations.of(context)!.tracks),
+        Tab(text: AppLocalizations.of(context)!.artists),
+        Tab(text: AppLocalizations.of(context)!.albums),
+        Tab(text: AppLocalizations.of(context)!.playlists),
       ],
     );
 
@@ -167,7 +168,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                     ),
                     cursorColor: colorScheme.primary,
                     decoration: InputDecoration(
-                      hintText: 'What do you want to listen to?',
+                      hintText: AppLocalizations.of(context)!.whatDoYouWantToListenTo,
                       hintStyle: TextStyle(
                         color: colorScheme.onSurfaceVariant.withValues(
                           alpha: 0.4,
@@ -233,7 +234,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                               SliverSectionShimmer(count: 12, isGrid: false),
                             ],
                           ),
-                      error: (e, _) => Center(child: Text('Error: $e')),
+                      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.error(e.toString()))),
                       data:
                           (data) => TabBarView(
                             controller: _tabCtrl,
@@ -268,7 +269,7 @@ class _EmptySearch extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
               child: Text(
-                    'Recent searches',
+                    AppLocalizations.of(context)!.recentSearches,
                     style: TextStyle(
                       color: colorScheme.onSurface,
                       fontSize: 22,
@@ -328,7 +329,7 @@ class _EmptySearch extends ConsumerWidget {
               16,
             ),
             child: Text(
-                  'Browse all',
+                  AppLocalizations.of(context)!.browseAll,
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 22,
@@ -388,7 +389,7 @@ class _EmptySearch extends ConsumerWidget {
               (e, _) => SliverToBoxAdapter(
                 child: Center(
                   child: Text(
-                    'Error loading categories: $e',
+                    AppLocalizations.of(context)!.errorLoadingMarkets(e.toString()),
                     style: TextStyle(color: colorScheme.error),
                   ),
                 ),
@@ -514,7 +515,7 @@ class _TrackResults extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (items.isEmpty) return const Center(child: Text('No tracks found'));
+    if (items.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noTracksFound));
     final tracks =
         items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
     return ListView.builder(
@@ -559,7 +560,7 @@ class _ArtistResults extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty) return const Center(child: Text('No artists found'));
+    if (items.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noArtistsFound));
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 16),
       itemCount: items.length + (items.length / 8).ceil(),
@@ -646,7 +647,7 @@ class _ArtistResults extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Artist'.toUpperCase(),
+                              AppLocalizations.of(context)!.artist.toUpperCase(),
                               style: TextStyle(
                                 color: colorScheme.primary.withValues(
                                   alpha: 0.8,
@@ -684,7 +685,7 @@ class _AlbumResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty) return const Center(child: Text('No albums found'));
+    if (items.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noAlbumsFound));
     return CustomScrollView(
       slivers: [
         const SliverToBoxAdapter(
@@ -805,7 +806,7 @@ class _PlaylistResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty) return const Center(child: Text('No playlists found'));
+    if (items.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noPlaylistsFound));
     return CustomScrollView(
       slivers: [
         const SliverToBoxAdapter(

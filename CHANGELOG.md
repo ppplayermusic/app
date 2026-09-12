@@ -4,6 +4,15 @@ All notable changes to PPPlayer will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-11
+
+### Added
+- Comprehensive internationalization and localization across the entire app and website.
+- Added full support for 11 global languages: Spanish, French, German, Portuguese, Italian, Japanese, Korean, Chinese, Hindi, Russian, and Arabic.
+- Added an in-app language picker in the Preferences menu that applies translations instantly without restarting the app.
+- Native OS-level language integrations on Android 13+ and iOS to sync the app's language automatically with system-level per-app language settings.
+- Replaced all hardcoded text strings in the app and website with responsive localization keys.
+
 ## [1.0.6] - 2026-09-11
 
 ### Fixed

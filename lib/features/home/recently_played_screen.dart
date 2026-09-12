@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -211,7 +212,7 @@ class RecentlyPlayedScreen extends ConsumerWidget {
   void _showClearHistoryConfirm(BuildContext context, WidgetRef ref) {
     showPremiumModal(
       context: context,
-      title: 'Clear History?',
+      title: AppLocalizations.of(context)!.clearHistory,
       child: Builder(
         builder: (dialogContext) {
           final colorScheme = Theme.of(dialogContext).colorScheme;
@@ -244,7 +245,7 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                           ),
                         ),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
                           style: TextStyle(
                             color: colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.bold,

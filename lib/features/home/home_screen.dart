@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/api/spotify_repository.dart';
 import 'package:go_router/go_router.dart';
@@ -329,7 +330,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       onTap: () => context.push('/settings'),
                       color: Theme.of(context).colorScheme.onSurface,
                       hoverColor: Theme.of(context).colorScheme.primary,
-                      tooltip: 'Settings',
+                      tooltip: AppLocalizations.of(context)!.settings,
                     ),
                 ],
               ),
@@ -342,7 +343,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   StaggeredHomeSection<Track>(
-                    title: 'Continue Listening',
+                    title: AppLocalizations.of(context)!.continueListening,
                     provider: recentlyPlayedProvider,
                     delay: 0.seconds,
                     topPadding: 24,
@@ -370,7 +371,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
-                    title: 'Popular Artists',
+                    title: AppLocalizations.of(context)!.popularArtists,
                     provider: popularArtistsProvider,
                     delay: 500.ms,
                     builder:
@@ -403,7 +404,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
-                    title: 'Made For You',
+                    title: AppLocalizations.of(context)!.madeForYou,
                     provider: madeForYouMixesProvider,
                     delay: 1.seconds,
                     builder:
@@ -456,7 +457,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
-                    title: 'Suggested Stations',
+                    title: AppLocalizations.of(context)!.suggestedStations,
                     provider: suggestedStationsProvider,
                     delay: 1.5.seconds,
                     builder:
@@ -497,7 +498,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
-                    title: 'Popular Albums',
+                    title: AppLocalizations.of(context)!.popularAlbums,
                     provider: marketPopularAlbumsProvider,
                     delay: 2.seconds,
                     builder:
@@ -508,7 +509,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
-                    title: 'Popular Genres',
+                    title: AppLocalizations.of(context)!.popularGenres,
                     provider: browseCategoriesProvider,
                     delay: 2.5.seconds,
                     builder:
@@ -608,7 +609,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const BannerAdWidget(),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
-                    title: 'New Releases',
+                    title: AppLocalizations.of(context)!.newReleases,
                     provider: newReleasesProvider,
                     delay: 3.seconds,
                     builder:
@@ -619,7 +620,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
-                    title: 'Featured Playlists',
+                    title: AppLocalizations.of(context)!.featuredPlaylists,
                     provider: featuredPlaylistsProvider,
                     delay: 3.5.seconds,
                     builder:
@@ -637,7 +638,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Track>(
-                    title: 'Popular Tracks',
+                    title: AppLocalizations.of(context)!.popularTracks,
                     provider: popularTracksProvider,
                     delay: 4.seconds,
                     builder:
