@@ -118,7 +118,9 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSettingTile(
                       title: AppLocalizations.of(context)!.contentMarket,
-                      subtitle: AppLocalizations.of(context)!.currentCountry(settings.selectedCountry),
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!.currentCountry(settings.selectedCountry),
                       icon: Icons.public_rounded,
                       onTap: () => _showCountryPicker(context, ref),
                     )
@@ -128,9 +130,13 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSettingTile(
                       title: AppLocalizations.of(context)!.language,
-                      subtitle: settings.languageCode == null 
-                          ? AppLocalizations.of(context)!.systemDefault 
-                          : _getLanguageName(settings.languageCode, context),
+                      subtitle:
+                          settings.languageCode == null
+                              ? AppLocalizations.of(context)!.systemDefault
+                              : _getLanguageName(
+                                settings.languageCode,
+                                context,
+                              ),
                       icon: Icons.language_rounded,
                       onTap: () => _showLanguagePicker(context, ref),
                     )
@@ -140,7 +146,10 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSwitchTile(
                       title: AppLocalizations.of(context)!.showVideoPlayer,
-                      subtitle: AppLocalizations.of(context)!.useYoutubePlayerWhenAvailable,
+                      subtitle:
+                          AppLocalizations.of(
+                            context,
+                          )!.useYoutubePlayerWhenAvailable,
                       icon: Icons.smart_display_rounded,
                       value: settings.showVideo,
                       onChanged:
@@ -195,7 +204,10 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSwitchTile(
                       title: AppLocalizations.of(context)!.autoplay,
-                      subtitle: AppLocalizations.of(context)!.keepPlayingSimilarTracksWhenQueueEnds,
+                      subtitle:
+                          AppLocalizations.of(
+                            context,
+                          )!.keepPlayingSimilarTracksWhenQueueEnds,
                       icon: Icons.all_inclusive_rounded,
                       value: settings.autoplayEnabled,
                       onChanged:
@@ -209,7 +221,10 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSwitchTile(
                       title: AppLocalizations.of(context)!.lowDataMode,
-                      subtitle: AppLocalizations.of(context)!.forceAudioonlyStreamsToSaveData,
+                      subtitle:
+                          AppLocalizations.of(
+                            context,
+                          )!.forceAudioonlyStreamsToSaveData,
                       icon: Icons.data_usage_rounded,
                       value: settings.lowDataMode,
                       onChanged:
@@ -224,8 +239,12 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 if (Platform.isAndroid) ...[
                   TactileSwitchTile(
-                        title: AppLocalizations.of(context)!.pictureinpicturePip,
-                        subtitle: AppLocalizations.of(context)!.continueVideoPlaybackInASmallWindow,
+                        title:
+                            AppLocalizations.of(context)!.pictureinpicturePip,
+                        subtitle:
+                            AppLocalizations.of(
+                              context,
+                            )!.continueVideoPlaybackInASmallWindow,
                         icon: Icons.picture_in_picture_alt_rounded,
                         value: settings.continuePlaybackInPip,
                         onChanged:
@@ -240,7 +259,10 @@ class SettingsScreen extends ConsumerWidget {
                 ],
                 TactileSettingTile(
                       title: AppLocalizations.of(context)!.clearRecentlyPlayed,
-                      subtitle: AppLocalizations.of(context)!.permanentlyRemoveListeningHistory,
+                      subtitle:
+                          AppLocalizations.of(
+                            context,
+                          )!.permanentlyRemoveListeningHistory,
                       icon: Icons.history_rounded,
                       color: colorScheme.error.withValues(alpha: 0.8),
                       onTap: () => _showClearHistoryConfirm(context, ref),
@@ -252,7 +274,9 @@ class SettingsScreen extends ConsumerWidget {
                 TactileSettingTile(
                       title: AppLocalizations.of(context)!.clearCache,
                       subtitle:
-                          AppLocalizations.of(context)!.freesUpSpaceAndForcesFreshDataOnNextLoad,
+                          AppLocalizations.of(
+                            context,
+                          )!.freesUpSpaceAndForcesFreshDataOnNextLoad,
                       icon: Icons.delete_outline_rounded,
                       color: colorScheme.error.withValues(alpha: 0.8),
                       onTap: () => _showClearCacheConfirm(context, ref),
@@ -606,19 +630,52 @@ class SettingsScreen extends ConsumerWidget {
 
   String _getLanguageName(String? code, BuildContext context) {
     switch (code) {
-      case 'en': return 'English';
-      case 'es': return 'Español';
-      case 'fr': return 'Français';
-      case 'de': return 'Deutsch';
-      case 'pt': return 'Português';
-      case 'it': return 'Italiano';
-      case 'ja': return '日本語';
-      case 'ko': return '한국어';
-      case 'zh': return '中文';
-      case 'hi': return 'हिन्दी';
-      case 'ru': return 'Русский';
-      case 'ar': return 'العربية';
-      default: return AppLocalizations.of(context)!.systemDefault;
+      case 'en':
+        return 'English';
+      case 'es':
+        return 'Español';
+      case 'fr':
+        return 'Français';
+      case 'de':
+        return 'Deutsch';
+      case 'pt':
+        return 'Português';
+      case 'it':
+        return 'Italiano';
+      case 'ja':
+        return '日本語';
+      case 'ko':
+        return '한국어';
+      case 'zh':
+        return '中文';
+      case 'hi':
+        return 'हिन्दी';
+      case 'ru':
+        return 'Русский';
+      case 'ar':
+        return 'العربية';
+      case 'id':
+        return 'Bahasa Indonesia';
+      case 'my':
+        return 'မြန်မာ';
+      case 'pl':
+        return 'Polski';
+      case 'da':
+        return 'Dansk';
+      case 'kk':
+        return 'Қазақша';
+      case 'cs':
+        return 'Čeština';
+      case 'hu':
+        return 'Magyar';
+      case 'ka':
+        return 'ქართული';
+      case 'sv':
+        return 'Svenska';
+      case 'uz':
+        return 'O\'zbekcha';
+      default:
+        return AppLocalizations.of(context)!.systemDefault;
     }
   }
 
@@ -638,6 +695,16 @@ class SettingsScreen extends ConsumerWidget {
       {'code': 'hi', 'name': 'हिन्दी'},
       {'code': 'ru', 'name': 'Русский'},
       {'code': 'ar', 'name': 'العربية'},
+      {'code': 'id', 'name': 'Bahasa Indonesia'},
+      {'code': 'my', 'name': 'မြန်မာ'},
+      {'code': 'pl', 'name': 'Polski'},
+      {'code': 'da', 'name': 'Dansk'},
+      {'code': 'kk', 'name': 'Қазақша'},
+      {'code': 'cs', 'name': 'Čeština'},
+      {'code': 'hu', 'name': 'Magyar'},
+      {'code': 'ka', 'name': 'ქართული'},
+      {'code': 'sv', 'name': 'Svenska'},
+      {'code': 'uz', 'name': 'O\'zbekcha'},
     ];
 
     showPremiumModal(
@@ -676,12 +743,8 @@ class SettingsScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color:
                             isSelected
-                                ? colorScheme.onSurface.withValues(
-                                  alpha: 0.1,
-                                )
-                                : colorScheme.onSurface.withValues(
-                                  alpha: 0.03,
-                                ),
+                                ? colorScheme.onSurface.withValues(alpha: 0.1)
+                                : colorScheme.onSurface.withValues(alpha: 0.03),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color:
@@ -701,9 +764,7 @@ class SettingsScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color:
-                                  isSelected
-                                      ? themeColor
-                                      : Colors.transparent,
+                                  isSelected ? themeColor : Colors.transparent,
                               border: Border.all(
                                 color:
                                     isSelected
@@ -872,8 +933,13 @@ class SettingsScreen extends ConsumerWidget {
                 );
               },
               error:
-                  (err, _) =>
-                      Center(child: Text(AppLocalizations.of(context)!.errorLoadingMarkets(err.toString()))),
+                  (err, _) => Center(
+                    child: Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.errorLoadingMarkets(err.toString()),
+                    ),
+                  ),
             );
           },
         ),
