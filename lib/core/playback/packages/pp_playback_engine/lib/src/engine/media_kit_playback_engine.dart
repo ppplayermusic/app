@@ -791,7 +791,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _currentStatus = status.copyWith(generation: _playGeneration);
     _statusController.add(_currentStatus);
 
-    // Manage IFrame position polling
+    // Manage IFrame position polling.
+    // The timer is kept running when the status becomes playing,
+    // and cancelled when the state leaves playing.
+    // The synthetic end-of-track detection inside the timer self-cancels.
     if (status.isIFrameMode && status.state == PlaybackState.playing) {
       if (_iframePositionTimer == null) {
         _startIFramePolling();
@@ -801,8 +804,17 @@ class MediaKitPlaybackEngine implements PlaybackController {
     }
   }
 
+  // Tracks consecutive ticks where getCurrentTime returned the same frozen value.
+  // A position that hasn't advanced for ~2 seconds while >= duration is treated
+  // as a synthetic end-of-track signal to advance to the next song.
+  double _lastPolledPosition = -1;
+  int _frozenPositionTicks = 0;
+  static const int _frozenTicksThreshold = 4; // 4 × 500ms = 2 s
+
   void _startIFramePolling() {
     final generation = _playGeneration;
+    _lastPolledPosition = -1;
+    _frozenPositionTicks = 0;
     _iframePositionTimer?.cancel();
     _iframePositionTimer = Timer.periodic(const Duration(milliseconds: 500), (
       timer,
@@ -812,32 +824,88 @@ class MediaKitPlaybackEngine implements PlaybackController {
         return;
       }
 
+      double currentTime;
+      double duration;
       try {
-        final currentTime = await _youtubeController!.currentTime;
-        final duration = await _youtubeController!.duration;
-
-        if (_valid(generation) &&
-            _currentStatus.state == PlaybackState.playing) {
-          _diag(
-            'RENDERER gen=$generation position=$currentTime duration=$duration',
-          );
-          final positionDuration = Duration(
-            milliseconds: (currentTime * 1000).toInt(),
-          );
-          // Update the confirmed position for watchdog recovery —
-          // validated by generation so stale polling cannot overwrite a newer attempt.
-          if (_confirmedPositionGeneration == generation) {
-            _confirmedPlaybackPosition = positionDuration;
-          }
-          _updateStatus(
-            _currentStatus.copyWith(
-              position: positionDuration,
-              duration: Duration(milliseconds: (duration * 1000).toInt()),
-            ),
-          );
-        }
+        // Each JS bridge call is individually guarded so a single hung call
+        // does not block the timer indefinitely.
+        currentTime = await _youtubeController!.currentTime.timeout(
+          const Duration(milliseconds: 400),
+        );
+        duration = await _youtubeController!.duration.timeout(
+          const Duration(milliseconds: 400),
+        );
       } catch (e) {
-        // Ignore polling errors during transitions
+        // Bridge call timed out or threw — skip this tick.
+        return;
+      }
+
+      // ── Synthetic end-of-track detection ────────────────────────────────
+      // Once macOS App Nap suspends requestAnimationFrame, YouTube's 'ended'
+      // event can never fire. We detect completion by observing:
+      //  1. position is within 0.5 s of duration (near-end zone)
+      //  2. position hasn't advanced for _frozenTicksThreshold ticks (2 s)
+      //  3. the engine still INTENDS to be playing (avoids false skip when
+      //     the user deliberately pauses at the very end of a track)
+      // This check runs independently of _valid()/_attemptActive so it fires
+      // even after the watchdog has killed the attempt flag.
+      if (duration > 0 &&
+          currentTime >= duration - 0.5 &&
+          _intendedState == PlaybackState.playing) {
+        final positionFrozen = (currentTime - _lastPolledPosition).abs() < 0.01;
+        if (positionFrozen) {
+          _frozenPositionTicks++;
+        } else {
+          _frozenPositionTicks = 0;
+        }
+        _lastPolledPosition = currentTime;
+
+        if (_frozenPositionTicks >= _frozenTicksThreshold) {
+          _diag(
+            'RENDERER gen=$generation synthetic end-of-track: '
+            'pos=$currentTime dur=$duration frozen=${_frozenPositionTicks} ticks',
+          );
+          timer.cancel();
+          _iframePositionTimer = null;
+          if (!_disposed) {
+            _eventController.add(
+              PlaybackEvent(
+                type: PlaybackEventType.trackEnded,
+                track: _currentStatus.track,
+                generation: _playGeneration,
+              ),
+            );
+          }
+          _updateStatus(_currentStatus.copyWith(state: PlaybackState.ended));
+          return;
+        }
+      } else {
+        _frozenPositionTicks = 0;
+        _lastPolledPosition = currentTime;
+      }
+      // ── End synthetic end-of-track ───────────────────────────────────────
+
+      if (!_valid(generation)) return;
+
+      if (_currentStatus.state == PlaybackState.playing) {
+        _diag(
+          'RENDERER gen=$generation position=$currentTime duration=$duration',
+        );
+
+        final positionDuration = Duration(
+          milliseconds: (currentTime * 1000).toInt(),
+        );
+        // Update the confirmed position for watchdog recovery —
+        // validated by generation so stale polling cannot overwrite a newer attempt.
+        if (_confirmedPositionGeneration == generation) {
+          _confirmedPlaybackPosition = positionDuration;
+        }
+        _updateStatus(
+          _currentStatus.copyWith(
+            position: positionDuration,
+            duration: Duration(milliseconds: (duration * 1000).toInt()),
+          ),
+        );
       }
     });
   }
