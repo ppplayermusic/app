@@ -674,6 +674,14 @@ class SettingsScreen extends ConsumerWidget {
         return 'Svenska';
       case 'uz':
         return 'O\'zbekcha';
+      case 'fil':
+        return 'Filipino';
+      case 'lv':
+        return 'Latviešu';
+      case 'bn':
+        return 'বাংলা';
+      case 'pcm':
+        return 'Naija';
       default:
         return AppLocalizations.of(context)!.systemDefault;
     }
@@ -705,6 +713,10 @@ class SettingsScreen extends ConsumerWidget {
       {'code': 'ka', 'name': 'ქართული'},
       {'code': 'sv', 'name': 'Svenska'},
       {'code': 'uz', 'name': 'O\'zbekcha'},
+      {'code': 'fil', 'name': 'Filipino'},
+      {'code': 'lv', 'name': 'Latviešu'},
+      {'code': 'bn', 'name': 'বাংলা'},
+      {'code': 'pcm', 'name': 'Naija'},
     ];
 
     showPremiumModal(

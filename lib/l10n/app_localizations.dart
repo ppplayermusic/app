@@ -6,11 +6,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_ar.dart';
+import 'app_localizations_bn.dart';
 import 'app_localizations_cs.dart';
 import 'app_localizations_da.dart';
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fil.dart';
 import 'app_localizations_fr.dart';
 import 'app_localizations_hi.dart';
 import 'app_localizations_hu.dart';
@@ -20,7 +22,9 @@ import 'app_localizations_ja.dart';
 import 'app_localizations_ka.dart';
 import 'app_localizations_kk.dart';
 import 'app_localizations_ko.dart';
+import 'app_localizations_lv.dart';
 import 'app_localizations_my.dart';
+import 'app_localizations_pcm.dart';
 import 'app_localizations_pl.dart';
 import 'app_localizations_pt.dart';
 import 'app_localizations_ru.dart';
@@ -115,11 +119,13 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
+    Locale('bn'),
     Locale('cs'),
     Locale('da'),
     Locale('de'),
     Locale('en'),
     Locale('es'),
+    Locale('fil'),
     Locale('fr'),
     Locale('hi'),
     Locale('hu'),
@@ -129,7 +135,9 @@ abstract class AppLocalizations {
     Locale('ka'),
     Locale('kk'),
     Locale('ko'),
+    Locale('lv'),
     Locale('my'),
+    Locale('pcm'),
     Locale('pl'),
     Locale('pt'),
     Locale('ru'),
@@ -937,11 +945,13 @@ class _AppLocalizationsDelegate
   @override
   bool isSupported(Locale locale) => <String>[
     'ar',
+    'bn',
     'cs',
     'da',
     'de',
     'en',
     'es',
+    'fil',
     'fr',
     'hi',
     'hu',
@@ -951,7 +961,9 @@ class _AppLocalizationsDelegate
     'ka',
     'kk',
     'ko',
+    'lv',
     'my',
+    'pcm',
     'pl',
     'pt',
     'ru',
@@ -969,6 +981,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'ar':
       return AppLocalizationsAr();
+    case 'bn':
+      return AppLocalizationsBn();
     case 'cs':
       return AppLocalizationsCs();
     case 'da':
@@ -979,6 +993,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fil':
+      return AppLocalizationsFil();
     case 'fr':
       return AppLocalizationsFr();
     case 'hi':
@@ -997,8 +1013,12 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsKk();
     case 'ko':
       return AppLocalizationsKo();
+    case 'lv':
+      return AppLocalizationsLv();
     case 'my':
       return AppLocalizationsMy();
+    case 'pcm':
+      return AppLocalizationsPcm();
     case 'pl':
       return AppLocalizationsPl();
     case 'pt':
