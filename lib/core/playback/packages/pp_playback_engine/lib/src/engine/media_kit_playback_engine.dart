@@ -87,8 +87,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
         _failAttempt(
           generation,
           loading
-              ? 'YouTube loading timed out (gen=$generation)'
-              : 'YouTube playback start timed out (gen=$generation)',
+              ? 'error: YouTube loading timed out (gen=$generation)'
+              : 'error: YouTube playback start timed out (gen=$generation)',
         );
         return;
       }

@@ -36,6 +36,9 @@
   </head>
 
   <body>
+    <audio id="pp-wakelock" loop autoplay>
+      <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA" type="audio/wav" />
+    </audio>
     <div class="embed-container">
       <div id="<<playerId>>"></div>
     </div>
@@ -94,6 +97,11 @@
         });
         if (player && typeof player.setSize === 'function') {
           player.setSize(window.innerWidth, window.innerHeight);
+        }
+        var wakelock = document.getElementById('pp-wakelock');
+        if (wakelock) {
+           wakelock.volume = 0.01;
+           wakelock.play().catch(function(e) { console.warn("[YT] Wakelock play failed", e); });
         }
       }
 
