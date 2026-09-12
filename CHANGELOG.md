@@ -4,6 +4,12 @@ All notable changes to PPPlayer will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-12
+
+### Fixed
+- Fixed an issue where the seek bar would instantly snap back to the start position when sliding it immediately after launching the app.
+- Fixed the seek bar showing a duration of 0:00 when the app is first launched.
+
 ## [1.1.0] - 2026-09-11
 
 ### Added

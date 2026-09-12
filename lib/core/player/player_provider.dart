@@ -101,12 +101,19 @@ class PlayerNotifier extends Notifier<PlayerState> {
   bool _isFetchingAutoplay = false;
   final Set<String> _autoplaySeenTrackIds = {};
 
+  /// True while the startup restore is cuing the saved track in the background.
+  /// External play commands (e.g. from macOS media session) are ignored during
+  /// this window to prevent auto-play on launch.
+  bool _restoringState = false;
+  Timer? _restoreTimeout;
+
   @override
   PlayerState build() {
     _persistenceWork = _initRestore();
     ref.onDispose(() {
       _disposed = true;
       _saveTimer?.cancel();
+      _restoreTimeout?.cancel();
     });
     // Listen to the playback engine's status and sync it to our state
     ref.listen(playbackStatusProvider, (previous, next) {
@@ -198,6 +205,17 @@ class PlayerNotifier extends Notifier<PlayerState> {
       PipHandler.setPipEnabled(wantPip);
     }
 
+    // During 'preparing' the engine position/duration are always Duration.zero
+    // (no live reading yet). Overwriting state with zeros would erase the saved
+    // restore position and cause the wrong startAt on the next playTrack call.
+    // Only propagate live timeline data once the engine is past the load phase.
+    final hasLivePosition = status.state != PlaybackState.preparing;
+    // Only overwrite the restored duration once the engine reports an actual
+    // non-zero value. Right after cueVideoById() the IFrame emits
+    // PlaybackState.paused with duration=0 (it hasn't read the track length
+    // yet). Propagating that zero would overwrite the Hive-restored duration
+    // and make the seekbar show 0% (progress = savedPosition / 0).
+    final hasLiveDuration = hasLivePosition && status.duration > Duration.zero;
     state = state.copyWith(
       isPlaying: isPlaying,
       isLoadingVideo:
@@ -205,11 +223,19 @@ class PlayerNotifier extends Notifier<PlayerState> {
           status.state == PlaybackState.buffering,
       loadError: displayError,
       videoId: status.activeVideoId,
-      position: status.position,
-      duration: status.duration,
-      buffered: status.buffered,
+      position: hasLivePosition ? status.position : state.position,
+      duration: hasLiveDuration ? status.duration : state.duration,
+      buffered: hasLivePosition ? status.buffered : state.buffered,
     );
     _scheduleSaveState();
+
+    // Restore complete: the IFrame fired the cued event and the engine is now
+    // paused. Clear the restore guard so normal play commands are honoured.
+    if (_restoringState && status.state == PlaybackState.paused) {
+      debugPrint('PlayerNotifier: restore complete — guard cleared (engine paused)');
+      _restoringState = false;
+      _restoreTimeout?.cancel();
+    }
 
     // Trigger prefetch once playback starts successfully
     if (status.state == PlaybackState.playing &&
@@ -312,6 +338,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       if (_disposed) return;
       await box.put('queue', jsonEncode(snapshot.playbackQueue.toJson()));
       await box.put('positionMs', snapshot.position.inMilliseconds);
+      await box.put('durationMs', snapshot.duration.inMilliseconds);
     } catch (e) {
       debugPrint('Failed to save player state: $e');
     }
@@ -328,19 +355,107 @@ class PlayerNotifier extends Notifier<PlayerState> {
       if (queueJson != null) {
         final queue = PlaybackQueue.fromJson(jsonDecode(queueJson));
         final position = Duration(milliseconds: posMs ?? 0);
+        final durMs = box.get('durationMs');
+        final duration =
+            durMs != null && durMs > 0
+                ? Duration(milliseconds: durMs)
+                : (queue.currentTrack?.durationMs != null &&
+                        queue.currentTrack!.durationMs! > 0)
+                    ? Duration(milliseconds: queue.currentTrack!.durationMs!)
+                    : Duration.zero;
 
         state = state.copyWith(
           playbackQueue: queue,
           position: position,
+          duration: duration,
           isPlaying: false,
         );
+
+        // Cue the video silently so the IFrame shows the paused frame.
+        // _restoringState blocks macOS from auto-playing via the AudioHandler.
+        _restoringState = true;
+        unawaited(_prepareRestoredTrack(position));
       }
     } catch (e) {
       debugPrint('Failed to restore player state: $e');
     }
   }
 
-  // Removed direct service getter to use ref.read inside methods
+
+  /// Cues the restored track at [savedPosition] without starting audio.
+  /// Runs after startup; sets _restoringState=false when done so
+  /// external play commands from macOS are honoured again.
+  Future<void> _prepareRestoredTrack(Duration savedPosition) async {
+    final track = state.currentTrack;
+    if (track == null) {
+      _restoringState = false;
+      return;
+    }
+
+    _playbackGeneration++;
+    final myGen = _playbackGeneration;
+
+    try {
+      final service = ref.read(playbackServiceProvider);
+      final candidates = await service.resolveCandidates(track, null);
+      if (_disposed || myGen != _playbackGeneration) {
+        _restoringState = false;
+        return;
+      }
+
+      if (candidates.isEmpty) {
+        _restoringState = false;
+        return;
+      }
+
+      final candidate = candidates.first;
+      final resolvedTrack = track.copyWith(youtubeVideoId: candidate.videoId);
+      await service.cacheYoutubeId(resolvedTrack.spotifyId, candidate.videoId);
+      if (_disposed || myGen != _playbackGeneration) {
+        _restoringState = false;
+        return;
+      }
+
+      // Update queue entry with resolved video ID.
+      final newQueue = List<Track>.from(state.playbackQueue.tracks);
+      final idx = state.playbackQueue.currentIndex;
+      if (idx >= 0 && idx < newQueue.length) {
+        newQueue[idx] = resolvedTrack;
+        state = state.copyWith(
+          playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
+        );
+      }
+
+      // Cue video silently (no audio). Sets intendedState=paused in engine.
+      await _controller.prepare(
+        resolvedTrack.toPlaybackTrack(),
+        position: savedPosition,
+      );
+      if (_disposed || myGen != _playbackGeneration) {
+        _clearRestoreGuard();
+        return;
+      }
+      _controller.setVolume(state.volume);
+      // _restoringState stays true here — _syncFromStatus will clear it when
+      // the engine reaches PlaybackState.paused (IFrame fired the cued event).
+      // _restoreTimeout is a safety net in case the cued event never fires.
+      _restoreTimeout?.cancel();
+      _restoreTimeout = Timer(const Duration(seconds: 10), _clearRestoreGuard);
+    } catch (e) {
+      debugPrint('PlayerNotifier: _prepareRestoredTrack failed: $e');
+      _clearRestoreGuard();
+    }
+  }
+
+  void _clearRestoreGuard() {
+    if (_restoringState) {
+      debugPrint('PlayerNotifier: restore guard cleared');
+      _restoringState = false;
+    }
+    _restoreTimeout?.cancel();
+    _restoreTimeout = null;
+  }
+
   PlaybackController get _controller => ref.read(playbackControllerProvider);
 
   Future<void> playTrack(
@@ -537,8 +652,20 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
   void pause() => _controller.pause();
   void resume() {
-    if (_controller.currentStatus.state == PlaybackState.idle &&
-        state.currentTrack != null) {
+    // Block system-initiated play commands (e.g. macOS media session) while
+    // the startup restore is cuing the video. _restoringState is cleared by
+    // _prepareRestoredTrack once the IFrame is ready (or on failure).
+    if (_restoringState) {
+      debugPrint('PlayerNotifier: resume() blocked — restore in progress');
+      return;
+    }
+    final engineState = _controller.currentStatus.state;
+    // Route to _resumeRestoredState if the engine is idle (never started) OR
+    // still preparing (prepare() was called but hasn't cued yet). In both
+    // cases _controller.resume() alone cannot start playback.
+    if (state.currentTrack != null &&
+        (engineState == PlaybackState.idle ||
+            engineState == PlaybackState.preparing)) {
       _resumeRestoredState();
     } else {
       _controller.resume();
@@ -549,14 +676,24 @@ class PlayerNotifier extends Notifier<PlayerState> {
     final track = state.currentTrack;
     if (track == null) return;
 
+    // Fast-path: the startup prepare() already cued the video.
+    // _controller.resume() calls playVideo() directly — instant audio start.
+    final engineState = _controller.currentStatus.state;
+    if (engineState == PlaybackState.paused) {
+      _controller.resume();
+      return;
+    }
+
+    // Fallback: engine is idle or still loading — run the full playTrack flow.
+    // state.position is always correct here because _syncFromStatus(preparing)
+    // no longer overwrites it with Duration.zero.
     final position = state.position;
-    final preparation = playTrack(
+    final generation = _playbackGeneration;
+    await playTrack(
       track,
       queue: state.playbackQueue.tracks,
       position: position,
     );
-    final generation = _playbackGeneration;
-    await preparation;
     if (_disposed || generation != _playbackGeneration) return;
   }
 
@@ -564,6 +701,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
     if (state.isPlaying) {
       pause();
     } else {
+      // User explicitly tapping play always clears the restore guard so the
+      // action is never silently swallowed (unlike macOS auto-commands).
+      _clearRestoreGuard();
       resume();
     }
   }

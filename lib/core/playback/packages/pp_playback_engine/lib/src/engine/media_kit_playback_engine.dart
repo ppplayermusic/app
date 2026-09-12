@@ -206,31 +206,58 @@ class MediaKitPlaybackEngine implements PlaybackController {
   Future<void> prepare(PlaybackTrack track, {Duration? position}) async {
     if (_disposed) return;
 
-    _attemptActive = false;
+    // _attemptActive must be true so the bridge listener's _valid() check
+    // passes and PlayerState.cued / unStarted events are processed.
+    // Without this the IFrame events are silently discarded and the video
+    // never resolves to PlaybackState.paused after cueVideoById().
+    _attemptActive = true;
     _intentRevision++;
     _intendedState = PlaybackState.paused;
     _playGeneration++;
     final myGen = _playGeneration;
-
-    _updateStatus(
-      _currentStatus.copyWith(
-        track: track,
-        state: PlaybackState.preparing,
-        isIFrameMode: true,
-      ),
-    );
-
-    // Initialize controller if needed
-    if (_youtubeController == null) {
-      await _enterIFrameMode(track.id, generation: myGen);
-    }
 
     final ss =
         position?.inMilliseconds != null
             ? position!.inMilliseconds / 1000.0
             : null;
     _currentStartSeconds = ss;
-    await _load(myGen, track.id, startSeconds: ss);
+
+    _updateStatus(
+      _currentStatus.copyWith(
+        track: track,
+        state: PlaybackState.preparing,
+        isIFrameMode: true,
+        // Set activeVideoId immediately so PlaybackView renders the YouTube
+        // player widget before the IFrame fires its first event.
+        activeVideoId: track.id,
+      ),
+    );
+
+    // Initialize the IFrame controller + bridge listener on first use.
+    // _enterIFrameMode also calls _load() at its end, but _load() will bail
+    // immediately because _intendedState == paused (not eligible to auto-play),
+    // so the side-effect is harmless — we just need the controller ready.
+    if (_youtubeController == null) {
+      await _enterIFrameMode(track.id, generation: myGen);
+    }
+
+    if (_disposed || myGen != _playGeneration) return;
+
+    // Cue the video at the saved position without starting playback.
+    // This fires PlayerState.cued / unStarted from the IFrame, which the
+    // bridge listener maps to PlaybackState.paused (because _intendedState
+    // == paused) and records the correct seek position.
+    // We use cueVideoById — not _load() / loadVideoById — because the latter
+    // requires _intendedState == playing and auto-starts the video.
+    try {
+      _diag('PREPARE cueVideoById gen=$myGen videoId=${track.id} ss=$ss');
+      await _youtubeController!.cueVideoById(
+        videoId: track.id,
+        startSeconds: ss,
+      );
+    } catch (e) {
+      debugPrint('MediaKitPlaybackEngine: prepare cueVideoById failed: $e');
+    }
   }
 
   @override
@@ -389,7 +416,26 @@ class MediaKitPlaybackEngine implements PlaybackController {
               _ready = true;
               // Repeated readiness events must not restart the start deadline.
               if (_lastPlayedGeneration != gen) {
-                unawaited(_dispatchIFramePlay(gen, ytState.playerState.name));
+                if (_intendedState == PlaybackState.paused) {
+                  // prepare() was used (startup restore). Resolve to paused state
+                  // with the saved start position — do NOT call playVideo().
+                  final savedPos =
+                      _currentStartSeconds != null
+                          ? Duration(
+                              milliseconds:
+                                  (_currentStartSeconds! * 1000).toInt(),
+                            )
+                          : Duration.zero;
+                  _updateStatus(
+                    _currentStatus.copyWith(
+                      state: PlaybackState.paused,
+                      position: savedPos,
+                      activeVideoId: _currentStatus.track?.id,
+                    ),
+                  );
+                } else {
+                  unawaited(_dispatchIFramePlay(gen, ytState.playerState.name));
+                }
               }
               break;
             default:
@@ -402,6 +448,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
             yt.PlayerState.unStarted => PlaybackState.paused,
             yt.PlayerState.buffering => PlaybackState.buffering,
             yt.PlayerState.ended => PlaybackState.ended,
+            // A cued video is ready-but-paused. Without this mapping the engine
+            // stays stuck in PlaybackState.preparing after a prepare() call.
+            yt.PlayerState.cued => PlaybackState.paused,
             _ => _currentStatus.state,
           };
 
@@ -511,10 +560,17 @@ class MediaKitPlaybackEngine implements PlaybackController {
       // However, loadVideoById starts playback automatically, bypassing our playVideo() guards.
       // Therefore, we must enforce the guard BEFORE loading.
       if (!eligible()) {
-        // If not eligible to play, we cannot load it because it will automatically play.
-        // We pause the engine immediately and return. The video will be loaded when resume() is called.
-        _diag('ENGINE _load() BLOCKED: not eligible to play.');
-        _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+        // Not eligible to auto-play. If this is a prepare/restore call
+        // (_intendedState == paused), return silently — cueVideoById() will
+        // fire the cued event and the bridge listener will set PlaybackState.paused
+        // with the correct position. Emitting paused here would clear the restore
+        // guard in PlayerNotifier before the video is actually cued.
+        if (_intendedState != PlaybackState.paused) {
+          _diag('ENGINE _load() BLOCKED: not eligible to play.');
+          _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
+        } else {
+          _diag('ENGINE _load() BLOCKED (prepare path): skipping spurious paused emit.');
+        }
         return;
       }
       await _youtubeController!.loadVideoById(
@@ -669,6 +725,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _intendedState = PlaybackState.playing;
     if (_currentStatus.isIFrameMode) {
       if (_ready) {
+        // Ensure _attemptActive is set so _valid() passes inside
+        // _dispatchIFramePlay. prepare() already sets it to true, but
+        // an intermediate pause() call can clear it; reassert here.
+        _attemptActive = true;
         await _dispatchIFramePlay(_playGeneration, 'resume');
       } else if (_valid(_playGeneration)) {
         _armWatchdog(_playGeneration, loading: true);
@@ -726,7 +786,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
     final wasPlaying = _currentStatus.state == PlaybackState.playing;
 
     if (_currentStatus.isIFrameMode) {
-      if (!_valid(generation)) return;
+      if (!_valid(generation)) {
+        return;
+      }
       if (!_ready) {
         // If not ready, we must load to prepare the offset.
         await _load(
@@ -746,6 +808,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
       }
 
       if (_valid(generation)) {
+        _currentStartSeconds = position.inMilliseconds / 1000.0;
         _updateStatus(_currentStatus.copyWith(position: position));
       }
       if (wasPlaying && revision == _intentRevision) {
