@@ -26,404 +26,406 @@ class AppLocalizationsGn extends AppLocalizations {
   String get artists => 'PURAHEIHÁRAKUÉRA';
 
   @override
-  String get artwork => 'ARTWORK';
+  String get artwork => 'IMAGEN';
 
   @override
-  String get appVersion => 'Tembiaporã version';
+  String get appVersion => 'Tembiaporã versión';
 
   @override
   String get artist => 'Puraheihára';
 
   @override
-  String get artistsYouFollow => 'Artists you follow';
+  String get artistsYouFollow => 'Puraheihára rehesa\'ỹjóva';
 
   @override
-  String get autoplay => 'Autoplay';
+  String get autoplay => 'Mbopu Pochy\'ỹre';
 
   @override
-  String get becauseYouListenedTo => 'Because you listened to';
+  String get becauseYouListenedTo => 'Ehendu va\'erã';
 
   @override
-  String get browseAll => 'Browse all';
+  String get browseAll => 'Ehecha Paite';
 
   @override
   String get cancel => 'Mbotove';
 
   @override
-  String get clearAppCache => 'Clear App Cache?';
+  String get clearAppCache => 'Embogue Tembiaporã Caché?';
 
   @override
-  String get clearCache => 'Clear Cache';
+  String get clearCache => 'Embogue Caché';
 
   @override
-  String get clearHistory => 'Clear History?';
+  String get clearHistory => 'Embogue Tembiasakue?';
 
   @override
-  String get clearRecentlyPlayed => 'Clear Recently Played';
+  String get clearRecentlyPlayed => 'Embogue Oñembopu Va\'ekue';
 
   @override
-  String get contentMarket => 'Content Market';
+  String get contentMarket => 'Tembiporu Ñorairõ';
 
   @override
-  String get continueListening => 'Continue Listening';
+  String get continueListening => 'Eheñói Ehendu Hag̃ua';
 
   @override
   String get continueVideoPlaybackInASmallWindow =>
-      'Continue video playback in a small window';
+      'Eheñói mbopu marandupy\'a michĩva-pe';
 
   @override
-  String get create => 'Create';
+  String get create => 'Moñepyrũ';
 
   @override
-  String get createAPlaylistToGetStarted => 'Create a playlist to get started';
+  String get createAPlaylistToGetStarted => 'Emoñepyrũ tysýi ñepyrũ hag̃ua';
 
   @override
   String currentSelectedcountry(Object country) {
-    return 'Current: $country';
+    return 'Ko\'ág̃a: $country';
   }
 
   @override
-  String get deletePlaylist => 'Delete Playlist';
+  String get deletePlaylist => 'Mboguete Tysýi';
 
   @override
-  String get editProfile => 'Edit Profile';
+  String get editProfile => 'Moambue Perfil';
 
   @override
   String errorLoadingMarkets(Object err) {
-    return 'Error loading markets: $err';
+    return 'Javy oikuaa hag̃ua ñorairõ: $err';
   }
 
   @override
   String error(Object error) {
-    return 'Error: $error';
+    return 'Javy: $error';
   }
 
   @override
   String explore(Object genre) {
-    return 'Explore $genre';
+    return 'Eikutu $genre';
   }
 
   @override
-  String get fansAlsoLike => 'FANS ALSO LIKE';
+  String get fansAlsoLike => 'PURAHEIVÝVA OIPOTÁVA';
 
   @override
   String featuringTouppercase(Object artist) {
-    return 'FEATURING $artist';
+    return 'NDIVE $artist';
   }
 
   @override
-  String get featuredPlaylists => 'Featured Playlists';
+  String get featuredPlaylists => 'Tysýi Ombojerapykuéva';
 
   @override
-  String get followArtistsToSeeThemHere => 'Follow artists to see them here';
+  String get followArtistsToSeeThemHere =>
+      'Resa\'ỹjo puraheihára ehecha hag̃ua ko\'ápe';
 
   @override
-  String get followStationsToSeeThemHere => 'Follow stations to see them here';
+  String get followStationsToSeeThemHere =>
+      'Resa\'ỹjo emisoras ehecha hag̃ua ko\'ápe';
 
   @override
   String get forceAudioonlyStreamsToSaveData =>
-      'Force audio-only streams to save data';
+      'Mboipota audio-nte roinjévo datos monguerekohápe';
 
   @override
   String get freesUpSpaceAndForcesFreshDataOnNextLoad =>
-      'Frees up space and forces fresh data on next load';
+      'Embogue tenda ha moĩ datos pyahu oúvo';
 
   @override
-  String get fromYourFavorites => 'From your favorites';
+  String get fromYourFavorites => 'Ne rembipotágui';
 
   @override
-  String get goBack => 'Go Back';
+  String get goBack => 'Ei Tapykuépe';
 
   @override
   String inspiredByName(Object name) {
-    return 'Inspired by $name';
+    return 'Inspirado $name ndive';
   }
 
   @override
   String get keepPlayingSimilarTracksWhenQueueEnds =>
-      'Keep playing similar tracks when queue ends';
+      'Eheñói mbopu pumbasy ojepaháramo tysýi';
 
   @override
-  String get library => 'Library';
+  String get library => 'Ñemongeta';
 
   @override
-  String get likeAlbumsToSeeThemHere => 'Like albums to see them here';
+  String get likeAlbumsToSeeThemHere => 'Eipota album ehecha hag̃ua ko\'ápe';
 
   @override
-  String get likedSongs => 'Liked Songs';
+  String get likedSongs => 'Pumbasy Rembipota';
 
   @override
-  String get lowDataMode => 'Low Data Mode';
+  String get lowDataMode => 'Datos Michĩ Modo';
 
   @override
-  String get madeForYou => 'Made For You';
+  String get madeForYou => 'Ojejapo Ndéve';
 
   @override
   String moreLikeName(Object name) {
-    return 'More like $name';
+    return 'Oñemejãva $name';
   }
 
   @override
-  String get moreOptions => 'More options';
+  String get moreOptions => 'Ambuéva tembiapokáva';
 
   @override
-  String get nameYourMasterpiece => 'Name your masterpiece...';
+  String get nameYourMasterpiece => 'Eme\'ẽ réra ne mba\'e porãve...';
 
   @override
-  String get newPlaylist => 'New Playlist';
+  String get newPlaylist => 'Tysýi Pyahu';
 
   @override
-  String get newReleases => 'New Releases';
+  String get newReleases => 'Oñemomba\'e Pyahu';
 
   @override
-  String get next => 'Next';
+  String get next => 'Oúva';
 
   @override
-  String get noAlbumsFound => 'No albums found';
+  String get noAlbumsFound => 'Ndojejuhúi albumkuéra';
 
   @override
-  String get noArtistsFollowed => 'No artists followed';
+  String get noArtistsFollowed => 'Ndaipóri puraheihára rehesa\'ỹjóva';
 
   @override
-  String get noArtistsFound => 'No artists found';
+  String get noArtistsFound => 'Ndojejuhúi puraheihára';
 
   @override
-  String get noLikedAlbums => 'No liked albums';
+  String get noLikedAlbums => 'Ndaipóri album reipotáva';
 
   @override
-  String get noPlaylistsFound => 'No playlists found';
+  String get noPlaylistsFound => 'Ndojejuhúi tysýikuéra';
 
   @override
-  String get noPlaylistsYet => 'No playlists yet';
+  String get noPlaylistsYet => 'Ndaipóri tysýi gueteri';
 
   @override
-  String get noResultsFound => 'No results found';
+  String get noResultsFound => 'Ndojejuhúi mba\'eve';
 
   @override
-  String get noStationsFollowed => 'No stations followed';
+  String get noStationsFollowed => 'Ndaipóri emisoras rehesa\'ỹjóva';
 
   @override
-  String get noTrackPlaying => 'No track playing';
+  String get noTrackPlaying => 'Ndaipóri pumbasy oñembopúva';
 
   @override
-  String get noTracksFound => 'No tracks found';
+  String get noTracksFound => 'Ndojejuhúi pumbasykuéra';
 
   @override
   String get playlists => 'TYSÝIKUÉRA';
 
   @override
-  String get popular => 'POPULAR';
+  String get popular => 'OJEPOUKAÁVA';
 
   @override
   String get permanentlyRemoveListeningHistory =>
-      'Permanently remove listening history';
+      'Mboguete mba\'eve tembiasakue ehendu va\'ekuégui';
 
   @override
-  String get pictureinpicturePip => 'Picture-in-Picture (PiP)';
+  String get pictureinpicturePip => 'Imagen imagen-pe (PiP)';
 
   @override
-  String get popularAlbums => 'Popular Albums';
+  String get popularAlbums => 'Albumkuéra Ojepoukaáva';
 
   @override
-  String get popularArtists => 'Popular Artists';
+  String get popularArtists => 'Puraheihárakuéra Ojepoukaáva';
 
   @override
-  String get popularGenres => 'Popular Genres';
+  String get popularGenres => 'Géneros Ojepoukaáva';
 
   @override
-  String get popularSongs => 'Popular Songs';
+  String get popularSongs => 'Pumbasykuéra Ojepoukaáva';
 
   @override
-  String get popularTracks => 'Popular Tracks';
+  String get popularTracks => 'Pumbasykuéra Ojepoukaáva';
 
   @override
-  String get popularHitsRightNow => 'Popular hits right now';
+  String get popularHitsRightNow => 'Hits Ojepoukaáva Ko\'ág̃a';
 
   @override
-  String get previous => 'Previous';
+  String get previous => 'Tapykuégui';
 
   @override
-  String get queue => 'QUEUE';
+  String get queue => 'TYSÝI';
 
   @override
-  String get recentSearches => 'Recent searches';
+  String get recentSearches => 'Ehekatéva';
 
   @override
-  String get recommendedForYou => 'Recommended for You';
+  String get recommendedForYou => 'Rohechaukáva Ndéve';
 
   @override
-  String get scraping => 'Scraping';
+  String get scraping => 'Oñembyaty Datos';
 
   @override
   String get search => 'Eheka';
 
   @override
-  String get searchInAlbum => 'Search in album...';
+  String get searchInAlbum => 'Eheka albumpe...';
 
   @override
-  String get searchInLibrary => 'Search in library...';
+  String get searchInLibrary => 'Eheka ñemongeta-pe...';
 
   @override
-  String get searchInPlaylist => 'Search in playlist';
+  String get searchInPlaylist => 'Eheka tysýipe';
 
   @override
-  String get searchLikedSongs => 'Search liked songs...';
+  String get searchLikedSongs => 'Eheka pumbasy reipotáva...';
 
   @override
-  String get searchPopularSongs => 'Search popular songs...';
+  String get searchPopularSongs => 'Eheka pumbasykuéra ojepoukaáva...';
 
   @override
-  String get selectMarket => 'Select Market';
+  String get selectMarket => 'Eiporavo Ñorairõ';
 
   @override
   String get settings => 'Tembiporu';
 
   @override
-  String get showVideoPlayer => 'Show Video Player';
+  String get showVideoPlayer => 'Ehecha Marandupy\'a';
 
   @override
-  String get shuffle => 'Shuffle';
+  String get shuffle => 'Ñemoheñói';
 
   @override
-  String get spotifyCredentials => 'Spotify Credentials';
+  String get spotifyCredentials => 'Spotify Credenciales';
 
   @override
-  String get suggestedStations => 'Suggested Stations';
+  String get suggestedStations => 'Emisoras Rojapurahéiva';
 
   @override
   String get tracks => 'PUMBASYKUÉRA';
 
   @override
-  String get trending => 'Trending';
+  String get trending => 'Ojepoukaáva';
 
   @override
-  String get tryAgain => 'Try Again';
+  String get tryAgain => 'Ejejapo Jey';
 
   @override
-  String get tryADifferentSearchTerm => 'Try a different search term';
+  String get tryADifferentSearchTerm => 'Eikotevẽ ambuéva reheka hag̃ua';
 
   @override
-  String get useYoutubePlayerWhenAvailable =>
-      'Use YouTube player when available';
+  String get useYoutubePlayerWhenAvailable => 'Eiporu YouTube Player oĩramo';
 
   @override
   String get video => 'VIDEO';
 
   @override
-  String get whatDoYouWantToListenTo => 'What do you want to listen to?';
+  String get whatDoYouWantToListenTo => 'Mba\'étapa rehendu potáva?';
 
   @override
-  String get youtubeCredentials => 'YouTube Credentials';
+  String get youtubeCredentials => 'YouTube Credenciales';
 
   @override
-  String get yourLibrary => 'Your Library';
+  String get yourLibrary => 'Ne Ñemongeta';
 
   @override
   String get playerscreenviewswitch => 'player_screen_view_switch';
 
   @override
-  String get addToPlaylist => 'Add to playlist';
+  String get addToPlaylist => 'Moĩ Tysýipe';
 
   @override
-  String get addToQueue => 'Add to queue';
+  String get addToQueue => 'Moĩ Tysýipe Espera';
 
   @override
-  String get copyId => 'Copy ID';
+  String get copyId => 'Kopia ID';
 
   @override
-  String get copyLink => 'Copy link';
+  String get copyLink => 'Kopia Ñandutiresẽ';
 
   @override
   String get discover => 'Ejuhu';
 
   @override
-  String get enterYourName => 'Enter your name';
+  String get enterYourName => 'Emoinge nde réra';
 
   @override
-  String get favorites => 'Ne rembipota';
+  String get favorites => 'Ne Rembipota';
 
   @override
-  String get goToAlbum => 'Go to album';
+  String get goToAlbum => 'E\'u albumpe';
 
   @override
-  String get goToArtist => 'Go to artist';
+  String get goToArtist => 'E\'u puraheihárape';
 
   @override
-  String get goToArtistRadio => 'Go to artist radio';
+  String get goToArtistRadio => 'E\'u puraheihára radiope';
 
   @override
-  String get goToPlaylist => 'Go to playlist';
+  String get goToPlaylist => 'E\'u tysýipe';
 
   @override
-  String get goToSongRadio => 'Go to song radio';
+  String get goToSongRadio => 'E\'u pumbasy radiope';
 
   @override
   String get home => 'Óga';
 
   @override
-  String get myAwesomePlaylist => 'My Awesome Playlist';
+  String get myAwesomePlaylist => 'Che Tysýi Porã';
 
   @override
-  String get myPlaylist => 'My Playlist';
+  String get myPlaylist => 'Che Tysýi';
 
   @override
-  String get newPlaylist1 => 'New playlist';
+  String get newPlaylist1 => 'Tysýi Pyahu';
 
   @override
-  String get play => 'Play';
+  String get play => 'Mbopu';
 
   @override
-  String get playStation => 'Play Station';
+  String get playStation => 'Mbopu Emisora';
 
   @override
   String get playNext => 'Mbopu Oúva';
 
   @override
-  String get playlist => 'Playlist';
+  String get playlist => 'Tysýi';
 
   @override
-  String get playlistName => 'Playlist Name';
+  String get playlistName => 'Réra Tysýi';
 
   @override
-  String get playlists1 => 'Playlists';
+  String get playlists1 => 'Tysýikuéra';
 
   @override
-  String get queue1 => 'Queue';
+  String get queue1 => 'Tysýi';
 
   @override
-  String get recentlyPlayed => 'Recently Played';
+  String get recentlyPlayed => 'Oñembopu Va\'ekue';
 
   @override
-  String get removeFromQueue => 'Remove from queue';
+  String get removeFromQueue => 'Mboguete Tysýigui';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Ejejapo Jey';
 
   @override
-  String get searchMusicArtistsAlbums => 'Search music, artists, albums...';
+  String get searchMusicArtistsAlbums =>
+      'Eheka pumbasy, puraheihára, albumkuéra...';
 
   @override
-  String get share => 'Share';
+  String get share => 'Mombe\'u';
 
   @override
   String featuringArtist(String artistName) {
-    return 'FEATURING $artistName';
+    return 'NDIVE $artistName';
   }
 
   @override
   String currentCountry(String country) {
-    return 'Current: $country';
+    return 'Ko\'ág̃a: $country';
   }
 
   @override
-  String get queueTooltip => 'Queue';
+  String get queueTooltip => 'Tysýi';
 
   @override
-  String get searchHint => 'Search music, artists, albums...';
+  String get searchHint => 'Eheka pumbasy, puraheihára, albumkuéra...';
 
   @override
   String get language => 'Ñe\'ẽ';
 
   @override
-  String get systemDefault => 'System Default';
+  String get systemDefault => 'Sistema Régagua';
 }
