@@ -12,9 +12,12 @@ import 'app_localizations_da.dart';
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_et.dart';
+import 'app_localizations_fa.dart';
 import 'app_localizations_fil.dart';
 import 'app_localizations_fr.dart';
 import 'app_localizations_hi.dart';
+import 'app_localizations_hr.dart';
 import 'app_localizations_hu.dart';
 import 'app_localizations_id.dart';
 import 'app_localizations_it.dart';
@@ -23,6 +26,7 @@ import 'app_localizations_ka.dart';
 import 'app_localizations_kk.dart';
 import 'app_localizations_ko.dart';
 import 'app_localizations_lv.dart';
+import 'app_localizations_ms.dart';
 import 'app_localizations_my.dart';
 import 'app_localizations_pcm.dart';
 import 'app_localizations_pl.dart';
@@ -125,9 +129,12 @@ abstract class AppLocalizations {
     Locale('de'),
     Locale('en'),
     Locale('es'),
+    Locale('et'),
+    Locale('fa'),
     Locale('fil'),
     Locale('fr'),
     Locale('hi'),
+    Locale('hr'),
     Locale('hu'),
     Locale('id'),
     Locale('it'),
@@ -136,6 +143,7 @@ abstract class AppLocalizations {
     Locale('kk'),
     Locale('ko'),
     Locale('lv'),
+    Locale('ms'),
     Locale('my'),
     Locale('pcm'),
     Locale('pl'),
@@ -951,9 +959,12 @@ class _AppLocalizationsDelegate
     'de',
     'en',
     'es',
+    'et',
+    'fa',
     'fil',
     'fr',
     'hi',
+    'hr',
     'hu',
     'id',
     'it',
@@ -962,6 +973,7 @@ class _AppLocalizationsDelegate
     'kk',
     'ko',
     'lv',
+    'ms',
     'my',
     'pcm',
     'pl',
@@ -993,12 +1005,18 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'et':
+      return AppLocalizationsEt();
+    case 'fa':
+      return AppLocalizationsFa();
     case 'fil':
       return AppLocalizationsFil();
     case 'fr':
       return AppLocalizationsFr();
     case 'hi':
       return AppLocalizationsHi();
+    case 'hr':
+      return AppLocalizationsHr();
     case 'hu':
       return AppLocalizationsHu();
     case 'id':
@@ -1015,6 +1033,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsKo();
     case 'lv':
       return AppLocalizationsLv();
+    case 'ms':
+      return AppLocalizationsMs();
     case 'my':
       return AppLocalizationsMy();
     case 'pcm':

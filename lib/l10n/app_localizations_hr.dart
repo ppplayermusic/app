@@ -1,0 +1,435 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Croatian (`hr`).
+class AppLocalizationsHr extends AppLocalizations {
+  AppLocalizationsHr([String locale = 'hr']) : super(locale);
+
+  @override
+  String get appTitle => 'PPPlayer';
+
+  @override
+  String titleSubtitle(Object title, Object subtitle) {
+    return '$title, $subtitle';
+  }
+
+  @override
+  String get albums => 'ALBUMI';
+
+  @override
+  String get api => 'API';
+
+  @override
+  String get artists => 'IZVOĐAČI';
+
+  @override
+  String get artwork => 'OMOT';
+
+  @override
+  String get appVersion => 'Verzija aplikacije';
+
+  @override
+  String get artist => 'Izvođač';
+
+  @override
+  String get artistsYouFollow => 'Izvođači koje pratite';
+
+  @override
+  String get autoplay => 'Automatska reprodukcija';
+
+  @override
+  String get becauseYouListenedTo => 'Zato što ste slušali';
+
+  @override
+  String get browseAll => 'Pregledaj sve';
+
+  @override
+  String get cancel => 'Odustani';
+
+  @override
+  String get clearAppCache => 'Očistiti predmemoriju aplikacije?';
+
+  @override
+  String get clearCache => 'Očisti predmemoriju';
+
+  @override
+  String get clearHistory => 'Očistiti povijest?';
+
+  @override
+  String get clearRecentlyPlayed => 'Očisti nedavno slušano';
+
+  @override
+  String get contentMarket => 'Tržište sadržaja';
+
+  @override
+  String get continueListening => 'Nastavi slušati';
+
+  @override
+  String get continueVideoPlaybackInASmallWindow =>
+      'Nastavi reprodukciju videa u malom prozoru';
+
+  @override
+  String get create => 'Stvori';
+
+  @override
+  String get createAPlaylistToGetStarted =>
+      'Stvorite popis za reprodukciju za početak';
+
+  @override
+  String currentSelectedcountry(Object country) {
+    return 'Trenutno: $country';
+  }
+
+  @override
+  String get deletePlaylist => 'Izbriši popis za reprodukciju';
+
+  @override
+  String get editProfile => 'Uredi profil';
+
+  @override
+  String errorLoadingMarkets(Object err) {
+    return 'Greška pri učitavanju tržišta: $err';
+  }
+
+  @override
+  String error(Object error) {
+    return 'Greška: $error';
+  }
+
+  @override
+  String explore(Object genre) {
+    return 'Istraži $genre';
+  }
+
+  @override
+  String get fansAlsoLike => 'OBOŽAVATELJI TAKOĐER VOLE';
+
+  @override
+  String featuringTouppercase(Object artist) {
+    return 'SUDJELUJE $artist';
+  }
+
+  @override
+  String get featuredPlaylists => 'Istaknuti popisi za reprodukciju';
+
+  @override
+  String get followArtistsToSeeThemHere =>
+      'Pratite izvođače da biste ih vidjeli ovdje';
+
+  @override
+  String get followStationsToSeeThemHere =>
+      'Pratite stanice da biste ih vidjeli ovdje';
+
+  @override
+  String get forceAudioonlyStreamsToSaveData =>
+      'Forsiraj samo audio streamove za uštedu podataka';
+
+  @override
+  String get freesUpSpaceAndForcesFreshDataOnNextLoad =>
+      'Oslobađa prostor i forsira nove podatke';
+
+  @override
+  String get fromYourFavorites => 'Iz vaših favorita';
+
+  @override
+  String get goBack => 'Idi natrag';
+
+  @override
+  String inspiredByName(Object name) {
+    return 'Inspirirano izvođačem $name';
+  }
+
+  @override
+  String get keepPlayingSimilarTracksWhenQueueEnds =>
+      'Nastavi reproducirati slične pjesme kada završi red čekanja';
+
+  @override
+  String get library => 'Biblioteka';
+
+  @override
+  String get likeAlbumsToSeeThemHere =>
+      'Lajkajte albume da biste ih vidjeli ovdje';
+
+  @override
+  String get likedSongs => 'Lajkane pjesme';
+
+  @override
+  String get lowDataMode => 'Način rada s malo podataka';
+
+  @override
+  String get madeForYou => 'Napravljeno za vas';
+
+  @override
+  String moreLikeName(Object name) {
+    return 'Više kao $name';
+  }
+
+  @override
+  String get moreOptions => 'Više opcija';
+
+  @override
+  String get nameYourMasterpiece => 'Imenujte svoje remek-djelo...';
+
+  @override
+  String get newPlaylist => 'Novi popis za reprodukciju';
+
+  @override
+  String get newReleases => 'Nova izdanja';
+
+  @override
+  String get next => 'Sljedeće';
+
+  @override
+  String get noAlbumsFound => 'Nisu pronađeni albumi';
+
+  @override
+  String get noArtistsFollowed => 'Ne pratite nijednog izvođača';
+
+  @override
+  String get noArtistsFound => 'Nisu pronađeni izvođači';
+
+  @override
+  String get noLikedAlbums => 'Nema lajkanih albuma';
+
+  @override
+  String get noPlaylistsFound => 'Nisu pronađeni popisi za reprodukciju';
+
+  @override
+  String get noPlaylistsYet => 'Još nema popisa za reprodukciju';
+
+  @override
+  String get noResultsFound => 'Nema rezultata';
+
+  @override
+  String get noStationsFollowed => 'Ne pratite nijednu stanicu';
+
+  @override
+  String get noTrackPlaying => 'Niti jedna pjesma se ne reproducira';
+
+  @override
+  String get noTracksFound => 'Nisu pronađene pjesme';
+
+  @override
+  String get playlists => 'POPISI ZA REPRODUKCIJU';
+
+  @override
+  String get popular => 'POPULARNO';
+
+  @override
+  String get permanentlyRemoveListeningHistory =>
+      'Trajno ukloni povijest slušanja';
+
+  @override
+  String get pictureinpicturePip => 'Slika u slici (PiP)';
+
+  @override
+  String get popularAlbums => 'Popularni albumi';
+
+  @override
+  String get popularArtists => 'Popularni izvođači';
+
+  @override
+  String get popularGenres => 'Popularni žanrovi';
+
+  @override
+  String get popularSongs => 'Popularne pjesme';
+
+  @override
+  String get popularTracks => 'Popularne pjesme';
+
+  @override
+  String get popularHitsRightNow => 'Trenutno popularni hitovi';
+
+  @override
+  String get previous => 'Prethodno';
+
+  @override
+  String get queue => 'RED ČEKANJA';
+
+  @override
+  String get recentSearches => 'Nedavna pretraživanja';
+
+  @override
+  String get recommendedForYou => 'Preporučeno za vas';
+
+  @override
+  String get scraping => 'Dohvaćanje podataka';
+
+  @override
+  String get search => 'Pretraživanje';
+
+  @override
+  String get searchInAlbum => 'Pretraži u albumu...';
+
+  @override
+  String get searchInLibrary => 'Pretraži u biblioteci...';
+
+  @override
+  String get searchInPlaylist => 'Pretraži u popisu za reprodukciju';
+
+  @override
+  String get searchLikedSongs => 'Pretraži lajkane pjesme...';
+
+  @override
+  String get searchPopularSongs => 'Pretraži popularne pjesme...';
+
+  @override
+  String get selectMarket => 'Odaberi tržište';
+
+  @override
+  String get settings => 'Postavke';
+
+  @override
+  String get showVideoPlayer => 'Prikaži video player';
+
+  @override
+  String get shuffle => 'Nasumično';
+
+  @override
+  String get spotifyCredentials => 'Vjerodajnice za Spotify';
+
+  @override
+  String get suggestedStations => 'Predložene stanice';
+
+  @override
+  String get tracks => 'PJESME';
+
+  @override
+  String get trending => 'U trendu';
+
+  @override
+  String get tryAgain => 'Pokušaj ponovno';
+
+  @override
+  String get tryADifferentSearchTerm =>
+      'Pokušajte s drugim pojmom za pretraživanje';
+
+  @override
+  String get useYoutubePlayerWhenAvailable =>
+      'Koristi YouTube player kada je dostupan';
+
+  @override
+  String get video => 'VIDEO';
+
+  @override
+  String get whatDoYouWantToListenTo => 'Što želite slušati?';
+
+  @override
+  String get youtubeCredentials => 'Vjerodajnice za YouTube';
+
+  @override
+  String get yourLibrary => 'Vaša biblioteka';
+
+  @override
+  String get playerscreenviewswitch => 'player_screen_view_switch';
+
+  @override
+  String get addToPlaylist => 'Dodaj na popis za reprodukciju';
+
+  @override
+  String get addToQueue => 'Dodaj u red čekanja';
+
+  @override
+  String get copyId => 'Kopiraj ID';
+
+  @override
+  String get copyLink => 'Kopiraj vezu';
+
+  @override
+  String get discover => 'Otkrij';
+
+  @override
+  String get enterYourName => 'Unesite svoje ime';
+
+  @override
+  String get favorites => 'Favoriti';
+
+  @override
+  String get goToAlbum => 'Idi na album';
+
+  @override
+  String get goToArtist => 'Idi na izvođača';
+
+  @override
+  String get goToArtistRadio => 'Idi na radio izvođača';
+
+  @override
+  String get goToPlaylist => 'Idi na popis za reprodukciju';
+
+  @override
+  String get goToSongRadio => 'Idi na radio pjesme';
+
+  @override
+  String get home => 'Početna';
+
+  @override
+  String get myAwesomePlaylist => 'Moj super popis za reprodukciju';
+
+  @override
+  String get myPlaylist => 'Moj popis za reprodukciju';
+
+  @override
+  String get newPlaylist1 => 'Novi popis za reprodukciju';
+
+  @override
+  String get play => 'Reproduciraj';
+
+  @override
+  String get playStation => 'Reproduciraj stanicu';
+
+  @override
+  String get playNext => 'Reproduciraj sljedeće';
+
+  @override
+  String get playlist => 'Popis za reprodukciju';
+
+  @override
+  String get playlistName => 'Naziv popisa za reprodukciju';
+
+  @override
+  String get playlists1 => 'Popisi za reprodukciju';
+
+  @override
+  String get queue1 => 'Red čekanja';
+
+  @override
+  String get recentlyPlayed => 'Nedavno slušano';
+
+  @override
+  String get removeFromQueue => 'Ukloni iz reda čekanja';
+
+  @override
+  String get retry => 'Pokušaj ponovno';
+
+  @override
+  String get searchMusicArtistsAlbums =>
+      'Pretražite glazbu, izvođače, albume...';
+
+  @override
+  String get share => 'Dijeli';
+
+  @override
+  String featuringArtist(String artistName) {
+    return 'SUDJELUJE $artistName';
+  }
+
+  @override
+  String currentCountry(String country) {
+    return 'Trenutno: $country';
+  }
+
+  @override
+  String get queueTooltip => 'Red čekanja';
+
+  @override
+  String get searchHint => 'Pretražite glazbu, izvođače, albume...';
+
+  @override
+  String get language => 'Jezik';
+
+  @override
+  String get systemDefault => 'Zadano u sustavu';
+}

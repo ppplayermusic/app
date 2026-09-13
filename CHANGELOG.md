@@ -2,6 +2,12 @@
 
 All notable changes to PPPlayer will be documented in this file.
 
+## [1.3.0] - 2026-09-13
+
+### Added
+- Added localizations for Nigerian Pidgin, Filipino, Latvian, Bengali, Croatian, Malay, Persian, and Estonian languages.
+
+
 ## [1.1.2] - 2026-09-12
 
 ### Added
