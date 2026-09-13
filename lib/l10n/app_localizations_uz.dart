@@ -17,413 +17,417 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get albums => 'Albomlar';
+  String get albums => 'ALBOMLAR';
 
   @override
   String get api => 'API';
 
   @override
-  String get artists => 'Ibrojchilar';
+  String get artists => 'IJROCHILAR';
 
   @override
-  String get artwork => 'ARTWORK';
+  String get artwork => 'MUQOVA';
 
   @override
-  String get appVersion => 'App version';
+  String get appVersion => 'Ilova versiyasi';
 
   @override
-  String get artist => 'Artist';
+  String get artist => 'Ijrochi';
 
   @override
-  String get artistsYouFollow => 'Artists you follow';
+  String get artistsYouFollow => 'Kuzatayotgan ijrochilaringiz';
 
   @override
-  String get autoplay => 'Autoplay';
+  String get autoplay => 'Avtomatik ijro';
 
   @override
-  String get becauseYouListenedTo => 'Because you listened to';
+  String get becauseYouListenedTo => 'Chunki siz tingladingiz';
 
   @override
-  String get browseAll => 'Browse all';
+  String get browseAll => 'Hammasini ko\'rish';
 
   @override
   String get cancel => 'Bekor qilish';
 
   @override
-  String get clearAppCache => 'Clear App Cache?';
+  String get clearAppCache => 'Ilova keshini tozalash?';
 
   @override
-  String get clearCache => 'Clear Cache';
+  String get clearCache => 'Keshni tozalash';
 
   @override
-  String get clearHistory => 'Clear History?';
+  String get clearHistory => 'Tarixni tozalash?';
 
   @override
-  String get clearRecentlyPlayed => 'Clear Recently Played';
+  String get clearRecentlyPlayed => 'Yaqinda ijro etilganlarni tozalash';
 
   @override
-  String get contentMarket => 'Content Market';
+  String get contentMarket => 'Kontent bozori';
 
   @override
-  String get continueListening => 'Continue Listening';
+  String get continueListening => 'Tinglashni davom ettirish';
 
   @override
   String get continueVideoPlaybackInASmallWindow =>
-      'Continue video playback in a small window';
+      'Videoni kichik oynada davom ettirish';
 
   @override
-  String get create => 'Create';
+  String get create => 'Yaratish';
 
   @override
-  String get createAPlaylistToGetStarted => 'Create a playlist to get started';
+  String get createAPlaylistToGetStarted => 'Boshlash uchun pleylist yarating';
 
   @override
   String currentSelectedcountry(Object country) {
-    return 'Current: $country';
+    return 'Joriy: $country';
   }
 
   @override
-  String get deletePlaylist => 'Delete Playlist';
+  String get deletePlaylist => 'Pleylistni o\'chirish';
 
   @override
-  String get editProfile => 'Edit Profile';
+  String get editProfile => 'Profilni tahrirlash';
 
   @override
   String errorLoadingMarkets(Object err) {
-    return 'Error loading markets: $err';
+    return 'Bozorlarni yuklashda xato: $err';
   }
 
   @override
   String error(Object error) {
-    return 'Xato yuz berdi';
+    return 'Xato: $error';
   }
 
   @override
   String explore(Object genre) {
-    return 'Explore $genre';
+    return '${genre}ni kashf etish';
   }
 
   @override
-  String get fansAlsoLike => 'FANS ALSO LIKE';
+  String get fansAlsoLike => 'MUXLISLAR HAM YOQTIRADI';
 
   @override
   String featuringTouppercase(Object artist) {
-    return 'FEATURING $artist';
+    return 'ISHTIROKIDA $artist';
   }
 
   @override
-  String get featuredPlaylists => 'Featured Playlists';
+  String get featuredPlaylists => 'Tanlangan pleylistlar';
 
   @override
-  String get followArtistsToSeeThemHere => 'Follow artists to see them here';
+  String get followArtistsToSeeThemHere =>
+      'Ijrochilarni kuzating, ular bu yerda ko\'rinadi';
 
   @override
-  String get followStationsToSeeThemHere => 'Follow stations to see them here';
+  String get followStationsToSeeThemHere =>
+      'Stansiyalarni kuzating, ular bu yerda ko\'rinadi';
 
   @override
   String get forceAudioonlyStreamsToSaveData =>
-      'Force audio-only streams to save data';
+      'Trafik tejash uchun faqat audio oqimlarini majburlash';
 
   @override
   String get freesUpSpaceAndForcesFreshDataOnNextLoad =>
-      'Frees up space and forces fresh data on next load';
+      'Joyni bo\'shatadi va keyingi yuklashda yangi ma\'lumotlarni majburlaydi';
 
   @override
-  String get fromYourFavorites => 'From your favorites';
+  String get fromYourFavorites => 'Sevimlilaringizdan';
 
   @override
-  String get goBack => 'Go Back';
+  String get goBack => 'Orqaga';
 
   @override
   String inspiredByName(Object name) {
-    return 'Inspired by $name';
+    return '$name bilan ilhomlangan';
   }
 
   @override
   String get keepPlayingSimilarTracksWhenQueueEnds =>
-      'Keep playing similar tracks when queue ends';
+      'Navbat tugaganda o\'xshash qo\'shiqlarni ijro etishni davom ettirish';
 
   @override
-  String get library => 'Library';
+  String get library => 'Kutubxona';
 
   @override
-  String get likeAlbumsToSeeThemHere => 'Like albums to see them here';
+  String get likeAlbumsToSeeThemHere =>
+      'Albomlarni yoqtiring, ular bu yerda ko\'rinadi';
 
   @override
-  String get likedSongs => 'Liked Songs';
+  String get likedSongs => 'Yoqtirgan qo\'shiqlar';
 
   @override
-  String get lowDataMode => 'Low Data Mode';
+  String get lowDataMode => 'Kam trafik rejimi';
 
   @override
-  String get madeForYou => 'Made For You';
+  String get madeForYou => 'Siz uchun tayyorlangan';
 
   @override
   String moreLikeName(Object name) {
-    return 'More like $name';
+    return '$name singari ko\'proq';
   }
 
   @override
-  String get moreOptions => 'More options';
+  String get moreOptions => 'Ko\'proq imkoniyatlar';
 
   @override
-  String get nameYourMasterpiece => 'Name your masterpiece...';
+  String get nameYourMasterpiece => 'Asaringizga nom bering...';
 
   @override
-  String get newPlaylist => 'New Playlist';
+  String get newPlaylist => 'Yangi pleylist';
 
   @override
-  String get newReleases => 'New Releases';
+  String get newReleases => 'Yangi chiqarilganlar';
 
   @override
   String get next => 'Keyingisi';
 
   @override
-  String get noAlbumsFound => 'No albums found';
+  String get noAlbumsFound => 'Albomlar topilmadi';
 
   @override
-  String get noArtistsFollowed => 'No artists followed';
+  String get noArtistsFollowed => 'Kuzatilayotgan ijrochilar yo\'q';
 
   @override
-  String get noArtistsFound => 'No artists found';
+  String get noArtistsFound => 'Ijrochilar topilmadi';
 
   @override
-  String get noLikedAlbums => 'No liked albums';
+  String get noLikedAlbums => 'Yoqtirilgan albomlar yo\'q';
 
   @override
-  String get noPlaylistsFound => 'No playlists found';
+  String get noPlaylistsFound => 'Pleylistlar topilmadi';
 
   @override
-  String get noPlaylistsYet => 'No playlists yet';
+  String get noPlaylistsYet => 'Hali pleylistlar yo\'q';
 
   @override
-  String get noResultsFound => 'No results found';
+  String get noResultsFound => 'Natijalar topilmadi';
 
   @override
-  String get noStationsFollowed => 'No stations followed';
+  String get noStationsFollowed => 'Kuzatilayotgan stansiyalar yo\'q';
 
   @override
-  String get noTrackPlaying => 'No track playing';
+  String get noTrackPlaying => 'Hech qanday qo\'shiq ijro etilmayapti';
 
   @override
-  String get noTracksFound => 'No tracks found';
+  String get noTracksFound => 'Qo\'shiqlar topilmadi';
 
   @override
-  String get playlists => 'Pleylistlar';
+  String get playlists => 'PLEYLISTLAR';
 
   @override
-  String get popular => 'POPULAR';
+  String get popular => 'MASHHUR';
 
   @override
   String get permanentlyRemoveListeningHistory =>
-      'Permanently remove listening history';
+      'Tinglash tarixini butunlay o\'chirish';
 
   @override
-  String get pictureinpicturePip => 'Picture-in-Picture (PiP)';
+  String get pictureinpicturePip => 'Rasm ichida rasm (PiP)';
 
   @override
-  String get popularAlbums => 'Popular Albums';
+  String get popularAlbums => 'Mashhur albomlar';
 
   @override
-  String get popularArtists => 'Popular Artists';
+  String get popularArtists => 'Mashhur ijrochilar';
 
   @override
-  String get popularGenres => 'Popular Genres';
+  String get popularGenres => 'Mashhur janrlar';
 
   @override
-  String get popularSongs => 'Popular Songs';
+  String get popularSongs => 'Mashhur qo\'shiqlar';
 
   @override
-  String get popularTracks => 'Popular Tracks';
+  String get popularTracks => 'Mashhur treklarlar';
 
   @override
-  String get popularHitsRightNow => 'Popular hits right now';
+  String get popularHitsRightNow => 'Hozirgi mashhur hitlar';
 
   @override
   String get previous => 'Oldingisi';
 
   @override
-  String get queue => 'Navbat';
+  String get queue => 'NAVBAT';
 
   @override
-  String get recentSearches => 'Recent searches';
+  String get recentSearches => 'So\'nggi qidiruvlar';
 
   @override
-  String get recommendedForYou => 'Recommended for You';
+  String get recommendedForYou => 'Siz uchun tavsiya etilgan';
 
   @override
-  String get scraping => 'Scraping';
+  String get scraping => 'Ma\'lumot olinmoqda';
 
   @override
-  String get search => 'Search';
+  String get search => 'Qidirish';
 
   @override
-  String get searchInAlbum => 'Search in album...';
+  String get searchInAlbum => 'Albomda qidirish...';
 
   @override
-  String get searchInLibrary => 'Search in library...';
+  String get searchInLibrary => 'Kutubxonada qidirish...';
 
   @override
-  String get searchInPlaylist => 'Search in playlist';
+  String get searchInPlaylist => 'Pleylistda qidirish';
 
   @override
-  String get searchLikedSongs => 'Search liked songs...';
+  String get searchLikedSongs => 'Yoqtirgan qo\'shiqlarni qidirish...';
 
   @override
-  String get searchPopularSongs => 'Search popular songs...';
+  String get searchPopularSongs => 'Mashhur qo\'shiqlarni qidirish...';
 
   @override
-  String get selectMarket => 'Select Market';
+  String get selectMarket => 'Bozorni tanlash';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'Sozlamalar';
 
   @override
-  String get showVideoPlayer => 'Show Video Player';
+  String get showVideoPlayer => 'Video pleyerni ko\'rsatish';
 
   @override
   String get shuffle => 'Tasodifiy';
 
   @override
-  String get spotifyCredentials => 'Spotify Credentials';
+  String get spotifyCredentials => 'Spotify hisob ma\'lumotlari';
 
   @override
-  String get suggestedStations => 'Suggested Stations';
+  String get suggestedStations => 'Tavsiya etilgan stansiyalar';
 
   @override
-  String get tracks => 'TRACKS';
+  String get tracks => 'TREKLAR';
 
   @override
-  String get trending => 'Trending';
+  String get trending => 'Trendda';
 
   @override
-  String get tryAgain => 'Try Again';
+  String get tryAgain => 'Qayta urinish';
 
   @override
-  String get tryADifferentSearchTerm => 'Try a different search term';
+  String get tryADifferentSearchTerm =>
+      'Boshqa qidiruv so\'zini sinab ko\'ring';
 
   @override
   String get useYoutubePlayerWhenAvailable =>
-      'Use YouTube player when available';
+      'Mavjud bo\'lsa YouTube pleyerini ishlatish';
 
   @override
   String get video => 'VIDEO';
 
   @override
-  String get whatDoYouWantToListenTo => 'What do you want to listen to?';
+  String get whatDoYouWantToListenTo => 'Nima tinglashni xohlaysiz?';
 
   @override
-  String get youtubeCredentials => 'YouTube Credentials';
+  String get youtubeCredentials => 'YouTube hisob ma\'lumotlari';
 
   @override
-  String get yourLibrary => 'Your Library';
+  String get yourLibrary => 'Sizning kutubxonangiz';
 
   @override
   String get playerscreenviewswitch => 'player_screen_view_switch';
 
   @override
-  String get addToPlaylist => 'Add to playlist';
+  String get addToPlaylist => 'Pleylistga qo\'shish';
 
   @override
-  String get addToQueue => 'Add to queue';
+  String get addToQueue => 'Navbatga qo\'shish';
 
   @override
-  String get copyId => 'Copy ID';
+  String get copyId => 'ID nusxalash';
 
   @override
-  String get copyLink => 'Copy link';
+  String get copyLink => 'Havolani nusxalash';
 
   @override
-  String get discover => 'Discover';
+  String get discover => 'Kashf etish';
 
   @override
-  String get enterYourName => 'Enter your name';
+  String get enterYourName => 'Ismingizni kiriting';
 
   @override
   String get favorites => 'Sevimlilar';
 
   @override
-  String get goToAlbum => 'Go to album';
+  String get goToAlbum => 'Albomga o\'tish';
 
   @override
-  String get goToArtist => 'Go to artist';
+  String get goToArtist => 'Ijrochiga o\'tish';
 
   @override
-  String get goToArtistRadio => 'Go to artist radio';
+  String get goToArtistRadio => 'Ijrochi radioga o\'tish';
 
   @override
-  String get goToPlaylist => 'Go to playlist';
+  String get goToPlaylist => 'Pleylistga o\'tish';
 
   @override
-  String get goToSongRadio => 'Go to song radio';
+  String get goToSongRadio => 'Qo\'shiq radioga o\'tish';
 
   @override
-  String get home => 'Home';
+  String get home => 'Asosiy';
 
   @override
-  String get myAwesomePlaylist => 'My Awesome Playlist';
+  String get myAwesomePlaylist => 'Mening ajoyib pleylistim';
 
   @override
-  String get myPlaylist => 'My Playlist';
+  String get myPlaylist => 'Mening pleylistim';
 
   @override
-  String get newPlaylist1 => 'New playlist';
+  String get newPlaylist1 => 'Yangi pleylist';
 
   @override
   String get play => 'Ijro etish';
 
   @override
-  String get playStation => 'Play Station';
+  String get playStation => 'Stansiyani ijro etish';
 
   @override
-  String get playNext => 'Play next';
+  String get playNext => 'Keyingisini ijro etish';
 
   @override
-  String get playlist => 'Playlist';
+  String get playlist => 'Pleylist';
 
   @override
-  String get playlistName => 'Playlist Name';
+  String get playlistName => 'Pleylist nomi';
 
   @override
-  String get playlists1 => 'Playlists';
+  String get playlists1 => 'Pleylistlar';
 
   @override
-  String get queue1 => 'Queue';
+  String get queue1 => 'Navbat';
 
   @override
-  String get recentlyPlayed => 'Recently Played';
+  String get recentlyPlayed => 'Yaqinda ijro etilgan';
 
   @override
-  String get removeFromQueue => 'Remove from queue';
+  String get removeFromQueue => 'Navbatdan olib tashlash';
 
   @override
   String get retry => 'Qayta urinish';
 
   @override
-  String get searchMusicArtistsAlbums => 'Search music, artists, albums...';
+  String get searchMusicArtistsAlbums => 'Musiqa, ijrochilar, albomlar...';
 
   @override
-  String get share => 'Share';
+  String get share => 'Ulashish';
 
   @override
   String featuringArtist(String artistName) {
-    return 'FEATURING $artistName';
+    return 'ISHTIROKIDA $artistName';
   }
 
   @override
   String currentCountry(String country) {
-    return 'Current: $country';
+    return 'Joriy: $country';
   }
 
   @override
-  String get queueTooltip => 'Queue';
+  String get queueTooltip => 'Navbat';
 
   @override
-  String get searchHint => 'Search music, artists, albums...';
+  String get searchHint => 'Musiqa, ijrochilar, albomlar...';
 
   @override
   String get language => 'Til';
 
   @override
-  String get systemDefault => 'System Default';
+  String get systemDefault => 'Tizim standarti';
 }

@@ -220,7 +220,7 @@ class AppLocalizationsIt extends AppLocalizations {
       'Rimuovi permanentemente la cronologia di ascolto';
 
   @override
-  String get pictureinpicturePip => 'Picture-in-Picture (PiP)';
+  String get pictureinpicturePip => 'Immagine nell\'immagine (PiP)';
 
   @override
   String get popularAlbums => 'Album popolari';

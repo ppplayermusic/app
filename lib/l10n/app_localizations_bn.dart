@@ -17,413 +17,416 @@ class AppLocalizationsBn extends AppLocalizations {
   }
 
   @override
-  String get albums => 'ALBUMS';
+  String get albums => 'অ্যালবাম';
 
   @override
   String get api => 'API';
 
   @override
-  String get artists => 'ARTISTS';
+  String get artists => 'শিল্পী';
 
   @override
-  String get artwork => 'ARTWORK';
+  String get artwork => 'প্রচ্ছদ';
 
   @override
-  String get appVersion => 'App version';
+  String get appVersion => 'অ্যাপ সংস্করণ';
 
   @override
-  String get artist => 'Artist';
+  String get artist => 'শিল্পী';
 
   @override
-  String get artistsYouFollow => 'Artists you follow';
+  String get artistsYouFollow => 'আপনি যেসব শিল্পী অনুসরণ করেন';
 
   @override
-  String get autoplay => 'Autoplay';
+  String get autoplay => 'স্বয়ংক্রিয় প্লে';
 
   @override
-  String get becauseYouListenedTo => 'Because you listened to';
+  String get becauseYouListenedTo => 'কারণ আপনি শুনেছিলেন';
 
   @override
-  String get browseAll => 'Browse all';
+  String get browseAll => 'সব দেখুন';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'বাতিল';
 
   @override
-  String get clearAppCache => 'Clear App Cache?';
+  String get clearAppCache => 'অ্যাপ ক্যাশ মুছবেন?';
 
   @override
-  String get clearCache => 'Clear Cache';
+  String get clearCache => 'ক্যাশ মুছুন';
 
   @override
-  String get clearHistory => 'Clear History?';
+  String get clearHistory => 'ইতিহাস মুছবেন?';
 
   @override
-  String get clearRecentlyPlayed => 'Clear Recently Played';
+  String get clearRecentlyPlayed => 'সম্প্রতি বাজানো মুছুন';
 
   @override
-  String get contentMarket => 'Content Market';
+  String get contentMarket => 'কন্টেন্ট মার্কেট';
 
   @override
-  String get continueListening => 'Continue Listening';
+  String get continueListening => 'শোনা চালিয়ে যান';
 
   @override
   String get continueVideoPlaybackInASmallWindow =>
-      'Continue video playback in a small window';
+      'ছোট উইন্ডোতে ভিডিও চালিয়ে যান';
 
   @override
-  String get create => 'Create';
+  String get create => 'তৈরি করুন';
 
   @override
-  String get createAPlaylistToGetStarted => 'Create a playlist to get started';
+  String get createAPlaylistToGetStarted =>
+      'শুরু করতে একটি প্লেলিস্ট তৈরি করুন';
 
   @override
   String currentSelectedcountry(Object country) {
-    return 'Current: $country';
+    return 'বর্তমান: $country';
   }
 
   @override
-  String get deletePlaylist => 'Delete Playlist';
+  String get deletePlaylist => 'প্লেলিস্ট মুছুন';
 
   @override
-  String get editProfile => 'Edit Profile';
+  String get editProfile => 'প্রোফাইল সম্পাদনা করুন';
 
   @override
   String errorLoadingMarkets(Object err) {
-    return 'Error loading markets: $err';
+    return 'মার্কেট লোড করতে ত্রুটি: $err';
   }
 
   @override
   String error(Object error) {
-    return 'Error: $error';
+    return 'ত্রুটি: $error';
   }
 
   @override
   String explore(Object genre) {
-    return 'Explore $genre';
+    return '$genre অন্বেষণ করুন';
   }
 
   @override
-  String get fansAlsoLike => 'FANS ALSO LIKE';
+  String get fansAlsoLike => 'ভক্তরাও পছন্দ করেন';
 
   @override
   String featuringTouppercase(Object artist) {
-    return 'FEATURING $artist';
+    return 'বিশেষ অতিথি $artist';
   }
 
   @override
-  String get featuredPlaylists => 'Featured Playlists';
+  String get featuredPlaylists => 'বৈশিষ্ট্যযুক্ত প্লেলিস্ট';
 
   @override
-  String get followArtistsToSeeThemHere => 'Follow artists to see them here';
+  String get followArtistsToSeeThemHere =>
+      'শিল্পী অনুসরণ করুন, তারা এখানে দেখাবে';
 
   @override
-  String get followStationsToSeeThemHere => 'Follow stations to see them here';
+  String get followStationsToSeeThemHere =>
+      'স্টেশন অনুসরণ করুন, তারা এখানে দেখাবে';
 
   @override
   String get forceAudioonlyStreamsToSaveData =>
-      'Force audio-only streams to save data';
+      'ডেটা সাশ্রয়ে শুধু অডিও স্ট্রিম বাধ্য করুন';
 
   @override
   String get freesUpSpaceAndForcesFreshDataOnNextLoad =>
-      'Frees up space and forces fresh data on next load';
+      'জায়গা খালি করে এবং পরবর্তী লোডে নতুন ডেটা আনে';
 
   @override
-  String get fromYourFavorites => 'From your favorites';
+  String get fromYourFavorites => 'আপনার পছন্দের থেকে';
 
   @override
-  String get goBack => 'Go Back';
+  String get goBack => 'পিছনে যান';
 
   @override
   String inspiredByName(Object name) {
-    return 'Inspired by $name';
+    return '$name দ্বারা অনুপ্রাণিত';
   }
 
   @override
   String get keepPlayingSimilarTracksWhenQueueEnds =>
-      'Keep playing similar tracks when queue ends';
+      'সারি শেষ হলে একই ধরনের গান বাজাতে থাকুন';
 
   @override
-  String get library => 'Library';
+  String get library => 'লাইব্রেরি';
 
   @override
-  String get likeAlbumsToSeeThemHere => 'Like albums to see them here';
+  String get likeAlbumsToSeeThemHere => 'অ্যালবাম পছন্দ করুন, এখানে দেখাবে';
 
   @override
-  String get likedSongs => 'Liked Songs';
+  String get likedSongs => 'পছন্দের গান';
 
   @override
-  String get lowDataMode => 'Low Data Mode';
+  String get lowDataMode => 'কম ডেটা মোড';
 
   @override
-  String get madeForYou => 'Made For You';
+  String get madeForYou => 'আপনার জন্য তৈরি';
 
   @override
   String moreLikeName(Object name) {
-    return 'More like $name';
+    return '$name-এর মতো আরও';
   }
 
   @override
-  String get moreOptions => 'More options';
+  String get moreOptions => 'আরও বিকল্প';
 
   @override
-  String get nameYourMasterpiece => 'Name your masterpiece...';
+  String get nameYourMasterpiece => 'আপনার মাস্টারপিসের নাম দিন...';
 
   @override
-  String get newPlaylist => 'New Playlist';
+  String get newPlaylist => 'নতুন প্লেলিস্ট';
 
   @override
-  String get newReleases => 'New Releases';
+  String get newReleases => 'নতুন প্রকাশনা';
 
   @override
-  String get next => 'Next';
+  String get next => 'পরবর্তী';
 
   @override
-  String get noAlbumsFound => 'No albums found';
+  String get noAlbumsFound => 'কোনো অ্যালবাম পাওয়া যায়নি';
 
   @override
-  String get noArtistsFollowed => 'No artists followed';
+  String get noArtistsFollowed => 'কোনো শিল্পী অনুসরণ করা হয়নি';
 
   @override
-  String get noArtistsFound => 'No artists found';
+  String get noArtistsFound => 'কোনো শিল্পী পাওয়া যায়নি';
 
   @override
-  String get noLikedAlbums => 'No liked albums';
+  String get noLikedAlbums => 'পছন্দের কোনো অ্যালবাম নেই';
 
   @override
-  String get noPlaylistsFound => 'No playlists found';
+  String get noPlaylistsFound => 'কোনো প্লেলিস্ট পাওয়া যায়নি';
 
   @override
-  String get noPlaylistsYet => 'No playlists yet';
+  String get noPlaylistsYet => 'এখনও কোনো প্লেলিস্ট নেই';
 
   @override
-  String get noResultsFound => 'No results found';
+  String get noResultsFound => 'কোনো ফলাফল পাওয়া যায়নি';
 
   @override
-  String get noStationsFollowed => 'No stations followed';
+  String get noStationsFollowed => 'কোনো স্টেশন অনুসরণ করা হয়নি';
 
   @override
-  String get noTrackPlaying => 'No track playing';
+  String get noTrackPlaying => 'কোনো গান বাজছে না';
 
   @override
-  String get noTracksFound => 'No tracks found';
+  String get noTracksFound => 'কোনো গান পাওয়া যায়নি';
 
   @override
-  String get playlists => 'PLAYLISTS';
+  String get playlists => 'প্লেলিস্ট';
 
   @override
-  String get popular => 'POPULAR';
+  String get popular => 'জনপ্রিয়';
 
   @override
   String get permanentlyRemoveListeningHistory =>
-      'Permanently remove listening history';
+      'শোনার ইতিহাস স্থায়ীভাবে মুছুন';
 
   @override
-  String get pictureinpicturePip => 'Picture-in-Picture (PiP)';
+  String get pictureinpicturePip => 'পিকচার-ইন-পিকচার (PiP)';
 
   @override
-  String get popularAlbums => 'Popular Albums';
+  String get popularAlbums => 'জনপ্রিয় অ্যালবাম';
 
   @override
-  String get popularArtists => 'Popular Artists';
+  String get popularArtists => 'জনপ্রিয় শিল্পী';
 
   @override
-  String get popularGenres => 'Popular Genres';
+  String get popularGenres => 'জনপ্রিয় ঘরানা';
 
   @override
-  String get popularSongs => 'Popular Songs';
+  String get popularSongs => 'জনপ্রিয় গান';
 
   @override
-  String get popularTracks => 'Popular Tracks';
+  String get popularTracks => 'জনপ্রিয় ট্র্যাক';
 
   @override
-  String get popularHitsRightNow => 'Popular hits right now';
+  String get popularHitsRightNow => 'এখন জনপ্রিয় হিট';
 
   @override
-  String get previous => 'Previous';
+  String get previous => 'আগেরটি';
 
   @override
-  String get queue => 'QUEUE';
+  String get queue => 'সারি';
 
   @override
-  String get recentSearches => 'Recent searches';
+  String get recentSearches => 'সাম্প্রতিক অনুসন্ধান';
 
   @override
-  String get recommendedForYou => 'Recommended for You';
+  String get recommendedForYou => 'আপনার জন্য প্রস্তাবিত';
 
   @override
-  String get scraping => 'Scraping';
+  String get scraping => 'ডেটা সংগ্রহ হচ্ছে';
 
   @override
-  String get search => 'Search';
+  String get search => 'অনুসন্ধান';
 
   @override
-  String get searchInAlbum => 'Search in album...';
+  String get searchInAlbum => 'অ্যালবামে অনুসন্ধান করুন...';
 
   @override
-  String get searchInLibrary => 'Search in library...';
+  String get searchInLibrary => 'লাইব্রেরিতে অনুসন্ধান করুন...';
 
   @override
-  String get searchInPlaylist => 'Search in playlist';
+  String get searchInPlaylist => 'প্লেলিস্টে অনুসন্ধান করুন';
 
   @override
-  String get searchLikedSongs => 'Search liked songs...';
+  String get searchLikedSongs => 'পছন্দের গান অনুসন্ধান করুন...';
 
   @override
-  String get searchPopularSongs => 'Search popular songs...';
+  String get searchPopularSongs => 'জনপ্রিয় গান অনুসন্ধান করুন...';
 
   @override
-  String get selectMarket => 'Select Market';
+  String get selectMarket => 'মার্কেট নির্বাচন করুন';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'সেটিংস';
 
   @override
-  String get showVideoPlayer => 'Show Video Player';
+  String get showVideoPlayer => 'ভিডিও প্লেয়ার দেখান';
 
   @override
-  String get shuffle => 'Shuffle';
+  String get shuffle => 'শাফল';
 
   @override
-  String get spotifyCredentials => 'Spotify Credentials';
+  String get spotifyCredentials => 'Spotify পরিচয়পত্র';
 
   @override
-  String get suggestedStations => 'Suggested Stations';
+  String get suggestedStations => 'প্রস্তাবিত স্টেশন';
 
   @override
-  String get tracks => 'TRACKS';
+  String get tracks => 'ট্র্যাক';
 
   @override
-  String get trending => 'Trending';
+  String get trending => 'ট্রেন্ডিং';
 
   @override
-  String get tryAgain => 'Try Again';
+  String get tryAgain => 'আবার চেষ্টা করুন';
 
   @override
-  String get tryADifferentSearchTerm => 'Try a different search term';
+  String get tryADifferentSearchTerm => 'ভিন্ন অনুসন্ধান শব্দ চেষ্টা করুন';
 
   @override
   String get useYoutubePlayerWhenAvailable =>
-      'Use YouTube player when available';
+      'উপলব্ধ হলে YouTube প্লেয়ার ব্যবহার করুন';
 
   @override
-  String get video => 'VIDEO';
+  String get video => 'ভিডিও';
 
   @override
-  String get whatDoYouWantToListenTo => 'What do you want to listen to?';
+  String get whatDoYouWantToListenTo => 'আপনি কী শুনতে চান?';
 
   @override
-  String get youtubeCredentials => 'YouTube Credentials';
+  String get youtubeCredentials => 'YouTube পরিচয়পত্র';
 
   @override
-  String get yourLibrary => 'Your Library';
+  String get yourLibrary => 'আপনার লাইব্রেরি';
 
   @override
   String get playerscreenviewswitch => 'player_screen_view_switch';
 
   @override
-  String get addToPlaylist => 'Add to playlist';
+  String get addToPlaylist => 'প্লেলিস্টে যোগ করুন';
 
   @override
-  String get addToQueue => 'Add to queue';
+  String get addToQueue => 'সারিতে যোগ করুন';
 
   @override
-  String get copyId => 'Copy ID';
+  String get copyId => 'আইডি কপি করুন';
 
   @override
-  String get copyLink => 'Copy link';
+  String get copyLink => 'লিঙ্ক কপি করুন';
 
   @override
-  String get discover => 'Discover';
+  String get discover => 'আবিষ্কার করুন';
 
   @override
-  String get enterYourName => 'Enter your name';
+  String get enterYourName => 'আপনার নাম লিখুন';
 
   @override
-  String get favorites => 'Favorites';
+  String get favorites => 'পছন্দের গান';
 
   @override
-  String get goToAlbum => 'Go to album';
+  String get goToAlbum => 'অ্যালবামে যান';
 
   @override
-  String get goToArtist => 'Go to artist';
+  String get goToArtist => 'শিল্পীর কাছে যান';
 
   @override
-  String get goToArtistRadio => 'Go to artist radio';
+  String get goToArtistRadio => 'শিল্পী রেডিওতে যান';
 
   @override
-  String get goToPlaylist => 'Go to playlist';
+  String get goToPlaylist => 'প্লেলিস্টে যান';
 
   @override
-  String get goToSongRadio => 'Go to song radio';
+  String get goToSongRadio => 'গান রেডিওতে যান';
 
   @override
-  String get home => 'Home';
+  String get home => 'হোম';
 
   @override
-  String get myAwesomePlaylist => 'My Awesome Playlist';
+  String get myAwesomePlaylist => 'আমার দারুণ প্লেলিস্ট';
 
   @override
-  String get myPlaylist => 'My Playlist';
+  String get myPlaylist => 'আমার প্লেলিস্ট';
 
   @override
-  String get newPlaylist1 => 'New playlist';
+  String get newPlaylist1 => 'নতুন প্লেলিস্ট';
 
   @override
-  String get play => 'Play';
+  String get play => 'বাজান';
 
   @override
-  String get playStation => 'Play Station';
+  String get playStation => 'স্টেশন বাজান';
 
   @override
-  String get playNext => 'Play next';
+  String get playNext => 'পরবর্তীতে বাজান';
 
   @override
-  String get playlist => 'Playlist';
+  String get playlist => 'প্লেলিস্ট';
 
   @override
-  String get playlistName => 'Playlist Name';
+  String get playlistName => 'প্লেলিস্টের নাম';
 
   @override
-  String get playlists1 => 'Playlists';
+  String get playlists1 => 'প্লেলিস্ট';
 
   @override
-  String get queue1 => 'Queue';
+  String get queue1 => 'সারি';
 
   @override
-  String get recentlyPlayed => 'Recently Played';
+  String get recentlyPlayed => 'সম্প্রতি বাজানো';
 
   @override
-  String get removeFromQueue => 'Remove from queue';
+  String get removeFromQueue => 'সারি থেকে সরান';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'আবার চেষ্টা করুন';
 
   @override
-  String get searchMusicArtistsAlbums => 'Search music, artists, albums...';
+  String get searchMusicArtistsAlbums => 'সঙ্গীত, শিল্পী, অ্যালবাম...';
 
   @override
-  String get share => 'Share';
+  String get share => 'শেয়ার করুন';
 
   @override
   String featuringArtist(String artistName) {
-    return 'FEATURING $artistName';
+    return 'বিশেষ অতিথি $artistName';
   }
 
   @override
   String currentCountry(String country) {
-    return 'Current: $country';
+    return 'বর্তমান: $country';
   }
 
   @override
-  String get queueTooltip => 'Queue';
+  String get queueTooltip => 'সারি';
 
   @override
-  String get searchHint => 'Search music, artists, albums...';
+  String get searchHint => 'সঙ্গীত, শিল্পী, অ্যালবাম...';
 
   @override
-  String get language => 'Language';
+  String get language => 'ভাষা';
 
   @override
-  String get systemDefault => 'System Default';
+  String get systemDefault => 'সিস্টেম ডিফল্ট';
 }

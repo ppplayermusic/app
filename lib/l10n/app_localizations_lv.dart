@@ -17,413 +17,417 @@ class AppLocalizationsLv extends AppLocalizations {
   }
 
   @override
-  String get albums => 'ALBUMS';
+  String get albums => 'ALBUMI';
 
   @override
   String get api => 'API';
 
   @override
-  String get artists => 'ARTISTS';
+  String get artists => 'MĀKSLINIEKI';
 
   @override
-  String get artwork => 'ARTWORK';
+  String get artwork => 'VĀKS';
 
   @override
-  String get appVersion => 'App version';
+  String get appVersion => 'Lietotnes versija';
 
   @override
-  String get artist => 'Artist';
+  String get artist => 'Mākslinieks';
 
   @override
-  String get artistsYouFollow => 'Artists you follow';
+  String get artistsYouFollow => 'Mākslinieki, kurus sekojat';
 
   @override
-  String get autoplay => 'Autoplay';
+  String get autoplay => 'Automātiskā atskaņošana';
 
   @override
-  String get becauseYouListenedTo => 'Because you listened to';
+  String get becauseYouListenedTo => 'Tāpēc, ka jūs klausījāties';
 
   @override
-  String get browseAll => 'Browse all';
+  String get browseAll => 'Skatīt visu';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Atcelt';
 
   @override
-  String get clearAppCache => 'Clear App Cache?';
+  String get clearAppCache => 'Notīrīt lietotnes kešatmiņu?';
 
   @override
-  String get clearCache => 'Clear Cache';
+  String get clearCache => 'Notīrīt kešatmiņu';
 
   @override
-  String get clearHistory => 'Clear History?';
+  String get clearHistory => 'Notīrīt vēsturi?';
 
   @override
-  String get clearRecentlyPlayed => 'Clear Recently Played';
+  String get clearRecentlyPlayed => 'Notīrīt nesen atskaņotos';
 
   @override
-  String get contentMarket => 'Content Market';
+  String get contentMarket => 'Satura tirgus';
 
   @override
-  String get continueListening => 'Continue Listening';
+  String get continueListening => 'Turpināt klausīties';
 
   @override
   String get continueVideoPlaybackInASmallWindow =>
-      'Continue video playback in a small window';
+      'Turpināt video atskaņošanu mazā logā';
 
   @override
-  String get create => 'Create';
+  String get create => 'Izveidot';
 
   @override
-  String get createAPlaylistToGetStarted => 'Create a playlist to get started';
+  String get createAPlaylistToGetStarted =>
+      'Izveidojiet atskaņošanas sarakstu, lai sāktu';
 
   @override
   String currentSelectedcountry(Object country) {
-    return 'Current: $country';
+    return 'Pašreizējā: $country';
   }
 
   @override
-  String get deletePlaylist => 'Delete Playlist';
+  String get deletePlaylist => 'Dzēst atskaņošanas sarakstu';
 
   @override
-  String get editProfile => 'Edit Profile';
+  String get editProfile => 'Rediģēt profilu';
 
   @override
   String errorLoadingMarkets(Object err) {
-    return 'Error loading markets: $err';
+    return 'Kļūda ielādējot tirgus: $err';
   }
 
   @override
   String error(Object error) {
-    return 'Error: $error';
+    return 'Kļūda: $error';
   }
 
   @override
   String explore(Object genre) {
-    return 'Explore $genre';
+    return 'Izpētīt $genre';
   }
 
   @override
-  String get fansAlsoLike => 'FANS ALSO LIKE';
+  String get fansAlsoLike => 'FANIEM PATĪK ARĪ';
 
   @override
   String featuringTouppercase(Object artist) {
-    return 'FEATURING $artist';
+    return 'PIEDALĀS $artist';
   }
 
   @override
-  String get featuredPlaylists => 'Featured Playlists';
+  String get featuredPlaylists => 'Ieteiktie atskaņošanas saraksti';
 
   @override
-  String get followArtistsToSeeThemHere => 'Follow artists to see them here';
+  String get followArtistsToSeeThemHere =>
+      'Sekojiet māksliniekiem, lai redzētu tos šeit';
 
   @override
-  String get followStationsToSeeThemHere => 'Follow stations to see them here';
+  String get followStationsToSeeThemHere =>
+      'Sekojiet stacijām, lai redzētu tās šeit';
 
   @override
   String get forceAudioonlyStreamsToSaveData =>
-      'Force audio-only streams to save data';
+      'Piespiest tikai audio straumēšanu, lai taupītu datus';
 
   @override
   String get freesUpSpaceAndForcesFreshDataOnNextLoad =>
-      'Frees up space and forces fresh data on next load';
+      'Atbrīvo vietu un piespiež jaunus datus nākamajā ielādē';
 
   @override
-  String get fromYourFavorites => 'From your favorites';
+  String get fromYourFavorites => 'No jūsu favorītiem';
 
   @override
-  String get goBack => 'Go Back';
+  String get goBack => 'Atpakaļ';
 
   @override
   String inspiredByName(Object name) {
-    return 'Inspired by $name';
+    return 'Iedvesmojies no $name';
   }
 
   @override
   String get keepPlayingSimilarTracksWhenQueueEnds =>
-      'Keep playing similar tracks when queue ends';
+      'Turpināt atskaņot līdzīgus ierakstus, kad rinda beidzas';
 
   @override
-  String get library => 'Library';
+  String get library => 'Bibliotēka';
 
   @override
-  String get likeAlbumsToSeeThemHere => 'Like albums to see them here';
+  String get likeAlbumsToSeeThemHere => 'Patīk albumi, lai redzētu tos šeit';
 
   @override
-  String get likedSongs => 'Liked Songs';
+  String get likedSongs => 'Iecienītās dziesmas';
 
   @override
-  String get lowDataMode => 'Low Data Mode';
+  String get lowDataMode => 'Zema datu režīms';
 
   @override
-  String get madeForYou => 'Made For You';
+  String get madeForYou => 'Izveidots tev';
 
   @override
   String moreLikeName(Object name) {
-    return 'More like $name';
+    return 'Vairāk kā $name';
   }
 
   @override
-  String get moreOptions => 'More options';
+  String get moreOptions => 'Vairāk iespēju';
 
   @override
-  String get nameYourMasterpiece => 'Name your masterpiece...';
+  String get nameYourMasterpiece => 'Nosauciet savu šedevru...';
 
   @override
-  String get newPlaylist => 'New Playlist';
+  String get newPlaylist => 'Jauns atskaņošanas saraksts';
 
   @override
-  String get newReleases => 'New Releases';
+  String get newReleases => 'Jaunākās izdošanas';
 
   @override
-  String get next => 'Next';
+  String get next => 'Nākamais';
 
   @override
-  String get noAlbumsFound => 'No albums found';
+  String get noAlbumsFound => 'Nav atrasts neviens albums';
 
   @override
-  String get noArtistsFollowed => 'No artists followed';
+  String get noArtistsFollowed => 'Nav sekotu mākslinieku';
 
   @override
-  String get noArtistsFound => 'No artists found';
+  String get noArtistsFound => 'Nav atrasts neviens mākslinieks';
 
   @override
-  String get noLikedAlbums => 'No liked albums';
+  String get noLikedAlbums => 'Nav iecienītu albumu';
 
   @override
-  String get noPlaylistsFound => 'No playlists found';
+  String get noPlaylistsFound => 'Nav atrasti atskaņošanas saraksti';
 
   @override
-  String get noPlaylistsYet => 'No playlists yet';
+  String get noPlaylistsYet => 'Vēl nav atskaņošanas sarakstu';
 
   @override
-  String get noResultsFound => 'No results found';
+  String get noResultsFound => 'Nav atrasti rezultāti';
 
   @override
-  String get noStationsFollowed => 'No stations followed';
+  String get noStationsFollowed => 'Nav sekotu staciju';
 
   @override
-  String get noTrackPlaying => 'No track playing';
+  String get noTrackPlaying => 'Netiek atskaņots neviens ieraksts';
 
   @override
-  String get noTracksFound => 'No tracks found';
+  String get noTracksFound => 'Nav atrasti ieraksti';
 
   @override
-  String get playlists => 'PLAYLISTS';
+  String get playlists => 'ATSKAŅOŠANAS SARAKSTI';
 
   @override
-  String get popular => 'POPULAR';
+  String get popular => 'POPULĀRS';
 
   @override
   String get permanentlyRemoveListeningHistory =>
-      'Permanently remove listening history';
+      'Neatgriezeniski noņemt klausīšanās vēsturi';
 
   @override
-  String get pictureinpicturePip => 'Picture-in-Picture (PiP)';
+  String get pictureinpicturePip => 'Attēls attēlā (PiP)';
 
   @override
-  String get popularAlbums => 'Popular Albums';
+  String get popularAlbums => 'Populāri albumi';
 
   @override
-  String get popularArtists => 'Popular Artists';
+  String get popularArtists => 'Populāri mākslinieki';
 
   @override
-  String get popularGenres => 'Popular Genres';
+  String get popularGenres => 'Populāri žanri';
 
   @override
-  String get popularSongs => 'Popular Songs';
+  String get popularSongs => 'Populāras dziesmas';
 
   @override
-  String get popularTracks => 'Popular Tracks';
+  String get popularTracks => 'Populāri ieraksti';
 
   @override
-  String get popularHitsRightNow => 'Popular hits right now';
+  String get popularHitsRightNow => 'Populārie hiti šobrīd';
 
   @override
-  String get previous => 'Previous';
+  String get previous => 'Iepriekšējais';
 
   @override
-  String get queue => 'QUEUE';
+  String get queue => 'RINDA';
 
   @override
-  String get recentSearches => 'Recent searches';
+  String get recentSearches => 'Pēdējie meklējumi';
 
   @override
-  String get recommendedForYou => 'Recommended for You';
+  String get recommendedForYou => 'Ieteikts tev';
 
   @override
-  String get scraping => 'Scraping';
+  String get scraping => 'Iegūst datus';
 
   @override
-  String get search => 'Search';
+  String get search => 'Meklēt';
 
   @override
-  String get searchInAlbum => 'Search in album...';
+  String get searchInAlbum => 'Meklēt albumā...';
 
   @override
-  String get searchInLibrary => 'Search in library...';
+  String get searchInLibrary => 'Meklēt bibliotēkā...';
 
   @override
-  String get searchInPlaylist => 'Search in playlist';
+  String get searchInPlaylist => 'Meklēt atskaņošanas sarakstā';
 
   @override
-  String get searchLikedSongs => 'Search liked songs...';
+  String get searchLikedSongs => 'Meklēt iecienītās dziesmas...';
 
   @override
-  String get searchPopularSongs => 'Search popular songs...';
+  String get searchPopularSongs => 'Meklēt populāras dziesmas...';
 
   @override
-  String get selectMarket => 'Select Market';
+  String get selectMarket => 'Atlasīt tirgu';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'Iestatījumi';
 
   @override
-  String get showVideoPlayer => 'Show Video Player';
+  String get showVideoPlayer => 'Rādīt video atskaņotāju';
 
   @override
-  String get shuffle => 'Shuffle';
+  String get shuffle => 'Jaukt';
 
   @override
-  String get spotifyCredentials => 'Spotify Credentials';
+  String get spotifyCredentials => 'Spotify akreditācijas dati';
 
   @override
-  String get suggestedStations => 'Suggested Stations';
+  String get suggestedStations => 'Ieteiktās stacijas';
 
   @override
-  String get tracks => 'TRACKS';
+  String get tracks => 'IERAKSTI';
 
   @override
-  String get trending => 'Trending';
+  String get trending => 'Populārs';
 
   @override
-  String get tryAgain => 'Try Again';
+  String get tryAgain => 'Mēģināt vēlreiz';
 
   @override
-  String get tryADifferentSearchTerm => 'Try a different search term';
+  String get tryADifferentSearchTerm => 'Mēģiniet citu meklēšanas terminu';
 
   @override
   String get useYoutubePlayerWhenAvailable =>
-      'Use YouTube player when available';
+      'Izmantot YouTube atskaņotāju, ja pieejams';
 
   @override
   String get video => 'VIDEO';
 
   @override
-  String get whatDoYouWantToListenTo => 'What do you want to listen to?';
+  String get whatDoYouWantToListenTo => 'Ko vēlaties klausīties?';
 
   @override
-  String get youtubeCredentials => 'YouTube Credentials';
+  String get youtubeCredentials => 'YouTube akreditācijas dati';
 
   @override
-  String get yourLibrary => 'Your Library';
+  String get yourLibrary => 'Jūsu bibliotēka';
 
   @override
   String get playerscreenviewswitch => 'player_screen_view_switch';
 
   @override
-  String get addToPlaylist => 'Add to playlist';
+  String get addToPlaylist => 'Pievienot atskaņošanas sarakstam';
 
   @override
-  String get addToQueue => 'Add to queue';
+  String get addToQueue => 'Pievienot rindai';
 
   @override
-  String get copyId => 'Copy ID';
+  String get copyId => 'Kopēt ID';
 
   @override
-  String get copyLink => 'Copy link';
+  String get copyLink => 'Kopēt saiti';
 
   @override
-  String get discover => 'Discover';
+  String get discover => 'Atklāt';
 
   @override
-  String get enterYourName => 'Enter your name';
+  String get enterYourName => 'Ievadiet savu vārdu';
 
   @override
-  String get favorites => 'Favorites';
+  String get favorites => 'Favorīti';
 
   @override
-  String get goToAlbum => 'Go to album';
+  String get goToAlbum => 'Doties uz albumu';
 
   @override
-  String get goToArtist => 'Go to artist';
+  String get goToArtist => 'Doties uz mākslinieku';
 
   @override
-  String get goToArtistRadio => 'Go to artist radio';
+  String get goToArtistRadio => 'Doties uz mākslinieka radio';
 
   @override
-  String get goToPlaylist => 'Go to playlist';
+  String get goToPlaylist => 'Doties uz atskaņošanas sarakstu';
 
   @override
-  String get goToSongRadio => 'Go to song radio';
+  String get goToSongRadio => 'Doties uz dziesmas radio';
 
   @override
-  String get home => 'Home';
+  String get home => 'Sākums';
 
   @override
-  String get myAwesomePlaylist => 'My Awesome Playlist';
+  String get myAwesomePlaylist => 'Mans lieliskais atskaņošanas saraksts';
 
   @override
-  String get myPlaylist => 'My Playlist';
+  String get myPlaylist => 'Mans atskaņošanas saraksts';
 
   @override
-  String get newPlaylist1 => 'New playlist';
+  String get newPlaylist1 => 'Jauns atskaņošanas saraksts';
 
   @override
-  String get play => 'Play';
+  String get play => 'Atskaņot';
 
   @override
-  String get playStation => 'Play Station';
+  String get playStation => 'Atskaņot staciju';
 
   @override
-  String get playNext => 'Play next';
+  String get playNext => 'Atskaņot nākamo';
 
   @override
-  String get playlist => 'Playlist';
+  String get playlist => 'Atskaņošanas saraksts';
 
   @override
-  String get playlistName => 'Playlist Name';
+  String get playlistName => 'Atskaņošanas saraksta nosaukums';
 
   @override
-  String get playlists1 => 'Playlists';
+  String get playlists1 => 'Atskaņošanas saraksti';
 
   @override
-  String get queue1 => 'Queue';
+  String get queue1 => 'Rinda';
 
   @override
-  String get recentlyPlayed => 'Recently Played';
+  String get recentlyPlayed => 'Nesen atskaņotie';
 
   @override
-  String get removeFromQueue => 'Remove from queue';
+  String get removeFromQueue => 'Noņemt no rindas';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Mēģināt vēlreiz';
 
   @override
-  String get searchMusicArtistsAlbums => 'Search music, artists, albums...';
+  String get searchMusicArtistsAlbums =>
+      'Meklēt mūziku, māksliniekus, albumus...';
 
   @override
-  String get share => 'Share';
+  String get share => 'Kopīgot';
 
   @override
   String featuringArtist(String artistName) {
-    return 'FEATURING $artistName';
+    return 'PIEDALĀS $artistName';
   }
 
   @override
   String currentCountry(String country) {
-    return 'Current: $country';
+    return 'Pašreizējā: $country';
   }
 
   @override
-  String get queueTooltip => 'Queue';
+  String get queueTooltip => 'Rinda';
 
   @override
-  String get searchHint => 'Search music, artists, albums...';
+  String get searchHint => 'Meklēt mūziku, māksliniekus, albumus...';
 
   @override
-  String get language => 'Language';
+  String get language => 'Valoda';
 
   @override
-  String get systemDefault => 'System Default';
+  String get systemDefault => 'Sistēmas noklusējums';
 }

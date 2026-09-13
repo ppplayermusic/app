@@ -219,7 +219,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Remover histórico de escuta permanentemente';
 
   @override
-  String get pictureinpicturePip => 'Picture-in-Picture (PiP)';
+  String get pictureinpicturePip => 'Imagem na imagem (PiP)';
 
   @override
   String get popularAlbums => 'Álbuns populares';

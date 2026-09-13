@@ -17,80 +17,80 @@ class AppLocalizationsFil extends AppLocalizations {
   }
 
   @override
-  String get albums => 'ALBUMS';
+  String get albums => 'MGA ALBUM';
 
   @override
   String get api => 'API';
 
   @override
-  String get artists => 'ARTISTS';
+  String get artists => 'MGA ARTISTA';
 
   @override
   String get artwork => 'ARTWORK';
 
   @override
-  String get appVersion => 'App version';
+  String get appVersion => 'Bersyon ng app';
 
   @override
-  String get artist => 'Artist';
+  String get artist => 'Artista';
 
   @override
-  String get artistsYouFollow => 'Artists you follow';
+  String get artistsYouFollow => 'Mga artistang sinusundan mo';
 
   @override
   String get autoplay => 'Autoplay';
 
   @override
-  String get becauseYouListenedTo => 'Because you listened to';
+  String get becauseYouListenedTo => 'Dahil nakikinig ka sa';
 
   @override
-  String get browseAll => 'Browse all';
+  String get browseAll => 'Tingnan lahat';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Kanselahin';
 
   @override
-  String get clearAppCache => 'Clear App Cache?';
+  String get clearAppCache => 'I-clear ang App Cache?';
 
   @override
-  String get clearCache => 'Clear Cache';
+  String get clearCache => 'I-clear ang Cache';
 
   @override
-  String get clearHistory => 'Clear History?';
+  String get clearHistory => 'I-clear ang Kasaysayan?';
 
   @override
-  String get clearRecentlyPlayed => 'Clear Recently Played';
+  String get clearRecentlyPlayed => 'I-clear ang Kamakailan lang na Na-play';
 
   @override
   String get contentMarket => 'Content Market';
 
   @override
-  String get continueListening => 'Continue Listening';
+  String get continueListening => 'Ituloy ang pakikinig';
 
   @override
   String get continueVideoPlaybackInASmallWindow =>
-      'Continue video playback in a small window';
+      'Ituloy ang video sa maliit na window';
 
   @override
-  String get create => 'Create';
+  String get create => 'Lumikha';
 
   @override
-  String get createAPlaylistToGetStarted => 'Create a playlist to get started';
+  String get createAPlaylistToGetStarted => 'Gumawa ng playlist para magsimula';
 
   @override
   String currentSelectedcountry(Object country) {
-    return 'Current: $country';
+    return 'Kasalukuyan: $country';
   }
 
   @override
-  String get deletePlaylist => 'Delete Playlist';
+  String get deletePlaylist => 'Burahin ang Playlist';
 
   @override
-  String get editProfile => 'Edit Profile';
+  String get editProfile => 'I-edit ang Profile';
 
   @override
   String errorLoadingMarkets(Object err) {
-    return 'Error loading markets: $err';
+    return 'Error sa pag-load ng mga market: $err';
   }
 
   @override
@@ -100,330 +100,333 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String explore(Object genre) {
-    return 'Explore $genre';
+    return 'I-explore ang $genre';
   }
 
   @override
-  String get fansAlsoLike => 'FANS ALSO LIKE';
+  String get fansAlsoLike => 'GUSTO RIN NG MGA FAN';
 
   @override
   String featuringTouppercase(Object artist) {
-    return 'FEATURING $artist';
+    return 'KASAMA SI $artist';
   }
 
   @override
-  String get featuredPlaylists => 'Featured Playlists';
+  String get featuredPlaylists => 'Mga Featured na Playlist';
 
   @override
-  String get followArtistsToSeeThemHere => 'Follow artists to see them here';
+  String get followArtistsToSeeThemHere =>
+      'Sundan ang mga artista para makita sila dito';
 
   @override
-  String get followStationsToSeeThemHere => 'Follow stations to see them here';
+  String get followStationsToSeeThemHere =>
+      'Sundan ang mga istasyon para makita sila dito';
 
   @override
   String get forceAudioonlyStreamsToSaveData =>
-      'Force audio-only streams to save data';
+      'Piliting mag-stream ng audio lamang para makatipid ng data';
 
   @override
   String get freesUpSpaceAndForcesFreshDataOnNextLoad =>
-      'Frees up space and forces fresh data on next load';
+      'Nagpapalaya ng espasyo at nagfo-force ng bagong data sa susunod na load';
 
   @override
-  String get fromYourFavorites => 'From your favorites';
+  String get fromYourFavorites => 'Mula sa iyong mga paborito';
 
   @override
-  String get goBack => 'Go Back';
+  String get goBack => 'Bumalik';
 
   @override
   String inspiredByName(Object name) {
-    return 'Inspired by $name';
+    return 'Inspirado ni $name';
   }
 
   @override
   String get keepPlayingSimilarTracksWhenQueueEnds =>
-      'Keep playing similar tracks when queue ends';
+      'Patuloy na mag-play ng katulad na mga kanta kapag natapos ang queue';
 
   @override
   String get library => 'Library';
 
   @override
-  String get likeAlbumsToSeeThemHere => 'Like albums to see them here';
+  String get likeAlbumsToSeeThemHere => 'I-like ang mga album para makita dito';
 
   @override
-  String get likedSongs => 'Liked Songs';
+  String get likedSongs => 'Mga Liked na Kanta';
 
   @override
   String get lowDataMode => 'Low Data Mode';
 
   @override
-  String get madeForYou => 'Made For You';
+  String get madeForYou => 'Para sa Iyo';
 
   @override
   String moreLikeName(Object name) {
-    return 'More like $name';
+    return 'Higit pang tulad ni $name';
   }
 
   @override
-  String get moreOptions => 'More options';
+  String get moreOptions => 'Higit pang mga pagpipilian';
 
   @override
-  String get nameYourMasterpiece => 'Name your masterpiece...';
+  String get nameYourMasterpiece => 'Pangalanan ang iyong obra maestra...';
 
   @override
-  String get newPlaylist => 'New Playlist';
+  String get newPlaylist => 'Bagong Playlist';
 
   @override
-  String get newReleases => 'New Releases';
+  String get newReleases => 'Mga Bagong Labas';
 
   @override
-  String get next => 'Next';
+  String get next => 'Susunod';
 
   @override
-  String get noAlbumsFound => 'No albums found';
+  String get noAlbumsFound => 'Walang nahanap na album';
 
   @override
-  String get noArtistsFollowed => 'No artists followed';
+  String get noArtistsFollowed => 'Walang sinundan na artista';
 
   @override
-  String get noArtistsFound => 'No artists found';
+  String get noArtistsFound => 'Walang nahanap na artista';
 
   @override
-  String get noLikedAlbums => 'No liked albums';
+  String get noLikedAlbums => 'Walang liked na album';
 
   @override
-  String get noPlaylistsFound => 'No playlists found';
+  String get noPlaylistsFound => 'Walang nahanap na playlist';
 
   @override
-  String get noPlaylistsYet => 'No playlists yet';
+  String get noPlaylistsYet => 'Wala pang playlist';
 
   @override
-  String get noResultsFound => 'No results found';
+  String get noResultsFound => 'Walang nahanap na resulta';
 
   @override
-  String get noStationsFollowed => 'No stations followed';
+  String get noStationsFollowed => 'Walang sinundan na istasyon';
 
   @override
-  String get noTrackPlaying => 'No track playing';
+  String get noTrackPlaying => 'Walang kanta na nagpe-play';
 
   @override
-  String get noTracksFound => 'No tracks found';
+  String get noTracksFound => 'Walang nahanap na kanta';
 
   @override
-  String get playlists => 'PLAYLISTS';
+  String get playlists => 'MGA PLAYLIST';
 
   @override
-  String get popular => 'POPULAR';
+  String get popular => 'SIKAT';
 
   @override
   String get permanentlyRemoveListeningHistory =>
-      'Permanently remove listening history';
+      'Permanenteng alisin ang kasaysayan ng pakikinig';
 
   @override
   String get pictureinpicturePip => 'Picture-in-Picture (PiP)';
 
   @override
-  String get popularAlbums => 'Popular Albums';
+  String get popularAlbums => 'Mga Sikat na Album';
 
   @override
-  String get popularArtists => 'Popular Artists';
+  String get popularArtists => 'Mga Sikat na Artista';
 
   @override
-  String get popularGenres => 'Popular Genres';
+  String get popularGenres => 'Mga Sikat na Genre';
 
   @override
-  String get popularSongs => 'Popular Songs';
+  String get popularSongs => 'Mga Sikat na Kanta';
 
   @override
-  String get popularTracks => 'Popular Tracks';
+  String get popularTracks => 'Mga Sikat na Track';
 
   @override
-  String get popularHitsRightNow => 'Popular hits right now';
+  String get popularHitsRightNow => 'Mga sikat na hit ngayon';
 
   @override
-  String get previous => 'Previous';
+  String get previous => 'Nakaraan';
 
   @override
   String get queue => 'QUEUE';
 
   @override
-  String get recentSearches => 'Recent searches';
+  String get recentSearches => 'Mga kamakailang paghahanap';
 
   @override
-  String get recommendedForYou => 'Recommended for You';
+  String get recommendedForYou => 'Inirerekomenda para sa Iyo';
 
   @override
-  String get scraping => 'Scraping';
+  String get scraping => 'Nangongolekta ng data';
 
   @override
-  String get search => 'Search';
+  String get search => 'Maghanap';
 
   @override
-  String get searchInAlbum => 'Search in album...';
+  String get searchInAlbum => 'Maghanap sa album...';
 
   @override
-  String get searchInLibrary => 'Search in library...';
+  String get searchInLibrary => 'Maghanap sa library...';
 
   @override
-  String get searchInPlaylist => 'Search in playlist';
+  String get searchInPlaylist => 'Maghanap sa playlist';
 
   @override
-  String get searchLikedSongs => 'Search liked songs...';
+  String get searchLikedSongs => 'Maghanap ng mga liked na kanta...';
 
   @override
-  String get searchPopularSongs => 'Search popular songs...';
+  String get searchPopularSongs => 'Maghanap ng mga sikat na kanta...';
 
   @override
-  String get selectMarket => 'Select Market';
+  String get selectMarket => 'Pumili ng Market';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'Mga Setting';
 
   @override
-  String get showVideoPlayer => 'Show Video Player';
+  String get showVideoPlayer => 'Ipakita ang Video Player';
 
   @override
   String get shuffle => 'Shuffle';
 
   @override
-  String get spotifyCredentials => 'Spotify Credentials';
+  String get spotifyCredentials => 'Mga Kredensyal ng Spotify';
 
   @override
-  String get suggestedStations => 'Suggested Stations';
+  String get suggestedStations => 'Mga Mungkahing Istasyon';
 
   @override
-  String get tracks => 'TRACKS';
+  String get tracks => 'MGA TRACK';
 
   @override
   String get trending => 'Trending';
 
   @override
-  String get tryAgain => 'Try Again';
+  String get tryAgain => 'Subukang muli';
 
   @override
-  String get tryADifferentSearchTerm => 'Try a different search term';
+  String get tryADifferentSearchTerm => 'Subukan ang ibang salitang panghanap';
 
   @override
   String get useYoutubePlayerWhenAvailable =>
-      'Use YouTube player when available';
+      'Gamitin ang YouTube player kung available';
 
   @override
   String get video => 'VIDEO';
 
   @override
-  String get whatDoYouWantToListenTo => 'What do you want to listen to?';
+  String get whatDoYouWantToListenTo => 'Ano ang gusto mong pakinggan?';
 
   @override
-  String get youtubeCredentials => 'YouTube Credentials';
+  String get youtubeCredentials => 'Mga Kredensyal ng YouTube';
 
   @override
-  String get yourLibrary => 'Your Library';
+  String get yourLibrary => 'Iyong Library';
 
   @override
   String get playerscreenviewswitch => 'player_screen_view_switch';
 
   @override
-  String get addToPlaylist => 'Add to playlist';
+  String get addToPlaylist => 'Idagdag sa playlist';
 
   @override
-  String get addToQueue => 'Add to queue';
+  String get addToQueue => 'Idagdag sa queue';
 
   @override
-  String get copyId => 'Copy ID';
+  String get copyId => 'Kopyahin ang ID';
 
   @override
-  String get copyLink => 'Copy link';
+  String get copyLink => 'Kopyahin ang link';
 
   @override
-  String get discover => 'Discover';
+  String get discover => 'Tuklasin';
 
   @override
-  String get enterYourName => 'Enter your name';
+  String get enterYourName => 'Ilagay ang iyong pangalan';
 
   @override
-  String get favorites => 'Favorites';
+  String get favorites => 'Mga Paborito';
 
   @override
-  String get goToAlbum => 'Go to album';
+  String get goToAlbum => 'Pumunta sa album';
 
   @override
-  String get goToArtist => 'Go to artist';
+  String get goToArtist => 'Pumunta sa artista';
 
   @override
-  String get goToArtistRadio => 'Go to artist radio';
+  String get goToArtistRadio => 'Pumunta sa artist radio';
 
   @override
-  String get goToPlaylist => 'Go to playlist';
+  String get goToPlaylist => 'Pumunta sa playlist';
 
   @override
-  String get goToSongRadio => 'Go to song radio';
+  String get goToSongRadio => 'Pumunta sa song radio';
 
   @override
   String get home => 'Home';
 
   @override
-  String get myAwesomePlaylist => 'My Awesome Playlist';
+  String get myAwesomePlaylist => 'Aking Magandang Playlist';
 
   @override
-  String get myPlaylist => 'My Playlist';
+  String get myPlaylist => 'Aking Playlist';
 
   @override
-  String get newPlaylist1 => 'New playlist';
+  String get newPlaylist1 => 'Bagong playlist';
 
   @override
-  String get play => 'Play';
+  String get play => 'I-play';
 
   @override
-  String get playStation => 'Play Station';
+  String get playStation => 'I-play ang Istasyon';
 
   @override
-  String get playNext => 'Play next';
+  String get playNext => 'I-play susunod';
 
   @override
   String get playlist => 'Playlist';
 
   @override
-  String get playlistName => 'Playlist Name';
+  String get playlistName => 'Pangalan ng Playlist';
 
   @override
-  String get playlists1 => 'Playlists';
+  String get playlists1 => 'Mga Playlist';
 
   @override
   String get queue1 => 'Queue';
 
   @override
-  String get recentlyPlayed => 'Recently Played';
+  String get recentlyPlayed => 'Kamakailan lang na Na-play';
 
   @override
-  String get removeFromQueue => 'Remove from queue';
+  String get removeFromQueue => 'Alisin sa queue';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Subukang muli';
 
   @override
-  String get searchMusicArtistsAlbums => 'Search music, artists, albums...';
+  String get searchMusicArtistsAlbums =>
+      'Maghanap ng musika, artista, album...';
 
   @override
-  String get share => 'Share';
+  String get share => 'Ibahagi';
 
   @override
   String featuringArtist(String artistName) {
-    return 'FEATURING $artistName';
+    return 'KASAMA SI $artistName';
   }
 
   @override
   String currentCountry(String country) {
-    return 'Current: $country';
+    return 'Kasalukuyan: $country';
   }
 
   @override
   String get queueTooltip => 'Queue';
 
   @override
-  String get searchHint => 'Search music, artists, albums...';
+  String get searchHint => 'Maghanap ng musika, artista, album...';
 
   @override
-  String get language => 'Language';
+  String get language => 'Wika';
 
   @override
-  String get systemDefault => 'System Default';
+  String get systemDefault => 'Default ng System';
 }
