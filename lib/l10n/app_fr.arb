@@ -3,7 +3,12 @@
   "appTitle": "PPPlayer",
   "@appTitle": {},
   "titleSubtitle": "{title}, {subtitle}",
-  "@titleSubtitle": {},
+  "@titleSubtitle": {
+    "placeholders": {
+      "title": {},
+      "subtitle": {}
+    }
+  },
   "albums": "ALBUMS",
   "@albums": {},
   "api": "API",
@@ -45,21 +50,41 @@
   "createAPlaylistToGetStarted": "Créez une playlist pour commencer",
   "@createAPlaylistToGetStarted": {},
   "currentSelectedcountry": "Actuel : {country}",
-  "@currentSelectedcountry": {},
+  "@currentSelectedcountry": {
+    "placeholders": {
+      "country": {}
+    }
+  },
   "deletePlaylist": "Supprimer la playlist",
   "@deletePlaylist": {},
   "editProfile": "Modifier le profil",
   "@editProfile": {},
   "errorLoadingMarkets": "Erreur lors du chargement des marchés : {err}",
-  "@errorLoadingMarkets": {},
+  "@errorLoadingMarkets": {
+    "placeholders": {
+      "err": {}
+    }
+  },
   "error": "Erreur : {error}",
-  "@error": {},
+  "@error": {
+    "placeholders": {
+      "error": {}
+    }
+  },
   "explore": "Explorer {genre}",
-  "@explore": {},
+  "@explore": {
+    "placeholders": {
+      "genre": {}
+    }
+  },
   "fansAlsoLike": "LES FANS AIMENT AUSSI",
   "@fansAlsoLike": {},
   "featuringTouppercase": "AVEC {artist}",
-  "@featuringTouppercase": {},
+  "@featuringTouppercase": {
+    "placeholders": {
+      "artist": {}
+    }
+  },
   "featuredPlaylists": "Playlists en vedette",
   "@featuredPlaylists": {},
   "followArtistsToSeeThemHere": "Suivez des artistes pour les voir ici",
@@ -75,7 +100,11 @@
   "goBack": "Retour",
   "@goBack": {},
   "inspiredByName": "Inspiré par {name}",
-  "@inspiredByName": {},
+  "@inspiredByName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
   "keepPlayingSimilarTracksWhenQueueEnds": "Continuer à lire des titres similaires à la fin de la file d'attente",
   "@keepPlayingSimilarTracksWhenQueueEnds": {},
   "library": "Bibliothèque",
@@ -89,7 +118,11 @@
   "madeForYou": "Fait pour vous",
   "@madeForYou": {},
   "moreLikeName": "Plus comme {name}",
-  "@moreLikeName": {},
+  "@moreLikeName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
   "moreOptions": "Plus d'options",
   "@moreOptions": {},
   "nameYourMasterpiece": "Nommez votre chef-d'œuvre...",
@@ -251,9 +284,21 @@
   "share": "Partager",
   "@share": {},
   "featuringArtist": "AVEC {artistName}",
-  "@featuringArtist": {},
+  "@featuringArtist": {
+    "placeholders": {
+      "artistName": {
+        "type": "String"
+      }
+    }
+  },
   "currentCountry": "Actuel: {country}",
-  "@currentCountry": {},
+  "@currentCountry": {
+    "placeholders": {
+      "country": {
+        "type": "String"
+      }
+    }
+  },
   "queueTooltip": "File d'attente",
   "@queueTooltip": {},
   "searchHint": "Rechercher de la musique, des artistes, des albums...",
