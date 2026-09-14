@@ -397,23 +397,27 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     try {
       final service = ref.read(playbackServiceProvider);
-      final candidates = await service.resolveCandidates(track, null);
-      if (_disposed || myGen != _playbackGeneration) {
-        _restoringState = false;
-        return;
-      }
+      Track resolvedTrack = track;
+      
+      if (!track.isLocal) {
+        final candidates = await service.resolveCandidates(track, null);
+        if (_disposed || myGen != _playbackGeneration) {
+          _restoringState = false;
+          return;
+        }
 
-      if (candidates.isEmpty) {
-        _restoringState = false;
-        return;
-      }
+        if (candidates.isEmpty) {
+          _restoringState = false;
+          return;
+        }
 
-      final candidate = candidates.first;
-      final resolvedTrack = track.copyWith(youtubeVideoId: candidate.videoId);
-      await service.cacheYoutubeId(resolvedTrack.spotifyId, candidate.videoId);
-      if (_disposed || myGen != _playbackGeneration) {
-        _restoringState = false;
-        return;
+        final candidate = candidates.first;
+        resolvedTrack = track.copyWith(youtubeVideoId: candidate.videoId);
+        await service.cacheYoutubeId(resolvedTrack.spotifyId, candidate.videoId);
+        if (_disposed || myGen != _playbackGeneration) {
+          _restoringState = false;
+          return;
+        }
       }
 
       // Update queue entry with resolved video ID.

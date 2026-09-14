@@ -155,7 +155,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
         }
       }),
       _player!.stream.playing.listen((playing) {
-        if (!_currentStatus.isIFrameMode) {
+        if (!_currentStatus.isIFrameMode && _currentStatus.state != PlaybackState.preparing) {
           _updateStatus(
             _currentStatus.copyWith(
               state: playing ? PlaybackState.playing : PlaybackState.paused,
@@ -239,7 +239,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
         await _player!.open(Media(track.localMediaUri!), play: false);
         if (position != null) {
           await _player!.seek(position);
+          _updateStatus(_currentStatus.copyWith(position: position));
         }
+        _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
       } catch (e) {
         _updateStatus(_currentStatus.copyWith(state: PlaybackState.error, error: e));
       }
