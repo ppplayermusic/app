@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'tactile_buttons.dart';
 import '../../core/models/track.dart';
+import '../../features/local_library/local_artist_detail_screen.dart';
 
 class ArtistsLinks extends StatelessWidget {
   const ArtistsLinks({
@@ -33,10 +34,19 @@ class ArtistsLinks extends StatelessWidget {
                 text: toUpperCase ? names[i].toUpperCase() : names[i],
                 style: style,
                 onTap: () {
-                  final id =
-                      i < ids.length ? ids[i] : (ids.isNotEmpty ? ids[0] : '');
-                  if (id.isNotEmpty) {
-                    context.push('/artist/$id');
+                  if (track.isLocal) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => LocalArtistDetailScreen(artistName: track.artistName),
+                      ),
+                    );
+                  } else {
+                    final id =
+                        i < ids.length ? ids[i] : (ids.isNotEmpty ? ids[0] : '');
+                    if (id.isNotEmpty) {
+                      context.push('/artist/$id');
+                    }
                   }
                 },
               ),

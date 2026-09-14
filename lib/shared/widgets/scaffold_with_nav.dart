@@ -1,4 +1,5 @@
 import 'package:ppplayer/l10n/app_localizations.dart';
+import '../../features/local_library/local_artist_detail_screen.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -746,10 +747,21 @@ class _MiniPlayerBar extends ConsumerWidget {
                                       .withValues(alpha: 0.6),
                                   fontSize: 11,
                                 ),
-                                onTap:
-                                    () => context.push(
-                                      '/artist/${track.artistId}',
-                                    ),
+                                onTap: () {
+                                  if (track.isLocal) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => LocalArtistDetailScreen(
+                                              artistName: track.artistName,
+                                            ),
+                                      ),
+                                    );
+                                  } else {
+                                    context.push('/artist/${track.artistId}');
+                                  }
+                                },
                               ),
                             ],
                           ),
