@@ -476,5 +476,7 @@
   "importAudioFiles": "Import Audio Files",
   "@importAudioFiles": {},
   "importFolder": "Import Folder",
-  "@importFolder": {}
+  "@importFolder": {},
+  "importFolderSubtitle": "Note: Audio files are hidden in the folder picker. This is normal.",
+  "@importFolderSubtitle": {}
 }

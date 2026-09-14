@@ -49,7 +49,16 @@ void showImportLocalModal(BuildContext context, WidgetRef ref) {
                 children: [
                   Icon(Icons.folder, color: Theme.of(context).colorScheme.onSurface),
                   const SizedBox(width: 16),
-                  Text(AppLocalizations.of(context)!.importFolder, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(AppLocalizations.of(context)!.importFolder, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 2),
+                        Text(AppLocalizations.of(context)!.importFolderSubtitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -1361,6 +1361,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Import Folder'**
   String get importFolder;
+
+  /// No description provided for @importFolderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: Audio files are hidden in the folder picker. This is normal.'**
+  String get importFolderSubtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -249,6 +249,7 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
   @internal
   Future<void> init() async {
     debugPrint("YoutubePlayerController: init() start");
+    _eventHandler.reset();
     await load(
       params: params,
       baseUrl: kIsWeb ? Uri.base.origin : params.origin,

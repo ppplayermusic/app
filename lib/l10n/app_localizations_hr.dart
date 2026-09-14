@@ -664,4 +664,8 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get importFolder => 'Uvezi mapu';
+
+  @override
+  String get importFolderSubtitle =>
+      'Note: Audio files are hidden in the folder picker. This is normal.';
 }

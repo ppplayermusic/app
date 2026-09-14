@@ -652,4 +652,8 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get importFolder => '폴더 가져오기';
+
+  @override
+  String get importFolderSubtitle =>
+      'Note: Audio files are hidden in the folder picker. This is normal.';
 }

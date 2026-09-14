@@ -660,4 +660,8 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get importFolder => 'Importa cartella';
+
+  @override
+  String get importFolderSubtitle =>
+      'Note: Audio files are hidden in the folder picker. This is normal.';
 }

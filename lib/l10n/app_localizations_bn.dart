@@ -662,4 +662,8 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get importFolder => 'ফোল্ডার আমদানি করুন';
+
+  @override
+  String get importFolderSubtitle =>
+      'Note: Audio files are hidden in the folder picker. This is normal.';
 }

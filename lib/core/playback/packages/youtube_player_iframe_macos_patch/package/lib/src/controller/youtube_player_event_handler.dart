@@ -29,7 +29,11 @@ class YoutubePlayerEventHandler {
   final StreamController<YoutubeVideoState> videoStateController =
       StreamController.broadcast();
 
-  final Completer<void> _readyCompleter = Completer();
+  Completer<void> _readyCompleter = Completer();
+
+  void reset() {
+    _readyCompleter = Completer();
+  }
   late final Map<String, ValueChanged<Object>> _events;
 
   /// Handles the [javaScriptMessage] from the player iframe and create events.
