@@ -569,4 +569,97 @@ class AppLocalizationsHi extends AppLocalizations {
   String copyright(Object year) {
     return '© $year PPPlayer योगदानकर्ता';
   }
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String greetingWithName(Object greeting, Object name) {
+    return '$greeting, $name';
+  }
+
+  @override
+  String get yourMusicIsWaiting => 'Your music is waiting.';
+
+  @override
+  String dailyMix(Object number) {
+    return 'Daily Mix $number';
+  }
+
+  @override
+  String get yourFavoritesAndNewDiscoveries =>
+      'Your favorites\nand new discoveries';
+
+  @override
+  String get discoverWeekly => 'Discover Weekly';
+
+  @override
+  String get releaseRadar => 'Release Radar';
+
+  @override
+  String get newMusicJustForYou => 'New music\njust for you';
+
+  @override
+  String get chillMix => 'Chill Mix';
+
+  @override
+  String get relaxAndUnwind => 'Relax and unwind';
+
+  @override
+  String get focusMix => 'Focus Mix';
+
+  @override
+  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+
+  @override
+  String artistRadio(Object artist) {
+    return '$artist Radio';
+  }
+
+  @override
+  String genreRadio(Object genre) {
+    return '$genre Radio';
+  }
+
+  @override
+  String get filterAll => 'सभी';
+
+  @override
+  String get filterPlaylists => 'प्लेलिस्ट';
+
+  @override
+  String get filterArtists => 'कलाकार';
+
+  @override
+  String get filterAlbums => 'एल्बम';
+
+  @override
+  String get filterStations => 'स्टेशन';
+
+  @override
+  String get localMusicCard => 'स्थानीय संगीत';
+
+  @override
+  String get createPlaylistButton => 'प्लेलिस्ट बनाएं';
+
+  @override
+  String get radioStations => 'रेडियो स्टेशन';
+
+  @override
+  String get discoverMusic => 'संगीत खोजें';
+
+  @override
+  String get importLocalMusic => 'स्थानीय संगीत आयात करें';
+
+  @override
+  String get importAudioFiles => 'ऑडियो फ़ाइलें आयात करें';
+
+  @override
+  String get importFolder => 'फ़ोल्डर आयात करें';
 }

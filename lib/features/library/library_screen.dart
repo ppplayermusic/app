@@ -700,7 +700,7 @@ class _LikedSongsCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Liked Songs',
+                              AppLocalizations.of(context)!.likedSongs,
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -855,7 +855,7 @@ class _LocalMusicCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Local Music',
+                        AppLocalizations.of(context)!.localMusicCard,
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.onTertiary,
@@ -957,7 +957,7 @@ class _PlaylistsGrid extends StatelessWidget {
               icon: Icons.playlist_add_rounded,
               title: AppLocalizations.of(context)!.noPlaylistsYet,
               subtitle: AppLocalizations.of(context)!.createAPlaylistToGetStarted,
-              buttonText: 'Create Playlist',
+              buttonText: AppLocalizations.of(context)!.createPlaylistButton,
               onPressed:
                   () =>
                       LibraryScreen.showCreatePlaylistDialog(context, database),
@@ -968,11 +968,11 @@ class _PlaylistsGrid extends StatelessWidget {
         return SliverMainAxisGroup(
           slivers: [
             if (showHeader)
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
                   child: Text(
-                    'Playlists',
+                    AppLocalizations.of(context)!.playlists1,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                   ),
                 ),
@@ -1298,8 +1298,7 @@ class _FilterChipItemState extends State<_FilterChipItem> {
                           : []),
             ),
             child: Text(
-              widget.filter.name[0].toUpperCase() +
-                  widget.filter.name.substring(1),
+              _getLocalizedFilterName(context, widget.filter),
               style: TextStyle(
                 color: textColor,
                 fontWeight:
@@ -1314,6 +1313,21 @@ class _FilterChipItemState extends State<_FilterChipItem> {
         ),
       ),
     );
+  }
+  String _getLocalizedFilterName(BuildContext context, LibraryFilter filter) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (filter) {
+      case LibraryFilter.all:
+        return l10n.filterAll;
+      case LibraryFilter.playlists:
+        return l10n.filterPlaylists;
+      case LibraryFilter.artists:
+        return l10n.filterArtists;
+      case LibraryFilter.albums:
+        return l10n.filterAlbums;
+      case LibraryFilter.stations:
+        return l10n.filterStations;
+    }
   }
 }
 
@@ -1376,11 +1390,11 @@ class _ArtistsSliverList extends StatelessWidget {
         return SliverMainAxisGroup(
           slivers: [
             if (showHeader)
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
                   child: Text(
-                    'Artists',
+                    AppLocalizations.of(context)!.artistsTab,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                   ),
                 ),
@@ -1555,11 +1569,11 @@ class _AlbumsSliverGrid extends StatelessWidget {
         return SliverMainAxisGroup(
           slivers: [
             if (showHeader)
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
                   child: Text(
-                    'Albums',
+                    AppLocalizations.of(context)!.albumsTab,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                   ),
                 ),
@@ -1877,7 +1891,7 @@ class _RadiosSliverGrid extends StatelessWidget {
               icon: Icons.radio_rounded,
               title: AppLocalizations.of(context)!.noStationsFollowed,
               subtitle: AppLocalizations.of(context)!.followStationsToSeeThemHere,
-              buttonText: 'Discover Music',
+              buttonText: AppLocalizations.of(context)!.discoverMusic,
               onPressed: () => context.push('/search'),
             ),
           );
@@ -1886,12 +1900,12 @@ class _RadiosSliverGrid extends StatelessWidget {
         return SliverMainAxisGroup(
           slivers: [
             if (showHeader)
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 32, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
                   child: Text(
-                    'Radio Stations',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                    AppLocalizations.of(context)!.radioStations,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                   ),
                 ),
               ),

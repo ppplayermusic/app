@@ -105,8 +105,8 @@ class PpAboutDialog extends StatelessWidget {
                   runSpacing: 8,
                   children: [
                     _buildActionButton(context, Icons.public, l10n.website, 'https://ppplayer.com'),
-                    _buildActionButton(context, Icons.code, l10n.github, 'https://github.com/ppplayermusic/app'),
-                    _buildActionButton(context, Icons.article_outlined, l10n.releaseNotes, 'https://github.com/ppplayermusic/app/releases'),
+                    _buildActionButton(context, Icons.code, l10n.github, 'https://github.com/ppplayermusic/ppplayer'),
+                    _buildActionButton(context, Icons.article_outlined, l10n.releaseNotes, 'https://github.com/ppplayermusic/ppplayer/releases'),
                     _buildActionButton(context, Icons.help_outline, l10n.support, 'https://ppplayer.com/support'),
                   ],
                 ),

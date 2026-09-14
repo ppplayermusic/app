@@ -571,4 +571,97 @@ class AppLocalizationsMy extends AppLocalizations {
   String copyright(Object year) {
     return '© $year PPPlayer ပါဝင်ကူညီသူများ';
   }
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String greetingWithName(Object greeting, Object name) {
+    return '$greeting, $name';
+  }
+
+  @override
+  String get yourMusicIsWaiting => 'Your music is waiting.';
+
+  @override
+  String dailyMix(Object number) {
+    return 'Daily Mix $number';
+  }
+
+  @override
+  String get yourFavoritesAndNewDiscoveries =>
+      'Your favorites\nand new discoveries';
+
+  @override
+  String get discoverWeekly => 'Discover Weekly';
+
+  @override
+  String get releaseRadar => 'Release Radar';
+
+  @override
+  String get newMusicJustForYou => 'New music\njust for you';
+
+  @override
+  String get chillMix => 'Chill Mix';
+
+  @override
+  String get relaxAndUnwind => 'Relax and unwind';
+
+  @override
+  String get focusMix => 'Focus Mix';
+
+  @override
+  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+
+  @override
+  String artistRadio(Object artist) {
+    return '$artist Radio';
+  }
+
+  @override
+  String genreRadio(Object genre) {
+    return '$genre Radio';
+  }
+
+  @override
+  String get filterAll => 'အားလုံး';
+
+  @override
+  String get filterPlaylists => 'အစီအစဉ်များ';
+
+  @override
+  String get filterArtists => 'အနုပညာရှင်များ';
+
+  @override
+  String get filterAlbums => 'အယ်လ်ဘမ်များ';
+
+  @override
+  String get filterStations => 'စခန်းများ';
+
+  @override
+  String get localMusicCard => 'ပြည်တွင်းတေးဂီတ';
+
+  @override
+  String get createPlaylistButton => 'အစီအစဉ်ဖန်တီးရန်';
+
+  @override
+  String get radioStations => 'ရေဒီယိုစခန်းများ';
+
+  @override
+  String get discoverMusic => 'တေးဂီတရှာဖွေရန်';
+
+  @override
+  String get importLocalMusic => 'ပြည်တွင်းတေးဂီတသွင်းရန်';
+
+  @override
+  String get importAudioFiles => 'အသံဖိုင်များသွင်းရန်';
+
+  @override
+  String get importFolder => 'ဖိုင်တွဲသွင်းရန်';
 }

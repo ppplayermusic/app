@@ -417,7 +417,7 @@ abstract class AppLocalizations {
   /// No description provided for @madeForYou.
   ///
   /// In en, this message translates to:
-  /// **'Made For You'**
+  /// **'Made for you'**
   String get madeForYou;
 
   /// No description provided for @moreLikeName.
@@ -1193,6 +1193,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'© {year} PPPlayer contributors'**
   String copyright(Object year);
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get goodEvening;
+
+  /// No description provided for @greetingWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'{greeting}, {name}'**
+  String greetingWithName(Object greeting, Object name);
+
+  /// No description provided for @yourMusicIsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Your music is waiting.'**
+  String get yourMusicIsWaiting;
+
+  /// No description provided for @dailyMix.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Mix {number}'**
+  String dailyMix(Object number);
+
+  /// No description provided for @yourFavoritesAndNewDiscoveries.
+  ///
+  /// In en, this message translates to:
+  /// **'Your favorites\nand new discoveries'**
+  String get yourFavoritesAndNewDiscoveries;
+
+  /// No description provided for @discoverWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover Weekly'**
+  String get discoverWeekly;
+
+  /// No description provided for @releaseRadar.
+  ///
+  /// In en, this message translates to:
+  /// **'Release Radar'**
+  String get releaseRadar;
+
+  /// No description provided for @newMusicJustForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'New music\njust for you'**
+  String get newMusicJustForYou;
+
+  /// No description provided for @chillMix.
+  ///
+  /// In en, this message translates to:
+  /// **'Chill Mix'**
+  String get chillMix;
+
+  /// No description provided for @relaxAndUnwind.
+  ///
+  /// In en, this message translates to:
+  /// **'Relax and unwind'**
+  String get relaxAndUnwind;
+
+  /// No description provided for @focusMix.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Mix'**
+  String get focusMix;
+
+  /// No description provided for @deepFocusAndProductivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep focus\nand productivity'**
+  String get deepFocusAndProductivity;
+
+  /// No description provided for @artistRadio.
+  ///
+  /// In en, this message translates to:
+  /// **'{artist} Radio'**
+  String artistRadio(Object artist);
+
+  /// No description provided for @genreRadio.
+  ///
+  /// In en, this message translates to:
+  /// **'{genre} Radio'**
+  String genreRadio(Object genre);
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterPlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlists'**
+  String get filterPlaylists;
+
+  /// No description provided for @filterArtists.
+  ///
+  /// In en, this message translates to:
+  /// **'Artists'**
+  String get filterArtists;
+
+  /// No description provided for @filterAlbums.
+  ///
+  /// In en, this message translates to:
+  /// **'Albums'**
+  String get filterAlbums;
+
+  /// No description provided for @filterStations.
+  ///
+  /// In en, this message translates to:
+  /// **'Stations'**
+  String get filterStations;
+
+  /// No description provided for @localMusicCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Music'**
+  String get localMusicCard;
+
+  /// No description provided for @createPlaylistButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Playlist'**
+  String get createPlaylistButton;
+
+  /// No description provided for @radioStations.
+  ///
+  /// In en, this message translates to:
+  /// **'Radio Stations'**
+  String get radioStations;
+
+  /// No description provided for @discoverMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover Music'**
+  String get discoverMusic;
+
+  /// No description provided for @importLocalMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Local Music'**
+  String get importLocalMusic;
+
+  /// No description provided for @importAudioFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Audio Files'**
+  String get importAudioFiles;
+
+  /// No description provided for @importFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Folder'**
+  String get importFolder;
 }
 
 class _AppLocalizationsDelegate

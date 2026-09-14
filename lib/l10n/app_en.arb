@@ -115,7 +115,7 @@
   "@likedSongs": {},
   "lowDataMode": "Low Data Mode",
   "@lowDataMode": {},
-  "madeForYou": "Made For You",
+  "madeForYou": "Made for you",
   "@madeForYou": {},
   "moreLikeName": "More like {name}",
   "@moreLikeName": {
@@ -403,5 +403,78 @@
     "placeholders": {
       "year": {}
     }
-  }
+  },
+  "goodMorning": "Good morning",
+  "@goodMorning": {},
+  "goodAfternoon": "Good afternoon",
+  "@goodAfternoon": {},
+  "goodEvening": "Good evening",
+  "@goodEvening": {},
+  "greetingWithName": "{greeting}, {name}",
+  "@greetingWithName": {
+    "placeholders": {
+      "greeting": {},
+      "name": {}
+    }
+  },
+  "yourMusicIsWaiting": "Your music is waiting.",
+  "@yourMusicIsWaiting": {},
+  "dailyMix": "Daily Mix {number}",
+  "@dailyMix": {
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "yourFavoritesAndNewDiscoveries": "Your favorites\nand new discoveries",
+  "@yourFavoritesAndNewDiscoveries": {},
+  "discoverWeekly": "Discover Weekly",
+  "@discoverWeekly": {},
+  "releaseRadar": "Release Radar",
+  "@releaseRadar": {},
+  "newMusicJustForYou": "New music\njust for you",
+  "@newMusicJustForYou": {},
+  "chillMix": "Chill Mix",
+  "@chillMix": {},
+  "relaxAndUnwind": "Relax and unwind",
+  "@relaxAndUnwind": {},
+  "focusMix": "Focus Mix",
+  "@focusMix": {},
+  "deepFocusAndProductivity": "Deep focus\nand productivity",
+  "@deepFocusAndProductivity": {},
+  "artistRadio": "{artist} Radio",
+  "@artistRadio": {
+    "placeholders": {
+      "artist": {}
+    }
+  },
+  "genreRadio": "{genre} Radio",
+  "@genreRadio": {
+    "placeholders": {
+      "genre": {}
+    }
+  },
+  "filterAll": "All",
+  "@filterAll": {},
+  "filterPlaylists": "Playlists",
+  "@filterPlaylists": {},
+  "filterArtists": "Artists",
+  "@filterArtists": {},
+  "filterAlbums": "Albums",
+  "@filterAlbums": {},
+  "filterStations": "Stations",
+  "@filterStations": {},
+  "localMusicCard": "Local Music",
+  "@localMusicCard": {},
+  "createPlaylistButton": "Create Playlist",
+  "@createPlaylistButton": {},
+  "radioStations": "Radio Stations",
+  "@radioStations": {},
+  "discoverMusic": "Discover Music",
+  "@discoverMusic": {},
+  "importLocalMusic": "Import Local Music",
+  "@importLocalMusic": {},
+  "importAudioFiles": "Import Audio Files",
+  "@importAudioFiles": {},
+  "importFolder": "Import Folder",
+  "@importFolder": {}
 }

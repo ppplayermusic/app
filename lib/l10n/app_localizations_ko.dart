@@ -560,4 +560,97 @@ class AppLocalizationsKo extends AppLocalizations {
   String copyright(Object year) {
     return '© $year PPPlayer 기여자';
   }
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String greetingWithName(Object greeting, Object name) {
+    return '$greeting, $name';
+  }
+
+  @override
+  String get yourMusicIsWaiting => 'Your music is waiting.';
+
+  @override
+  String dailyMix(Object number) {
+    return 'Daily Mix $number';
+  }
+
+  @override
+  String get yourFavoritesAndNewDiscoveries =>
+      'Your favorites\nand new discoveries';
+
+  @override
+  String get discoverWeekly => 'Discover Weekly';
+
+  @override
+  String get releaseRadar => 'Release Radar';
+
+  @override
+  String get newMusicJustForYou => 'New music\njust for you';
+
+  @override
+  String get chillMix => 'Chill Mix';
+
+  @override
+  String get relaxAndUnwind => 'Relax and unwind';
+
+  @override
+  String get focusMix => 'Focus Mix';
+
+  @override
+  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+
+  @override
+  String artistRadio(Object artist) {
+    return '$artist Radio';
+  }
+
+  @override
+  String genreRadio(Object genre) {
+    return '$genre Radio';
+  }
+
+  @override
+  String get filterAll => '모두';
+
+  @override
+  String get filterPlaylists => '플레이리스트';
+
+  @override
+  String get filterArtists => '아티스트';
+
+  @override
+  String get filterAlbums => '앨범';
+
+  @override
+  String get filterStations => '스테이션';
+
+  @override
+  String get localMusicCard => '로컬 음악';
+
+  @override
+  String get createPlaylistButton => '플레이리스트 만들기';
+
+  @override
+  String get radioStations => '라디오 스테이션';
+
+  @override
+  String get discoverMusic => '음악 찾기';
+
+  @override
+  String get importLocalMusic => '로컬 음악 가져오기';
+
+  @override
+  String get importAudioFiles => '오디오 파일 가져오기';
+
+  @override
+  String get importFolder => '폴더 가져오기';
 }

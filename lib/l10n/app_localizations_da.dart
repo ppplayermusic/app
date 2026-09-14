@@ -566,4 +566,97 @@ class AppLocalizationsDa extends AppLocalizations {
   String copyright(Object year) {
     return '© $year PPPlayer bidragydere';
   }
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String greetingWithName(Object greeting, Object name) {
+    return '$greeting, $name';
+  }
+
+  @override
+  String get yourMusicIsWaiting => 'Your music is waiting.';
+
+  @override
+  String dailyMix(Object number) {
+    return 'Daily Mix $number';
+  }
+
+  @override
+  String get yourFavoritesAndNewDiscoveries =>
+      'Your favorites\nand new discoveries';
+
+  @override
+  String get discoverWeekly => 'Discover Weekly';
+
+  @override
+  String get releaseRadar => 'Release Radar';
+
+  @override
+  String get newMusicJustForYou => 'New music\njust for you';
+
+  @override
+  String get chillMix => 'Chill Mix';
+
+  @override
+  String get relaxAndUnwind => 'Relax and unwind';
+
+  @override
+  String get focusMix => 'Focus Mix';
+
+  @override
+  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+
+  @override
+  String artistRadio(Object artist) {
+    return '$artist Radio';
+  }
+
+  @override
+  String genreRadio(Object genre) {
+    return '$genre Radio';
+  }
+
+  @override
+  String get filterAll => 'Alt';
+
+  @override
+  String get filterPlaylists => 'Playlister';
+
+  @override
+  String get filterArtists => 'Kunstnere';
+
+  @override
+  String get filterAlbums => 'Album';
+
+  @override
+  String get filterStations => 'Stationer';
+
+  @override
+  String get localMusicCard => 'Lokal musik';
+
+  @override
+  String get createPlaylistButton => 'Opret playliste';
+
+  @override
+  String get radioStations => 'Radiostationer';
+
+  @override
+  String get discoverMusic => 'Opdag musik';
+
+  @override
+  String get importLocalMusic => 'Importer lokal musik';
+
+  @override
+  String get importAudioFiles => 'Importer lydfiler';
+
+  @override
+  String get importFolder => 'Importer mappe';
 }

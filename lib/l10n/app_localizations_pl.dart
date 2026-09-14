@@ -569,4 +569,97 @@ class AppLocalizationsPl extends AppLocalizations {
   String copyright(Object year) {
     return '© $year Współtwórcy PPPlayer';
   }
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String greetingWithName(Object greeting, Object name) {
+    return '$greeting, $name';
+  }
+
+  @override
+  String get yourMusicIsWaiting => 'Your music is waiting.';
+
+  @override
+  String dailyMix(Object number) {
+    return 'Daily Mix $number';
+  }
+
+  @override
+  String get yourFavoritesAndNewDiscoveries =>
+      'Your favorites\nand new discoveries';
+
+  @override
+  String get discoverWeekly => 'Discover Weekly';
+
+  @override
+  String get releaseRadar => 'Release Radar';
+
+  @override
+  String get newMusicJustForYou => 'New music\njust for you';
+
+  @override
+  String get chillMix => 'Chill Mix';
+
+  @override
+  String get relaxAndUnwind => 'Relax and unwind';
+
+  @override
+  String get focusMix => 'Focus Mix';
+
+  @override
+  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+
+  @override
+  String artistRadio(Object artist) {
+    return '$artist Radio';
+  }
+
+  @override
+  String genreRadio(Object genre) {
+    return '$genre Radio';
+  }
+
+  @override
+  String get filterAll => 'Wszystko';
+
+  @override
+  String get filterPlaylists => 'Playlisty';
+
+  @override
+  String get filterArtists => 'Artyści';
+
+  @override
+  String get filterAlbums => 'Albumy';
+
+  @override
+  String get filterStations => 'Stacje';
+
+  @override
+  String get localMusicCard => 'Lokalna muzyka';
+
+  @override
+  String get createPlaylistButton => 'Utwórz playlistę';
+
+  @override
+  String get radioStations => 'Stacje radiowe';
+
+  @override
+  String get discoverMusic => 'Odkrywaj muzykę';
+
+  @override
+  String get importLocalMusic => 'Importuj lokalną muzykę';
+
+  @override
+  String get importAudioFiles => 'Importuj pliki audio';
+
+  @override
+  String get importFolder => 'Importuj folder';
 }

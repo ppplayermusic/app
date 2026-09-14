@@ -262,19 +262,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     }
 
+    final l10n = AppLocalizations.of(context)!;
     final hour = DateTime.now().hour;
     String greeting;
     if (hour < 12) {
-      greeting = 'Good morning';
+      greeting = l10n.goodMorning;
     } else if (hour < 17) {
-      greeting = 'Good afternoon';
+      greeting = l10n.goodAfternoon;
     } else {
-      greeting = 'Good evening';
+      greeting = l10n.goodEvening;
     }
     final firstName =
         settings.userName.isNotEmpty ? settings.userName.split(' ').first : '';
     final greetingText =
-        firstName.isNotEmpty ? '$greeting, $firstName' : greeting;
+        firstName.isNotEmpty ? l10n.greetingWithName(greeting, firstName) : greeting;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -308,7 +309,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Your music is waiting.',
+                          l10n.yourMusicIsWaiting,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
@@ -415,16 +416,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             itemCount: mixes.length,
                             itemBuilder: (context, index) {
                               final mix = mixes[index];
+                              String mixTitle = mix['title'];
+                              if (mixTitle == 'Daily Mix 1') mixTitle = l10n.dailyMix('1');
+                              else if (mixTitle == 'Daily Mix 2') mixTitle = l10n.dailyMix('2');
+                              else if (mixTitle == 'Discover Weekly') mixTitle = l10n.discoverWeekly;
+                              else if (mixTitle == 'Release Radar') mixTitle = l10n.releaseRadar;
+                              else if (mixTitle == 'Chill Mix') mixTitle = l10n.chillMix;
+                              else if (mixTitle == 'Focus Mix') mixTitle = l10n.focusMix;
+
+                              String mixSubtitle = mix['subtitle'];
+                              if (mixSubtitle == 'Your favorites\nand new discoveries') mixSubtitle = l10n.yourFavoritesAndNewDiscoveries;
+                              else if (mixSubtitle == 'Made for you') mixSubtitle = l10n.madeForYou;
+                              else if (mixSubtitle == 'New music\njust for you') mixSubtitle = l10n.newMusicJustForYou;
+                              else if (mixSubtitle == 'Relax and unwind') mixSubtitle = l10n.relaxAndUnwind;
+                              else if (mixSubtitle == 'Deep focus\nand productivity') mixSubtitle = l10n.deepFocusAndProductivity;
+
                               return _MixCard(
-                                    title: mix['title'],
-                                    subtitle: mix['subtitle'],
+                                    title: mixTitle,
+                                    subtitle: mixSubtitle,
                                     imageAsset: mix['imageAsset'] as String,
                                     color1: mix['color1'] as Color,
                                     color2: mix['color2'] as Color,
                                     contextTarget: RadioContextTarget(
                                       seedId: mix['id'],
                                       seedType: mix['type'] ?? 'genre',
-                                      title: mix['title'],
+                                      title: mixTitle,
                                       imageUrl:
                                           mix['imageUrl'] ?? mix['imageAsset'],
                                     ),

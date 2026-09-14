@@ -156,7 +156,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lowDataMode => 'Low Data Mode';
 
   @override
-  String get madeForYou => 'Made For You';
+  String get madeForYou => 'Made for you';
 
   @override
   String moreLikeName(Object name) {
@@ -565,4 +565,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String copyright(Object year) {
     return '© $year PPPlayer contributors';
   }
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String greetingWithName(Object greeting, Object name) {
+    return '$greeting, $name';
+  }
+
+  @override
+  String get yourMusicIsWaiting => 'Your music is waiting.';
+
+  @override
+  String dailyMix(Object number) {
+    return 'Daily Mix $number';
+  }
+
+  @override
+  String get yourFavoritesAndNewDiscoveries =>
+      'Your favorites\nand new discoveries';
+
+  @override
+  String get discoverWeekly => 'Discover Weekly';
+
+  @override
+  String get releaseRadar => 'Release Radar';
+
+  @override
+  String get newMusicJustForYou => 'New music\njust for you';
+
+  @override
+  String get chillMix => 'Chill Mix';
+
+  @override
+  String get relaxAndUnwind => 'Relax and unwind';
+
+  @override
+  String get focusMix => 'Focus Mix';
+
+  @override
+  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+
+  @override
+  String artistRadio(Object artist) {
+    return '$artist Radio';
+  }
+
+  @override
+  String genreRadio(Object genre) {
+    return '$genre Radio';
+  }
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterPlaylists => 'Playlists';
+
+  @override
+  String get filterArtists => 'Artists';
+
+  @override
+  String get filterAlbums => 'Albums';
+
+  @override
+  String get filterStations => 'Stations';
+
+  @override
+  String get localMusicCard => 'Local Music';
+
+  @override
+  String get createPlaylistButton => 'Create Playlist';
+
+  @override
+  String get radioStations => 'Radio Stations';
+
+  @override
+  String get discoverMusic => 'Discover Music';
+
+  @override
+  String get importLocalMusic => 'Import Local Music';
+
+  @override
+  String get importAudioFiles => 'Import Audio Files';
+
+  @override
+  String get importFolder => 'Import Folder';
 }
