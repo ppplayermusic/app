@@ -324,7 +324,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get yourLibrary => 'Vaša biblioteka';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'prebacivanje_prikaza_zaslona_sviraca';
 
   @override
   String get addToPlaylist => 'Dodaj na popis za reprodukciju';
@@ -434,117 +434,118 @@ class AppLocalizationsHr extends AppLocalizations {
   String get systemDefault => 'Zadano u sustavu';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Pjesme';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Mape';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Izvođači';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Albumi';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Dodaj glazbu';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Dodaj datoteke';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Dodaj mapu';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Ponovno skeniraj biblioteku';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Poredaj po naslovu';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Poredaj po izvođaču';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Poredaj po albumu';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Poredaj po trajanju';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Poredaj po datumu';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Informacije o zapisu';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Ukloni iz biblioteke';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Prikaži u mapi';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Nepoznat izvođač';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Nepoznat album';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Uvezene datoteke';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Pokreni mapu';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Nasumično pokreni mapu';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Pokreni sve';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Uključi podmape';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count zapisa',
+      few: '$count zapisa',
+      one: '1 zapis',
+      zero: '0 zapisa',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Nema lokalnih pjesama';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Pretraži lokalnu glazbu...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Prikaži kao popis';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Prikaži kao mrežu';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Putanja';
 
   @override
   String get trackInfoFormat => 'Format';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Trajanje';
 
   @override
-  String get aboutDescription => 'Besplatni glazbeni player otvorenog koda.';
+  String get aboutDescription => 'Besplatan glazbeni svirač otvorenog koda.';
 
   @override
   String versionInfo(Object version, Object build) {
-    return 'Verzija $version (Međuverzija $build)';
+    return 'Verzija $version (Oznaka međuverzije $build)';
   }
 
   @override
-  String get createdBy => 'Autor: Lucas Coelho';
+  String get createdBy => 'Izradio Lucas Coelho';
 
   @override
   String get website => 'Web stranica';
@@ -569,6 +570,6 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year Suradnici PPPlayer-a';
   }
 }

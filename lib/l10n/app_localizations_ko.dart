@@ -314,7 +314,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get yourLibrary => '내 라이브러리';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => '플레이어_화면_보기_전환';
 
   @override
   String get addToPlaylist => '플레이리스트에 추가';
@@ -423,109 +423,109 @@ class AppLocalizationsKo extends AppLocalizations {
   String get systemDefault => '시스템 기본값';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => '곡';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => '폴더';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => '아티스트';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => '앨범';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => '음악 추가';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => '파일 추가';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => '폴더 추가';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => '라이브러리 재검색';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => '제목순으로 정렬';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => '아티스트순으로 정렬';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => '앨범순으로 정렬';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => '시간순으로 정렬';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => '추가된 날짜순으로 정렬';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => '트랙 정보';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => '라이브러리에서 제거';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => '폴더에 표시';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => '알 수 없는 아티스트';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => '알 수 없는 앨범';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => '가져온 파일';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => '폴더 재생';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => '폴더 셔플 재생';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => '모두 재생';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => '하위 폴더 포함';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count 트랙',
+      one: '1 트랙',
+      zero: '0 트랙',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => '로컬 곡을 찾을 수 없습니다';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => '로컬 음악 검색...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => '목록으로 보기';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => '그리드로 보기';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => '경로';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => '형식';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => '시간';
 
   @override
-  String get aboutDescription => '무료 오픈 소스 음악 플레이어입니다.';
+  String get aboutDescription => '무료 오픈소스 음악 플레이어입니다.';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -533,7 +533,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get createdBy => 'Lucas Coelho 제작';
+  String get createdBy => '제작: Lucas Coelho';
 
   @override
   String get website => '웹사이트';
@@ -542,7 +542,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => '릴리스 노트';
+  String get releaseNotes => '출시 노트';
 
   @override
   String get support => '지원';
@@ -551,13 +551,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get license => '라이선스';
 
   @override
-  String get acknowledgments => '감사';
+  String get acknowledgments => '감사 인사';
 
   @override
   String get close => '닫기';
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer 기여자';
   }
 }

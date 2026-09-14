@@ -322,7 +322,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get yourLibrary => 'Сіздің кітапханаңыз';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'ойыншы_экраны_көрінісін_ауыстыру';
 
   @override
   String get addToPlaylist => 'Ойнату тізіміне қосу';
@@ -431,110 +431,109 @@ class AppLocalizationsKk extends AppLocalizations {
   String get systemDefault => 'Жүйелік әдепкі';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Өлеңдер';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Қалталар';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Орындаушылар';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Альбомдар';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Музыка қосу';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Файлдарды қосу';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Қалтаны қосу';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Кітапхананы қайта сканерлеу';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Атауы бойынша сұрыптау';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Орындаушы бойынша сұрыптау';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Альбом бойынша сұрыптау';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Ұзақтығы бойынша сұрыптау';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Қосылған күні бойынша сұрыптау';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Трек ақпараты';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Кітапханадан өшіру';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Қалтада көрсету';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Белгісіз орындаушы';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Белгісіз альбом';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Импортталған файлдар';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Қалтаны ойнату';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Қалтаны араластыру';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Барлығын ойнату';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Ішкі қалталарды қосу';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count трек',
+      one: '1 трек',
+      zero: '0 трек',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Жергілікті әндер табылмады';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Жергілікті музыканы іздеу...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Тізім ретінде қарау';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Тор ретінде қарау';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Жол';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'Пішім';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Ұзақтығы';
 
   @override
-  String get aboutDescription =>
-      'Тегін және ашық бастапқы кодты музыкалық ойнатқыш.';
+  String get aboutDescription => 'Тегін, ашық бастапқы кодты музыка ойнатқышы.';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -542,7 +541,7 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get createdBy => 'Lucas Coelho жасаған';
+  String get createdBy => 'Жасаған Lucas Coelho';
 
   @override
   String get website => 'Веб-сайт';
@@ -567,6 +566,6 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer үлескерлері';
   }
 }

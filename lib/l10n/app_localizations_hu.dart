@@ -323,7 +323,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get yourLibrary => 'Saját könyvtár';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'lejatszo_kepernyo_nezet_valto';
 
   @override
   String get addToPlaylist => 'Hozzáadás lejátszási listához';
@@ -432,113 +432,113 @@ class AppLocalizationsHu extends AppLocalizations {
   String get systemDefault => 'Rendszer alapértelmezett';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Dalok';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Mappák';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Előadók';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Albumok';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Zene hozzáadása';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Fájlok hozzáadása';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Mappa hozzáadása';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Könyvtár újraolvasása';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Rendezés cím szerint';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Rendezés előadó szerint';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Rendezés album szerint';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Rendezés időtartam szerint';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Rendezés hozzáadás dátuma szerint';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Szám információi';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Eltávolítás a könyvtárból';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Megjelenítés mappában';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Ismeretlen előadó';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Ismeretlen album';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Importált fájlok';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Mappa lejátszása';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Mappa keverése';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Összes lejátszása';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Almappák belefoglalása';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count szám',
+      one: '1 szám',
+      zero: '0 szám',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Nem találhatók helyi dalok';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Helyi zene keresése...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Megjelenítés listaként';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Megjelenítés rácsként';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Útvonal';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'Formátum';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Időtartam';
 
   @override
   String get aboutDescription => 'Egy ingyenes, nyílt forráskódú zenelejátszó.';
 
   @override
   String versionInfo(Object version, Object build) {
-    return 'Verzió $version (Build $build)';
+    return '$version. verzió ($build. build)';
   }
 
   @override
@@ -560,13 +560,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get license => 'Licenc';
 
   @override
-  String get acknowledgments => 'Köszönetnyilvánítás';
+  String get acknowledgments => 'Köszönetnyilvánítások';
 
   @override
   String get close => 'Bezárás';
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer közreműködők';
   }
 }

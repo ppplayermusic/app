@@ -322,7 +322,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get yourLibrary => 'Jūsu bibliotēka';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'speletaja_ekrana_skata_sledzis';
 
   @override
   String get addToPlaylist => 'Pievienot atskaņošanas sarakstam';
@@ -432,110 +432,110 @@ class AppLocalizationsLv extends AppLocalizations {
   String get systemDefault => 'Sistēmas noklusējums';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Dziesmas';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Mapes';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Mākslinieki';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Albumi';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Pievienot mūziku';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Pievienot failus';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Pievienot mapi';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Atkārtoti skenēt bibliotēku';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Kārtot pēc nosaukuma';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Kārtot pēc mākslinieka';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Kārtot pēc albuma';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Kārtot pēc ilguma';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Kārtot pēc pievienošanas datuma';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Sliežu ceļa informācija';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Noņemt no bibliotēkas';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Rādīt mapē';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Nezināms mākslinieks';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Nezināms albums';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Importētie faili';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Atskaņot mapi';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Jaukt mapi';
 
   @override
   String get playAll => 'Atskaņot visu';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Iekļaut apakšmapes';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count celiņi',
+      one: '1 celiņš',
+      zero: '0 celiņi',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Vietējās dziesmas nav atrastas';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Meklēt vietējo mūziku...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Skatīt kā sarakstu';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Skatīt kā režģi';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Ceļš';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'Formāts';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Ilgums';
 
   @override
   String get aboutDescription =>
-      'Bezmaksas atvērtā pirmkoda mūzikas atskaņotājs.';
+      'Bezmaksas, atvērtā pirmkoda mūzikas atskaņotājs.';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -552,7 +552,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => 'Izlaiduma piezīmes';
+  String get releaseNotes => 'Laidiena piezīmes';
 
   @override
   String get support => 'Atbalsts';
@@ -568,6 +568,6 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer atbalstītāji';
   }
 }

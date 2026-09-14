@@ -320,7 +320,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get yourLibrary => 'Dit bibliotek';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'skift_spiller_skaerm_visning';
 
   @override
   String get addToPlaylist => 'Føj til playliste';
@@ -429,109 +429,109 @@ class AppLocalizationsDa extends AppLocalizations {
   String get systemDefault => 'Systemstandard';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Sange';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Mapper';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Kunstnere';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Album';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Tilføj musik';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Tilføj filer';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Tilføj mappe';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Genskan bibliotek';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Sortér efter titel';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Sortér efter kunstner';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Sortér efter album';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Sortér efter varighed';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Sortér efter tilføjelsesdato';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Sporinformation';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Fjern fra bibliotek';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Vis i mappe';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Ukendt kunstner';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Ukendt album';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Importerede filer';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Afspil mappe';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Bland mappe';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Afspil alle';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Inkluder undermapper';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count spor',
+      one: '1 spor',
+      zero: '0 spor',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Ingen lokale sange fundet';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Søg i lokal musik...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Vis som liste';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Vis som gitter';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Sti';
 
   @override
   String get trackInfoFormat => 'Format';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Varighed';
 
   @override
-  String get aboutDescription => 'En gratis open source musikafspiller.';
+  String get aboutDescription => 'En gratis, open-source musikafspiller.';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -539,7 +539,7 @@ class AppLocalizationsDa extends AppLocalizations {
   }
 
   @override
-  String get createdBy => 'Oprettet af Lucas Coelho';
+  String get createdBy => 'Skabt af Lucas Coelho';
 
   @override
   String get website => 'Hjemmeside';
@@ -564,6 +564,6 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer bidragydere';
   }
 }

@@ -313,7 +313,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get yourLibrary => '你的音乐库';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => '播放器屏幕视图切换';
 
   @override
   String get addToPlaylist => '添加到播放列表';
@@ -422,113 +422,113 @@ class AppLocalizationsZh extends AppLocalizations {
   String get systemDefault => '系统默认';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => '歌曲';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => '文件夹';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => '艺术家';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => '专辑';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => '添加音乐';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => '添加文件';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => '添加文件夹';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => '重新扫描库';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => '按标题排序';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => '按艺术家排序';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => '按专辑排序';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => '按时长排序';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => '按添加日期排序';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => '曲目信息';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => '从库中移除';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => '在文件夹中显示';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => '未知艺术家';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => '未知专辑';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => '导入的文件';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => '播放文件夹';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => '随机播放文件夹';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => '播放全部';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => '包含子文件夹';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count 首曲目',
+      one: '1 首曲目',
+      zero: '0 首曲目',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => '未找到本地歌曲';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => '搜索本地音乐...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => '列表视图';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => '网格视图';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => '路径';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => '格式';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => '时长';
 
   @override
-  String get aboutDescription => '一个免费的开源音乐播放器。';
+  String get aboutDescription => '免费、开源的音乐播放器。';
 
   @override
   String versionInfo(Object version, Object build) {
-    return '版本 $version (Build $build)';
+    return '版本 $version (构建 $build)';
   }
 
   @override
@@ -547,7 +547,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get support => '支持';
 
   @override
-  String get license => '许可协议';
+  String get license => '许可证';
 
   @override
   String get acknowledgments => '鸣谢';
@@ -557,6 +557,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer 贡献者';
   }
 }

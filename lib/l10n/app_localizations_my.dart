@@ -255,7 +255,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get recommendedForYou => 'သင့်အတွက် အကြံပြုချက်';
 
   @override
-  String get scraping => 'Scraping';
+  String get scraping => 'ခြစ်ယူခြင်း';
 
   @override
   String get search => 'ရှာဖွေရန်';
@@ -322,7 +322,8 @@ class AppLocalizationsMy extends AppLocalizations {
   String get yourLibrary => 'သင်၏ စာကြည့်တိုက်';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch =>
+      'ကစားသမား_မျက်နှာပြင်_မြင်ကွင်း_ပြောင်းရန်';
 
   @override
   String get addToPlaylist => 'ဖွင့်စာရင်းသို့ ထည့်မည်';
@@ -432,109 +433,110 @@ class AppLocalizationsMy extends AppLocalizations {
   String get systemDefault => 'စနစ် မူလသတ်မှတ်ချက်';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'သီချင်းများ';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'ဖိုင်တွဲများ';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'အနုပညာရှင်များ';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'အယ်လ်ဘမ်များ';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'တေးဂီတ ပေါင်းထည့်ရန်';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'ဖိုင်များ ပေါင်းထည့်ရန်';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'ဖိုင်တွဲ ပေါင်းထည့်ရန်';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'ဒစ်ဂျစ်တယ် စာကြည့်တိုက်ကို ပြန်လည်စကင်ဖတ်ရန်';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'ခေါင်းစဉ်အလိုက် စီရန်';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'အနုပညာရှင်အလိုက် စီရန်';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'အယ်လ်ဘမ်အလိုက် စီရန်';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'ကြာချိန်အလိုက် စီရန်';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'ပေါင်းထည့်သည့်ရက်စွဲအလိုက် စီရန်';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'တေးသွား အချက်အလက်';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'ဒစ်ဂျစ်တယ် စာကြည့်တိုက်မှ ဖယ်ရှားရန်';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'ဖိုင်တွဲတွင် ပြရန်';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'အမည်မသိ အနုပညာရှင်';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'အမည်မသိ အယ်လ်ဘမ်';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'တင်သွင်းထားသော ဖိုင်များ';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'ဖိုင်တွဲ ဖွင့်ရန်';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'ဖိုင်တွဲ ရောမွှေရန်';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'အားလုံး ဖွင့်ရန်';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'ဖိုင်တွဲခွဲများ ပါဝင်ရန်';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count တေးသွား',
+      one: '1 တေးသွား',
+      zero: '0 တေးသွား',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'ဒေသန္တရ သီချင်းများ မတွေ့ပါ';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'ဒေသန္တရ တေးဂီတကို ရှာရန်...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'စာရင်းအဖြစ် ကြည့်ရန်';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'ဇယားကွက်အဖြစ် ကြည့်ရန်';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'လမ်းကြောင်း';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'ဖော်မတ်';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'ကြာချိန်';
 
   @override
-  String get aboutDescription => 'အခမဲ့ပွင့်လင်းအရင်းအမြစ်တေးဂီတဖွင့်စက်။';
+  String get aboutDescription =>
+      'အခမဲ့ဖြစ်သော အလွယ်တကူရနိုင်သည့် တေးဂီတဖွင့်စက်။';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -542,7 +544,7 @@ class AppLocalizationsMy extends AppLocalizations {
   }
 
   @override
-  String get createdBy => 'Lucas Coelho ဖန်တီးသည်';
+  String get createdBy => 'Lucas Coelho မှ ဖန်တီးသည်';
 
   @override
   String get website => 'ဝဘ်ဆိုက်';
@@ -551,7 +553,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => 'ထွက်ရှိမှုမှတ်စုများ';
+  String get releaseNotes => 'ထုတ်ဝေမှု မှတ်စုများ';
 
   @override
   String get support => 'ပံ့ပိုးမှု';
@@ -560,13 +562,13 @@ class AppLocalizationsMy extends AppLocalizations {
   String get license => 'လိုင်စင်';
 
   @override
-  String get acknowledgments => 'ကျေးဇူးတင်လွှာ';
+  String get acknowledgments => 'အသိအမှတ်ပြုမှုများ';
 
   @override
-  String get close => 'ပိတ်မည်';
+  String get close => 'ပိတ်ရန်';
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer ပါဝင်ကူညီသူများ';
   }
 }

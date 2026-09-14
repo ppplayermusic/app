@@ -254,7 +254,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get recommendedForYou => 'Direkomendasikan untuk Anda';
 
   @override
-  String get scraping => 'Scraping';
+  String get scraping => 'Mengikis';
 
   @override
   String get search => 'Cari';
@@ -321,7 +321,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get yourLibrary => 'Koleksi Anda';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'beralih_tampilan_layar_pemain';
 
   @override
   String get addToPlaylist => 'Tambahkan ke playlist';
@@ -381,7 +381,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get playNext => 'Putar selanjutnya';
 
   @override
-  String get playlist => 'Playlist';
+  String get playlist => 'Daftar Putar';
 
   @override
   String get playlistName => 'Nama Playlist';
@@ -430,106 +430,106 @@ class AppLocalizationsId extends AppLocalizations {
   String get systemDefault => 'Default Sistem';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Lagu';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Folder';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Artis';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Album';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Tambahkan Musik';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Tambahkan File';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Tambahkan Folder';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Pindai Ulang Pustaka';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Urutkan berdasarkan Judul';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Urutkan berdasarkan Artis';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Urutkan berdasarkan Album';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Urutkan berdasarkan Durasi';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Urutkan berdasarkan Tanggal';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Informasi Trek';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Hapus dari Pustaka';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Tampilkan di Folder';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Artis Tidak Dikenal';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Album Tidak Dikenal';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'File yang Diimpor';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Putar Folder';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Acak Folder';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Putar Semua';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Sertakan Subfolder';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count trek',
+      one: '1 trek',
+      zero: '0 trek',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Tidak ada lagu lokal yang ditemukan';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Cari musik lokal...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Tampilkan sebagai Daftar';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Tampilkan sebagai Grid';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Jalur';
 
   @override
   String get trackInfoFormat => 'Format';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Durasi';
 
   @override
   String get aboutDescription => 'Pemutar musik sumber terbuka dan gratis.';
@@ -549,7 +549,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => 'Catatan rilis';
+  String get releaseNotes => 'Catatan Rilis';
 
   @override
   String get support => 'Dukungan';
@@ -565,6 +565,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year Kontributor PPPlayer';
   }
 }

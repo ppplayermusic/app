@@ -320,7 +320,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get yourLibrary => 'Ditt bibliotek';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'vaxla_spelar_skarm_vy';
 
   @override
   String get addToPlaylist => 'Lägg till i spellista';
@@ -429,106 +429,106 @@ class AppLocalizationsSv extends AppLocalizations {
   String get systemDefault => 'Systemstandard';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Låtar';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Mappar';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Artister';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Album';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Lägg till musik';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Lägg till filer';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Lägg till mapp';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Skanna om bibliotek';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Sortera efter titel';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Sortera efter artist';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Sortera efter album';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Sortera efter längd';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Sortera efter datum';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Spårinformation';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Ta bort från bibliotek';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Visa i mapp';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Okänd artist';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Okänt album';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Importerade filer';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Spela upp mapp';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Blanda mapp';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Spela upp alla';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Inkludera undermappar';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count spår',
+      one: '1 spår',
+      zero: '0 spår',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Inga lokala låtar hittades';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Sök lokal musik...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Visa som lista';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Visa som rutnät';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Sökväg';
 
   @override
   String get trackInfoFormat => 'Format';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Längd';
 
   @override
   String get aboutDescription => 'En gratis musikspelare med öppen källkod.';
@@ -564,6 +564,6 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer-bidragsgivare';
   }
 }

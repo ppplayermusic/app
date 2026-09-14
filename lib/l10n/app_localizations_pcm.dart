@@ -23,16 +23,16 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get api => 'API';
 
   @override
-  String get artists => 'ARTISTS';
+  String get artists => 'ARTIS DEM';
 
   @override
   String get artwork => 'ARTWORK';
 
   @override
-  String get appVersion => 'App version';
+  String get appVersion => 'App vershon';
 
   @override
-  String get artist => 'Artist';
+  String get artist => 'Artis';
 
   @override
   String get artistsYouFollow => 'Artists wey yu dey follow';
@@ -72,7 +72,7 @@ class AppLocalizationsPcm extends AppLocalizations {
       'Kontinu video for small window';
 
   @override
-  String get create => 'Create';
+  String get create => 'Make';
 
   @override
   String get createAPlaylistToGetStarted => 'Create playlist to start';
@@ -440,40 +440,40 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get albumsTab => 'Albums';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Add Music';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Add Files';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Add Folder';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Rescan Library';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Sort by Title';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Sort by Artist';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Sort by Album';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Sort by Duration';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Sort by Date';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Track Informashon';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Remove from Library';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Show in Folder';
 
   @override
   String get unknownArtist => 'Unknown Artist';
@@ -485,16 +485,16 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get importedFiles => 'Imported Files';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Play Folder';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Shuffle Folder';
 
   @override
-  String get playAll => 'Play everything';
+  String get playAll => 'Play All';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Include Subfolders';
 
   @override
   String trackCount(num count) {
@@ -509,16 +509,16 @@ class AppLocalizationsPcm extends AppLocalizations {
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'No local songs found';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Search local music...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'View as List';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'View as Grid';
 
   @override
   String get trackInfoPath => 'Path';
@@ -530,15 +530,16 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get trackInfoDuration => 'Duration';
 
   @override
-  String get aboutDescription => 'A free open-source music player.';
+  String get aboutDescription =>
+      'Awoof music player wey their code open for everybody.';
 
   @override
   String versionInfo(Object version, Object build) {
-    return 'Version $version (Build $build)';
+    return 'Vershon $version (Build $build)';
   }
 
   @override
-  String get createdBy => 'Created by Lucas Coelho';
+  String get createdBy => 'Na Lucas Coelho do am';
 
   @override
   String get website => 'Website';
@@ -550,7 +551,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get releaseNotes => 'Release notes';
 
   @override
-  String get support => 'Support';
+  String get support => 'Help';
 
   @override
   String get license => 'License';

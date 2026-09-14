@@ -322,7 +322,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get yourLibrary => 'Ваша медиатека';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'переключение_вида_экрана_плеера';
 
   @override
   String get addToPlaylist => 'Добавить в плейлист';
@@ -432,106 +432,108 @@ class AppLocalizationsRu extends AppLocalizations {
   String get systemDefault => 'Системный по умолчанию';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Песни';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Папки';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Исполнители';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Альбомы';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Добавить музыку';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Добавить файлы';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Добавить папку';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Пересканировать медиатеку';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Сортировать по названию';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Сортировать по исполнителю';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Сортировать по альбому';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Сортировать по длительности';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Сортировать по дате добавления';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Информация о треке';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Удалить из медиатеки';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Показать в папке';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Неизвестный исполнитель';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Неизвестный альбом';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Импортированные файлы';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Воспроизвести папку';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Перемешать папку';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Воспроизвести все';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Включая вложенные папки';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count трека',
+      many: '$count треков',
+      few: '$count трека',
+      one: '1 трек',
+      zero: '0 треков',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Локальные песни не найдены';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Поиск локальной музыки...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'В виде списка';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'В виде сетки';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Путь';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'Формат';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Длительность';
 
   @override
   String get aboutDescription =>
@@ -543,7 +545,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get createdBy => 'Создано Lucas Coelho';
+  String get createdBy => 'Создатель: Lucas Coelho';
 
   @override
   String get website => 'Веб-сайт';
@@ -568,6 +570,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year Участники PPPlayer';
   }
 }

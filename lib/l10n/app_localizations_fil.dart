@@ -26,7 +26,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get artists => 'MGA ARTISTA';
 
   @override
-  String get artwork => 'ARTWORK';
+  String get artwork => 'SINING';
 
   @override
   String get appVersion => 'Bersyon ng app';
@@ -62,7 +62,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get clearRecentlyPlayed => 'I-clear ang Kamakailan lang na Na-play';
 
   @override
-  String get contentMarket => 'Content Market';
+  String get contentMarket => 'Market ng Nilalaman';
 
   @override
   String get continueListening => 'Ituloy ang pakikinig';
@@ -146,7 +146,7 @@ class AppLocalizationsFil extends AppLocalizations {
       'Patuloy na mag-play ng katulad na mga kanta kapag natapos ang queue';
 
   @override
-  String get library => 'Library';
+  String get library => 'Aklatan';
 
   @override
   String get likeAlbumsToSeeThemHere => 'I-like ang mga album para makita dito';
@@ -155,7 +155,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get likedSongs => 'Mga Liked na Kanta';
 
   @override
-  String get lowDataMode => 'Low Data Mode';
+  String get lowDataMode => 'Mode ng Mababang Data';
 
   @override
   String get madeForYou => 'Para sa Iyo';
@@ -245,7 +245,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get previous => 'Nakaraan';
 
   @override
-  String get queue => 'QUEUE';
+  String get queue => 'PILA';
 
   @override
   String get recentSearches => 'Mga kamakailang paghahanap';
@@ -284,7 +284,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get showVideoPlayer => 'Ipakita ang Video Player';
 
   @override
-  String get shuffle => 'Shuffle';
+  String get shuffle => 'I-shuffle';
 
   @override
   String get spotifyCredentials => 'Mga Kredensyal ng Spotify';
@@ -321,7 +321,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get yourLibrary => 'Iyong Library';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'pagpalit_tingin_screen_manlalaro';
 
   @override
   String get addToPlaylist => 'Idagdag sa playlist';
@@ -390,7 +390,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get playlists1 => 'Mga Playlist';
 
   @override
-  String get queue1 => 'Queue';
+  String get queue1 => 'Pila';
 
   @override
   String get recentlyPlayed => 'Kamakailan lang na Na-play';
@@ -419,7 +419,7 @@ class AppLocalizationsFil extends AppLocalizations {
   }
 
   @override
-  String get queueTooltip => 'Queue';
+  String get queueTooltip => 'Pila';
 
   @override
   String get searchHint => 'Maghanap ng musika, artista, album...';
@@ -431,109 +431,109 @@ class AppLocalizationsFil extends AppLocalizations {
   String get systemDefault => 'Default ng System';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Mga Kanta';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Mga Folder';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Mga Artista';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Mga Album';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Magdagdag ng Musika';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Magdagdag ng mga File';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Magdagdag ng Folder';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'I-scan Muli ang Library';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Pagbukud-bukurin ayon sa Pamagat';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Pagbukud-bukurin ayon sa Artista';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Pagbukud-bukurin ayon sa Album';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Pagbukud-bukurin ayon sa Tagal';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Pagbukud-bukurin ayon sa Petsa';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Impormasyon ng Track';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Alisin mula sa Library';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Ipakita sa Folder';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Hindi Kilalang Artista';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Hindi Kilalang Album';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Mga Na-import na File';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'I-play ang Folder';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'I-shuffle ang Folder';
 
   @override
-  String get playAll => 'I-play lahat';
+  String get playAll => 'I-play Lahat';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Isama ang mga Subfolder';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
+      other: '$count track',
       one: '1 track',
-      zero: '0 tracks',
+      zero: '0 track',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Walang nahanap na mga lokal na kanta';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Maghanap ng lokal na musika...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Tingnan bilang Listahan';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Tingnan bilang Grid';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Landas';
 
   @override
   String get trackInfoFormat => 'Format';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Tagal';
 
   @override
-  String get aboutDescription => 'Isang libre at open-source na music player.';
+  String get aboutDescription => 'Isang libre, open-source na music player.';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -541,7 +541,7 @@ class AppLocalizationsFil extends AppLocalizations {
   }
 
   @override
-  String get createdBy => 'Nilikha ni Lucas Coelho';
+  String get createdBy => 'Ginawa ni Lucas Coelho';
 
   @override
   String get website => 'Website';
@@ -550,7 +550,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => 'Mga tala sa pag-release';
+  String get releaseNotes => 'Mga tala sa paglabas';
 
   @override
   String get support => 'Suporta';
@@ -559,13 +559,13 @@ class AppLocalizationsFil extends AppLocalizations {
   String get license => 'Lisensya';
 
   @override
-  String get acknowledgments => 'Mga Pasasalamat';
+  String get acknowledgments => 'Mga Pagkilala';
 
   @override
   String get close => 'Isara';
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year Mga nag-ambag sa PPPlayer';
   }
 }

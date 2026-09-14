@@ -314,7 +314,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get yourLibrary => 'マイライブラリ';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'プレーヤー画面ビュー切り替え';
 
   @override
   String get addToPlaylist => 'プレイリストに追加';
@@ -423,106 +423,106 @@ class AppLocalizationsJa extends AppLocalizations {
   String get systemDefault => 'システムデフォルト';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => '曲';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'フォルダ';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'アーティスト';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'アルバム';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => '音楽を追加';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'ファイルを追加';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'フォルダを追加';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'ライブラリを再スキャン';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'タイトル順';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'アーティスト順';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'アルバム順';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => '再生時間順';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => '追加日順';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'トラック情報';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'ライブラリから削除';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'フォルダに表示';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => '不明なアーティスト';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => '不明なアルバム';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'インポートされたファイル';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'フォルダを再生';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'フォルダをシャッフル';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'すべて再生';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'サブフォルダを含める';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count トラック',
+      one: '1 トラック',
+      zero: '0 トラック',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'ローカルの曲が見つかりません';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'ローカルの音楽を検索...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'リスト表示';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'グリッド表示';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'パス';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'フォーマット';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => '再生時間';
 
   @override
   String get aboutDescription => '無料のオープンソース音楽プレーヤー。';
@@ -533,7 +533,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get createdBy => 'Lucas Coelho による作成';
+  String get createdBy => '作成者: Lucas Coelho';
 
   @override
   String get website => 'ウェブサイト';
@@ -558,6 +558,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer 貢献者';
   }
 }

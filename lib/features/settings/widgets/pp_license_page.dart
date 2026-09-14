@@ -47,13 +47,17 @@ class _PPLicensePageState extends State<PPLicensePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: entry.paragraphs.map((p) {
+          final isCentered = p.indent == LicenseParagraph.centeredIndent;
+          final leftPadding = isCentered ? 0.0 : (p.indent > 0 ? p.indent * 16.0 : 0.0);
+
           return Padding(
             padding: EdgeInsets.only(
-              left: p.indent * 16.0,
+              left: leftPadding,
               bottom: 8.0,
             ),
             child: Text(
               p.text,
+              textAlign: isCentered ? TextAlign.center : TextAlign.left,
               style: theme.textTheme.bodySmall?.copyWith(
                 height: 1.5,
                 color: theme.colorScheme.onSurfaceVariant,

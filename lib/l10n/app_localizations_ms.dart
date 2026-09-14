@@ -321,7 +321,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get yourLibrary => 'Pustaka Anda';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'tukar_pandangan_skrin_pemain';
 
   @override
   String get addToPlaylist => 'Tambah ke senarai main';
@@ -430,109 +430,109 @@ class AppLocalizationsMs extends AppLocalizations {
   String get systemDefault => 'Lalai Sistem';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Lagu';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Folder';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Artis';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Album';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Tambah Muzik';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Tambah Fail';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Tambah Folder';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Imbas Semula Pustaka';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Isih mengikut Tajuk';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Isih mengikut Artis';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Isih mengikut Album';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Isih mengikut Tempoh';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Isih mengikut Tarikh';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Maklumat Trek';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Alih Keluar daripada Pustaka';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Tunjukkan dalam Folder';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Artis Tidak Diketahui';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Album Tidak Diketahui';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Fail yang Diimport';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Main Folder';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Kocok Folder';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Main Semua';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Sertakan Subfolder';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count trek',
+      one: '1 trek',
+      zero: '0 trek',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Tiada lagu tempatan ditemui';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Cari muzik tempatan...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Lihat sebagai Senarai';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Lihat sebagai Grid';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Laluan';
 
   @override
   String get trackInfoFormat => 'Format';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Tempoh';
 
   @override
-  String get aboutDescription => 'Pemain muzik sumber terbuka percuma.';
+  String get aboutDescription => 'Pemain muzik sumber terbuka dan percuma.';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -543,13 +543,13 @@ class AppLocalizationsMs extends AppLocalizations {
   String get createdBy => 'Dicipta oleh Lucas Coelho';
 
   @override
-  String get website => 'Laman Web';
+  String get website => 'Laman web';
 
   @override
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => 'Nota keluaran';
+  String get releaseNotes => 'Nota Keluaran';
 
   @override
   String get support => 'Sokongan';
@@ -565,6 +565,6 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year Penyumbang PPPlayer';
   }
 }

@@ -32,7 +32,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get appVersion => 'Rakenduse versioon';
 
   @override
-  String get artist => 'Artist';
+  String get artist => 'Esitaja';
 
   @override
   String get artistsYouFollow => 'Artistid, keda jälgite';
@@ -320,7 +320,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get yourLibrary => 'Teie raamatukogu';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'mangija_ekraani_vaate_lüliti';
 
   @override
   String get addToPlaylist => 'Lisa esitusloendisse';
@@ -429,106 +429,106 @@ class AppLocalizationsEt extends AppLocalizations {
   String get systemDefault => 'Süsteemi vaikeväärtus';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Laulud';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Kaustad';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Artistid';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Albumid';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Lisa muusika';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Lisa failid';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Lisa kaust';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Skanni teek uuesti';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Sordi pealkirja järgi';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Sordi artisti järgi';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Sordi albumi järgi';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Sordi kestuse järgi';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Sordi lisamiskuupäeva järgi';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Loo teave';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Eemalda teegist';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Näita kaustas';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Tundmatu artist';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Tundmatu album';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Imporditud failid';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Esita kausta';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Esita kausta juhuslikult';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Esita kõik';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Kaasa alamkaustad';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count lugu',
+      one: '1 lugu',
+      zero: '0 lugu',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Kohalikke laule ei leitud';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Otsi kohalikku muusikat...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Vaata loendina';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Vaata ruudustikuna';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Tee';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'Vorming';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Kestus';
 
   @override
   String get aboutDescription => 'Tasuta avatud lähtekoodiga muusikapleier.';
@@ -539,10 +539,10 @@ class AppLocalizationsEt extends AppLocalizations {
   }
 
   @override
-  String get createdBy => 'Loodud Lucas Coelho poolt';
+  String get createdBy => 'Loonud Lucas Coelho';
 
   @override
-  String get website => 'Veebileht';
+  String get website => 'Veebisait';
 
   @override
   String get github => 'GitHub';
@@ -564,6 +564,6 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayeri panustajad';
   }
 }

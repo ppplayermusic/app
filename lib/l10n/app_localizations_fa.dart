@@ -320,7 +320,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get yourLibrary => 'کتابخانه شما';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'تغییر_نمای_صفحه_پخش‌کننده';
 
   @override
   String get addToPlaylist => 'افزودن به لیست پخش';
@@ -429,109 +429,109 @@ class AppLocalizationsFa extends AppLocalizations {
   String get systemDefault => 'پیش‌فرض سیستم';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'آهنگ‌ها';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'پوشه‌ها';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'هنرمندان';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'آلبوم‌ها';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'افزودن موسیقی';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'افزودن فایل‌ها';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'افزودن پوشه';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'اسکن مجدد کتابخانه';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'مرتب‌سازی بر اساس عنوان';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'مرتب‌سازی بر اساس هنرمند';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'مرتب‌سازی بر اساس آلبوم';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'مرتب‌سازی بر اساس مدت زمان';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'مرتب‌سازی بر اساس تاریخ افزودن';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'اطلاعات آهنگ';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'حذف از کتابخانه';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'نمایش در پوشه';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'هنرمند ناشناس';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'آلبوم ناشناس';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'فایل‌های وارد شده';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'پخش پوشه';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'پخش تصادفی پوشه';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'پخش همه';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'شامل زیرپوشه‌ها';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count قطعه',
+      one: '1 قطعه',
+      zero: '0 قطعه',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'هیچ آهنگ محلی یافت نشد';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'جستجوی موسیقی محلی...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'نمایش به صورت لیست';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'نمایش به صورت شبکه';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'مسیر';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'فرمت';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'مدت زمان';
 
   @override
-  String get aboutDescription => 'یک پخش‌کننده موسیقی رایگان و منبع‌باز.';
+  String get aboutDescription => 'یک پخش‌کننده موسیقی رایگان و متن‌باز.';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -557,13 +557,13 @@ class AppLocalizationsFa extends AppLocalizations {
   String get license => 'مجوز';
 
   @override
-  String get acknowledgments => 'قدردانی‌ها';
+  String get acknowledgments => 'تقدیرنامه‌ها';
 
   @override
   String get close => 'بستن';
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year مشارکت‌کنندگان PPPlayer';
   }
 }

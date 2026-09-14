@@ -321,7 +321,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get yourLibrary => 'თქვენი ბიბლიოთეკა';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'მოთამაშის_ეკრანის_ნახვის_გადამრთველი';
 
   @override
   String get addToPlaylist => 'დასაკრავ სიაში დამატება';
@@ -431,120 +431,120 @@ class AppLocalizationsKa extends AppLocalizations {
   String get systemDefault => 'სისტემის ნაგულისხმევი';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'სიმღერები';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'საქაღალდეები';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'შემსრულებლები';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'ალბომები';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'მუსიკის დამატება';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'ფაილების დამატება';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'საქაღალდის დამატება';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'ბიბლიოთეკის ხელახლა სკანირება';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'დალაგება სათაურის მიხედვით';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'დალაგება შემსრულებლის მიხედვით';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'დალაგება ალბომის მიხედვით';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'დალაგება ხანგრძლივობის მიხედვით';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'დალაგება დამატების თარიღის მიხედვით';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'ტრეკის ინფორმაცია';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'ბიბლიოთეკიდან ამოღება';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'საქაღალდეში ჩვენება';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'უცნობი შემსრულებელი';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'უცნობი ალბომი';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'იმპორტირებული ფაილები';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'საქაღალდის დაკვრა';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'საქაღალდის შემთხვევითი დაკვრა';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'ყველას დაკვრა';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'ქვესაქაღალდეების ჩართვა';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count ტრეკი',
+      one: '1 ტრეკი',
+      zero: '0 ტრეკი',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'ლოკალური სიმღერები ვერ მოიძებნა';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'ლოკალური მუსიკის ძიება...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'სიის სახით ნახვა';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'ბადის სახით ნახვა';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'გზა';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'ფორმატი';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'ხანგრძლივობა';
 
   @override
-  String get aboutDescription => 'უფასო, ღია კოდის მუსიკალური პლეერი.';
+  String get aboutDescription => 'უფასო, ღია კოდის მქონე მუსიკალური პლეერი.';
 
   @override
   String versionInfo(Object version, Object build) {
-    return 'ვერსია $version (შენება $build)';
+    return 'ვერსია $version (Build $build)';
   }
 
   @override
-  String get createdBy => 'შექმნა Lucas Coelho-მ';
+  String get createdBy => 'შექმნილია Lucas Coelho-ს მიერ';
 
   @override
-  String get website => 'ვებსაიტი';
+  String get website => 'ვებგვერდი';
 
   @override
   String get github => 'GitHub';
@@ -566,6 +566,6 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer კონტრიბუტორები';
   }
 }

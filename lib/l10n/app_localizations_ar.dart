@@ -317,7 +317,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get yourLibrary => 'مكتبتك';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'تبديل_عرض_شاشة_اللاعب';
 
   @override
   String get addToPlaylist => 'أضف إلى قائمة التشغيل';
@@ -427,106 +427,109 @@ class AppLocalizationsAr extends AppLocalizations {
   String get systemDefault => 'الافتراضي للنظام';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'الأغاني';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'المجلدات';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'الفنانين';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'الألبومات';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'إضافة موسيقى';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'إضافة ملفات';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'إضافة مجلد';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'إعادة فحص المكتبة';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'الترتيب حسب العنوان';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'الترتيب حسب الفنان';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'الترتيب حسب الألبوم';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'الترتيب حسب المدة';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'الترتيب حسب تاريخ الإضافة';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'معلومات المسار';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'إزالة من المكتبة';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'عرض في المجلد';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'فنان غير معروف';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'ألبوم غير معروف';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'الملفات المستوردة';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'تشغيل المجلد';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'تشغيل المجلد عشوائياً';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'تشغيل الكل';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'تضمين المجلدات الفرعية';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count مقطع',
+      many: '$count مقطعًا',
+      few: '$count مقاطع',
+      two: 'مقطعان',
+      one: 'مقطع واحد',
+      zero: '0 مقطع',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'لم يتم العثور على أغانٍ محلية';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'البحث في الموسيقى المحلية...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'عرض كقائمة';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'عرض كشبكة';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'المسار';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'التنسيق';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'المدة';
 
   @override
   String get aboutDescription => 'مشغل موسيقى مجاني ومفتوح المصدر.';
@@ -562,6 +565,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year مساهمو PPPlayer';
   }
 }

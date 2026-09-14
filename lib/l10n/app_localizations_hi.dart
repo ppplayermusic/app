@@ -323,7 +323,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get yourLibrary => 'आपकी लाइब्रेरी';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'प्लेयर_स्क्रीन_व्यू_स्विच';
 
   @override
   String get addToPlaylist => 'प्लेलिस्ट में जोड़ें';
@@ -432,109 +432,109 @@ class AppLocalizationsHi extends AppLocalizations {
   String get systemDefault => 'सिस्टम डिफ़ॉल्ट';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'गाने';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'फ़ोल्डर';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'कलाकार';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'एल्बम';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'संगीत जोड़ें';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'फ़ाइलें जोड़ें';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'फ़ोल्डर जोड़ें';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'लाइब्रेरी को फिर से स्कैन करें';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'शीर्षक के अनुसार क्रमित करें';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'कलाकार के अनुसार क्रमित करें';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'एल्बम के अनुसार क्रमित करें';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'अवधि के अनुसार क्रमित करें';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'जोड़ने की तिथि के अनुसार क्रमित करें';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'ट्रैक की जानकारी';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'लाइब्रेरी से हटाएं';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'फ़ोल्डर में दिखाएं';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'अज्ञात कलाकार';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'अज्ञात एल्बम';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'आयातित फ़ाइलें';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'फ़ोल्डर चलाएं';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'फ़ोल्डर शफ़ल करें';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'सभी चलाएं';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'उपफ़ोल्डर शामिल करें';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count ट्रैक',
+      one: '1 ट्रैक',
+      zero: '0 ट्रैक',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'कोई स्थानीय गाने नहीं मिले';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'स्थानीय संगीत खोजें...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'सूची के रूप में देखें';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'ग्रिड के रूप में देखें';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'पथ';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'प्रारूप';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'अवधि';
 
   @override
-  String get aboutDescription => 'एक मुफ़्त, ओपन-सोर्स म्यूज़िक प्लेयर।';
+  String get aboutDescription => 'एक निःशुल्क, ओपन-सोर्स म्यूजिक प्लेयर।';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -567,6 +567,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer योगदानकर्ता';
   }
 }

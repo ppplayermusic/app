@@ -322,7 +322,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get yourLibrary => 'Vaše knihovna';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'prepinac_zobrazeni_prehravace';
 
   @override
   String get addToPlaylist => 'Přidat do playlistu';
@@ -382,7 +382,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get playNext => 'Přehrát jako další';
 
   @override
-  String get playlist => 'Playlist';
+  String get playlist => 'Seznam skladeb';
 
   @override
   String get playlistName => 'Název playlistu';
@@ -431,110 +431,110 @@ class AppLocalizationsCs extends AppLocalizations {
   String get systemDefault => 'Výchozí systémový';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Skladby';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Složky';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Umělci';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Alba';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Přidat hudbu';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Přidat soubory';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Přidat složku';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Znovu skenovat knihovnu';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Seřadit podle názvu';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Seřadit podle umělce';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Seřadit podle alba';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Seřadit podle délky';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Seřadit podle data přidání';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Informace o skladbě';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Odebrat z knihovny';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Zobrazit ve složce';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Neznámý umělec';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Neznámé album';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Importované soubory';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Přehrát složku';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Náhodně přehrát složku';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Přehrát vše';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Zahrnout podsložky';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count skladeb',
+      few: '$count skladby',
+      one: '1 skladba',
+      zero: '0 skladeb',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Nenalezeny žádné místní skladby';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Hledat místní hudbu...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Zobrazit jako seznam';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Zobrazit jako mřížku';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Cesta';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'Formát';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Délka';
 
   @override
-  String get aboutDescription =>
-      'Bezplatný hudební přehrávač s otevřeným zdrojovým kódem.';
+  String get aboutDescription => 'Bezplatný, open-source hudební přehrávač.';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -567,6 +567,6 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year Přispěvatelé PPPlayer';
   }
 }

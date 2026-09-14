@@ -323,7 +323,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get yourLibrary => 'Sizning kutubxonangiz';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'pleyer_ekrani_ko_rinish_almashtirish';
 
   @override
   String get addToPlaylist => 'Pleylistga qo\'shish';
@@ -432,113 +432,113 @@ class AppLocalizationsUz extends AppLocalizations {
   String get systemDefault => 'Tizim standarti';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Qo\'shiqlar';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Jildlar';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Ijrochilar';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Albomlar';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Musiqa qo\'shish';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Fayllar qo\'shish';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Jild qo\'shish';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Kutubxonani qayta skanerlash';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Nomi bo\'yicha saralash';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Ijrochi bo\'yicha saralash';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Albom bo\'yicha saralash';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Davomiyligi bo\'yicha saralash';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Qo\'shilgan sana bo\'yicha saralash';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Trek haqida ma\'lumot';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Kutubxonadan olib tashlash';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Jildda ko\'rsatish';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Noma\'lum ijrochi';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Noma\'lum albom';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Import qilingan fayllar';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Jildni o\'ynatish';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Jildni aralashtirib o\'ynatish';
 
   @override
-  String get playAll => 'Hammasini ijro etish';
+  String get playAll => 'Barchasini o\'ynatish';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Ostki jildlarni qo\'shish';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count trek',
+      one: '1 trek',
+      zero: '0 trek',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Hech qanday mahalliy qo\'shiq topilmadi';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Mahalliy musiqani qidirish...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Ro\'yxat sifatida ko\'rish';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'To\'r sifatida ko\'rish';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Yo\'l';
 
   @override
   String get trackInfoFormat => 'Format';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Davomiyligi';
 
   @override
   String get aboutDescription => 'Bepul va ochiq kodli musiqa pleyeri.';
 
   @override
   String versionInfo(Object version, Object build) {
-    return 'Versiya $version (Yig\'ilish $build)';
+    return 'Versiya $version (Qurilma $build)';
   }
 
   @override
@@ -551,7 +551,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => 'Reliz qaydlari';
+  String get releaseNotes => 'Chiqarish qaydlari';
 
   @override
   String get support => 'Qo\'llab-quvvatlash';
@@ -567,6 +567,6 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer hissa qo\'shuvchilari';
   }
 }

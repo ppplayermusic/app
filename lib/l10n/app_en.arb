@@ -374,21 +374,30 @@
   "trackInfoDuration": "Duration",
   "@trackInfoDuration": {},
   "aboutDescription": "A free, open-source music player.",
+  "@aboutDescription": {},
   "versionInfo": "Version {version} (Build {build})",
-  "createdBy": "Created by Lucas Coelho",
-  "website": "Website",
-  "github": "GitHub",
-  "releaseNotes": "Release notes",
-  "support": "Support",
-  "license": "License",
-  "acknowledgments": "Acknowledgments",
-  "close": "Close",
   "@versionInfo": {
     "placeholders": {
       "version": {},
       "build": {}
     }
   },
+  "createdBy": "Created by Lucas Coelho",
+  "@createdBy": {},
+  "website": "Website",
+  "@website": {},
+  "github": "GitHub",
+  "@github": {},
+  "releaseNotes": "Release notes",
+  "@releaseNotes": {},
+  "support": "Support",
+  "@support": {},
+  "license": "License",
+  "@license": {},
+  "acknowledgments": "Acknowledgments",
+  "@acknowledgments": {},
+  "close": "Close",
+  "@close": {},
   "copyright": "© {year} PPPlayer contributors",
   "@copyright": {
     "placeholders": {

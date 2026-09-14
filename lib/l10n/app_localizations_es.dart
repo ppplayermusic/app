@@ -210,7 +210,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noTracksFound => 'No se encontraron pistas';
 
   @override
-  String get playlists => 'PLAYLISTS';
+  String get playlists => 'LISTAS DE REPRODUCCIÓN';
 
   @override
   String get popular => 'POPULAR';
@@ -321,7 +321,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get yourLibrary => 'Tu biblioteca';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'cambiar_vista_pantalla_jugador';
 
   @override
   String get addToPlaylist => 'Añadir a playlist';
@@ -381,13 +381,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get playNext => 'Reproducir a continuación';
 
   @override
-  String get playlist => 'Playlist';
+  String get playlist => 'Lista de reproducción';
 
   @override
   String get playlistName => 'Nombre de la playlist';
 
   @override
-  String get playlists1 => 'Playlists';
+  String get playlists1 => 'Listas de reproducción';
 
   @override
   String get queue1 => 'Cola';
@@ -430,106 +430,106 @@ class AppLocalizationsEs extends AppLocalizations {
   String get systemDefault => 'Predeterminado del sistema';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Canciones';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Carpetas';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Artistas';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Álbumes';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Añadir música';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Añadir archivos';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Añadir carpeta';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Volver a escanear biblioteca';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Ordenar por título';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Ordenar por artista';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Ordenar por álbum';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Ordenar por duración';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Ordenar por fecha';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Información de la pista';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Eliminar de la biblioteca';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Mostrar en carpeta';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Artista desconocido';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Álbum desconocido';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Archivos importados';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Reproducir carpeta';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Reproducir carpeta en orden aleatorio';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Reproducir todo';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Incluir subcarpetas';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count pistas',
+      one: '1 pista',
+      zero: '0 pistas',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'No se encontraron canciones locales';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Buscar música local...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Ver como lista';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Ver como cuadrícula';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Ruta';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'Formato';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Duración';
 
   @override
   String get aboutDescription =>
@@ -537,7 +537,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String versionInfo(Object version, Object build) {
-    return 'Versión $version (Build $build)';
+    return 'Versión $version (Compilación $build)';
   }
 
   @override
@@ -566,6 +566,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year Colaboradores de PPPlayer';
   }
 }

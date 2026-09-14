@@ -320,7 +320,7 @@ class AppLocalizationsGn extends AppLocalizations {
   String get yourLibrary => 'Ne Ñemongeta';
 
   @override
-  String get playerscreenviewswitch => 'player_screen_view_switch';
+  String get playerscreenviewswitch => 'moambue_hecha_mba_e_ryru';
 
   @override
   String get addToPlaylist => 'Moĩ Tysýipe';
@@ -430,133 +430,132 @@ class AppLocalizationsGn extends AppLocalizations {
   String get systemDefault => 'Sistema Régagua';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Purahéi';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Mba\'eryru';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Puraheihára';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Aty';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Mbojuaju purahéi';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Mbojuaju marandukuéra';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Mbojuaju mba\'eryru';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Heka jey purahéi';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Oñemohenda héra rupi';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Oñemohenda puraheihára rupi';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Oñemohenda aty rupi';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Oñemohenda pukukue rupi';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Oñemohenda ára rupi';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Purahéi marandu';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Nohẽ purahéi atýgui';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Hechauka mba\'eryrúpe';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Puraheihára ojekuaa\'ỹva';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Aty ojekuaa\'ỹva';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'Marandukuéra oñemoguahẽva';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Mbohyapu mba\'eryru';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Mbohyapu sarambi mba\'eryru';
 
   @override
-  String get playAll => 'Mbopu Paite';
+  String get playAll => 'Mbohyapu paite';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Mbojuaju mba\'eryru\'i';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count purahéi',
+      one: '1 purahéi',
+      zero: '0 purahéi',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Ndojejuhúi purahéi ko\'ápe';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Heka purahéi ko\'ápe...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Hechauka tysýi ramo';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Hechauka ñanduti ramo';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Tape';
 
   @override
-  String get trackInfoFormat => 'Format';
+  String get trackInfoFormat => 'Ysaja';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Pukukue';
 
   @override
-  String get aboutDescription =>
-      'Peteĩ purahéi ñembopuha ojehepyme\'ẽ\'ỹva ha ojehechaukáva.';
+  String get aboutDescription => 'Peteĩ purahéi ryrúre reigua ha ijehegui.';
 
   @override
   String versionInfo(Object version, Object build) {
-    return 'Mba\'e $version (Mba\'e $build)';
+    return 'Mba\'e $version (Apopy $build)';
   }
 
   @override
-  String get createdBy => 'Lucas Coelho ojapo';
+  String get createdBy => 'Lucas Coelho rembiapokue';
 
   @override
-  String get website => 'Web';
+  String get website => 'Ñanduti tenda';
 
   @override
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => 'Marandu sãsõ';
+  String get releaseNotes => 'Jekuaaukapy';
 
   @override
   String get support => 'Pytyvõ';
 
   @override
-  String get license => 'Liséñsia';
+  String get license => 'Moneĩmby';
 
   @override
   String get acknowledgments => 'Aguyje';
@@ -566,6 +565,6 @@ class AppLocalizationsGn extends AppLocalizations {
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer pytyvõhára';
   }
 }
