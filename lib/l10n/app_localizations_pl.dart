@@ -428,4 +428,106 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get systemDefault => 'Domyślny systemowy';
+
+  @override
+  String get songsTab => 'Songs';
+
+  @override
+  String get foldersTab => 'Folders';
+
+  @override
+  String get artistsTab => 'Artists';
+
+  @override
+  String get albumsTab => 'Albums';
+
+  @override
+  String get addMusic => 'Add music';
+
+  @override
+  String get addFiles => 'Add files';
+
+  @override
+  String get addFolder => 'Add folder';
+
+  @override
+  String get rescanLibrary => 'Rescan library';
+
+  @override
+  String get sortTitle => 'Title';
+
+  @override
+  String get sortArtist => 'Artist';
+
+  @override
+  String get sortAlbum => 'Album';
+
+  @override
+  String get sortDuration => 'Duration';
+
+  @override
+  String get sortDateAdded => 'Date Added';
+
+  @override
+  String get trackInformation => 'Track Information';
+
+  @override
+  String get removeFromLibrary => 'Remove from library';
+
+  @override
+  String get showInFolder => 'Show in folder';
+
+  @override
+  String get unknownArtist => 'Unknown Artist';
+
+  @override
+  String get unknownAlbum => 'Unknown Album';
+
+  @override
+  String get importedFiles => 'Imported Files';
+
+  @override
+  String get playFolder => 'Play folder';
+
+  @override
+  String get shuffleFolder => 'Shuffle folder';
+
+  @override
+  String get playAll => 'Play all';
+
+  @override
+  String get includeSubfolders => 'Include subfolders';
+
+  @override
+  String trackCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tracks',
+      one: '1 track',
+      zero: '0 tracks',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noLocalSongs => 'No local songs imported';
+
+  @override
+  String get searchLocalMusic => 'Search local music';
+
+  @override
+  String get viewAsList => 'View as list';
+
+  @override
+  String get viewAsGrid => 'View as grid';
+
+  @override
+  String get trackInfoPath => 'Path';
+
+  @override
+  String get trackInfoFormat => 'Format';
+
+  @override
+  String get trackInfoDuration => 'Duration';
 }

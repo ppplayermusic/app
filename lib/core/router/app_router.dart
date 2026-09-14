@@ -16,6 +16,7 @@ import '../../features/library/playlist_detail_screen.dart';
 import '../../features/library/remote_playlist_screen.dart';
 import '../../features/radio/radio_details_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/local_library/local_library_screen.dart';
 import '../../shared/widgets/scaffold_with_nav.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -60,6 +61,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 child: LibraryScreen(initialFilter: filter),
               );
             },
+          ),
+          GoRoute(
+            path: '/local-library',
+            builder: (context, state) => const LocalLibraryScreen(),
           ),
           GoRoute(
             path: '/artist/:id',

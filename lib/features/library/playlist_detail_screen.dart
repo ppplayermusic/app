@@ -96,14 +96,14 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
     }
   }
 
-  void _onReorder(int oldIndex, int newIndex, List<db.Track> currentTracks) {
+  void _onReorder(int oldIndex, int newIndex, List<model.Track> currentTracks) {
     if (_isSearching || _searchController.text.isNotEmpty) return;
 
     if (newIndex > oldIndex) {
       newIndex -= 1;
     }
 
-    final updatedTracks = List<db.Track>.from(currentTracks);
+    final updatedTracks = List<model.Track>.from(currentTracks);
     final item = updatedTracks.removeAt(oldIndex);
     updatedTracks.insert(newIndex, item);
 
@@ -157,8 +157,8 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
           );
         }
 
-        return StreamBuilder<List<db.Track>>(
-          stream: database.watchPlaylistTracks(widget.playlistId),
+        return StreamBuilder<List<model.Track>>(
+          stream: database.watchPlaylistAppTracks(widget.playlistId),
           builder: (context, tracksSnapshot) {
             final allTracks = tracksSnapshot.data ?? [];
 
@@ -187,7 +187,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                       return titleMatch || artistMatch;
                     }).toList();
 
-            final modelTracks = filteredTracks.map(model.Track.fromDb).toList();
+            final modelTracks = filteredTracks;
 
             return Scaffold(
               backgroundColor: colorScheme.surface,
@@ -209,7 +209,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
   Widget _buildSliverAppBar(
     BuildContext context,
     db.Playlist playlist,
-    List<db.Track> tracks,
+    List<model.Track> tracks,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
     return SliverAppBar(
@@ -448,7 +448,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
   List<Widget> _buildBody(
     BuildContext context,
     db.Playlist playlist,
-    List<db.Track> allTracks,
+    List<model.Track> allTracks,
     List<model.Track> modelTracks,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -640,13 +640,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             (oldIndex, newIndex) => _onReorder(
               oldIndex,
               newIndex,
-              modelTracks
-                  .map(
-                    (t) => allTracks.firstWhere(
-                      (at) => at.spotifyId == t.spotifyId,
-                    ),
-                  )
-                  .toList(),
+              modelTracks,
             ),
       ),
       const SliverToBoxAdapter(child: SizedBox(height: 120)),

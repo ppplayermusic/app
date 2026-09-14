@@ -35,24 +35,7 @@ class PlaybackService {
 
   /// Fetches tracks for a playlist.
   Future<List<Track>> getPlaylistTracks(int playlistId) async {
-    final tracks = await _db.getPlaylistTracks(playlistId);
-    return tracks
-        .map(
-          (t) => Track(
-            spotifyId: t.spotifyId,
-            name: t.name,
-            artistId: t.artistId,
-            artistName: t.artistName,
-            albumId: t.albumId,
-            albumName: t.albumName,
-            albumImage: t.albumImage,
-            durationMs: t.durationMs,
-            youtubeVideoId: t.youtubeVideoId,
-            playCount: t.playCount,
-            isFavorite: t.isFavorite,
-          ),
-        )
-        .toList();
+    return await _db.getPlaylistAppTracks(playlistId);
   }
 
   SpotifyRepository get _spotifyRepo => ref.read(spotifyRepositoryProvider);
@@ -154,24 +137,7 @@ class PlaybackService {
 
   /// Fetches recently played tracks.
   Future<List<Track>> getRecentlyPlayed({int limit = 50}) async {
-    final tracks = await _db.getRecentlyPlayed(limit: limit);
-    return tracks
-        .map(
-          (t) => Track(
-            spotifyId: t.spotifyId,
-            name: t.name,
-            artistId: t.artistId,
-            artistName: t.artistName,
-            albumId: t.albumId,
-            albumName: t.albumName,
-            albumImage: t.albumImage,
-            durationMs: t.durationMs,
-            youtubeVideoId: t.youtubeVideoId,
-            playCount: t.playCount,
-            isFavorite: t.isFavorite,
-          ),
-        )
-        .toList();
+    return await _db.getRecentlyPlayedAppTracks(limit: limit);
   }
 }
 

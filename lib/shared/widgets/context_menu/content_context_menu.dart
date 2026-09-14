@@ -711,10 +711,9 @@ class _ContentContextMenuOverlayState
           try {
             List<Track> tracks;
             if (target.isLocal && target.localId != null) {
-              final raw = await _container
+              tracks = await _container
                   .read(db.appDatabaseProvider)
-                  .getPlaylistTracks(target.localId!);
-              tracks = raw.map(Track.fromDb).toList();
+                  .getPlaylistAppTracks(target.localId!);
             } else {
               tracks =
                   (await _container
@@ -746,10 +745,9 @@ class _ContentContextMenuOverlayState
           try {
             List<Track> tracks;
             if (target.isLocal && target.localId != null) {
-              final raw = await _container
+              tracks = await _container
                   .read(db.appDatabaseProvider)
-                  .getPlaylistTracks(target.localId!);
-              tracks = raw.map(Track.fromDb).toList();
+                  .getPlaylistAppTracks(target.localId!);
             } else {
               tracks =
                   (await _container
@@ -1131,8 +1129,7 @@ class _ContentContextMenuOverlayState
       } else if (widget.target case PlaylistContextTarget target) {
         List<Track> tracks;
         if (target.isLocal && target.localId != null) {
-          final raw = await database.getPlaylistTracks(target.localId!);
-          tracks = raw.map(Track.fromDb).toList();
+          tracks = await database.getPlaylistAppTracks(target.localId!);
         } else {
           tracks =
               (await _container

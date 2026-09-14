@@ -264,8 +264,8 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (!_isSearching) ...[
-                    StreamBuilder<List<db.Track>>(
-                      stream: database.watchFavorites(),
+                    StreamBuilder<List<model.Track>>(
+                      stream: database.watchFavoriteAppTracks(),
                       builder: (context, snap) {
                         final count = snap.data?.length ?? 0;
                         return Text(
@@ -286,13 +286,11 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                         Expanded(
                           child: TactileTap(
                             onTap: () async {
-                              final tracks = await database.getFavorites();
+                              final tracks = await database.getFavoriteAppTracks();
                               if (tracks.isNotEmpty && context.mounted) {
-                                final modelTracks =
-                                    tracks.map(model.Track.fromDb).toList();
                                 ref
                                     .read(playerProvider.notifier)
-                                    .playTracks(modelTracks);
+                                    .playTracks(tracks);
                               }
                             },
                             child: Container(
@@ -350,10 +348,8 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                         const SizedBox(width: 12),
                         TactileTap(
                           onTap: () async {
-                            final tracks = await database.getFavorites();
+                            final tracks = await database.getFavoriteAppTracks();
                             if (tracks.isNotEmpty && context.mounted) {
-                              final modelTracks =
-                                  tracks.map(model.Track.fromDb).toList();
                               final notifier = ref.read(
                                 playerProvider.notifier,
                               );
@@ -364,7 +360,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
 
                               // Shuffle the list locally or just play with shuffle enabled
                               final List<model.Track> shuffledList = List.from(
-                                modelTracks,
+                                tracks,
                               )..shuffle();
                               notifier.playTracks(shuffledList);
                             }
@@ -409,8 +405,8 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
               ),
             ),
           ),
-          StreamBuilder<List<db.Track>>(
-            stream: database.watchFavorites(),
+          StreamBuilder<List<model.Track>>(
+            stream: database.watchFavoriteAppTracks(),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting &&
                   !snap.hasData) {
@@ -504,7 +500,7 @@ class _LikedSongsScreenState extends ConsumerState<LikedSongsScreen> {
                 );
               }
 
-              final tracks = dbTracks.map(model.Track.fromDb).toList();
+              final tracks = dbTracks;
 
               return SliverPadding(
                 padding: const EdgeInsets.only(bottom: 120),

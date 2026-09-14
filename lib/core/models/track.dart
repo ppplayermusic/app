@@ -5,6 +5,10 @@ part 'track.g.dart';
 
 enum QueueItemOrigin { context, user, autoplay }
 
+/// Distinguishes how the track is played. Stored explicitly so that an
+/// unavailable local track is still recognised as local in the playback layer.
+enum TrackSourceType { online, local }
+
 @freezed
 abstract class Track with _$Track {
   const factory Track({
@@ -21,6 +25,16 @@ abstract class Track with _$Track {
     @Default(false) bool isFavorite,
     String? queueItemId, // Unique ID for queue instances
     @Default(QueueItemOrigin.context) QueueItemOrigin queueOrigin,
+    // --- Local music fields ---
+    @Default(TrackSourceType.online) TrackSourceType sourceType,
+    /// Absolute path or content URI stored by LocalFileResolver.
+    /// Null only when [sourceType] == TrackSourceType.online.
+    String? localFilePath,
+    /// Local artwork absolute path (cached by MetadataExtractor).
+    String? localArtworkPath,
+    /// 'available' | 'missing' | 'permissionRevoked' | 'decodingError'
+    @Default('available') String localAvailabilityStatus,
+    String? localAlbumGroupKey,
   }) = _Track;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
@@ -39,6 +53,38 @@ abstract class Track with _$Track {
       youtubeVideoId: t.youtubeVideoId,
       playCount: t.playCount,
       isFavorite: t.isFavorite,
+    );
+  }
+
+  /// Build from a locally imported file plus its LocalFile DB row.
+  factory Track.fromLocalFile({
+    required String libraryId, // 'local:<uuid>'
+    required String name,
+    required String artistName,
+    required String albumName,
+    required String localFilePath,
+    String? localArtworkPath,
+    int? durationMs,
+    bool isFavorite = false,
+    int playCount = 0,
+    String localAvailabilityStatus = 'available',
+  }) {
+    return Track(
+      spotifyId: libraryId,
+      name: name,
+      // Local tracks use libraryId as artistId/albumId placeholder.
+      artistId: 'local',
+      artistName: artistName,
+      albumId: null,
+      albumName: albumName,
+      albumImage: localArtworkPath,
+      durationMs: durationMs,
+      sourceType: TrackSourceType.local,
+      localFilePath: localFilePath,
+      localArtworkPath: localArtworkPath,
+      localAvailabilityStatus: localAvailabilityStatus,
+      isFavorite: isFavorite,
+      playCount: playCount,
     );
   }
 
@@ -73,4 +119,13 @@ abstract class Track with _$Track {
       durationMs: json['duration_ms'] as int?,
     );
   }
+}
+
+extension TrackLocalX on Track {
+  bool get isLocal => sourceType == TrackSourceType.local;
+
+  /// True when the track is local AND the file was last seen as accessible.
+  /// An unavailable local track has isLocal=true but isAvailable=false.
+  bool get isAvailable =>
+      !isLocal || localAvailabilityStatus == 'available';
 }

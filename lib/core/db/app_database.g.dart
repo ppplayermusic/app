@@ -3,7 +3,7 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $TracksTable extends Tracks with TableInfo<$TracksTable, Track> {
+class $TracksTable extends Tracks with TableInfo<$TracksTable, TrackEntry> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -178,7 +178,7 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, Track> {
   static const String $name = 'tracks';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Track> instance, {
+    Insertable<TrackEntry> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -284,9 +284,9 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, Track> {
   @override
   Set<GeneratedColumn> get $primaryKey => {spotifyId};
   @override
-  Track map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TrackEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Track(
+    return TrackEntry(
       spotifyId:
           attachedDatabase.typeMapping.read(
             DriftSqlType.string,
@@ -354,7 +354,7 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, Track> {
   }
 }
 
-class Track extends DataClass implements Insertable<Track> {
+class TrackEntry extends DataClass implements Insertable<TrackEntry> {
   final String spotifyId;
   final String name;
   final String artistId;
@@ -368,7 +368,7 @@ class Track extends DataClass implements Insertable<Track> {
   final int playCount;
   final bool isFavorite;
   final DateTime? lastPlayedAt;
-  const Track({
+  const TrackEntry({
     required this.spotifyId,
     required this.name,
     required this.artistId,
@@ -455,12 +455,12 @@ class Track extends DataClass implements Insertable<Track> {
     );
   }
 
-  factory Track.fromJson(
+  factory TrackEntry.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Track(
+    return TrackEntry(
       spotifyId: serializer.fromJson<String>(json['spotifyId']),
       name: serializer.fromJson<String>(json['name']),
       artistId: serializer.fromJson<String>(json['artistId']),
@@ -498,7 +498,7 @@ class Track extends DataClass implements Insertable<Track> {
     };
   }
 
-  Track copyWith({
+  TrackEntry copyWith({
     String? spotifyId,
     String? name,
     String? artistId,
@@ -512,7 +512,7 @@ class Track extends DataClass implements Insertable<Track> {
     int? playCount,
     bool? isFavorite,
     Value<DateTime?> lastPlayedAt = const Value.absent(),
-  }) => Track(
+  }) => TrackEntry(
     spotifyId: spotifyId ?? this.spotifyId,
     name: name ?? this.name,
     artistId: artistId ?? this.artistId,
@@ -531,8 +531,8 @@ class Track extends DataClass implements Insertable<Track> {
     isFavorite: isFavorite ?? this.isFavorite,
     lastPlayedAt: lastPlayedAt.present ? lastPlayedAt.value : this.lastPlayedAt,
   );
-  Track copyWithCompanion(TracksCompanion data) {
-    return Track(
+  TrackEntry copyWithCompanion(TracksCompanion data) {
+    return TrackEntry(
       spotifyId: data.spotifyId.present ? data.spotifyId.value : this.spotifyId,
       name: data.name.present ? data.name.value : this.name,
       artistId: data.artistId.present ? data.artistId.value : this.artistId,
@@ -564,7 +564,7 @@ class Track extends DataClass implements Insertable<Track> {
 
   @override
   String toString() {
-    return (StringBuffer('Track(')
+    return (StringBuffer('TrackEntry(')
           ..write('spotifyId: $spotifyId, ')
           ..write('name: $name, ')
           ..write('artistId: $artistId, ')
@@ -601,7 +601,7 @@ class Track extends DataClass implements Insertable<Track> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Track &&
+      (other is TrackEntry &&
           other.spotifyId == this.spotifyId &&
           other.name == this.name &&
           other.artistId == this.artistId &&
@@ -617,7 +617,7 @@ class Track extends DataClass implements Insertable<Track> {
           other.lastPlayedAt == this.lastPlayedAt);
 }
 
-class TracksCompanion extends UpdateCompanion<Track> {
+class TracksCompanion extends UpdateCompanion<TrackEntry> {
   final Value<String> spotifyId;
   final Value<String> name;
   final Value<String> artistId;
@@ -667,7 +667,7 @@ class TracksCompanion extends UpdateCompanion<Track> {
        name = Value(name),
        artistId = Value(artistId),
        artistName = Value(artistName);
-  static Insertable<Track> custom({
+  static Insertable<TrackEntry> custom({
     Expression<String>? spotifyId,
     Expression<String>? name,
     Expression<String>? artistId,
@@ -3369,6 +3369,1471 @@ class CatalogCacheEntriesCompanion extends UpdateCompanion<CatalogCacheEntry> {
   }
 }
 
+class $LocalFilesTable extends LocalFiles
+    with TableInfo<$LocalFilesTable, LocalFile> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalFilesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _libraryIdMeta = const VerificationMeta(
+    'libraryId',
+  );
+  @override
+  late final GeneratedColumn<String> libraryId = GeneratedColumn<String>(
+    'library_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mechanismMeta = const VerificationMeta(
+    'mechanism',
+  );
+  @override
+  late final GeneratedColumn<String> mechanism = GeneratedColumn<String>(
+    'mechanism',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _locatorMeta = const VerificationMeta(
+    'locator',
+  );
+  @override
+  late final GeneratedColumn<String> locator = GeneratedColumn<String>(
+    'locator',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _displayPathMeta = const VerificationMeta(
+    'displayPath',
+  );
+  @override
+  late final GeneratedColumn<String> displayPath = GeneratedColumn<String>(
+    'display_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deduplicationKeyMeta = const VerificationMeta(
+    'deduplicationKey',
+  );
+  @override
+  late final GeneratedColumn<String> deduplicationKey = GeneratedColumn<String>(
+    'deduplication_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _availabilityStatusMeta =
+      const VerificationMeta('availabilityStatus');
+  @override
+  late final GeneratedColumn<String> availabilityStatus =
+      GeneratedColumn<String>(
+        'availability_status',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('available'),
+      );
+  static const VerificationMeta _lastScannedAtMeta = const VerificationMeta(
+    'lastScannedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastScannedAt =
+      GeneratedColumn<DateTime>(
+        'last_scanned_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _importRootLocatorMeta = const VerificationMeta(
+    'importRootLocator',
+  );
+  @override
+  late final GeneratedColumn<String> importRootLocator =
+      GeneratedColumn<String>(
+        'import_root_locator',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _albumArtistMeta = const VerificationMeta(
+    'albumArtist',
+  );
+  @override
+  late final GeneratedColumn<String> albumArtist = GeneratedColumn<String>(
+    'album_artist',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _albumGroupKeyMeta = const VerificationMeta(
+    'albumGroupKey',
+  );
+  @override
+  late final GeneratedColumn<String> albumGroupKey = GeneratedColumn<String>(
+    'album_group_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _trackNumberMeta = const VerificationMeta(
+    'trackNumber',
+  );
+  @override
+  late final GeneratedColumn<int> trackNumber = GeneratedColumn<int>(
+    'track_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _trackTotalMeta = const VerificationMeta(
+    'trackTotal',
+  );
+  @override
+  late final GeneratedColumn<int> trackTotal = GeneratedColumn<int>(
+    'track_total',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _discNumberMeta = const VerificationMeta(
+    'discNumber',
+  );
+  @override
+  late final GeneratedColumn<int> discNumber = GeneratedColumn<int>(
+    'disc_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _discTotalMeta = const VerificationMeta(
+    'discTotal',
+  );
+  @override
+  late final GeneratedColumn<int> discTotal = GeneratedColumn<int>(
+    'disc_total',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _genreMeta = const VerificationMeta('genre');
+  @override
+  late final GeneratedColumn<String> genre = GeneratedColumn<String>(
+    'genre',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _releaseYearMeta = const VerificationMeta(
+    'releaseYear',
+  );
+  @override
+  late final GeneratedColumn<int> releaseYear = GeneratedColumn<int>(
+    'release_year',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _artworkPathMeta = const VerificationMeta(
+    'artworkPath',
+  );
+  @override
+  late final GeneratedColumn<String> artworkPath = GeneratedColumn<String>(
+    'artwork_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _artworkMimeTypeMeta = const VerificationMeta(
+    'artworkMimeType',
+  );
+  @override
+  late final GeneratedColumn<String> artworkMimeType = GeneratedColumn<String>(
+    'artwork_mime_type',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    libraryId,
+    mechanism,
+    locator,
+    displayPath,
+    deduplicationKey,
+    availabilityStatus,
+    lastScannedAt,
+    importRootLocator,
+    albumArtist,
+    albumGroupKey,
+    trackNumber,
+    trackTotal,
+    discNumber,
+    discTotal,
+    genre,
+    releaseYear,
+    artworkPath,
+    artworkMimeType,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_files';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalFile> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('library_id')) {
+      context.handle(
+        _libraryIdMeta,
+        libraryId.isAcceptableOrUnknown(data['library_id']!, _libraryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_libraryIdMeta);
+    }
+    if (data.containsKey('mechanism')) {
+      context.handle(
+        _mechanismMeta,
+        mechanism.isAcceptableOrUnknown(data['mechanism']!, _mechanismMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mechanismMeta);
+    }
+    if (data.containsKey('locator')) {
+      context.handle(
+        _locatorMeta,
+        locator.isAcceptableOrUnknown(data['locator']!, _locatorMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_locatorMeta);
+    }
+    if (data.containsKey('display_path')) {
+      context.handle(
+        _displayPathMeta,
+        displayPath.isAcceptableOrUnknown(
+          data['display_path']!,
+          _displayPathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_displayPathMeta);
+    }
+    if (data.containsKey('deduplication_key')) {
+      context.handle(
+        _deduplicationKeyMeta,
+        deduplicationKey.isAcceptableOrUnknown(
+          data['deduplication_key']!,
+          _deduplicationKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_deduplicationKeyMeta);
+    }
+    if (data.containsKey('availability_status')) {
+      context.handle(
+        _availabilityStatusMeta,
+        availabilityStatus.isAcceptableOrUnknown(
+          data['availability_status']!,
+          _availabilityStatusMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_scanned_at')) {
+      context.handle(
+        _lastScannedAtMeta,
+        lastScannedAt.isAcceptableOrUnknown(
+          data['last_scanned_at']!,
+          _lastScannedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastScannedAtMeta);
+    }
+    if (data.containsKey('import_root_locator')) {
+      context.handle(
+        _importRootLocatorMeta,
+        importRootLocator.isAcceptableOrUnknown(
+          data['import_root_locator']!,
+          _importRootLocatorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('album_artist')) {
+      context.handle(
+        _albumArtistMeta,
+        albumArtist.isAcceptableOrUnknown(
+          data['album_artist']!,
+          _albumArtistMeta,
+        ),
+      );
+    }
+    if (data.containsKey('album_group_key')) {
+      context.handle(
+        _albumGroupKeyMeta,
+        albumGroupKey.isAcceptableOrUnknown(
+          data['album_group_key']!,
+          _albumGroupKeyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('track_number')) {
+      context.handle(
+        _trackNumberMeta,
+        trackNumber.isAcceptableOrUnknown(
+          data['track_number']!,
+          _trackNumberMeta,
+        ),
+      );
+    }
+    if (data.containsKey('track_total')) {
+      context.handle(
+        _trackTotalMeta,
+        trackTotal.isAcceptableOrUnknown(data['track_total']!, _trackTotalMeta),
+      );
+    }
+    if (data.containsKey('disc_number')) {
+      context.handle(
+        _discNumberMeta,
+        discNumber.isAcceptableOrUnknown(data['disc_number']!, _discNumberMeta),
+      );
+    }
+    if (data.containsKey('disc_total')) {
+      context.handle(
+        _discTotalMeta,
+        discTotal.isAcceptableOrUnknown(data['disc_total']!, _discTotalMeta),
+      );
+    }
+    if (data.containsKey('genre')) {
+      context.handle(
+        _genreMeta,
+        genre.isAcceptableOrUnknown(data['genre']!, _genreMeta),
+      );
+    }
+    if (data.containsKey('release_year')) {
+      context.handle(
+        _releaseYearMeta,
+        releaseYear.isAcceptableOrUnknown(
+          data['release_year']!,
+          _releaseYearMeta,
+        ),
+      );
+    }
+    if (data.containsKey('artwork_path')) {
+      context.handle(
+        _artworkPathMeta,
+        artworkPath.isAcceptableOrUnknown(
+          data['artwork_path']!,
+          _artworkPathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('artwork_mime_type')) {
+      context.handle(
+        _artworkMimeTypeMeta,
+        artworkMimeType.isAcceptableOrUnknown(
+          data['artwork_mime_type']!,
+          _artworkMimeTypeMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {libraryId};
+  @override
+  LocalFile map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalFile(
+      libraryId:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}library_id'],
+          )!,
+      mechanism:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}mechanism'],
+          )!,
+      locator:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}locator'],
+          )!,
+      displayPath:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}display_path'],
+          )!,
+      deduplicationKey:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}deduplication_key'],
+          )!,
+      availabilityStatus:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}availability_status'],
+          )!,
+      lastScannedAt:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}last_scanned_at'],
+          )!,
+      importRootLocator: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}import_root_locator'],
+      ),
+      albumArtist: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}album_artist'],
+      ),
+      albumGroupKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}album_group_key'],
+      ),
+      trackNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}track_number'],
+      ),
+      trackTotal: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}track_total'],
+      ),
+      discNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disc_number'],
+      ),
+      discTotal: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}disc_total'],
+      ),
+      genre: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}genre'],
+      ),
+      releaseYear: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}release_year'],
+      ),
+      artworkPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artwork_path'],
+      ),
+      artworkMimeType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artwork_mime_type'],
+      ),
+    );
+  }
+
+  @override
+  $LocalFilesTable createAlias(String alias) {
+    return $LocalFilesTable(attachedDatabase, alias);
+  }
+}
+
+class LocalFile extends DataClass implements Insertable<LocalFile> {
+  final String libraryId;
+  final String mechanism;
+  final String locator;
+  final String displayPath;
+  final String deduplicationKey;
+  final String availabilityStatus;
+  final DateTime lastScannedAt;
+  final String? importRootLocator;
+  final String? albumArtist;
+  final String? albumGroupKey;
+  final int? trackNumber;
+  final int? trackTotal;
+  final int? discNumber;
+  final int? discTotal;
+  final String? genre;
+  final int? releaseYear;
+  final String? artworkPath;
+  final String? artworkMimeType;
+  const LocalFile({
+    required this.libraryId,
+    required this.mechanism,
+    required this.locator,
+    required this.displayPath,
+    required this.deduplicationKey,
+    required this.availabilityStatus,
+    required this.lastScannedAt,
+    this.importRootLocator,
+    this.albumArtist,
+    this.albumGroupKey,
+    this.trackNumber,
+    this.trackTotal,
+    this.discNumber,
+    this.discTotal,
+    this.genre,
+    this.releaseYear,
+    this.artworkPath,
+    this.artworkMimeType,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['library_id'] = Variable<String>(libraryId);
+    map['mechanism'] = Variable<String>(mechanism);
+    map['locator'] = Variable<String>(locator);
+    map['display_path'] = Variable<String>(displayPath);
+    map['deduplication_key'] = Variable<String>(deduplicationKey);
+    map['availability_status'] = Variable<String>(availabilityStatus);
+    map['last_scanned_at'] = Variable<DateTime>(lastScannedAt);
+    if (!nullToAbsent || importRootLocator != null) {
+      map['import_root_locator'] = Variable<String>(importRootLocator);
+    }
+    if (!nullToAbsent || albumArtist != null) {
+      map['album_artist'] = Variable<String>(albumArtist);
+    }
+    if (!nullToAbsent || albumGroupKey != null) {
+      map['album_group_key'] = Variable<String>(albumGroupKey);
+    }
+    if (!nullToAbsent || trackNumber != null) {
+      map['track_number'] = Variable<int>(trackNumber);
+    }
+    if (!nullToAbsent || trackTotal != null) {
+      map['track_total'] = Variable<int>(trackTotal);
+    }
+    if (!nullToAbsent || discNumber != null) {
+      map['disc_number'] = Variable<int>(discNumber);
+    }
+    if (!nullToAbsent || discTotal != null) {
+      map['disc_total'] = Variable<int>(discTotal);
+    }
+    if (!nullToAbsent || genre != null) {
+      map['genre'] = Variable<String>(genre);
+    }
+    if (!nullToAbsent || releaseYear != null) {
+      map['release_year'] = Variable<int>(releaseYear);
+    }
+    if (!nullToAbsent || artworkPath != null) {
+      map['artwork_path'] = Variable<String>(artworkPath);
+    }
+    if (!nullToAbsent || artworkMimeType != null) {
+      map['artwork_mime_type'] = Variable<String>(artworkMimeType);
+    }
+    return map;
+  }
+
+  LocalFilesCompanion toCompanion(bool nullToAbsent) {
+    return LocalFilesCompanion(
+      libraryId: Value(libraryId),
+      mechanism: Value(mechanism),
+      locator: Value(locator),
+      displayPath: Value(displayPath),
+      deduplicationKey: Value(deduplicationKey),
+      availabilityStatus: Value(availabilityStatus),
+      lastScannedAt: Value(lastScannedAt),
+      importRootLocator:
+          importRootLocator == null && nullToAbsent
+              ? const Value.absent()
+              : Value(importRootLocator),
+      albumArtist:
+          albumArtist == null && nullToAbsent
+              ? const Value.absent()
+              : Value(albumArtist),
+      albumGroupKey:
+          albumGroupKey == null && nullToAbsent
+              ? const Value.absent()
+              : Value(albumGroupKey),
+      trackNumber:
+          trackNumber == null && nullToAbsent
+              ? const Value.absent()
+              : Value(trackNumber),
+      trackTotal:
+          trackTotal == null && nullToAbsent
+              ? const Value.absent()
+              : Value(trackTotal),
+      discNumber:
+          discNumber == null && nullToAbsent
+              ? const Value.absent()
+              : Value(discNumber),
+      discTotal:
+          discTotal == null && nullToAbsent
+              ? const Value.absent()
+              : Value(discTotal),
+      genre:
+          genre == null && nullToAbsent ? const Value.absent() : Value(genre),
+      releaseYear:
+          releaseYear == null && nullToAbsent
+              ? const Value.absent()
+              : Value(releaseYear),
+      artworkPath:
+          artworkPath == null && nullToAbsent
+              ? const Value.absent()
+              : Value(artworkPath),
+      artworkMimeType:
+          artworkMimeType == null && nullToAbsent
+              ? const Value.absent()
+              : Value(artworkMimeType),
+    );
+  }
+
+  factory LocalFile.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalFile(
+      libraryId: serializer.fromJson<String>(json['libraryId']),
+      mechanism: serializer.fromJson<String>(json['mechanism']),
+      locator: serializer.fromJson<String>(json['locator']),
+      displayPath: serializer.fromJson<String>(json['displayPath']),
+      deduplicationKey: serializer.fromJson<String>(json['deduplicationKey']),
+      availabilityStatus: serializer.fromJson<String>(
+        json['availabilityStatus'],
+      ),
+      lastScannedAt: serializer.fromJson<DateTime>(json['lastScannedAt']),
+      importRootLocator: serializer.fromJson<String?>(
+        json['importRootLocator'],
+      ),
+      albumArtist: serializer.fromJson<String?>(json['albumArtist']),
+      albumGroupKey: serializer.fromJson<String?>(json['albumGroupKey']),
+      trackNumber: serializer.fromJson<int?>(json['trackNumber']),
+      trackTotal: serializer.fromJson<int?>(json['trackTotal']),
+      discNumber: serializer.fromJson<int?>(json['discNumber']),
+      discTotal: serializer.fromJson<int?>(json['discTotal']),
+      genre: serializer.fromJson<String?>(json['genre']),
+      releaseYear: serializer.fromJson<int?>(json['releaseYear']),
+      artworkPath: serializer.fromJson<String?>(json['artworkPath']),
+      artworkMimeType: serializer.fromJson<String?>(json['artworkMimeType']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'libraryId': serializer.toJson<String>(libraryId),
+      'mechanism': serializer.toJson<String>(mechanism),
+      'locator': serializer.toJson<String>(locator),
+      'displayPath': serializer.toJson<String>(displayPath),
+      'deduplicationKey': serializer.toJson<String>(deduplicationKey),
+      'availabilityStatus': serializer.toJson<String>(availabilityStatus),
+      'lastScannedAt': serializer.toJson<DateTime>(lastScannedAt),
+      'importRootLocator': serializer.toJson<String?>(importRootLocator),
+      'albumArtist': serializer.toJson<String?>(albumArtist),
+      'albumGroupKey': serializer.toJson<String?>(albumGroupKey),
+      'trackNumber': serializer.toJson<int?>(trackNumber),
+      'trackTotal': serializer.toJson<int?>(trackTotal),
+      'discNumber': serializer.toJson<int?>(discNumber),
+      'discTotal': serializer.toJson<int?>(discTotal),
+      'genre': serializer.toJson<String?>(genre),
+      'releaseYear': serializer.toJson<int?>(releaseYear),
+      'artworkPath': serializer.toJson<String?>(artworkPath),
+      'artworkMimeType': serializer.toJson<String?>(artworkMimeType),
+    };
+  }
+
+  LocalFile copyWith({
+    String? libraryId,
+    String? mechanism,
+    String? locator,
+    String? displayPath,
+    String? deduplicationKey,
+    String? availabilityStatus,
+    DateTime? lastScannedAt,
+    Value<String?> importRootLocator = const Value.absent(),
+    Value<String?> albumArtist = const Value.absent(),
+    Value<String?> albumGroupKey = const Value.absent(),
+    Value<int?> trackNumber = const Value.absent(),
+    Value<int?> trackTotal = const Value.absent(),
+    Value<int?> discNumber = const Value.absent(),
+    Value<int?> discTotal = const Value.absent(),
+    Value<String?> genre = const Value.absent(),
+    Value<int?> releaseYear = const Value.absent(),
+    Value<String?> artworkPath = const Value.absent(),
+    Value<String?> artworkMimeType = const Value.absent(),
+  }) => LocalFile(
+    libraryId: libraryId ?? this.libraryId,
+    mechanism: mechanism ?? this.mechanism,
+    locator: locator ?? this.locator,
+    displayPath: displayPath ?? this.displayPath,
+    deduplicationKey: deduplicationKey ?? this.deduplicationKey,
+    availabilityStatus: availabilityStatus ?? this.availabilityStatus,
+    lastScannedAt: lastScannedAt ?? this.lastScannedAt,
+    importRootLocator:
+        importRootLocator.present
+            ? importRootLocator.value
+            : this.importRootLocator,
+    albumArtist: albumArtist.present ? albumArtist.value : this.albumArtist,
+    albumGroupKey:
+        albumGroupKey.present ? albumGroupKey.value : this.albumGroupKey,
+    trackNumber: trackNumber.present ? trackNumber.value : this.trackNumber,
+    trackTotal: trackTotal.present ? trackTotal.value : this.trackTotal,
+    discNumber: discNumber.present ? discNumber.value : this.discNumber,
+    discTotal: discTotal.present ? discTotal.value : this.discTotal,
+    genre: genre.present ? genre.value : this.genre,
+    releaseYear: releaseYear.present ? releaseYear.value : this.releaseYear,
+    artworkPath: artworkPath.present ? artworkPath.value : this.artworkPath,
+    artworkMimeType:
+        artworkMimeType.present ? artworkMimeType.value : this.artworkMimeType,
+  );
+  LocalFile copyWithCompanion(LocalFilesCompanion data) {
+    return LocalFile(
+      libraryId: data.libraryId.present ? data.libraryId.value : this.libraryId,
+      mechanism: data.mechanism.present ? data.mechanism.value : this.mechanism,
+      locator: data.locator.present ? data.locator.value : this.locator,
+      displayPath:
+          data.displayPath.present ? data.displayPath.value : this.displayPath,
+      deduplicationKey:
+          data.deduplicationKey.present
+              ? data.deduplicationKey.value
+              : this.deduplicationKey,
+      availabilityStatus:
+          data.availabilityStatus.present
+              ? data.availabilityStatus.value
+              : this.availabilityStatus,
+      lastScannedAt:
+          data.lastScannedAt.present
+              ? data.lastScannedAt.value
+              : this.lastScannedAt,
+      importRootLocator:
+          data.importRootLocator.present
+              ? data.importRootLocator.value
+              : this.importRootLocator,
+      albumArtist:
+          data.albumArtist.present ? data.albumArtist.value : this.albumArtist,
+      albumGroupKey:
+          data.albumGroupKey.present
+              ? data.albumGroupKey.value
+              : this.albumGroupKey,
+      trackNumber:
+          data.trackNumber.present ? data.trackNumber.value : this.trackNumber,
+      trackTotal:
+          data.trackTotal.present ? data.trackTotal.value : this.trackTotal,
+      discNumber:
+          data.discNumber.present ? data.discNumber.value : this.discNumber,
+      discTotal: data.discTotal.present ? data.discTotal.value : this.discTotal,
+      genre: data.genre.present ? data.genre.value : this.genre,
+      releaseYear:
+          data.releaseYear.present ? data.releaseYear.value : this.releaseYear,
+      artworkPath:
+          data.artworkPath.present ? data.artworkPath.value : this.artworkPath,
+      artworkMimeType:
+          data.artworkMimeType.present
+              ? data.artworkMimeType.value
+              : this.artworkMimeType,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalFile(')
+          ..write('libraryId: $libraryId, ')
+          ..write('mechanism: $mechanism, ')
+          ..write('locator: $locator, ')
+          ..write('displayPath: $displayPath, ')
+          ..write('deduplicationKey: $deduplicationKey, ')
+          ..write('availabilityStatus: $availabilityStatus, ')
+          ..write('lastScannedAt: $lastScannedAt, ')
+          ..write('importRootLocator: $importRootLocator, ')
+          ..write('albumArtist: $albumArtist, ')
+          ..write('albumGroupKey: $albumGroupKey, ')
+          ..write('trackNumber: $trackNumber, ')
+          ..write('trackTotal: $trackTotal, ')
+          ..write('discNumber: $discNumber, ')
+          ..write('discTotal: $discTotal, ')
+          ..write('genre: $genre, ')
+          ..write('releaseYear: $releaseYear, ')
+          ..write('artworkPath: $artworkPath, ')
+          ..write('artworkMimeType: $artworkMimeType')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    libraryId,
+    mechanism,
+    locator,
+    displayPath,
+    deduplicationKey,
+    availabilityStatus,
+    lastScannedAt,
+    importRootLocator,
+    albumArtist,
+    albumGroupKey,
+    trackNumber,
+    trackTotal,
+    discNumber,
+    discTotal,
+    genre,
+    releaseYear,
+    artworkPath,
+    artworkMimeType,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalFile &&
+          other.libraryId == this.libraryId &&
+          other.mechanism == this.mechanism &&
+          other.locator == this.locator &&
+          other.displayPath == this.displayPath &&
+          other.deduplicationKey == this.deduplicationKey &&
+          other.availabilityStatus == this.availabilityStatus &&
+          other.lastScannedAt == this.lastScannedAt &&
+          other.importRootLocator == this.importRootLocator &&
+          other.albumArtist == this.albumArtist &&
+          other.albumGroupKey == this.albumGroupKey &&
+          other.trackNumber == this.trackNumber &&
+          other.trackTotal == this.trackTotal &&
+          other.discNumber == this.discNumber &&
+          other.discTotal == this.discTotal &&
+          other.genre == this.genre &&
+          other.releaseYear == this.releaseYear &&
+          other.artworkPath == this.artworkPath &&
+          other.artworkMimeType == this.artworkMimeType);
+}
+
+class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
+  final Value<String> libraryId;
+  final Value<String> mechanism;
+  final Value<String> locator;
+  final Value<String> displayPath;
+  final Value<String> deduplicationKey;
+  final Value<String> availabilityStatus;
+  final Value<DateTime> lastScannedAt;
+  final Value<String?> importRootLocator;
+  final Value<String?> albumArtist;
+  final Value<String?> albumGroupKey;
+  final Value<int?> trackNumber;
+  final Value<int?> trackTotal;
+  final Value<int?> discNumber;
+  final Value<int?> discTotal;
+  final Value<String?> genre;
+  final Value<int?> releaseYear;
+  final Value<String?> artworkPath;
+  final Value<String?> artworkMimeType;
+  final Value<int> rowid;
+  const LocalFilesCompanion({
+    this.libraryId = const Value.absent(),
+    this.mechanism = const Value.absent(),
+    this.locator = const Value.absent(),
+    this.displayPath = const Value.absent(),
+    this.deduplicationKey = const Value.absent(),
+    this.availabilityStatus = const Value.absent(),
+    this.lastScannedAt = const Value.absent(),
+    this.importRootLocator = const Value.absent(),
+    this.albumArtist = const Value.absent(),
+    this.albumGroupKey = const Value.absent(),
+    this.trackNumber = const Value.absent(),
+    this.trackTotal = const Value.absent(),
+    this.discNumber = const Value.absent(),
+    this.discTotal = const Value.absent(),
+    this.genre = const Value.absent(),
+    this.releaseYear = const Value.absent(),
+    this.artworkPath = const Value.absent(),
+    this.artworkMimeType = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LocalFilesCompanion.insert({
+    required String libraryId,
+    required String mechanism,
+    required String locator,
+    required String displayPath,
+    required String deduplicationKey,
+    this.availabilityStatus = const Value.absent(),
+    required DateTime lastScannedAt,
+    this.importRootLocator = const Value.absent(),
+    this.albumArtist = const Value.absent(),
+    this.albumGroupKey = const Value.absent(),
+    this.trackNumber = const Value.absent(),
+    this.trackTotal = const Value.absent(),
+    this.discNumber = const Value.absent(),
+    this.discTotal = const Value.absent(),
+    this.genre = const Value.absent(),
+    this.releaseYear = const Value.absent(),
+    this.artworkPath = const Value.absent(),
+    this.artworkMimeType = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : libraryId = Value(libraryId),
+       mechanism = Value(mechanism),
+       locator = Value(locator),
+       displayPath = Value(displayPath),
+       deduplicationKey = Value(deduplicationKey),
+       lastScannedAt = Value(lastScannedAt);
+  static Insertable<LocalFile> custom({
+    Expression<String>? libraryId,
+    Expression<String>? mechanism,
+    Expression<String>? locator,
+    Expression<String>? displayPath,
+    Expression<String>? deduplicationKey,
+    Expression<String>? availabilityStatus,
+    Expression<DateTime>? lastScannedAt,
+    Expression<String>? importRootLocator,
+    Expression<String>? albumArtist,
+    Expression<String>? albumGroupKey,
+    Expression<int>? trackNumber,
+    Expression<int>? trackTotal,
+    Expression<int>? discNumber,
+    Expression<int>? discTotal,
+    Expression<String>? genre,
+    Expression<int>? releaseYear,
+    Expression<String>? artworkPath,
+    Expression<String>? artworkMimeType,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (libraryId != null) 'library_id': libraryId,
+      if (mechanism != null) 'mechanism': mechanism,
+      if (locator != null) 'locator': locator,
+      if (displayPath != null) 'display_path': displayPath,
+      if (deduplicationKey != null) 'deduplication_key': deduplicationKey,
+      if (availabilityStatus != null) 'availability_status': availabilityStatus,
+      if (lastScannedAt != null) 'last_scanned_at': lastScannedAt,
+      if (importRootLocator != null) 'import_root_locator': importRootLocator,
+      if (albumArtist != null) 'album_artist': albumArtist,
+      if (albumGroupKey != null) 'album_group_key': albumGroupKey,
+      if (trackNumber != null) 'track_number': trackNumber,
+      if (trackTotal != null) 'track_total': trackTotal,
+      if (discNumber != null) 'disc_number': discNumber,
+      if (discTotal != null) 'disc_total': discTotal,
+      if (genre != null) 'genre': genre,
+      if (releaseYear != null) 'release_year': releaseYear,
+      if (artworkPath != null) 'artwork_path': artworkPath,
+      if (artworkMimeType != null) 'artwork_mime_type': artworkMimeType,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LocalFilesCompanion copyWith({
+    Value<String>? libraryId,
+    Value<String>? mechanism,
+    Value<String>? locator,
+    Value<String>? displayPath,
+    Value<String>? deduplicationKey,
+    Value<String>? availabilityStatus,
+    Value<DateTime>? lastScannedAt,
+    Value<String?>? importRootLocator,
+    Value<String?>? albumArtist,
+    Value<String?>? albumGroupKey,
+    Value<int?>? trackNumber,
+    Value<int?>? trackTotal,
+    Value<int?>? discNumber,
+    Value<int?>? discTotal,
+    Value<String?>? genre,
+    Value<int?>? releaseYear,
+    Value<String?>? artworkPath,
+    Value<String?>? artworkMimeType,
+    Value<int>? rowid,
+  }) {
+    return LocalFilesCompanion(
+      libraryId: libraryId ?? this.libraryId,
+      mechanism: mechanism ?? this.mechanism,
+      locator: locator ?? this.locator,
+      displayPath: displayPath ?? this.displayPath,
+      deduplicationKey: deduplicationKey ?? this.deduplicationKey,
+      availabilityStatus: availabilityStatus ?? this.availabilityStatus,
+      lastScannedAt: lastScannedAt ?? this.lastScannedAt,
+      importRootLocator: importRootLocator ?? this.importRootLocator,
+      albumArtist: albumArtist ?? this.albumArtist,
+      albumGroupKey: albumGroupKey ?? this.albumGroupKey,
+      trackNumber: trackNumber ?? this.trackNumber,
+      trackTotal: trackTotal ?? this.trackTotal,
+      discNumber: discNumber ?? this.discNumber,
+      discTotal: discTotal ?? this.discTotal,
+      genre: genre ?? this.genre,
+      releaseYear: releaseYear ?? this.releaseYear,
+      artworkPath: artworkPath ?? this.artworkPath,
+      artworkMimeType: artworkMimeType ?? this.artworkMimeType,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (libraryId.present) {
+      map['library_id'] = Variable<String>(libraryId.value);
+    }
+    if (mechanism.present) {
+      map['mechanism'] = Variable<String>(mechanism.value);
+    }
+    if (locator.present) {
+      map['locator'] = Variable<String>(locator.value);
+    }
+    if (displayPath.present) {
+      map['display_path'] = Variable<String>(displayPath.value);
+    }
+    if (deduplicationKey.present) {
+      map['deduplication_key'] = Variable<String>(deduplicationKey.value);
+    }
+    if (availabilityStatus.present) {
+      map['availability_status'] = Variable<String>(availabilityStatus.value);
+    }
+    if (lastScannedAt.present) {
+      map['last_scanned_at'] = Variable<DateTime>(lastScannedAt.value);
+    }
+    if (importRootLocator.present) {
+      map['import_root_locator'] = Variable<String>(importRootLocator.value);
+    }
+    if (albumArtist.present) {
+      map['album_artist'] = Variable<String>(albumArtist.value);
+    }
+    if (albumGroupKey.present) {
+      map['album_group_key'] = Variable<String>(albumGroupKey.value);
+    }
+    if (trackNumber.present) {
+      map['track_number'] = Variable<int>(trackNumber.value);
+    }
+    if (trackTotal.present) {
+      map['track_total'] = Variable<int>(trackTotal.value);
+    }
+    if (discNumber.present) {
+      map['disc_number'] = Variable<int>(discNumber.value);
+    }
+    if (discTotal.present) {
+      map['disc_total'] = Variable<int>(discTotal.value);
+    }
+    if (genre.present) {
+      map['genre'] = Variable<String>(genre.value);
+    }
+    if (releaseYear.present) {
+      map['release_year'] = Variable<int>(releaseYear.value);
+    }
+    if (artworkPath.present) {
+      map['artwork_path'] = Variable<String>(artworkPath.value);
+    }
+    if (artworkMimeType.present) {
+      map['artwork_mime_type'] = Variable<String>(artworkMimeType.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalFilesCompanion(')
+          ..write('libraryId: $libraryId, ')
+          ..write('mechanism: $mechanism, ')
+          ..write('locator: $locator, ')
+          ..write('displayPath: $displayPath, ')
+          ..write('deduplicationKey: $deduplicationKey, ')
+          ..write('availabilityStatus: $availabilityStatus, ')
+          ..write('lastScannedAt: $lastScannedAt, ')
+          ..write('importRootLocator: $importRootLocator, ')
+          ..write('albumArtist: $albumArtist, ')
+          ..write('albumGroupKey: $albumGroupKey, ')
+          ..write('trackNumber: $trackNumber, ')
+          ..write('trackTotal: $trackTotal, ')
+          ..write('discNumber: $discNumber, ')
+          ..write('discTotal: $discTotal, ')
+          ..write('genre: $genre, ')
+          ..write('releaseYear: $releaseYear, ')
+          ..write('artworkPath: $artworkPath, ')
+          ..write('artworkMimeType: $artworkMimeType, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ImportRootsTable extends ImportRoots
+    with TableInfo<$ImportRootsTable, ImportRoot> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ImportRootsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mechanismMeta = const VerificationMeta(
+    'mechanism',
+  );
+  @override
+  late final GeneratedColumn<String> mechanism = GeneratedColumn<String>(
+    'mechanism',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rootLocatorMeta = const VerificationMeta(
+    'rootLocator',
+  );
+  @override
+  late final GeneratedColumn<String> rootLocator = GeneratedColumn<String>(
+    'root_locator',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _displayPathMeta = const VerificationMeta(
+    'displayPath',
+  );
+  @override
+  late final GeneratedColumn<String> displayPath = GeneratedColumn<String>(
+    'display_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _addedAtMeta = const VerificationMeta(
+    'addedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> addedAt = GeneratedColumn<DateTime>(
+    'added_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    mechanism,
+    rootLocator,
+    displayPath,
+    addedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'import_roots';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ImportRoot> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('mechanism')) {
+      context.handle(
+        _mechanismMeta,
+        mechanism.isAcceptableOrUnknown(data['mechanism']!, _mechanismMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mechanismMeta);
+    }
+    if (data.containsKey('root_locator')) {
+      context.handle(
+        _rootLocatorMeta,
+        rootLocator.isAcceptableOrUnknown(
+          data['root_locator']!,
+          _rootLocatorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_rootLocatorMeta);
+    }
+    if (data.containsKey('display_path')) {
+      context.handle(
+        _displayPathMeta,
+        displayPath.isAcceptableOrUnknown(
+          data['display_path']!,
+          _displayPathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_displayPathMeta);
+    }
+    if (data.containsKey('added_at')) {
+      context.handle(
+        _addedAtMeta,
+        addedAt.isAcceptableOrUnknown(data['added_at']!, _addedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_addedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ImportRoot map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ImportRoot(
+      id:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}id'],
+          )!,
+      mechanism:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}mechanism'],
+          )!,
+      rootLocator:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}root_locator'],
+          )!,
+      displayPath:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}display_path'],
+          )!,
+      addedAt:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.dateTime,
+            data['${effectivePrefix}added_at'],
+          )!,
+    );
+  }
+
+  @override
+  $ImportRootsTable createAlias(String alias) {
+    return $ImportRootsTable(attachedDatabase, alias);
+  }
+}
+
+class ImportRoot extends DataClass implements Insertable<ImportRoot> {
+  final String id;
+  final String mechanism;
+  final String rootLocator;
+  final String displayPath;
+  final DateTime addedAt;
+  const ImportRoot({
+    required this.id,
+    required this.mechanism,
+    required this.rootLocator,
+    required this.displayPath,
+    required this.addedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['mechanism'] = Variable<String>(mechanism);
+    map['root_locator'] = Variable<String>(rootLocator);
+    map['display_path'] = Variable<String>(displayPath);
+    map['added_at'] = Variable<DateTime>(addedAt);
+    return map;
+  }
+
+  ImportRootsCompanion toCompanion(bool nullToAbsent) {
+    return ImportRootsCompanion(
+      id: Value(id),
+      mechanism: Value(mechanism),
+      rootLocator: Value(rootLocator),
+      displayPath: Value(displayPath),
+      addedAt: Value(addedAt),
+    );
+  }
+
+  factory ImportRoot.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ImportRoot(
+      id: serializer.fromJson<String>(json['id']),
+      mechanism: serializer.fromJson<String>(json['mechanism']),
+      rootLocator: serializer.fromJson<String>(json['rootLocator']),
+      displayPath: serializer.fromJson<String>(json['displayPath']),
+      addedAt: serializer.fromJson<DateTime>(json['addedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'mechanism': serializer.toJson<String>(mechanism),
+      'rootLocator': serializer.toJson<String>(rootLocator),
+      'displayPath': serializer.toJson<String>(displayPath),
+      'addedAt': serializer.toJson<DateTime>(addedAt),
+    };
+  }
+
+  ImportRoot copyWith({
+    String? id,
+    String? mechanism,
+    String? rootLocator,
+    String? displayPath,
+    DateTime? addedAt,
+  }) => ImportRoot(
+    id: id ?? this.id,
+    mechanism: mechanism ?? this.mechanism,
+    rootLocator: rootLocator ?? this.rootLocator,
+    displayPath: displayPath ?? this.displayPath,
+    addedAt: addedAt ?? this.addedAt,
+  );
+  ImportRoot copyWithCompanion(ImportRootsCompanion data) {
+    return ImportRoot(
+      id: data.id.present ? data.id.value : this.id,
+      mechanism: data.mechanism.present ? data.mechanism.value : this.mechanism,
+      rootLocator:
+          data.rootLocator.present ? data.rootLocator.value : this.rootLocator,
+      displayPath:
+          data.displayPath.present ? data.displayPath.value : this.displayPath,
+      addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImportRoot(')
+          ..write('id: $id, ')
+          ..write('mechanism: $mechanism, ')
+          ..write('rootLocator: $rootLocator, ')
+          ..write('displayPath: $displayPath, ')
+          ..write('addedAt: $addedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, mechanism, rootLocator, displayPath, addedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ImportRoot &&
+          other.id == this.id &&
+          other.mechanism == this.mechanism &&
+          other.rootLocator == this.rootLocator &&
+          other.displayPath == this.displayPath &&
+          other.addedAt == this.addedAt);
+}
+
+class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
+  final Value<String> id;
+  final Value<String> mechanism;
+  final Value<String> rootLocator;
+  final Value<String> displayPath;
+  final Value<DateTime> addedAt;
+  final Value<int> rowid;
+  const ImportRootsCompanion({
+    this.id = const Value.absent(),
+    this.mechanism = const Value.absent(),
+    this.rootLocator = const Value.absent(),
+    this.displayPath = const Value.absent(),
+    this.addedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ImportRootsCompanion.insert({
+    required String id,
+    required String mechanism,
+    required String rootLocator,
+    required String displayPath,
+    required DateTime addedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       mechanism = Value(mechanism),
+       rootLocator = Value(rootLocator),
+       displayPath = Value(displayPath),
+       addedAt = Value(addedAt);
+  static Insertable<ImportRoot> custom({
+    Expression<String>? id,
+    Expression<String>? mechanism,
+    Expression<String>? rootLocator,
+    Expression<String>? displayPath,
+    Expression<DateTime>? addedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (mechanism != null) 'mechanism': mechanism,
+      if (rootLocator != null) 'root_locator': rootLocator,
+      if (displayPath != null) 'display_path': displayPath,
+      if (addedAt != null) 'added_at': addedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ImportRootsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? mechanism,
+    Value<String>? rootLocator,
+    Value<String>? displayPath,
+    Value<DateTime>? addedAt,
+    Value<int>? rowid,
+  }) {
+    return ImportRootsCompanion(
+      id: id ?? this.id,
+      mechanism: mechanism ?? this.mechanism,
+      rootLocator: rootLocator ?? this.rootLocator,
+      displayPath: displayPath ?? this.displayPath,
+      addedAt: addedAt ?? this.addedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (mechanism.present) {
+      map['mechanism'] = Variable<String>(mechanism.value);
+    }
+    if (rootLocator.present) {
+      map['root_locator'] = Variable<String>(rootLocator.value);
+    }
+    if (displayPath.present) {
+      map['display_path'] = Variable<String>(displayPath.value);
+    }
+    if (addedAt.present) {
+      map['added_at'] = Variable<DateTime>(addedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ImportRootsCompanion(')
+          ..write('id: $id, ')
+          ..write('mechanism: $mechanism, ')
+          ..write('rootLocator: $rootLocator, ')
+          ..write('displayPath: $displayPath, ')
+          ..write('addedAt: $addedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3380,6 +4845,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RadiosTable radios = $RadiosTable(this);
   late final $CatalogCacheEntriesTable catalogCacheEntries =
       $CatalogCacheEntriesTable(this);
+  late final $LocalFilesTable localFiles = $LocalFilesTable(this);
+  late final $ImportRootsTable importRoots = $ImportRootsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3392,6 +4859,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     playlistTracks,
     radios,
     catalogCacheEntries,
+    localFiles,
+    importRoots,
   ];
 }
 
@@ -3648,14 +5117,14 @@ class $$TracksTableTableManager
         RootTableManager<
           _$AppDatabase,
           $TracksTable,
-          Track,
+          TrackEntry,
           $$TracksTableFilterComposer,
           $$TracksTableOrderingComposer,
           $$TracksTableAnnotationComposer,
           $$TracksTableCreateCompanionBuilder,
           $$TracksTableUpdateCompanionBuilder,
-          (Track, BaseReferences<_$AppDatabase, $TracksTable, Track>),
-          Track,
+          (TrackEntry, BaseReferences<_$AppDatabase, $TracksTable, TrackEntry>),
+          TrackEntry,
           PrefetchHooks Function()
         > {
   $$TracksTableTableManager(_$AppDatabase db, $TracksTable table)
@@ -3738,12 +5207,12 @@ class $$TracksTableTableManager
                   p0
                       .map(
                         (e) => (
-                          e.readTable<$TracksTable, Track>(table),
-                          BaseReferences<_$AppDatabase, $TracksTable, Track>(
-                            db,
-                            table,
-                            e,
-                          ),
+                          e.readTable<$TracksTable, TrackEntry>(table),
+                          BaseReferences<
+                            _$AppDatabase,
+                            $TracksTable,
+                            TrackEntry
+                          >(db, table, e),
                         ),
                       )
                       .toList(),
@@ -3756,14 +5225,14 @@ typedef $$TracksTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $TracksTable,
-      Track,
+      TrackEntry,
       $$TracksTableFilterComposer,
       $$TracksTableOrderingComposer,
       $$TracksTableAnnotationComposer,
       $$TracksTableCreateCompanionBuilder,
       $$TracksTableUpdateCompanionBuilder,
-      (Track, BaseReferences<_$AppDatabase, $TracksTable, Track>),
-      Track,
+      (TrackEntry, BaseReferences<_$AppDatabase, $TracksTable, TrackEntry>),
+      TrackEntry,
       PrefetchHooks Function()
     >;
 typedef $$ArtistsTableCreateCompanionBuilder =
@@ -5168,6 +6637,703 @@ typedef $$CatalogCacheEntriesTableProcessedTableManager =
       CatalogCacheEntry,
       PrefetchHooks Function()
     >;
+typedef $$LocalFilesTableCreateCompanionBuilder =
+    LocalFilesCompanion Function({
+      required String libraryId,
+      required String mechanism,
+      required String locator,
+      required String displayPath,
+      required String deduplicationKey,
+      Value<String> availabilityStatus,
+      required DateTime lastScannedAt,
+      Value<String?> importRootLocator,
+      Value<String?> albumArtist,
+      Value<String?> albumGroupKey,
+      Value<int?> trackNumber,
+      Value<int?> trackTotal,
+      Value<int?> discNumber,
+      Value<int?> discTotal,
+      Value<String?> genre,
+      Value<int?> releaseYear,
+      Value<String?> artworkPath,
+      Value<String?> artworkMimeType,
+      Value<int> rowid,
+    });
+typedef $$LocalFilesTableUpdateCompanionBuilder =
+    LocalFilesCompanion Function({
+      Value<String> libraryId,
+      Value<String> mechanism,
+      Value<String> locator,
+      Value<String> displayPath,
+      Value<String> deduplicationKey,
+      Value<String> availabilityStatus,
+      Value<DateTime> lastScannedAt,
+      Value<String?> importRootLocator,
+      Value<String?> albumArtist,
+      Value<String?> albumGroupKey,
+      Value<int?> trackNumber,
+      Value<int?> trackTotal,
+      Value<int?> discNumber,
+      Value<int?> discTotal,
+      Value<String?> genre,
+      Value<int?> releaseYear,
+      Value<String?> artworkPath,
+      Value<String?> artworkMimeType,
+      Value<int> rowid,
+    });
+
+class $$LocalFilesTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalFilesTable> {
+  $$LocalFilesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get libraryId => $composableBuilder(
+    column: $table.libraryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mechanism => $composableBuilder(
+    column: $table.mechanism,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get locator => $composableBuilder(
+    column: $table.locator,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get displayPath => $composableBuilder(
+    column: $table.displayPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deduplicationKey => $composableBuilder(
+    column: $table.deduplicationKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get availabilityStatus => $composableBuilder(
+    column: $table.availabilityStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastScannedAt => $composableBuilder(
+    column: $table.lastScannedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get importRootLocator => $composableBuilder(
+    column: $table.importRootLocator,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get albumArtist => $composableBuilder(
+    column: $table.albumArtist,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get albumGroupKey => $composableBuilder(
+    column: $table.albumGroupKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get trackNumber => $composableBuilder(
+    column: $table.trackNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get trackTotal => $composableBuilder(
+    column: $table.trackTotal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get discNumber => $composableBuilder(
+    column: $table.discNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get discTotal => $composableBuilder(
+    column: $table.discTotal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get genre => $composableBuilder(
+    column: $table.genre,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get releaseYear => $composableBuilder(
+    column: $table.releaseYear,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get artworkPath => $composableBuilder(
+    column: $table.artworkPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get artworkMimeType => $composableBuilder(
+    column: $table.artworkMimeType,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalFilesTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalFilesTable> {
+  $$LocalFilesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get libraryId => $composableBuilder(
+    column: $table.libraryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mechanism => $composableBuilder(
+    column: $table.mechanism,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get locator => $composableBuilder(
+    column: $table.locator,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get displayPath => $composableBuilder(
+    column: $table.displayPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deduplicationKey => $composableBuilder(
+    column: $table.deduplicationKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get availabilityStatus => $composableBuilder(
+    column: $table.availabilityStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastScannedAt => $composableBuilder(
+    column: $table.lastScannedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get importRootLocator => $composableBuilder(
+    column: $table.importRootLocator,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get albumArtist => $composableBuilder(
+    column: $table.albumArtist,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get albumGroupKey => $composableBuilder(
+    column: $table.albumGroupKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get trackNumber => $composableBuilder(
+    column: $table.trackNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get trackTotal => $composableBuilder(
+    column: $table.trackTotal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get discNumber => $composableBuilder(
+    column: $table.discNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get discTotal => $composableBuilder(
+    column: $table.discTotal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get genre => $composableBuilder(
+    column: $table.genre,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get releaseYear => $composableBuilder(
+    column: $table.releaseYear,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get artworkPath => $composableBuilder(
+    column: $table.artworkPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get artworkMimeType => $composableBuilder(
+    column: $table.artworkMimeType,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalFilesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalFilesTable> {
+  $$LocalFilesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get libraryId =>
+      $composableBuilder(column: $table.libraryId, builder: (column) => column);
+
+  GeneratedColumn<String> get mechanism =>
+      $composableBuilder(column: $table.mechanism, builder: (column) => column);
+
+  GeneratedColumn<String> get locator =>
+      $composableBuilder(column: $table.locator, builder: (column) => column);
+
+  GeneratedColumn<String> get displayPath => $composableBuilder(
+    column: $table.displayPath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get deduplicationKey => $composableBuilder(
+    column: $table.deduplicationKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get availabilityStatus => $composableBuilder(
+    column: $table.availabilityStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastScannedAt => $composableBuilder(
+    column: $table.lastScannedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get importRootLocator => $composableBuilder(
+    column: $table.importRootLocator,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get albumArtist => $composableBuilder(
+    column: $table.albumArtist,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get albumGroupKey => $composableBuilder(
+    column: $table.albumGroupKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get trackNumber => $composableBuilder(
+    column: $table.trackNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get trackTotal => $composableBuilder(
+    column: $table.trackTotal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get discNumber => $composableBuilder(
+    column: $table.discNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get discTotal =>
+      $composableBuilder(column: $table.discTotal, builder: (column) => column);
+
+  GeneratedColumn<String> get genre =>
+      $composableBuilder(column: $table.genre, builder: (column) => column);
+
+  GeneratedColumn<int> get releaseYear => $composableBuilder(
+    column: $table.releaseYear,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get artworkPath => $composableBuilder(
+    column: $table.artworkPath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get artworkMimeType => $composableBuilder(
+    column: $table.artworkMimeType,
+    builder: (column) => column,
+  );
+}
+
+class $$LocalFilesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocalFilesTable,
+          LocalFile,
+          $$LocalFilesTableFilterComposer,
+          $$LocalFilesTableOrderingComposer,
+          $$LocalFilesTableAnnotationComposer,
+          $$LocalFilesTableCreateCompanionBuilder,
+          $$LocalFilesTableUpdateCompanionBuilder,
+          (
+            LocalFile,
+            BaseReferences<_$AppDatabase, $LocalFilesTable, LocalFile>,
+          ),
+          LocalFile,
+          PrefetchHooks Function()
+        > {
+  $$LocalFilesTableTableManager(_$AppDatabase db, $LocalFilesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer:
+              () => $$LocalFilesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer:
+              () => $$LocalFilesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer:
+              () => $$LocalFilesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> libraryId = const Value.absent(),
+                Value<String> mechanism = const Value.absent(),
+                Value<String> locator = const Value.absent(),
+                Value<String> displayPath = const Value.absent(),
+                Value<String> deduplicationKey = const Value.absent(),
+                Value<String> availabilityStatus = const Value.absent(),
+                Value<DateTime> lastScannedAt = const Value.absent(),
+                Value<String?> importRootLocator = const Value.absent(),
+                Value<String?> albumArtist = const Value.absent(),
+                Value<String?> albumGroupKey = const Value.absent(),
+                Value<int?> trackNumber = const Value.absent(),
+                Value<int?> trackTotal = const Value.absent(),
+                Value<int?> discNumber = const Value.absent(),
+                Value<int?> discTotal = const Value.absent(),
+                Value<String?> genre = const Value.absent(),
+                Value<int?> releaseYear = const Value.absent(),
+                Value<String?> artworkPath = const Value.absent(),
+                Value<String?> artworkMimeType = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LocalFilesCompanion(
+                libraryId: libraryId,
+                mechanism: mechanism,
+                locator: locator,
+                displayPath: displayPath,
+                deduplicationKey: deduplicationKey,
+                availabilityStatus: availabilityStatus,
+                lastScannedAt: lastScannedAt,
+                importRootLocator: importRootLocator,
+                albumArtist: albumArtist,
+                albumGroupKey: albumGroupKey,
+                trackNumber: trackNumber,
+                trackTotal: trackTotal,
+                discNumber: discNumber,
+                discTotal: discTotal,
+                genre: genre,
+                releaseYear: releaseYear,
+                artworkPath: artworkPath,
+                artworkMimeType: artworkMimeType,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String libraryId,
+                required String mechanism,
+                required String locator,
+                required String displayPath,
+                required String deduplicationKey,
+                Value<String> availabilityStatus = const Value.absent(),
+                required DateTime lastScannedAt,
+                Value<String?> importRootLocator = const Value.absent(),
+                Value<String?> albumArtist = const Value.absent(),
+                Value<String?> albumGroupKey = const Value.absent(),
+                Value<int?> trackNumber = const Value.absent(),
+                Value<int?> trackTotal = const Value.absent(),
+                Value<int?> discNumber = const Value.absent(),
+                Value<int?> discTotal = const Value.absent(),
+                Value<String?> genre = const Value.absent(),
+                Value<int?> releaseYear = const Value.absent(),
+                Value<String?> artworkPath = const Value.absent(),
+                Value<String?> artworkMimeType = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LocalFilesCompanion.insert(
+                libraryId: libraryId,
+                mechanism: mechanism,
+                locator: locator,
+                displayPath: displayPath,
+                deduplicationKey: deduplicationKey,
+                availabilityStatus: availabilityStatus,
+                lastScannedAt: lastScannedAt,
+                importRootLocator: importRootLocator,
+                albumArtist: albumArtist,
+                albumGroupKey: albumGroupKey,
+                trackNumber: trackNumber,
+                trackTotal: trackTotal,
+                discNumber: discNumber,
+                discTotal: discTotal,
+                genre: genre,
+                releaseYear: releaseYear,
+                artworkPath: artworkPath,
+                artworkMimeType: artworkMimeType,
+                rowid: rowid,
+              ),
+          withReferenceMapper:
+              (p0) =>
+                  p0
+                      .map(
+                        (e) => (
+                          e.readTable<$LocalFilesTable, LocalFile>(table),
+                          BaseReferences<
+                            _$AppDatabase,
+                            $LocalFilesTable,
+                            LocalFile
+                          >(db, table, e),
+                        ),
+                      )
+                      .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalFilesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocalFilesTable,
+      LocalFile,
+      $$LocalFilesTableFilterComposer,
+      $$LocalFilesTableOrderingComposer,
+      $$LocalFilesTableAnnotationComposer,
+      $$LocalFilesTableCreateCompanionBuilder,
+      $$LocalFilesTableUpdateCompanionBuilder,
+      (LocalFile, BaseReferences<_$AppDatabase, $LocalFilesTable, LocalFile>),
+      LocalFile,
+      PrefetchHooks Function()
+    >;
+typedef $$ImportRootsTableCreateCompanionBuilder =
+    ImportRootsCompanion Function({
+      required String id,
+      required String mechanism,
+      required String rootLocator,
+      required String displayPath,
+      required DateTime addedAt,
+      Value<int> rowid,
+    });
+typedef $$ImportRootsTableUpdateCompanionBuilder =
+    ImportRootsCompanion Function({
+      Value<String> id,
+      Value<String> mechanism,
+      Value<String> rootLocator,
+      Value<String> displayPath,
+      Value<DateTime> addedAt,
+      Value<int> rowid,
+    });
+
+class $$ImportRootsTableFilterComposer
+    extends Composer<_$AppDatabase, $ImportRootsTable> {
+  $$ImportRootsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mechanism => $composableBuilder(
+    column: $table.mechanism,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rootLocator => $composableBuilder(
+    column: $table.rootLocator,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get displayPath => $composableBuilder(
+    column: $table.displayPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ImportRootsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ImportRootsTable> {
+  $$ImportRootsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mechanism => $composableBuilder(
+    column: $table.mechanism,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rootLocator => $composableBuilder(
+    column: $table.rootLocator,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get displayPath => $composableBuilder(
+    column: $table.displayPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ImportRootsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ImportRootsTable> {
+  $$ImportRootsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get mechanism =>
+      $composableBuilder(column: $table.mechanism, builder: (column) => column);
+
+  GeneratedColumn<String> get rootLocator => $composableBuilder(
+    column: $table.rootLocator,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get displayPath => $composableBuilder(
+    column: $table.displayPath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get addedAt =>
+      $composableBuilder(column: $table.addedAt, builder: (column) => column);
+}
+
+class $$ImportRootsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ImportRootsTable,
+          ImportRoot,
+          $$ImportRootsTableFilterComposer,
+          $$ImportRootsTableOrderingComposer,
+          $$ImportRootsTableAnnotationComposer,
+          $$ImportRootsTableCreateCompanionBuilder,
+          $$ImportRootsTableUpdateCompanionBuilder,
+          (
+            ImportRoot,
+            BaseReferences<_$AppDatabase, $ImportRootsTable, ImportRoot>,
+          ),
+          ImportRoot,
+          PrefetchHooks Function()
+        > {
+  $$ImportRootsTableTableManager(_$AppDatabase db, $ImportRootsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer:
+              () => $$ImportRootsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer:
+              () => $$ImportRootsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer:
+              () =>
+                  $$ImportRootsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> mechanism = const Value.absent(),
+                Value<String> rootLocator = const Value.absent(),
+                Value<String> displayPath = const Value.absent(),
+                Value<DateTime> addedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ImportRootsCompanion(
+                id: id,
+                mechanism: mechanism,
+                rootLocator: rootLocator,
+                displayPath: displayPath,
+                addedAt: addedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String mechanism,
+                required String rootLocator,
+                required String displayPath,
+                required DateTime addedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ImportRootsCompanion.insert(
+                id: id,
+                mechanism: mechanism,
+                rootLocator: rootLocator,
+                displayPath: displayPath,
+                addedAt: addedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper:
+              (p0) =>
+                  p0
+                      .map(
+                        (e) => (
+                          e.readTable<$ImportRootsTable, ImportRoot>(table),
+                          BaseReferences<
+                            _$AppDatabase,
+                            $ImportRootsTable,
+                            ImportRoot
+                          >(db, table, e),
+                        ),
+                      )
+                      .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ImportRootsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ImportRootsTable,
+      ImportRoot,
+      $$ImportRootsTableFilterComposer,
+      $$ImportRootsTableOrderingComposer,
+      $$ImportRootsTableAnnotationComposer,
+      $$ImportRootsTableCreateCompanionBuilder,
+      $$ImportRootsTableUpdateCompanionBuilder,
+      (
+        ImportRoot,
+        BaseReferences<_$AppDatabase, $ImportRootsTable, ImportRoot>,
+      ),
+      ImportRoot,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5186,4 +7352,8 @@ class $AppDatabaseManager {
       $$RadiosTableTableManager(_db, _db.radios);
   $$CatalogCacheEntriesTableTableManager get catalogCacheEntries =>
       $$CatalogCacheEntriesTableTableManager(_db, _db.catalogCacheEntries);
+  $$LocalFilesTableTableManager get localFiles =>
+      $$LocalFilesTableTableManager(_db, _db.localFiles);
+  $$ImportRootsTableTableManager get importRoots =>
+      $$ImportRootsTableTableManager(_db, _db.importRoots);
 }

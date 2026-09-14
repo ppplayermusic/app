@@ -177,9 +177,12 @@ class MediaKitPlaybackEngine implements PlaybackController {
       }),
       _player!.stream.buffering.listen((buffering) {
         if (!_currentStatus.isIFrameMode) {
+          final isPlaying = _player!.state.playing;
           _updateStatus(
             _currentStatus.copyWith(
-              state: buffering ? PlaybackState.buffering : _currentStatus.state,
+              state: buffering 
+                  ? PlaybackState.buffering 
+                  : (isPlaying ? PlaybackState.playing : PlaybackState.paused),
             ),
           );
         }
@@ -205,6 +208,43 @@ class MediaKitPlaybackEngine implements PlaybackController {
   @override
   Future<void> prepare(PlaybackTrack track, {Duration? position}) async {
     if (_disposed) return;
+    
+    if (track.isLocal) {
+      if (track.localMediaUri == null) {
+        _updateStatus(_currentStatus.copyWith(
+          track: track,
+          state: PlaybackState.error,
+          error: 'Local media URI is missing for ${track.id}',
+        ));
+        return;
+      }
+      _intentRevision++;
+      _intendedState = PlaybackState.paused;
+      _playGeneration++;
+      
+      _updateStatus(_currentStatus.copyWith(
+        track: track,
+        state: PlaybackState.preparing,
+        isIFrameMode: false,
+        activeVideoId: track.id,
+      ));
+      
+      if (_currentStatus.isIFrameMode) {
+        try {
+          await _youtubeController?.pauseVideo().timeout(const Duration(seconds: 1));
+        } catch (_) {}
+      }
+      
+      try {
+        await _player!.open(Media(track.localMediaUri!), play: false);
+        if (position != null) {
+          await _player!.seek(position);
+        }
+      } catch (e) {
+        _updateStatus(_currentStatus.copyWith(state: PlaybackState.error, error: e));
+      }
+      return;
+    }
 
     // _attemptActive must be true so the bridge listener's _valid() check
     // passes and PlayerState.cued / unStarted events are processed.
@@ -298,6 +338,37 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _recoveryUsed = false;
     _ready = false;
     _latePauseGeneration = null;
+
+    if (track.isLocal) {
+      if (track.localMediaUri == null) {
+        _failAttempt(myGen, 'Local media URI is missing for ${track.id}');
+        return;
+      }
+      
+      _updateStatus(
+        _currentStatus.copyWith(
+          track: track,
+          state: PlaybackState.preparing,
+          clearError: true,
+          activeVideoId: testVideoId,
+          hasVideo: false,
+          isIFrameMode: false,
+          generation: myGen,
+        ),
+      );
+      
+      try {
+        await _player!.open(Media(track.localMediaUri!));
+        if (startAt > Duration.zero) {
+          await _player!.seek(startAt);
+        }
+      } catch (e) {
+        if (_valid(myGen)) {
+          _failAttempt(myGen, 'Local playback failed: $e');
+        }
+      }
+      return;
+    }
 
     _updateStatus(
       _currentStatus.copyWith(

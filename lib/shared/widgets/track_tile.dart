@@ -14,6 +14,7 @@ import '../../shared/widgets/artists_links.dart';
 import 'context_menu/content_context_menu.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/animated_equalizer.dart';
+import '../../features/local_library/local_track_context_menu.dart';
 
 class TrackTile extends ConsumerStatefulWidget {
   const TrackTile({
@@ -50,6 +51,11 @@ class TrackTile extends ConsumerStatefulWidget {
     model.Track track, [
     Offset? position,
   ]) {
+    if (track.isLocal) {
+      showLocalTrackContextMenu(context, ref, track);
+      return;
+    }
+    
     final screenSize = MediaQuery.of(context).size;
     final pos =
         position ??

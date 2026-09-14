@@ -11,12 +11,9 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
 
-/// Provider for recently played tracks from the database (Stream for real-time updates)
 final recentlyPlayedTracksProvider = StreamProvider<List<model.Track>>((ref) {
   final database = ref.watch(db.appDatabaseProvider);
-  return database
-      .watchRecentlyPlayed(limit: 50)
-      .map((tracks) => tracks.map(model.Track.fromDb).toList());
+  return database.watchRecentlyPlayedAppTracks(limit: 50);
 });
 
 class RecentlyPlayedScreen extends ConsumerWidget {

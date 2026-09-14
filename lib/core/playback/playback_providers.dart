@@ -11,16 +11,20 @@ export 'package:pp_playback_engine/pp_playback_engine.dart';
 // Extension to convert App Track to PlaybackTrack
 extension TrackToPlayback on Track {
   PlaybackTrack toPlaybackTrack() {
-    if (youtubeVideoId == null) {
-      throw StateError('Cannot create PlaybackTrack: youtubeVideoId is null');
+    if (sourceType == TrackSourceType.online && youtubeVideoId == null) {
+      throw StateError('Cannot create PlaybackTrack: youtubeVideoId is null for online track');
     }
     return PlaybackTrack(
-      id: youtubeVideoId!,
+      id: isLocal ? spotifyId : youtubeVideoId!,
       title: name,
       artist: artistName,
       album: albumName,
       artworkUrl: albumImage,
       duration: durationMs != null ? Duration(milliseconds: durationMs!) : null,
+      sourceType: isLocal ? PlaybackSourceType.local : PlaybackSourceType.online,
+      // For local tracks, the localFilePath comes from the db (set by LocalFileResolver).
+      // That path has already been processed (e.g. Uri.file() called) and is a valid URI string.
+      localMediaUri: localFilePath,
     );
   }
 }

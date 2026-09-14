@@ -22,6 +22,14 @@ _Track _$TrackFromJson(Map<String, dynamic> json) => _Track(
   queueOrigin:
       $enumDecodeNullable(_$QueueItemOriginEnumMap, json['queueOrigin']) ??
       QueueItemOrigin.context,
+  sourceType:
+      $enumDecodeNullable(_$TrackSourceTypeEnumMap, json['sourceType']) ??
+      TrackSourceType.online,
+  localFilePath: json['localFilePath'] as String?,
+  localArtworkPath: json['localArtworkPath'] as String?,
+  localAvailabilityStatus:
+      json['localAvailabilityStatus'] as String? ?? 'available',
+  localAlbumGroupKey: json['localAlbumGroupKey'] as String?,
 );
 
 Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
@@ -38,10 +46,20 @@ Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
   'isFavorite': instance.isFavorite,
   'queueItemId': instance.queueItemId,
   'queueOrigin': _$QueueItemOriginEnumMap[instance.queueOrigin]!,
+  'sourceType': _$TrackSourceTypeEnumMap[instance.sourceType]!,
+  'localFilePath': instance.localFilePath,
+  'localArtworkPath': instance.localArtworkPath,
+  'localAvailabilityStatus': instance.localAvailabilityStatus,
+  'localAlbumGroupKey': instance.localAlbumGroupKey,
 };
 
 const _$QueueItemOriginEnumMap = {
   QueueItemOrigin.context: 'context',
   QueueItemOrigin.user: 'user',
   QueueItemOrigin.autoplay: 'autoplay',
+};
+
+const _$TrackSourceTypeEnumMap = {
+  TrackSourceType.online: 'online',
+  TrackSourceType.local: 'local',
 };

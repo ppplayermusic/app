@@ -14,6 +14,7 @@ import '../../shared/widgets/shimmer_placeholder.dart';
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
 import '../../shared/widgets/pp_image.dart';
+import 'import_local_modal.dart';
 
 enum LibraryFilter { all, playlists, artists, albums, stations }
 
@@ -387,6 +388,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                             ),
                       ),
                       TactileIconButton(
+                        icon: Icons.create_new_folder_rounded,
+                        onTap: () => showImportLocalModal(context, ref),
+                      ),
+                      TactileIconButton(
                         icon: Icons.search_rounded,
                         onTap: () {
                           setState(() {
@@ -429,10 +434,23 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (_selectedFilter == LibraryFilter.all) ...[
-                      _LikedSongsCard(database: database)
-                          .animate()
-                          .fadeIn(duration: 400.ms)
-                          .slideY(begin: 0.1, end: 0),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _LikedSongsCard(database: database)
+                                .animate()
+                                .fadeIn(duration: 400.ms)
+                                .slideY(begin: 0.1, end: 0),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _LocalMusicCard(database: database)
+                                .animate()
+                                .fadeIn(duration: 400.ms, delay: 100.ms)
+                                .slideY(begin: 0.1, end: 0),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 16),
                     ],
                   ],
@@ -496,7 +514,7 @@ class _LikedSongsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<db.Track>>(
+    return StreamBuilder<List<db.TrackEntry>>(
       stream:
           (database.select(database.tracks)
             ..where((t) => t.isFavorite.equals(true))).watch(),
@@ -727,13 +745,11 @@ class _LikedSongsCard extends StatelessWidget {
                         builder:
                             (context, ref, _) => TactileTap(
                               onTap: () async {
-                                final tracks = await database.getFavorites();
+                                final tracks = await database.getFavoriteAppTracks();
                                 if (tracks.isNotEmpty) {
-                                  final modelTracks =
-                                      tracks.map(model.Track.fromDb).toList();
                                   ref
                                       .read(playerProvider.notifier)
-                                      .playTracks(modelTracks);
+                                      .playTracks(tracks);
                                 }
                               },
                               child: Container(
@@ -767,6 +783,120 @@ class _LikedSongsCard extends StatelessWidget {
                             ),
                       ),
                     ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _LocalMusicCard extends StatelessWidget {
+  const _LocalMusicCard({required this.database});
+
+  final db.AppDatabase database;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<model.Track>>(
+      stream: database.watchLocalAppTracks(),
+      builder: (context, snap) {
+        final count = snap.data?.length ?? 0;
+        return TactileTap(
+          onTap: () => context.push('/local-library'),
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 140),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32),
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.9),
+                  Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.4),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.25),
+                  blurRadius: 30,
+                  offset: const Offset(0, 15),
+                ),
+              ],
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
+                width: 0.5,
+              ),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              children: [
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.library_music_rounded,
+                          color: Theme.of(context).colorScheme.onTertiary,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Local Music',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: Theme.of(context).colorScheme.onTertiary,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onTertiary.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '$count TRACKS',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: Theme.of(context).colorScheme.onTertiary.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Decorative Play Icon
+                Positioned(
+                  right: 24,
+                  bottom: 24,
+                  child: Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onTertiary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.play_arrow_rounded,
+                      color: Theme.of(context).colorScheme.onTertiary.withValues(alpha: 0.5),
+                      size: 32,
+                    ),
                   ),
                 ),
               ],
@@ -880,9 +1010,7 @@ class _PlaylistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<model.Track>>(
-      future: database
-          .getPlaylistTracks(playlist.id)
-          .then((list) => list.map(model.Track.fromDb).toList()),
+      future: database.getPlaylistAppTracks(playlist.id),
       builder: (context, snap) {
         final tracks = snap.data ?? [];
         final images =

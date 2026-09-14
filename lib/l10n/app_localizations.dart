@@ -941,6 +941,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System Default'**
   String get systemDefault;
+
+  /// No description provided for @songsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Songs'**
+  String get songsTab;
+
+  /// No description provided for @foldersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Folders'**
+  String get foldersTab;
+
+  /// No description provided for @artistsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Artists'**
+  String get artistsTab;
+
+  /// No description provided for @albumsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Albums'**
+  String get albumsTab;
+
+  /// No description provided for @addMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Add music'**
+  String get addMusic;
+
+  /// No description provided for @addFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Add files'**
+  String get addFiles;
+
+  /// No description provided for @addFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Add folder'**
+  String get addFolder;
+
+  /// No description provided for @rescanLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescan library'**
+  String get rescanLibrary;
+
+  /// No description provided for @sortTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get sortTitle;
+
+  /// No description provided for @sortArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Artist'**
+  String get sortArtist;
+
+  /// No description provided for @sortAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Album'**
+  String get sortAlbum;
+
+  /// No description provided for @sortDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get sortDuration;
+
+  /// No description provided for @sortDateAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Date Added'**
+  String get sortDateAdded;
+
+  /// No description provided for @trackInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Information'**
+  String get trackInformation;
+
+  /// No description provided for @removeFromLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from library'**
+  String get removeFromLibrary;
+
+  /// No description provided for @showInFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Show in folder'**
+  String get showInFolder;
+
+  /// No description provided for @unknownArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Artist'**
+  String get unknownArtist;
+
+  /// No description provided for @unknownAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Album'**
+  String get unknownAlbum;
+
+  /// No description provided for @importedFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported Files'**
+  String get importedFiles;
+
+  /// No description provided for @playFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Play folder'**
+  String get playFolder;
+
+  /// No description provided for @shuffleFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle folder'**
+  String get shuffleFolder;
+
+  /// No description provided for @playAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Play all'**
+  String get playAll;
+
+  /// No description provided for @includeSubfolders.
+  ///
+  /// In en, this message translates to:
+  /// **'Include subfolders'**
+  String get includeSubfolders;
+
+  /// No description provided for @trackCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{0 tracks} =1{1 track} other{{count} tracks}}'**
+  String trackCount(num count);
+
+  /// No description provided for @noLocalSongs.
+  ///
+  /// In en, this message translates to:
+  /// **'No local songs imported'**
+  String get noLocalSongs;
+
+  /// No description provided for @searchLocalMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Search local music'**
+  String get searchLocalMusic;
+
+  /// No description provided for @viewAsList.
+  ///
+  /// In en, this message translates to:
+  /// **'View as list'**
+  String get viewAsList;
+
+  /// No description provided for @viewAsGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'View as grid'**
+  String get viewAsGrid;
+
+  /// No description provided for @trackInfoPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Path'**
+  String get trackInfoPath;
+
+  /// No description provided for @trackInfoFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get trackInfoFormat;
+
+  /// No description provided for @trackInfoDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get trackInfoDuration;
 }
 
 class _AppLocalizationsDelegate

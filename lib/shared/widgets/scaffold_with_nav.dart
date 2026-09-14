@@ -18,6 +18,7 @@ import 'premium_modals.dart';
 import '../../core/db/app_database.dart' as db;
 import 'artists_links.dart';
 import 'context_menu/content_context_menu.dart';
+import '../../core/models/track.dart';
 
 class ScaffoldWithNav extends ConsumerStatefulWidget {
   const ScaffoldWithNav({
@@ -59,9 +60,11 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     final playerView = settings.playerView;
     final isVideoView = playerView == PlayerView.video;
     final isPlayerScreen = widget.location == '/player';
+    final currentTrack = ref.watch(playerProvider.select((s) => s.currentTrack));
+    final isLocalTrack = currentTrack?.sourceType == TrackSourceType.local;
     final hasVideoId = ref.watch(
       playerProvider.select((s) => s.videoId != null),
-    );
+    ) && !isLocalTrack;
     final loadError = ref.watch(playerProvider.select((s) => s.loadError));
     final isPipMode = ref.watch(playerProvider.select((s) => s.isPipMode));
 
@@ -299,10 +302,11 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                               child: Stack(
                                                 children: [
                                                   // Stable WebView host — never remounts during PiP.
-                                                  _StablePlaybackView(
-                                                    controller: playbackEngine,
-                                                    status: playbackStatus,
-                                                  ),
+                                                  if (playbackStatus.track?.isLocal != true)
+                                                    _StablePlaybackView(
+                                                      controller: playbackEngine,
+                                                      status: playbackStatus,
+                                                    ),
 
                                                   if (loadError != null)
                                                     Positioned.fill(
@@ -330,6 +334,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .center,
+                                                              mainAxisSize: MainAxisSize.min,
                                                               children: [
                                                                 Icon(
                                                                   Icons
@@ -338,44 +343,40 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                                                       Theme.of(
                                                                         context,
                                                                       ).colorScheme.error,
-                                                                  size:
-                                                                      renderH *
-                                                                      0.25,
+                                                                  size: 24, // Use fixed size instead of renderH * 0.25 to avoid overflow in miniplayer
                                                                 ),
                                                                 const SizedBox(
-                                                                  height: 12,
+                                                                  height: 4,
                                                                 ),
                                                                 Padding(
                                                                   padding:
                                                                       const EdgeInsets.symmetric(
                                                                         horizontal:
-                                                                            16,
+                                                                            8.0,
                                                                       ),
                                                                   child: Text(
-                                                                    loadError,
+                                                                    loadError!,
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
-                                                                    style: TextStyle(
-                                                                      color:
-                                                                          Theme.of(
-                                                                            context,
-                                                                          ).colorScheme.onSurface,
-                                                                      fontSize:
-                                                                          renderH *
-                                                                                      0.08 <
-                                                                                  12
-                                                                              ? 12
-                                                                              : renderH *
-                                                                                  0.08,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
                                                                     maxLines: 2,
                                                                     overflow:
                                                                         TextOverflow
                                                                             .ellipsis,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          Theme.of(
+                                                                            context,
+                                                                          )
+                                                                              .colorScheme
+                                                                              .error,
+                                                                      fontSize:
+                                                                          10,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -630,6 +631,7 @@ class _MiniPlayerBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final playerState = ref.watch(playerProvider);
     final track = playerState.currentTrack;
+    final isLocalTrack = track?.sourceType == TrackSourceType.local;
     final showVideo = ref.watch(settingsProvider.select((s) => s.showVideo));
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -783,20 +785,21 @@ class _MiniPlayerBar extends ConsumerWidget {
                           tooltip: AppLocalizations.of(context)!.next,
                         ),
                         const SizedBox(width: 4),
-                        TactileIconButton(
-                          icon: showVideo ? Icons.videocam : Icons.videocam_off,
-                          onTap:
-                              () =>
-                                  ref
-                                      .read(settingsProvider.notifier)
-                                      .toggleVideo(),
-                          size: 18,
-                          color: colorScheme.onSurfaceVariant.withValues(
-                            alpha: 0.6,
+                        if (isLocalTrack == false)
+                          TactileIconButton(
+                            icon: showVideo ? Icons.videocam : Icons.videocam_off,
+                            onTap:
+                                () =>
+                                    ref
+                                        .read(settingsProvider.notifier)
+                                        .toggleVideo(),
+                            size: 18,
+                            color: colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.6,
+                            ),
+                            hoverColor: colorScheme.onSurface,
+                            tooltip: showVideo ? 'Hide Video' : 'Show Video',
                           ),
-                          hoverColor: colorScheme.onSurface,
-                          tooltip: showVideo ? 'Hide Video' : 'Show Video',
-                        ),
                       ],
                     ),
                   ],
@@ -1379,6 +1382,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final playerState = ref.watch(playerProvider);
     final track = playerState.currentTrack;
+    final isLocalTrack = track?.sourceType == TrackSourceType.local;
     final showVideo = ref.watch(settingsProvider.select((s) => s.showVideo));
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -1603,27 +1607,29 @@ class _DesktopPlayerBar extends ConsumerWidget {
                                         .setVolume(val),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            TactileIconButton(
-                              icon:
-                                  showVideo
-                                      ? Icons.videocam
-                                      : Icons.videocam_off,
-                              onTap:
-                                  () =>
-                                      ref
-                                          .read(settingsProvider.notifier)
-                                          .toggleVideo(),
-                              size: 20,
-                              color:
-                                  showVideo
-                                      ? colorScheme.primary
-                                      : colorScheme.onSurfaceVariant.withValues(
-                                        alpha: 0.7,
-                                      ),
-                              hoverColor: colorScheme.onSurface,
-                              tooltip: showVideo ? 'Hide Video' : 'Show Video',
-                            ),
+                            if (isLocalTrack == false) ...[
+                              const SizedBox(width: 8),
+                              TactileIconButton(
+                                icon:
+                                    showVideo
+                                        ? Icons.videocam
+                                        : Icons.videocam_off,
+                                onTap:
+                                    () =>
+                                        ref
+                                            .read(settingsProvider.notifier)
+                                            .toggleVideo(),
+                                size: 20,
+                                color:
+                                    showVideo
+                                        ? colorScheme.primary
+                                        : colorScheme.onSurfaceVariant.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                hoverColor: colorScheme.onSurface,
+                                tooltip: showVideo ? 'Hide Video' : 'Show Video',
+                              ),
+                            ],
                             const SizedBox(width: 16),
                             TactileIconButton(
                               icon: Icons.queue_music,

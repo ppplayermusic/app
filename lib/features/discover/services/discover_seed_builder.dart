@@ -30,12 +30,12 @@ class DiscoverSeedBuilder {
   DiscoverSeedBuilder(this._db);
 
   Future<DiscoverSeedContext> getContext() async {
-    final recentDb = await _db.getRecentlyPlayed(limit: 20);
-    final favoritesDb = await _db.getFavorites();
+    final recentTracks = await _db.getRecentlyPlayedAppTracks(limit: 20);
+    final favoriteTracks = await _db.getFavoriteAppTracks();
     final artistsDb = await _db.getFollowedArtists();
     return DiscoverSeedContext(
-      recentTracks: recentDb.map((t) => Track.fromDb(t)).toList(),
-      favoriteTracks: favoritesDb.map((t) => Track.fromDb(t)).toList(),
+      recentTracks: recentTracks,
+      favoriteTracks: favoriteTracks,
       followedArtists:
           artistsDb
               .map(

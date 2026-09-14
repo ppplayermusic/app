@@ -1,11 +1,16 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/track.dart' as model;
+import '../models/local_album.dart';
+import '../models/local_artist.dart';
+import '../models/local_folder.dart';
 
 part 'app_database.g.dart';
 
 // --- Tables ---
 
+@DataClassName('TrackEntry')
 class Tracks extends Table {
   TextColumn get spotifyId => text()();
   TextColumn get name => text()();
@@ -95,6 +100,64 @@ class CatalogCacheEntries extends Table {
   Set<Column> get primaryKey => {key};
 }
 
+/// Persistent access descriptor for each locally imported audio file.
+/// [spotifyId] in Tracks stores the matching [libraryId] (e.g. 'local:`<uuid>`').
+class LocalFiles extends Table {
+  // Stable library ID: 'local:<uuid>'. FK → Tracks.spotifyId.
+  TextColumn get libraryId => text()();
+
+  // Access mechanism: 'absolutePath' | 'androidContentUri' |
+  //                   'iOsSecurityBookmark' | 'managedCopy'
+  TextColumn get mechanism => text()();
+
+  // Durable locator — absolute path, content URI, or base64 bookmark.
+  TextColumn get locator => text()();
+
+  // Human-readable path for UI only.
+  TextColumn get displayPath => text()();
+
+  // sha1 hex of canonical locator bytes — deduplication key.
+  TextColumn get deduplicationKey => text()();
+
+  // 'available' | 'missing' | 'permissionRevoked' | 'decodingError'
+  TextColumn get availabilityStatus =>
+      text().withDefault(const Constant('available'))();
+
+  DateTimeColumn get lastScannedAt => dateTime()();
+
+  // Import root this file came from (rootLocator), if imported via folder.
+  TextColumn get importRootLocator => text().nullable()();
+
+  // Enriched metadata fields (beyond what Tracks stores for Spotify tracks).
+  TextColumn get albumArtist => text().nullable()();
+  TextColumn get albumGroupKey => text().nullable()();
+  IntColumn get trackNumber => integer().nullable()();
+  IntColumn get trackTotal => integer().nullable()();
+  IntColumn get discNumber => integer().nullable()();
+  IntColumn get discTotal => integer().nullable()();
+  TextColumn get genre => text().nullable()();
+  IntColumn get releaseYear => integer().nullable()();
+
+  // Path to cached artwork file preserving original MIME type.
+  TextColumn get artworkPath => text().nullable()();
+  TextColumn get artworkMimeType => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {libraryId};
+}
+
+/// Persisted import roots so rescan can discover new files.
+class ImportRoots extends Table {
+  TextColumn get id => text()(); // uuid v4
+  TextColumn get mechanism => text()();
+  TextColumn get rootLocator => text()();
+  TextColumn get displayPath => text()();
+  DateTimeColumn get addedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // --- Database ---
 
 @DriftDatabase(
@@ -106,6 +169,8 @@ class CatalogCacheEntries extends Table {
     PlaylistTracks,
     Radios,
     CatalogCacheEntries,
+    LocalFiles,
+    ImportRoots,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -114,7 +179,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -158,27 +223,90 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(tracks, tracks.youtubeVideoId);
         } catch (_) {}
       }
+      if (from < 8) {
+        await m.createTable(localFiles);
+        await m.createTable(importRoots);
+      }
     },
   );
 
   // --- Track queries ---
 
-  Future<List<Track>> getFavorites() =>
+  Future<List<TrackEntry>> getFavorites() =>
       (select(tracks)..where((t) => t.isFavorite.equals(true))).get();
 
-  Future<List<Track>> getRecentlyPlayed({int limit = 50}) =>
+  Future<List<model.Track>> getFavoriteAppTracks() async {
+    final query = select(tracks).join([
+      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])..where(tracks.isFavorite.equals(true));
+    final rows = await query.get();
+    return rows.map(_mapTrackWithLocal).toList();
+  }
+
+  Future<List<TrackEntry>> getRecentlyPlayed({int limit = 50}) =>
       (select(tracks)
             ..where((t) => t.lastPlayedAt.isNotNull())
             ..orderBy([(t) => OrderingTerm.desc(t.lastPlayedAt)])
             ..limit(limit))
           .get();
 
-  Stream<List<Track>> watchRecentlyPlayed({int limit = 50}) =>
+  Future<List<model.Track>> getRecentlyPlayedAppTracks({int limit = 50}) async {
+    final query = select(tracks).join([
+      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])
+      ..where(tracks.lastPlayedAt.isNotNull())
+      ..orderBy([OrderingTerm.desc(tracks.lastPlayedAt)])
+      ..limit(limit);
+    final rows = await query.get();
+    return rows.map(_mapTrackWithLocal).toList();
+  }
+
+  Stream<List<TrackEntry>> watchRecentlyPlayed({int limit = 50}) =>
       (select(tracks)
             ..where((t) => t.lastPlayedAt.isNotNull())
             ..orderBy([(t) => OrderingTerm.desc(t.lastPlayedAt)])
             ..limit(limit))
           .watch();
+
+  model.Track _mapTrackWithLocal(TypedResult row) {
+    final t = row.readTable(tracks);
+    final lf = row.readTableOrNull(localFiles);
+    
+    if (lf != null) {
+      return model.Track(
+        spotifyId: t.spotifyId,
+        name: t.name,
+        artistId: t.artistId,
+        artistName: t.artistName,
+        albumId: t.albumId,
+        albumName: t.albumName,
+        albumImage: t.albumImage,
+        durationMs: t.durationMs,
+        youtubeVideoId: t.youtubeVideoId,
+        playCount: t.playCount,
+        isFavorite: t.isFavorite,
+        
+        sourceType: model.TrackSourceType.local,
+        localFilePath: lf.locator,
+        localArtworkPath: lf.artworkPath,
+        localAvailabilityStatus: lf.availabilityStatus,
+        localAlbumGroupKey: lf.albumGroupKey,
+      );
+    }
+    
+    return model.Track.fromDb(t);
+  }
+
+  Stream<List<model.Track>> watchRecentlyPlayedAppTracks({int limit = 50}) {
+    final query = select(tracks).join([
+      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])
+      ..where(tracks.lastPlayedAt.isNotNull())
+      ..orderBy([OrderingTerm.desc(tracks.lastPlayedAt)])
+      ..limit(limit);
+      
+    return query.watch().map((rows) => rows.map(_mapTrackWithLocal).toList());
+  }
 
   Future<void> clearHistory() =>
       (update(tracks)).write(const TracksCompanion(lastPlayedAt: Value(null)));
@@ -202,8 +330,16 @@ class AppDatabase extends _$AppDatabase {
     )).watchSingleOrNull().map((t) => t?.isFavorite ?? false);
   }
 
-  Stream<List<Track>> watchFavorites() {
+  Stream<List<TrackEntry>> watchFavorites() {
     return (select(tracks)..where((t) => t.isFavorite.equals(true))).watch();
+  }
+
+  Stream<List<model.Track>> watchFavoriteAppTracks() {
+    final query = select(tracks).join([
+      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])..where(tracks.isFavorite.equals(true));
+    
+    return query.watch().map((rows) => rows.map(_mapTrackWithLocal).toList());
   }
 
   Future<void> recordPlay(TracksCompanion companion) async {
@@ -354,7 +490,7 @@ class AppDatabase extends _$AppDatabase {
     return query.watch();
   }
 
-  Future<List<Track>> getPlaylistTracks(int playlistId) async {
+  Future<List<TrackEntry>> getPlaylistTracks(int playlistId) async {
     final query =
         select(tracks).join([
             innerJoin(
@@ -369,7 +505,138 @@ class AppDatabase extends _$AppDatabase {
     return rows.map((row) => row.readTable(tracks)).toList();
   }
 
-  Stream<List<Track>> watchPlaylistTracks(int playlistId) {
+  Future<List<model.Track>> getPlaylistAppTracks(int playlistId) async {
+    final query =
+        select(tracks).join([
+            innerJoin(
+              playlistTracks,
+              playlistTracks.trackSpotifyId.equalsExp(tracks.spotifyId),
+            ),
+            leftOuterJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(playlistTracks.playlistId.equals(playlistId))
+          ..orderBy([OrderingTerm.asc(playlistTracks.position)]);
+
+    final rows = await query.get();
+    return rows.map(_mapTrackWithLocal).toList();
+  }
+
+  Future<List<model.Track>> getLocalAppTracks() async {
+    final query = select(tracks).join([
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ]);
+    final rows = await query.get();
+    return rows.map(_mapTrackWithLocal).toList();
+  }
+
+  Stream<List<model.Track>> watchLocalAppTracks() {
+    final query = select(tracks).join([
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ]);
+    return query.watch().map((rows) => rows.map(_mapTrackWithLocal).toList());
+  }
+
+  Future<List<model.Track>> getAlbumAppTracks(String albumGroupKey) async {
+    final query = select(tracks).join([
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])..where(localFiles.albumGroupKey.equals(albumGroupKey));
+    final rows = await query.get();
+    return rows.map(_mapTrackWithLocal).toList()..sort((a, b) => a.name.compareTo(b.name));
+  }
+
+  Future<List<model.Track>> getArtistAppTracks(String artistName) async {
+    final query = select(tracks).join([
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])..where(tracks.artistName.equals(artistName));
+    final rows = await query.get();
+    return rows.map(_mapTrackWithLocal).toList()..sort((a, b) => a.name.compareTo(b.name));
+  }
+
+  Future<List<model.Track>> getFolderAppTracks(String rootLocator) async {
+    final query = select(tracks).join([
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])..where(localFiles.importRootLocator.equals(rootLocator));
+    final rows = await query.get();
+    return rows.map(_mapTrackWithLocal).toList()..sort((a, b) => a.name.compareTo(b.name));
+  }
+
+  Stream<List<LocalAlbum>> watchLocalAlbums() {
+    final query = select(localFiles).join([
+      innerJoin(tracks, tracks.spotifyId.equalsExp(localFiles.libraryId))
+    ])
+      ..addColumns([localFiles.albumGroupKey.count()])
+      ..groupBy([localFiles.albumGroupKey]);
+
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        final track = row.readTable(tracks);
+        final local = row.readTable(localFiles);
+        final count = row.read(localFiles.albumGroupKey.count()) ?? 0;
+        return LocalAlbum(
+          albumGroupKey: local.albumGroupKey ?? track.albumName ?? 'Unknown',
+          title: track.albumName ?? 'Unknown Album',
+          artist: local.albumArtist ?? track.artistName,
+          artworkPath: local.artworkPath,
+          trackCount: count,
+          releaseYear: local.releaseYear,
+        );
+      }).toList();
+    });
+  }
+
+  Stream<List<LocalArtist>> watchLocalArtists() {
+    final query = select(tracks).join([
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])
+      ..addColumns([tracks.artistName.count()])
+      ..groupBy([tracks.artistName]);
+
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        final track = row.readTable(tracks);
+        final local = row.readTable(localFiles);
+        final count = row.read(tracks.artistName.count()) ?? 0;
+        return LocalArtist(
+          name: track.artistName,
+          trackCount: count,
+          fallbackArtworkPath: local.artworkPath,
+        );
+      }).toList();
+    });
+  }
+
+  Stream<List<LocalFolder>> watchLocalFolders() {
+    final query = selectOnly(localFiles)
+      ..addColumns([localFiles.importRootLocator])
+      ..groupBy([localFiles.importRootLocator]);
+
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        final locator = row.read(localFiles.importRootLocator);
+        if (locator == null) {
+          return const LocalFolder(
+            path: 'imported',
+            name: 'Imported Files',
+          );
+        }
+        // Extract the last part of the path as the name. 
+        // We will do a full folder tree in the UI provider, 
+        // this is just the root folders for now.
+        final uri = Uri.tryParse(locator) ?? Uri.file(locator);
+        final name = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : locator;
+        
+        return LocalFolder(
+          path: locator,
+          name: name,
+        );
+      }).toList();
+    });
+  }
+
+  Stream<List<TrackEntry>> watchPlaylistTracks(int playlistId) {
     final query =
         select(tracks).join([
             innerJoin(
@@ -382,6 +649,26 @@ class AppDatabase extends _$AppDatabase {
 
     return query.watch().map(
       (rows) => rows.map((row) => row.readTable(tracks)).toList(),
+    );
+  }
+
+  Stream<List<model.Track>> watchPlaylistAppTracks(int playlistId) {
+    final query =
+        select(tracks).join([
+            innerJoin(
+              playlistTracks,
+              playlistTracks.trackSpotifyId.equalsExp(tracks.spotifyId),
+            ),
+            leftOuterJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(playlistTracks.playlistId.equals(playlistId))
+          ..orderBy([OrderingTerm.asc(playlistTracks.position)]);
+
+    return query.watch().map(
+      (rows) => rows.map(_mapTrackWithLocal).toList(),
     );
   }
 
@@ -496,6 +783,60 @@ class AppDatabase extends _$AppDatabase {
       }
     });
   }
+
+  // --- LocalFiles queries ---
+
+  Future<LocalFile?> getLocalFile(String libraryId) =>
+      (select(localFiles)
+        ..where((f) => f.libraryId.equals(libraryId))).getSingleOrNull();
+
+  Future<List<LocalFile>> getAllLocalFiles() => select(localFiles).get();
+
+  Stream<List<LocalFile>> watchAllLocalFiles() => select(localFiles).watch();
+
+  Future<LocalFile?> getLocalFileByDeduplicationKey(String key) =>
+      (select(localFiles)
+        ..where((f) => f.deduplicationKey.equals(key))).getSingleOrNull();
+
+  Future<void> upsertLocalFile(LocalFilesCompanion entry) =>
+      into(localFiles).insertOnConflictUpdate(entry);
+
+  Future<void> updateLocalFileStatus(
+    String libraryId,
+    String status,
+    DateTime scannedAt,
+  ) =>
+      (update(localFiles)
+        ..where((f) => f.libraryId.equals(libraryId))).write(
+        LocalFilesCompanion(
+          availabilityStatus: Value(status),
+          lastScannedAt: Value(scannedAt),
+        ),
+      );
+
+  Future<void> deleteLocalFile(String libraryId) async {
+    await (delete(localFiles)
+      ..where((f) => f.libraryId.equals(libraryId))).go();
+    // Also remove from Tracks so it disappears from playlists and history.
+    await (delete(tracks)
+      ..where((t) => t.spotifyId.equals(libraryId))).go();
+  }
+
+  Future<List<LocalFile>> getLocalFilesByImportRoot(String rootLocator) =>
+      (select(localFiles)
+        ..where((f) => f.importRootLocator.equals(rootLocator))).get();
+
+  // --- ImportRoots queries ---
+
+  Future<List<ImportRoot>> getAllImportRoots() => select(importRoots).get();
+
+  Stream<List<ImportRoot>> watchImportRoots() => select(importRoots).watch();
+
+  Future<void> upsertImportRoot(ImportRootsCompanion entry) =>
+      into(importRoots).insertOnConflictUpdate(entry);
+
+  Future<void> deleteImportRoot(String id) =>
+      (delete(importRoots)..where((r) => r.id.equals(id))).go();
 
   static QueryExecutor _openConnection() {
     return driftDatabase(

@@ -35,6 +35,8 @@ dependencies:
   media_kit: ^1.2.6
   media_kit_libs_video: ^1.0.7
   media_kit_video: ^2.0.1
+  crypto: ^3.0.6
+  file_picker: ^12.0.0
   image_picker: ^1.1.2
   path_provider: ^2.1.5
   permission_handler: ^13.0.2
@@ -49,6 +51,9 @@ dependencies:
     path: lib/core/playback/packages/youtube_player_iframe_macos_patch/package
   flutter_secure_storage: ^11.0.0
   package_info_plus: ^10.2.1
+  uuid: ^4.6.0
+  path: ^1.9.1
+  metadata_god: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -93,3 +98,5 @@ dependency_overrides:
   # fire on macOS because 'macos' was missing from sendPlatformMessage().
   youtube_player_iframe:
     path: lib/core/playback/packages/youtube_player_iframe_macos_patch/package
+  freezed_annotation: ^3.1.0
+  flutter_rust_bridge: 2.11.1
