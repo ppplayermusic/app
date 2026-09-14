@@ -570,13 +570,13 @@ class AppLocalizationsKa extends AppLocalizations {
   }
 
   @override
-  String get goodMorning => 'Good morning';
+  String get goodMorning => 'დილა მშვიდობისა';
 
   @override
-  String get goodAfternoon => 'Good afternoon';
+  String get goodAfternoon => 'შუადღე მშვიდობისა';
 
   @override
-  String get goodEvening => 'Good evening';
+  String get goodEvening => 'საღამო მშვიდობისა';
 
   @override
   String greetingWithName(Object greeting, Object name) {
@@ -584,7 +584,7 @@ class AppLocalizationsKa extends AppLocalizations {
   }
 
   @override
-  String get yourMusicIsWaiting => 'Your music is waiting.';
+  String get yourMusicIsWaiting => 'შენი მუსიკა გელოდება.';
 
   @override
   String dailyMix(Object number) {
@@ -593,7 +593,7 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String get yourFavoritesAndNewDiscoveries =>
-      'Your favorites\nand new discoveries';
+      'შენი ფავორიტები\nდა ახალი აღმოჩენები';
 
   @override
   String get discoverWeekly => 'Discover Weekly';
@@ -602,28 +602,28 @@ class AppLocalizationsKa extends AppLocalizations {
   String get releaseRadar => 'Release Radar';
 
   @override
-  String get newMusicJustForYou => 'New music\njust for you';
+  String get newMusicJustForYou => 'ახალი მუსიკა\nმხოლოდ შენთვის';
 
   @override
   String get chillMix => 'Chill Mix';
 
   @override
-  String get relaxAndUnwind => 'Relax and unwind';
+  String get relaxAndUnwind => 'დაისვენე და განიტვირთე';
 
   @override
   String get focusMix => 'Focus Mix';
 
   @override
-  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+  String get deepFocusAndProductivity => 'ღრმა ფოკუსი\nდა პროდუქტიულობა';
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return '$artist რადიო';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return '$genre რადიო';
   }
 
   @override

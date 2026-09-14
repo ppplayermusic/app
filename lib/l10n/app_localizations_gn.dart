@@ -308,7 +308,7 @@ class AppLocalizationsGn extends AppLocalizations {
   String get useYoutubePlayerWhenAvailable => 'Eiporu YouTube Player oĩramo';
 
   @override
-  String get video => 'VIDEO';
+  String get video => 'Ta\'ãngamýi';
 
   @override
   String get whatDoYouWantToListenTo => 'Mba\'étapa rehendu potáva?';
@@ -380,7 +380,7 @@ class AppLocalizationsGn extends AppLocalizations {
   String get playNext => 'Mbopu Oúva';
 
   @override
-  String get playlist => 'Tysýi';
+  String get playlist => 'Playlist';
 
   @override
   String get playlistName => 'Réra Tysýi';
@@ -526,7 +526,7 @@ class AppLocalizationsGn extends AppLocalizations {
   String get trackInfoPath => 'Tape';
 
   @override
-  String get trackInfoFormat => 'Ysaja';
+  String get trackInfoFormat => 'Formato';
 
   @override
   String get trackInfoDuration => 'Pukukue';
@@ -569,13 +569,13 @@ class AppLocalizationsGn extends AppLocalizations {
   }
 
   @override
-  String get goodMorning => 'Good morning';
+  String get goodMorning => 'Mba\'éichapa pyhareve';
 
   @override
-  String get goodAfternoon => 'Good afternoon';
+  String get goodAfternoon => 'Mba\'éichapa ka\'aru';
 
   @override
-  String get goodEvening => 'Good evening';
+  String get goodEvening => 'Mba\'éichapa pyhare';
 
   @override
   String greetingWithName(Object greeting, Object name) {
@@ -583,7 +583,7 @@ class AppLocalizationsGn extends AppLocalizations {
   }
 
   @override
-  String get yourMusicIsWaiting => 'Your music is waiting.';
+  String get yourMusicIsWaiting => 'Ne purahéi nde ra\'arõ.';
 
   @override
   String dailyMix(Object number) {
@@ -592,7 +592,7 @@ class AppLocalizationsGn extends AppLocalizations {
 
   @override
   String get yourFavoritesAndNewDiscoveries =>
-      'Your favorites\nand new discoveries';
+      'Ne mba\'e eipotavéva\nha pyahu rejuhúva';
 
   @override
   String get discoverWeekly => 'Discover Weekly';
@@ -601,28 +601,28 @@ class AppLocalizationsGn extends AppLocalizations {
   String get releaseRadar => 'Release Radar';
 
   @override
-  String get newMusicJustForYou => 'New music\njust for you';
+  String get newMusicJustForYou => 'Purahéi pyahu\nndéve g̃uarãnte';
 
   @override
   String get chillMix => 'Chill Mix';
 
   @override
-  String get relaxAndUnwind => 'Relax and unwind';
+  String get relaxAndUnwind => 'Epytu\'u ha eñembopiro\'y';
 
   @override
   String get focusMix => 'Focus Mix';
 
   @override
-  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+  String get deepFocusAndProductivity => 'Eñatende porã\nha ejapo heta mba\'e';
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return '$artist Puhoe';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return '$genre Puhoe';
   }
 
   @override

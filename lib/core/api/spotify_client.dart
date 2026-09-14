@@ -684,16 +684,33 @@ final spotifyClientProvider = Provider<SpotifyClient>((ref) {
   }
 
   final metrics = ref.watch(cacheMetricsProvider);
+  final authHandler = ref.watch(spotifyAuthHandlerProvider(dio));
+
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
         metrics.spotifyRequests++;
         handler.next(options);
       },
+      onError: (DioException e, handler) async {
+        if (e.response?.statusCode == 401 &&
+            e.requestOptions.extra['_retry'] != true) {
+          e.requestOptions.extra['_retry'] = true;
+          authHandler.invalidate();
+          try {
+            final newToken = await authHandler.getAccessToken();
+            e.requestOptions.headers['Authorization'] = 'Bearer $newToken';
+            final retryResponse = await dio.fetch(e.requestOptions);
+            return handler.resolve(retryResponse);
+          } catch (retryError) {
+            return handler.next(e);
+          }
+        }
+        return handler.next(e);
+      },
     ),
   );
 
-  final authHandler = ref.watch(spotifyAuthHandlerProvider(dio));
   return SpotifyClient(dio, authHandler, market: market);
 });
 

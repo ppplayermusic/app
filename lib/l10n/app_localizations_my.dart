@@ -383,7 +383,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get playNext => 'နောက်တစ်ခုကို ဖွင့်မည်';
 
   @override
-  String get playlist => 'ဖွင့်စာရင်း';
+  String get playlist => 'သီချင်းစာရင်း';
 
   @override
   String get playlistName => 'ဖွင့်စာရင်း အမည်';
@@ -573,13 +573,13 @@ class AppLocalizationsMy extends AppLocalizations {
   }
 
   @override
-  String get goodMorning => 'Good morning';
+  String get goodMorning => 'မင်္ဂလာနံနက်ခင်းပါ';
 
   @override
-  String get goodAfternoon => 'Good afternoon';
+  String get goodAfternoon => 'မင်္ဂလာမွန်းလွဲခင်းပါ';
 
   @override
-  String get goodEvening => 'Good evening';
+  String get goodEvening => 'မင်္ဂလာညချမ်းပါ';
 
   @override
   String greetingWithName(Object greeting, Object name) {
@@ -587,7 +587,7 @@ class AppLocalizationsMy extends AppLocalizations {
   }
 
   @override
-  String get yourMusicIsWaiting => 'Your music is waiting.';
+  String get yourMusicIsWaiting => 'သင့်သီချင်းများ စောင့်နေပါသည်။';
 
   @override
   String dailyMix(Object number) {
@@ -596,7 +596,7 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get yourFavoritesAndNewDiscoveries =>
-      'Your favorites\nand new discoveries';
+      'သင်နှစ်သက်သော\nနှင့် အသစ်တွေ့ရှိမှုများ';
 
   @override
   String get discoverWeekly => 'Discover Weekly';
@@ -605,28 +605,29 @@ class AppLocalizationsMy extends AppLocalizations {
   String get releaseRadar => 'Release Radar';
 
   @override
-  String get newMusicJustForYou => 'New music\njust for you';
+  String get newMusicJustForYou => 'သင့်အတွက်သီးသန့်\nသီချင်းသစ်များ';
 
   @override
   String get chillMix => 'Chill Mix';
 
   @override
-  String get relaxAndUnwind => 'Relax and unwind';
+  String get relaxAndUnwind => 'အနားယူပါ';
 
   @override
   String get focusMix => 'Focus Mix';
 
   @override
-  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+  String get deepFocusAndProductivity =>
+      'နက်ရှိုင်းသောအာရုံစိုက်မှု\nနှင့် ကုန်ထုတ်စွမ်းအား';
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return '$artist ရေဒီယို';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return '$genre ရေဒီယို';
   }
 
   @override

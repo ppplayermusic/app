@@ -571,13 +571,13 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get goodMorning => 'Good morning';
+  String get goodMorning => 'Jó reggelt';
 
   @override
-  String get goodAfternoon => 'Good afternoon';
+  String get goodAfternoon => 'Jó napot';
 
   @override
-  String get goodEvening => 'Good evening';
+  String get goodEvening => 'Jó estét';
 
   @override
   String greetingWithName(Object greeting, Object name) {
@@ -585,7 +585,7 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get yourMusicIsWaiting => 'Your music is waiting.';
+  String get yourMusicIsWaiting => 'A zenéd vár rád.';
 
   @override
   String dailyMix(Object number) {
@@ -593,8 +593,7 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get yourFavoritesAndNewDiscoveries =>
-      'Your favorites\nand new discoveries';
+  String get yourFavoritesAndNewDiscoveries => 'Kedvenceid\nés új felfedezések';
 
   @override
   String get discoverWeekly => 'Discover Weekly';
@@ -603,28 +602,28 @@ class AppLocalizationsHu extends AppLocalizations {
   String get releaseRadar => 'Release Radar';
 
   @override
-  String get newMusicJustForYou => 'New music\njust for you';
+  String get newMusicJustForYou => 'Új zene\ncsak neked';
 
   @override
   String get chillMix => 'Chill Mix';
 
   @override
-  String get relaxAndUnwind => 'Relax and unwind';
+  String get relaxAndUnwind => 'Dőlj hátra és lazíts';
 
   @override
   String get focusMix => 'Focus Mix';
 
   @override
-  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+  String get deepFocusAndProductivity => 'Mély fókusz\nés produktivitás';
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return '$artist Rádió';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return '$genre Rádió';
   }
 
   @override

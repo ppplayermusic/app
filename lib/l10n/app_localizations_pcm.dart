@@ -17,7 +17,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   }
 
   @override
-  String get albums => 'ALBUMS';
+  String get albums => 'Albums';
 
   @override
   String get api => 'API';
@@ -26,7 +26,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get artists => 'ARTIS DEM';
 
   @override
-  String get artwork => 'ARTWORK';
+  String get artwork => 'Artwork';
 
   @override
   String get appVersion => 'App vershon';
@@ -210,10 +210,10 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get noTracksFound => 'No song wey dem find';
 
   @override
-  String get playlists => 'PLAYLISTS';
+  String get playlists => 'Playlists';
 
   @override
-  String get popular => 'POPULAR';
+  String get popular => 'Popular';
 
   @override
   String get permanentlyRemoveListeningHistory =>
@@ -244,7 +244,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get previous => 'Previous';
 
   @override
-  String get queue => 'QUEUE';
+  String get queue => 'Queue';
 
   @override
   String get recentSearches => 'Recent searches';
@@ -292,7 +292,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get suggestedStations => 'Stations wey dem suggest';
 
   @override
-  String get tracks => 'TRACKS';
+  String get tracks => 'Tracks';
 
   @override
   String get trending => 'Trending';
@@ -582,7 +582,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   }
 
   @override
-  String get yourMusicIsWaiting => 'Your music is waiting.';
+  String get yourMusicIsWaiting => 'Your music dey wait.';
 
   @override
   String dailyMix(Object number) {
@@ -590,8 +590,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   }
 
   @override
-  String get yourFavoritesAndNewDiscoveries =>
-      'Your favorites\nand new discoveries';
+  String get yourFavoritesAndNewDiscoveries => 'Your favorites\nand new jams';
 
   @override
   String get discoverWeekly => 'Discover Weekly';
@@ -600,19 +599,19 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get releaseRadar => 'Release Radar';
 
   @override
-  String get newMusicJustForYou => 'New music\njust for you';
+  String get newMusicJustForYou => 'New music\njust for yu';
 
   @override
   String get chillMix => 'Chill Mix';
 
   @override
-  String get relaxAndUnwind => 'Relax and unwind';
+  String get relaxAndUnwind => 'Relax and enjoy';
 
   @override
   String get focusMix => 'Focus Mix';
 
   @override
-  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+  String get deepFocusAndProductivity => 'Deep focus\nand hard work';
 
   @override
   String artistRadio(Object artist) {

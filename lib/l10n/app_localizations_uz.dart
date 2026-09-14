@@ -383,7 +383,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get playNext => 'Keyingisini ijro etish';
 
   @override
-  String get playlist => 'Pleylist';
+  String get playlist => 'Pley-list';
 
   @override
   String get playlistName => 'Pleylist nomi';
@@ -571,13 +571,13 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get goodMorning => 'Good morning';
+  String get goodMorning => 'Xayrli tong';
 
   @override
-  String get goodAfternoon => 'Good afternoon';
+  String get goodAfternoon => 'Xayrli kun';
 
   @override
-  String get goodEvening => 'Good evening';
+  String get goodEvening => 'Xayrli kech';
 
   @override
   String greetingWithName(Object greeting, Object name) {
@@ -585,7 +585,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get yourMusicIsWaiting => 'Your music is waiting.';
+  String get yourMusicIsWaiting => 'Musiqangiz kutmoqda.';
 
   @override
   String dailyMix(Object number) {
@@ -593,8 +593,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get yourFavoritesAndNewDiscoveries =>
-      'Your favorites\nand new discoveries';
+  String get yourFavoritesAndNewDiscoveries => 'Sevimli\nva yangi kashfiyotlar';
 
   @override
   String get discoverWeekly => 'Discover Weekly';
@@ -603,28 +602,28 @@ class AppLocalizationsUz extends AppLocalizations {
   String get releaseRadar => 'Release Radar';
 
   @override
-  String get newMusicJustForYou => 'New music\njust for you';
+  String get newMusicJustForYou => 'Faqat siz uchun\nyangi musiqa';
 
   @override
   String get chillMix => 'Chill Mix';
 
   @override
-  String get relaxAndUnwind => 'Relax and unwind';
+  String get relaxAndUnwind => 'Dam oling va rohatlaning';
 
   @override
   String get focusMix => 'Focus Mix';
 
   @override
-  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+  String get deepFocusAndProductivity => 'Chuqur diqqat\nva mahsuldorlik';
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return '$artist Radiosi';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return '$genre Radiosi';
   }
 
   @override

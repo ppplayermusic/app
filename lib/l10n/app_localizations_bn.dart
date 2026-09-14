@@ -571,13 +571,13 @@ class AppLocalizationsBn extends AppLocalizations {
   }
 
   @override
-  String get goodMorning => 'Good morning';
+  String get goodMorning => 'শুভ সকাল';
 
   @override
-  String get goodAfternoon => 'Good afternoon';
+  String get goodAfternoon => 'শুভ অপরাহ্ন';
 
   @override
-  String get goodEvening => 'Good evening';
+  String get goodEvening => 'শুভ সন্ধ্যা';
 
   @override
   String greetingWithName(Object greeting, Object name) {
@@ -585,7 +585,7 @@ class AppLocalizationsBn extends AppLocalizations {
   }
 
   @override
-  String get yourMusicIsWaiting => 'Your music is waiting.';
+  String get yourMusicIsWaiting => 'আপনার গান আপনার জন্য অপেক্ষা করছে।';
 
   @override
   String dailyMix(Object number) {
@@ -594,7 +594,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get yourFavoritesAndNewDiscoveries =>
-      'Your favorites\nand new discoveries';
+      'আপনার প্রিয়\nএবং নতুন আবিষ্কার';
 
   @override
   String get discoverWeekly => 'Discover Weekly';
@@ -603,28 +603,28 @@ class AppLocalizationsBn extends AppLocalizations {
   String get releaseRadar => 'Release Radar';
 
   @override
-  String get newMusicJustForYou => 'New music\njust for you';
+  String get newMusicJustForYou => 'আপনার জন্য\nনতুন গান';
 
   @override
   String get chillMix => 'Chill Mix';
 
   @override
-  String get relaxAndUnwind => 'Relax and unwind';
+  String get relaxAndUnwind => 'আরাম করুন';
 
   @override
   String get focusMix => 'Focus Mix';
 
   @override
-  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+  String get deepFocusAndProductivity => 'গভীর মনোযোগ\nএবং কর্মক্ষমতা';
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return '$artist রেডিও';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return '$genre রেডিও';
   }
 
   @override
