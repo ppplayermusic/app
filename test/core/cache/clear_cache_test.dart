@@ -26,7 +26,7 @@ void main() {
       'CatalogCacheRepository.clearAll() clears L1 and L2 and providers are invalidated',
       () async {
         // 1. Setup Data Layer
-        final db = AppDatabase();
+        final db = AppDatabase(null);
         final metrics = CacheMetrics();
         final repo = CatalogCacheRepository(db, metrics);
 

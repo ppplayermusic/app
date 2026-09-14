@@ -353,7 +353,7 @@ class SpotifyClient {
       );
       final items = (response.data['playlists']['items'] as List?) ?? [];
       final sanitizedItems = _filterAndSanitizeItems(items);
-      return _enrichPlaylistsWithCollage(sanitizedItems);
+      return await _enrichPlaylistsWithCollage(sanitizedItems);
     } catch (e) {
       if (e is SpotifyAuthException) rethrow;
       // /browse/featured-playlists is deprecated. Fallback to search.
@@ -370,7 +370,7 @@ class SpotifyClient {
         );
         final items = (response.data['playlists']['items'] as List?) ?? [];
         final sanitizedItems = _filterAndSanitizeItems(items);
-        return _enrichPlaylistsWithCollage(sanitizedItems);
+        return await _enrichPlaylistsWithCollage(sanitizedItems);
       } catch (_) {
         throw Exception('Failed to load featured playlists.');
       }

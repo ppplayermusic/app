@@ -2,7 +2,7 @@
 import 'package:ppplayer/core/db/app_database.dart';
 
 void main() async {
-  final db = AppDatabase();
+  final db = AppDatabase(null);
   print('Running query 1...');
   try {
     await db.getRecentlyPlayed(limit: 5);
