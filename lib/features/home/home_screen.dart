@@ -417,19 +417,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             itemBuilder: (context, index) {
                               final mix = mixes[index];
                               String mixTitle = mix['title'];
-                              if (mixTitle == 'Daily Mix 1') mixTitle = l10n.dailyMix('1');
-                              else if (mixTitle == 'Daily Mix 2') mixTitle = l10n.dailyMix('2');
-                              else if (mixTitle == 'Discover Weekly') mixTitle = l10n.discoverWeekly;
-                              else if (mixTitle == 'Release Radar') mixTitle = l10n.releaseRadar;
-                              else if (mixTitle == 'Chill Mix') mixTitle = l10n.chillMix;
-                              else if (mixTitle == 'Focus Mix') mixTitle = l10n.focusMix;
+                              if (mixTitle == 'Daily Mix 1') {
+                                mixTitle = l10n.dailyMix('1');
+                              } else if (mixTitle == 'Daily Mix 2') {
+                                mixTitle = l10n.dailyMix('2');
+                              } else if (mixTitle == 'Discover Weekly') {
+                                mixTitle = l10n.discoverWeekly;
+                              } else if (mixTitle == 'Release Radar') {
+                                mixTitle = l10n.releaseRadar;
+                              } else if (mixTitle == 'Chill Mix') {
+                                mixTitle = l10n.chillMix;
+                              } else if (mixTitle == 'Focus Mix') {
+                                mixTitle = l10n.focusMix;
+                              }
 
                               String mixSubtitle = mix['subtitle'];
-                              if (mixSubtitle == 'Your favorites\nand new discoveries') mixSubtitle = l10n.yourFavoritesAndNewDiscoveries;
-                              else if (mixSubtitle == 'Made for you') mixSubtitle = l10n.madeForYou;
-                              else if (mixSubtitle == 'New music\njust for you') mixSubtitle = l10n.newMusicJustForYou;
-                              else if (mixSubtitle == 'Relax and unwind') mixSubtitle = l10n.relaxAndUnwind;
-                              else if (mixSubtitle == 'Deep focus\nand productivity') mixSubtitle = l10n.deepFocusAndProductivity;
+                              if (mixSubtitle == 'Your favorites\nand new discoveries') {
+                                mixSubtitle = l10n.yourFavoritesAndNewDiscoveries;
+                              } else if (mixSubtitle == 'Made for you') {
+                                mixSubtitle = l10n.madeForYou;
+                              } else if (mixSubtitle == 'New music\njust for you') {
+                                mixSubtitle = l10n.newMusicJustForYou;
+                              } else if (mixSubtitle == 'Relax and unwind') {
+                                mixSubtitle = l10n.relaxAndUnwind;
+                              } else if (mixSubtitle == 'Deep focus\nand productivity') {
+                                mixSubtitle = l10n.deepFocusAndProductivity;
+                              }
 
                               return _MixCard(
                                     title: mixTitle,
