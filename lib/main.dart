@@ -22,6 +22,7 @@ import 'core/playback/pip_handler.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:macos_file_open_handler/macos_file_open_handler.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'core/player/player_provider.dart';
 import 'core/local_library/local_library_service.dart';
@@ -55,7 +56,14 @@ void main() async {
   PipHandler.init();
 
   // Init Hive for prefs/queue
-  await Hive.initFlutter();
+  String? dbPath;
+  if (!kIsWeb) {
+    final appDir = await getApplicationSupportDirectory();
+    dbPath = appDir.path;
+    Hive.init(appDir.path);
+  } else {
+    await Hive.initFlutter();
+  }
 
   // Initialize Ads if on mobile - delay to avoid startup contention
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
@@ -64,7 +72,7 @@ void main() async {
     });
   }
 
-  final appDatabase = AppDatabase();
+  final appDatabase = AppDatabase(dbPath);
 
   // Initialize the container first (needed by builder)
   globalContainer = ProviderContainer(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -257,6 +258,28 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     if (!_initCompleter.isCompleted) _initCompleter.complete();
   }
 
+  static HttpServer? _localServer;
+  static String? _localServerUrl;
+  static String _latestHtml = '';
+
+  static Future<void> _ensureLocalServer() async {
+    if (_localServer != null) return;
+    try {
+      _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      _localServerUrl = 'http://localhost:${_localServer!.port}/';
+      debugPrint("YoutubePlayerController: Local server started at $_localServerUrl");
+      _localServer!.listen((HttpRequest request) {
+        request.response
+          ..headers.contentType = ContentType.html
+          ..headers.set('Access-Control-Allow-Origin', '*')
+          ..write(_latestHtml)
+          ..close();
+      });
+    } catch (e) {
+      debugPrint("YoutubePlayerController: Failed to start local server: $e");
+    }
+  }
+
   /// Loads the player with the given [params].
   ///
   /// [baseUrl] sets the origin for the iframe player.
@@ -266,11 +289,25 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     String id = 'player',
   }) async {
     debugPrint("YoutubePlayerController: load() start");
+    
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      await _ensureLocalServer();
+    }
+
     final platform = kIsWeb ? 'web' : defaultTargetPlatform.name.toLowerCase();
+    
+    final playerVarsMap = params.toMap();
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows && _localServerUrl != null) {
+      // Remove trailing slash for the origin parameter
+      playerVarsMap['origin'] = _localServerUrl!.substring(0, _localServerUrl!.length - 1);
+      playerVarsMap['widget_referrer'] = playerVarsMap['origin'];
+    }
+    final playerVars = jsonEncode(playerVarsMap);
+
     final playerData = {
       'playerId': id,
       'pointerEvents': params.pointerEvents.name,
-      'playerVars': params.toJson(),
+      'playerVars': playerVars,
       'platform': platform,
       'host': 'https://www.youtube.com',
     };
@@ -278,6 +315,15 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     String generatedHtml = await _buildPlayerHTML(playerData);
     debugPrint(
         "YoutubePlayerController: generatedHtml length = ${generatedHtml.length}");
+
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      _latestHtml = generatedHtml;
+      if (_localServerUrl != null) {
+        await webViewController.loadRequest(Uri.parse(_localServerUrl!));
+        return;
+      }
+    }
+
     await webViewController.loadHtmlString(
       generatedHtml,
       baseUrl: baseUrl,

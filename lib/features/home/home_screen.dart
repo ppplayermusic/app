@@ -1202,7 +1202,7 @@ class _AlbumCardState extends State<_AlbumCard> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 8),
                 AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 150),
                   style: TextStyle(

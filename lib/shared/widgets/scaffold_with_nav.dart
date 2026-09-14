@@ -334,10 +334,11 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                                                 .withValues(
                                                                   alpha: 0.7,
                                                                 ),
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                            child: SingleChildScrollView(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
                                                               mainAxisSize: MainAxisSize.min,
                                                               children: [
                                                                 Icon(
@@ -461,6 +462,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                                                 ),
                                                               ],
                                                             ),
+                                                          ),
                                                           ),
                                                         ),
                                                       ),

@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/track.dart' as model;
 import '../models/local_album.dart';
@@ -174,7 +178,7 @@ class ImportRoots extends Table {
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase(String? dbPath) : super(_openConnection(dbPath));
 
   AppDatabase.forTesting(super.e);
 
@@ -838,7 +842,11 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deleteImportRoot(String id) =>
       (delete(importRoots)..where((r) => r.id.equals(id))).go();
 
-  static QueryExecutor _openConnection() {
+  static QueryExecutor _openConnection(String? dbPath) {
+    if (!kIsWeb && dbPath != null) {
+      final file = File(p.join(dbPath, 'ppplayer_db.sqlite'));
+      return NativeDatabase.createInBackground(file);
+    }
     return driftDatabase(
       name: 'ppplayer_db',
       web: DriftWebOptions(
