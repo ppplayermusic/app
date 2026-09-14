@@ -21,6 +21,10 @@ import 'core/metrics/cache_metrics.dart';
 import 'core/playback/pip_handler.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ppplayer/l10n/app_localizations.dart';
+import 'package:macos_file_open_handler/macos_file_open_handler.dart';
+
+import 'core/player/player_provider.dart';
+import 'core/local_library/local_library_service.dart';
 
 /// Global access to the provider container for the [AudioHandler].
 late ProviderContainer globalContainer;
@@ -110,6 +114,26 @@ void main() async {
   // Initialize native dock menu service for macOS
   if (!kIsWeb && Platform.isMacOS) {
     globalContainer.read(dockMenuServiceProvider);
+    
+    // Register file open handler
+    MacosFileOpenHandler.instance.listen(
+      (files) async {
+        if (files.isEmpty) return;
+        final libraryService = globalContainer.read(localLibraryServiceProvider);
+        final tracks = await libraryService.importFilesByPaths(
+          files.map((e) => e.path).toList()
+        );
+        
+        if (tracks.isNotEmpty) {
+          final player = globalContainer.read(playerProvider.notifier);
+          // Play the first track and add the rest to queue
+          player.playTrack(tracks.first);
+        }
+      },
+      onError: (error, stackTrace) {
+        debugPrint('Could not open file: $error');
+      },
+    );
   }
 
   if (kDebugMode) {

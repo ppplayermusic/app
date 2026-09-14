@@ -38,5 +38,16 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_macos_build_settings(target)
+    target.build_configurations.each do |config|
+      if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
+        if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].is_a?(Array)
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].map! do |val|
+            val.gsub('POD_CONFIGURATION_DEBUG=1 DEBUG=1', 'POD_CONFIGURATION_DEBUG=1')
+          end
+        else
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'].gsub('POD_CONFIGURATION_DEBUG=1 DEBUG=1', 'POD_CONFIGURATION_DEBUG=1')
+        end
+      end
+    end
   end
 end

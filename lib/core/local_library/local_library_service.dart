@@ -7,7 +7,8 @@ import 'package:drift/drift.dart' as drift;
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../db/app_database.dart';
+import 'package:ppplayer/core/db/app_database.dart';
+import 'package:ppplayer/core/models/track.dart' show Track;
 import 'local_track_source.dart';
 import 'metadata_extractor.dart';
 import 'local_file_resolver.dart';
@@ -59,6 +60,44 @@ class LocalLibraryService {
         importRootLocator: null,
       );
     }
+  }
+
+  /// Imports files from specific paths (e.g., via macOS Open With).
+  /// Returns the imported tracks.
+  Future<List<Track>> importFilesByPaths(List<String> paths) async {
+    final importedTracks = <Track>[];
+    for (final path in paths) {
+      String locator = path;
+      TrackSourceType mechanism = TrackSourceType.absolutePath;
+      
+      if (Platform.isAndroid && locator.contains('/cache/')) {
+        // Move temp file to our own managed sandbox so it survives
+        final copyPath = await _moveToManagedCopy(locator, path.split('/').last);
+        if (copyPath == null) continue;
+        locator = copyPath;
+        mechanism = TrackSourceType.managedCopy;
+      } else if (Platform.isIOS || Platform.isMacOS) {
+        // Request a security-scoped bookmark from native
+        final bookmark = await createSecurityScopedBookmark(locator);
+        if (bookmark != null) {
+          locator = bookmark;
+          mechanism = TrackSourceType.iOsSecurityBookmark;
+        } else {
+          mechanism = TrackSourceType.absolutePath;
+        }
+      }
+      
+      final track = await _processDiscoveredFile(
+        locator: locator,
+        displayPath: path.split('/').last,
+        mechanism: mechanism,
+        importRootLocator: null,
+      );
+      if (track != null) {
+        importedTracks.add(track);
+      }
+    }
+    return importedTracks;
   }
 
   Future<void> importFolder() async {
@@ -169,7 +208,7 @@ class LocalLibraryService {
     }
   }
 
-  Future<void> _processDiscoveredFile({
+  Future<Track?> _processDiscoveredFile({
     required String locator,
     required String displayPath,
     required TrackSourceType mechanism,
@@ -187,7 +226,7 @@ class LocalLibraryService {
         extractPath = temp;
         isTemp = true;
       } else {
-        return;
+        return null;
       }
     }
     
@@ -231,6 +270,17 @@ class LocalLibraryService {
         albumImage: drift.Value(metadata.artworkPath),
         durationMs: drift.Value(metadata.durationMs),
       )
+    );
+
+    return Track(
+      spotifyId: libraryId,
+      name: metadata.title,
+      artistId: 'local',
+      artistName: metadata.artistName,
+      albumId: metadata.albumGroupKey,
+      albumName: metadata.albumName,
+      albumImage: metadata.artworkPath,
+      durationMs: metadata.durationMs,
     );
   }
 
