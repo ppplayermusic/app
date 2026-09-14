@@ -492,7 +492,13 @@ class PlayerNotifier extends Notifier<PlayerState> {
         }).toList();
 
     final targetTrack = q.firstWhere(
-      (t) => t.spotifyId == track.spotifyId && t.name == track.name,
+      (t) {
+        if (track.queueItemId != null && t.queueItemId != null) {
+          return t.queueItemId == track.queueItemId;
+        }
+        return t.spotifyId == track.spotifyId && t.name == track.name;
+      },
+      orElse: () => q.first,
     );
     final idx = q.indexOf(targetTrack);
 
