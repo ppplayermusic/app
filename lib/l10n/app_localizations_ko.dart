@@ -523,4 +523,41 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => '무료 오픈 소스 음악 플레이어입니다.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return '버전 $version (빌드 $build)';
+  }
+
+  @override
+  String get createdBy => 'Lucas Coelho 제작';
+
+  @override
+  String get website => '웹사이트';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => '릴리스 노트';
+
+  @override
+  String get support => '지원';
+
+  @override
+  String get license => '라이선스';
+
+  @override
+  String get acknowledgments => '감사';
+
+  @override
+  String get close => '닫기';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

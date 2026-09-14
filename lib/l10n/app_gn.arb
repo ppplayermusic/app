@@ -371,5 +371,27 @@
   "addToPlaylist": "Moĩ Tysýipe",
   "@addToPlaylist": {},
   "addToQueue": "Moĩ Tysýipe Espera",
-  "@addToQueue": {}
+  "@addToQueue": {},
+  "aboutDescription": "Peteĩ purahéi ñembopuha ojehepyme'ẽ'ỹva ha ojehechaukáva.",
+  "versionInfo": "Mba'e {version} (Mba'e {build})",
+  "createdBy": "Lucas Coelho ojapo",
+  "website": "Web",
+  "github": "GitHub",
+  "releaseNotes": "Marandu sãsõ",
+  "support": "Pytyvõ",
+  "license": "Liséñsia",
+  "acknowledgments": "Aguyje",
+  "close": "Mboty",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

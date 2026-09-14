@@ -371,5 +371,27 @@
   "addToPlaylist": "Pievienot atskaņošanas sarakstam",
   "@addToPlaylist": {},
   "addToQueue": "Pievienot rindai",
-  "@addToQueue": {}
+  "@addToQueue": {},
+  "aboutDescription": "Bezmaksas atvērtā pirmkoda mūzikas atskaņotājs.",
+  "versionInfo": "Versija {version} (Būvējums {build})",
+  "createdBy": "Izveidoja Lucas Coelho",
+  "website": "Tīmekļa vietne",
+  "github": "GitHub",
+  "releaseNotes": "Izlaiduma piezīmes",
+  "support": "Atbalsts",
+  "license": "Licence",
+  "acknowledgments": "Pateicības",
+  "close": "Aizvērt",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

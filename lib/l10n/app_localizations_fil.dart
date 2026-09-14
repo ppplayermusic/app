@@ -531,4 +531,41 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'Isang libre at open-source na music player.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Bersyon $version (Build $build)';
+  }
+
+  @override
+  String get createdBy => 'Nilikha ni Lucas Coelho';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Mga tala sa pag-release';
+
+  @override
+  String get support => 'Suporta';
+
+  @override
+  String get license => 'Lisensya';
+
+  @override
+  String get acknowledgments => 'Mga Pasasalamat';
+
+  @override
+  String get close => 'Isara';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

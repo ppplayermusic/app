@@ -531,4 +531,41 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'একটি বিনামূল্যের ওপেন-সোর্স মিউজিক প্লেয়ার।';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'সংস্করণ $version (বিল্ড $build)';
+  }
+
+  @override
+  String get createdBy => 'Lucas Coelho দ্বারা তৈরি';
+
+  @override
+  String get website => 'ওয়েবসাইট';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'রিলিজ নোট';
+
+  @override
+  String get support => 'সমর্থন';
+
+  @override
+  String get license => 'লাইসেন্স';
+
+  @override
+  String get acknowledgments => 'স্বীকৃতি';
+
+  @override
+  String get close => 'বন্ধ করুন';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

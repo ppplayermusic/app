@@ -306,5 +306,27 @@
   "language": "ဘာသာစကား",
   "@language": {},
   "systemDefault": "စနစ် မူလသတ်မှတ်ချက်",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "အခမဲ့ပွင့်လင်းအရင်းအမြစ်တေးဂီတဖွင့်စက်။",
+  "versionInfo": "ဗားရှင်း {version} (တည်ဆောက်မှု {build})",
+  "createdBy": "Lucas Coelho ဖန်တီးသည်",
+  "website": "ဝဘ်ဆိုက်",
+  "github": "GitHub",
+  "releaseNotes": "ထွက်ရှိမှုမှတ်စုများ",
+  "support": "ပံ့ပိုးမှု",
+  "license": "လိုင်စင်",
+  "acknowledgments": "ကျေးဇူးတင်လွှာ",
+  "close": "ပိတ်မည်",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

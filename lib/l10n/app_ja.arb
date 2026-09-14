@@ -261,5 +261,27 @@
   "language": "言語",
   "@language": {},
   "systemDefault": "システムデフォルト",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "無料のオープンソース音楽プレーヤー。",
+  "versionInfo": "バージョン {version} (ビルド {build})",
+  "createdBy": "Lucas Coelho による作成",
+  "website": "ウェブサイト",
+  "github": "GitHub",
+  "releaseNotes": "リリースノート",
+  "support": "サポート",
+  "license": "ライセンス",
+  "acknowledgments": "謝辞",
+  "close": "閉じる",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

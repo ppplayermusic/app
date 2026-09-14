@@ -532,4 +532,41 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'Egy ingyenes, nyílt forráskódú zenelejátszó.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Verzió $version (Build $build)';
+  }
+
+  @override
+  String get createdBy => 'Készítette: Lucas Coelho';
+
+  @override
+  String get website => 'Weboldal';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Kiadási megjegyzések';
+
+  @override
+  String get support => 'Támogatás';
+
+  @override
+  String get license => 'Licenc';
+
+  @override
+  String get acknowledgments => 'Köszönetnyilvánítás';
+
+  @override
+  String get close => 'Bezárás';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

@@ -532,4 +532,41 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'အခမဲ့ပွင့်လင်းအရင်းအမြစ်တေးဂီတဖွင့်စက်။';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'ဗားရှင်း $version (တည်ဆောက်မှု $build)';
+  }
+
+  @override
+  String get createdBy => 'Lucas Coelho ဖန်တီးသည်';
+
+  @override
+  String get website => 'ဝဘ်ဆိုက်';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'ထွက်ရှိမှုမှတ်စုများ';
+
+  @override
+  String get support => 'ပံ့ပိုးမှု';
+
+  @override
+  String get license => 'လိုင်စင်';
+
+  @override
+  String get acknowledgments => 'ကျေးဇူးတင်လွှာ';
+
+  @override
+  String get close => 'ပိတ်မည်';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

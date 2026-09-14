@@ -4,7 +4,6 @@ import '../../core/models/track.dart' as model;
 import '../../core/player/player_provider.dart';
 import 'local_artist_detail_screen.dart';
 import 'local_album_detail_screen.dart';
-import 'package:ppplayer/l10n/app_localizations.dart';
 
 void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track track) {
   final colorScheme = Theme.of(context).colorScheme;
@@ -84,19 +83,19 @@ void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track 
               },
             ),
             if (track.artistName.isNotEmpty)
-              ListTile(
+              ...track.artistName.split(', ').map((artist) => ListTile(
                 leading: const Icon(Icons.person_outline_rounded),
-                title: const Text('Go to Artist'),
+                title: Text('Go to $artist'),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => LocalArtistDetailScreen(artistName: track.artistName),
+                      builder: (_) => LocalArtistDetailScreen(artistName: artist),
                     ),
                   );
                 },
-              ),
+              )),
             if (track.albumName?.isNotEmpty == true)
               ListTile(
                 leading: const Icon(Icons.album_outlined),

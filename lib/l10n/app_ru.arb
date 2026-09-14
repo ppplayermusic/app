@@ -261,5 +261,27 @@
   "language": "Язык",
   "@language": {},
   "systemDefault": "Системный по умолчанию",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "Бесплатный музыкальный плеер с открытым исходным кодом.",
+  "versionInfo": "Версия {version} (Сборка {build})",
+  "createdBy": "Создано Lucas Coelho",
+  "website": "Веб-сайт",
+  "github": "GitHub",
+  "releaseNotes": "Примечания к выпуску",
+  "support": "Поддержка",
+  "license": "Лицензия",
+  "acknowledgments": "Благодарности",
+  "close": "Закрыть",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

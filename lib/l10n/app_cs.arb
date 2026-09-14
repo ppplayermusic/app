@@ -306,5 +306,27 @@
   "language": "Jazyk",
   "@language": {},
   "systemDefault": "Výchozí systémový",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "Bezplatný hudební přehrávač s otevřeným zdrojovým kódem.",
+  "versionInfo": "Verze {version} (Sestavení {build})",
+  "createdBy": "Vytvořil Lucas Coelho",
+  "website": "Webová stránka",
+  "github": "GitHub",
+  "releaseNotes": "Poznámky k vydání",
+  "support": "Podpora",
+  "license": "Licence",
+  "acknowledgments": "Poděkování",
+  "close": "Zavřít",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

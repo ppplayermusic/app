@@ -523,4 +523,41 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => '無料のオープンソース音楽プレーヤー。';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'バージョン $version (ビルド $build)';
+  }
+
+  @override
+  String get createdBy => 'Lucas Coelho による作成';
+
+  @override
+  String get website => 'ウェブサイト';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'リリースノート';
+
+  @override
+  String get support => 'サポート';
+
+  @override
+  String get license => 'ライセンス';
+
+  @override
+  String get acknowledgments => '謝辞';
+
+  @override
+  String get close => '閉じる';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

@@ -306,5 +306,27 @@
   "language": "Språk",
   "@language": {},
   "systemDefault": "Systemstandard",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "En gratis musikspelare med öppen källkod.",
+  "versionInfo": "Version {version} (Bygge {build})",
+  "createdBy": "Skapad av Lucas Coelho",
+  "website": "Webbplats",
+  "github": "GitHub",
+  "releaseNotes": "Versionsfakta",
+  "support": "Support",
+  "license": "Licens",
+  "acknowledgments": "Erkännanden",
+  "close": "Stäng",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

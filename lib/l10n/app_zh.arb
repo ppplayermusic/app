@@ -261,5 +261,27 @@
   "language": "语言",
   "@language": {},
   "systemDefault": "系统默认",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "一个免费的开源音乐播放器。",
+  "versionInfo": "版本 {version} (Build {build})",
+  "createdBy": "由 Lucas Coelho 创建",
+  "website": "网站",
+  "github": "GitHub",
+  "releaseNotes": "发行说明",
+  "support": "支持",
+  "license": "许可协议",
+  "acknowledgments": "鸣谢",
+  "close": "关闭",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

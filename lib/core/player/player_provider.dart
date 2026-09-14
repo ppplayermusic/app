@@ -684,7 +684,15 @@ class PlayerNotifier extends Notifier<PlayerState> {
     // _controller.resume() calls playVideo() directly — instant audio start.
     final engineState = _controller.currentStatus.state;
     if (engineState == PlaybackState.paused) {
-      _controller.resume();
+      if (track.isLocal) {
+        // media_kit loses the initial cued seek position on resume().
+        await _controller.play(
+          track.toPlaybackTrack(),
+          startAt: state.position,
+        );
+      } else {
+        _controller.resume();
+      }
       return;
     }
 

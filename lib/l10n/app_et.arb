@@ -306,5 +306,27 @@
   "language": "Keel",
   "@language": {},
   "systemDefault": "Süsteemi vaikeväärtus",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "Tasuta avatud lähtekoodiga muusikapleier.",
+  "versionInfo": "Versioon {version} (Järk {build})",
+  "createdBy": "Loodud Lucas Coelho poolt",
+  "website": "Veebileht",
+  "github": "GitHub",
+  "releaseNotes": "Väljalaskemärkmed",
+  "support": "Tugi",
+  "license": "Litsents",
+  "acknowledgments": "Tunnustused",
+  "close": "Sulge",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

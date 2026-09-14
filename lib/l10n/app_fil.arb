@@ -371,5 +371,27 @@
   "addToPlaylist": "Idagdag sa playlist",
   "@addToPlaylist": {},
   "addToQueue": "Idagdag sa queue",
-  "@addToQueue": {}
+  "@addToQueue": {},
+  "aboutDescription": "Isang libre at open-source na music player.",
+  "versionInfo": "Bersyon {version} (Build {build})",
+  "createdBy": "Nilikha ni Lucas Coelho",
+  "website": "Website",
+  "github": "GitHub",
+  "releaseNotes": "Mga tala sa pag-release",
+  "support": "Suporta",
+  "license": "Lisensya",
+  "acknowledgments": "Mga Pasasalamat",
+  "close": "Isara",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

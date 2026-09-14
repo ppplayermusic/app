@@ -261,5 +261,27 @@
   "language": "Idioma",
   "@language": {},
   "systemDefault": "Padrão do sistema",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "Um reprodutor de música gratuito e de código aberto.",
+  "versionInfo": "Versão {version} (Build {build})",
+  "createdBy": "Criado por Lucas Coelho",
+  "website": "Site",
+  "github": "GitHub",
+  "releaseNotes": "Notas de lançamento",
+  "support": "Suporte",
+  "license": "Licença",
+  "acknowledgments": "Agradecimentos",
+  "close": "Fechar",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

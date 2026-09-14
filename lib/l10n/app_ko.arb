@@ -261,5 +261,27 @@
   "language": "언어",
   "@language": {},
   "systemDefault": "시스템 기본값",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "무료 오픈 소스 음악 플레이어입니다.",
+  "versionInfo": "버전 {version} (빌드 {build})",
+  "createdBy": "Lucas Coelho 제작",
+  "website": "웹사이트",
+  "github": "GitHub",
+  "releaseNotes": "릴리스 노트",
+  "support": "지원",
+  "license": "라이선스",
+  "acknowledgments": "감사",
+  "close": "닫기",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

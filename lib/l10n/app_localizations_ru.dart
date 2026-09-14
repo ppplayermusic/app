@@ -532,4 +532,42 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription =>
+      'Бесплатный музыкальный плеер с открытым исходным кодом.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Версия $version (Сборка $build)';
+  }
+
+  @override
+  String get createdBy => 'Создано Lucas Coelho';
+
+  @override
+  String get website => 'Веб-сайт';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Примечания к выпуску';
+
+  @override
+  String get support => 'Поддержка';
+
+  @override
+  String get license => 'Лицензия';
+
+  @override
+  String get acknowledgments => 'Благодарности';
+
+  @override
+  String get close => 'Закрыть';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

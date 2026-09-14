@@ -528,4 +528,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'A free, open-source music player.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Version $version (Build $build)';
+  }
+
+  @override
+  String get createdBy => 'Created by Lucas Coelho';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Release notes';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get license => 'License';
+
+  @override
+  String get acknowledgments => 'Acknowledgments';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

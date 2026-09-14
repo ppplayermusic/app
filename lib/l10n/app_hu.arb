@@ -306,5 +306,27 @@
   "language": "Nyelv",
   "@language": {},
   "systemDefault": "Rendszer alapértelmezett",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "Egy ingyenes, nyílt forráskódú zenelejátszó.",
+  "versionInfo": "Verzió {version} (Build {build})",
+  "createdBy": "Készítette: Lucas Coelho",
+  "website": "Weboldal",
+  "github": "GitHub",
+  "releaseNotes": "Kiadási megjegyzések",
+  "support": "Támogatás",
+  "license": "Licenc",
+  "acknowledgments": "Köszönetnyilvánítás",
+  "close": "Bezárás",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

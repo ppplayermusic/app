@@ -534,4 +534,41 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'Besplatni glazbeni player otvorenog koda.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Verzija $version (Međuverzija $build)';
+  }
+
+  @override
+  String get createdBy => 'Autor: Lucas Coelho';
+
+  @override
+  String get website => 'Web stranica';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Napomene o izdanju';
+
+  @override
+  String get support => 'Podrška';
+
+  @override
+  String get license => 'Licenca';
+
+  @override
+  String get acknowledgments => 'Zahvale';
+
+  @override
+  String get close => 'Zatvori';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:ppplayer/l10n/app_localizations.dart';
-import '../../features/local_library/local_artist_detail_screen.dart';
+
 import 'dart:ui';
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +20,9 @@ import '../../core/db/app_database.dart' as db;
 import 'artists_links.dart';
 import 'context_menu/content_context_menu.dart';
 import '../../core/models/track.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import '../../features/settings/widgets/about_dialog.dart';
 
 class ScaffoldWithNav extends ConsumerStatefulWidget {
   const ScaffoldWithNav({
@@ -98,7 +101,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
       builder: (context, boxConstraints) {
         final isDesktop = boxConstraints.maxWidth >= 600;
 
-        return Scaffold(
+        Widget content = Scaffold(
           body: SafeArea(
             bottom: false,
             child: Row(
@@ -356,7 +359,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                                                             8.0,
                                                                       ),
                                                                   child: Text(
-                                                                    loadError!,
+                                                                    loadError,
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -492,6 +495,79 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                     children: [_MiniPlayerBar(), _BottomNavBar()],
                   ),
         );
+
+        if (!kIsWeb && Platform.isMacOS) {
+          content = PlatformMenuBar(
+            menus: [
+              PlatformMenu(
+                label: 'PPPlayer',
+                menus: [
+                  PlatformMenuItemGroup(
+                    members: [
+                      PlatformMenuItem(
+                        label: 'About PPPlayer',
+                        onSelected: () async {
+                          if (context.mounted) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const PpAboutDialog(),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  PlatformMenuItemGroup(
+                    members: [
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.servicesSubmenu),
+                    ],
+                  ),
+                  PlatformMenuItemGroup(
+                    members: [
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.hide),
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.hideOtherApplications),
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.showAllApplications),
+                    ],
+                  ),
+                  PlatformMenuItemGroup(
+                    members: [
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.quit),
+                    ],
+                  ),
+                ],
+              ),
+              PlatformMenu(
+                label: 'View',
+                menus: [
+                  PlatformMenuItemGroup(
+                    members: [
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.toggleFullScreen),
+                    ],
+                  ),
+                ],
+              ),
+              PlatformMenu(
+                label: 'Window',
+                menus: [
+                  PlatformMenuItemGroup(
+                    members: [
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.minimizeWindow),
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.zoomWindow),
+                    ],
+                  ),
+                  PlatformMenuItemGroup(
+                    members: [
+                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.arrangeWindowsInFront),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+            child: content,
+          );
+        }
+
+        return content;
       },
     );
   }
@@ -740,28 +816,13 @@ class _MiniPlayerBar extends ConsumerWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              HoverText(
-                                text: track.artistName,
+                              ArtistsLinks(
+                                track: track,
                                 style: TextStyle(
                                   color: colorScheme.onSurfaceVariant
                                       .withValues(alpha: 0.6),
                                   fontSize: 11,
                                 ),
-                                onTap: () {
-                                  if (track.isLocal) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (_) => LocalArtistDetailScreen(
-                                              artistName: track.artistName,
-                                            ),
-                                      ),
-                                    );
-                                  } else {
-                                    context.push('/artist/${track.artistId}');
-                                  }
-                                },
                               ),
                             ],
                           ),

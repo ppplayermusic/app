@@ -529,4 +529,41 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'Tasuta avatud lähtekoodiga muusikapleier.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Versioon $version (Järk $build)';
+  }
+
+  @override
+  String get createdBy => 'Loodud Lucas Coelho poolt';
+
+  @override
+  String get website => 'Veebileht';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Väljalaskemärkmed';
+
+  @override
+  String get support => 'Tugi';
+
+  @override
+  String get license => 'Litsents';
+
+  @override
+  String get acknowledgments => 'Tunnustused';
+
+  @override
+  String get close => 'Sulge';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

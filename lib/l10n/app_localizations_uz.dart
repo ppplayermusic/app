@@ -532,4 +532,41 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'Bepul va ochiq kodli musiqa pleyeri.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Versiya $version (Yig\'ilish $build)';
+  }
+
+  @override
+  String get createdBy => 'Lucas Coelho tomonidan yaratilgan';
+
+  @override
+  String get website => 'Veb-sayt';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Reliz qaydlari';
+
+  @override
+  String get support => 'Qo\'llab-quvvatlash';
+
+  @override
+  String get license => 'Litsenziya';
+
+  @override
+  String get acknowledgments => 'Minnatdorchilik';
+
+  @override
+  String get close => 'Yopish';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

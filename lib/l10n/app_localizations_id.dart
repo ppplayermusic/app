@@ -530,4 +530,41 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'Pemutar musik sumber terbuka dan gratis.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Versi $version (Build $build)';
+  }
+
+  @override
+  String get createdBy => 'Dibuat oleh Lucas Coelho';
+
+  @override
+  String get website => 'Situs Web';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Catatan rilis';
+
+  @override
+  String get support => 'Dukungan';
+
+  @override
+  String get license => 'Lisensi';
+
+  @override
+  String get acknowledgments => 'Penghargaan';
+
+  @override
+  String get close => 'Tutup';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

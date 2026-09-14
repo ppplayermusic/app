@@ -86,6 +86,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/mix_covers/
+    - assets/LICENSE
 
 flutter_native_splash:
   color: "#0A0A0A"

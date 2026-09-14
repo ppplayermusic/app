@@ -1127,6 +1127,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Duration'**
   String get trackInfoDuration;
+
+  /// No description provided for @aboutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A free, open-source music player.'**
+  String get aboutDescription;
+
+  /// No description provided for @versionInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version} (Build {build})'**
+  String versionInfo(Object version, Object build);
+
+  /// No description provided for @createdBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by Lucas Coelho'**
+  String get createdBy;
+
+  /// No description provided for @website.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get website;
+
+  /// No description provided for @github.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub'**
+  String get github;
+
+  /// No description provided for @releaseNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Release notes'**
+  String get releaseNotes;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @license.
+  ///
+  /// In en, this message translates to:
+  /// **'License'**
+  String get license;
+
+  /// No description provided for @acknowledgments.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledgments'**
+  String get acknowledgments;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @copyright.
+  ///
+  /// In en, this message translates to:
+  /// **'© {year} PPPlayer contributors'**
+  String copyright(Object year);
 }
 
 class _AppLocalizationsDelegate

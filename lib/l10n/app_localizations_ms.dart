@@ -530,4 +530,41 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'Pemain muzik sumber terbuka percuma.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Versi $version (Binaan $build)';
+  }
+
+  @override
+  String get createdBy => 'Dicipta oleh Lucas Coelho';
+
+  @override
+  String get website => 'Laman Web';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Nota keluaran';
+
+  @override
+  String get support => 'Sokongan';
+
+  @override
+  String get license => 'Lesen';
+
+  @override
+  String get acknowledgments => 'Penghargaan';
+
+  @override
+  String get close => 'Tutup';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

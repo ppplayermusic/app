@@ -531,4 +531,42 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription =>
+      'Bezplatný hudební přehrávač s otevřeným zdrojovým kódem.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Verze $version (Sestavení $build)';
+  }
+
+  @override
+  String get createdBy => 'Vytvořil Lucas Coelho';
+
+  @override
+  String get website => 'Webová stránka';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Poznámky k vydání';
+
+  @override
+  String get support => 'Podpora';
+
+  @override
+  String get license => 'Licence';
+
+  @override
+  String get acknowledgments => 'Poděkování';
+
+  @override
+  String get close => 'Zavřít';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

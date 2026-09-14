@@ -527,4 +527,41 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'مشغل موسيقى مجاني ومفتوح المصدر.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'الإصدار $version (النسخة $build)';
+  }
+
+  @override
+  String get createdBy => 'تم الإنشاء بواسطة Lucas Coelho';
+
+  @override
+  String get website => 'الموقع الإلكتروني';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'ملاحظات الإصدار';
+
+  @override
+  String get support => 'الدعم';
+
+  @override
+  String get license => 'الترخيص';
+
+  @override
+  String get acknowledgments => 'شكر وتقدير';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

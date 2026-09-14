@@ -306,5 +306,27 @@
   "language": "زبان",
   "@language": {},
   "systemDefault": "پیش‌فرض سیستم",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "یک پخش‌کننده موسیقی رایگان و منبع‌باز.",
+  "versionInfo": "نسخه {version} (ساخت {build})",
+  "createdBy": "ایجاد شده توسط Lucas Coelho",
+  "website": "وب‌سایت",
+  "github": "GitHub",
+  "releaseNotes": "یادداشت‌های انتشار",
+  "support": "پشتیبانی",
+  "license": "مجوز",
+  "acknowledgments": "قدردانی‌ها",
+  "close": "بستن",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

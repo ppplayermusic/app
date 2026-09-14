@@ -306,5 +306,27 @@
   "language": "Bahasa",
   "@language": {},
   "systemDefault": "Lalai Sistem",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "Pemain muzik sumber terbuka percuma.",
+  "versionInfo": "Versi {version} (Binaan {build})",
+  "createdBy": "Dicipta oleh Lucas Coelho",
+  "website": "Laman Web",
+  "github": "GitHub",
+  "releaseNotes": "Nota keluaran",
+  "support": "Sokongan",
+  "license": "Lesen",
+  "acknowledgments": "Penghargaan",
+  "close": "Tutup",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

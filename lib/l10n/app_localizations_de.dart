@@ -531,4 +531,41 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'Ein kostenloser Open-Source-Musikplayer.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Version $version (Build $build)';
+  }
+
+  @override
+  String get createdBy => 'Erstellt von Lucas Coelho';
+
+  @override
+  String get website => 'Webseite';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Versionshinweise';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get license => 'Lizenz';
+
+  @override
+  String get acknowledgments => 'Danksagungen';
+
+  @override
+  String get close => 'Schließen';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

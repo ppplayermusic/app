@@ -38,7 +38,7 @@ class ArtistsLinks extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => LocalArtistDetailScreen(artistName: track.artistName),
+                        builder: (_) => LocalArtistDetailScreen(artistName: names[i]),
                       ),
                     );
                   } else {

@@ -531,4 +531,41 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'უფასო, ღია კოდის მუსიკალური პლეერი.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'ვერსია $version (შენება $build)';
+  }
+
+  @override
+  String get createdBy => 'შექმნა Lucas Coelho-მ';
+
+  @override
+  String get website => 'ვებსაიტი';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'გამოშვების შენიშვნები';
+
+  @override
+  String get support => 'მხარდაჭერა';
+
+  @override
+  String get license => 'ლიცენზია';
+
+  @override
+  String get acknowledgments => 'მადლობები';
+
+  @override
+  String get close => 'დახურვა';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

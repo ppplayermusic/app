@@ -529,4 +529,41 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => 'یک پخش‌کننده موسیقی رایگان و منبع‌باز.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'نسخه $version (ساخت $build)';
+  }
+
+  @override
+  String get createdBy => 'ایجاد شده توسط Lucas Coelho';
+
+  @override
+  String get website => 'وب‌سایت';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'یادداشت‌های انتشار';
+
+  @override
+  String get support => 'پشتیبانی';
+
+  @override
+  String get license => 'مجوز';
+
+  @override
+  String get acknowledgments => 'قدردانی‌ها';
+
+  @override
+  String get close => 'بستن';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

@@ -531,4 +531,42 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription =>
+      'Тегін және ашық бастапқы кодты музыкалық ойнатқыш.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Нұсқасы $version (Құрастыру $build)';
+  }
+
+  @override
+  String get createdBy => 'Lucas Coelho жасаған';
+
+  @override
+  String get website => 'Веб-сайт';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Шығарылым жазбалары';
+
+  @override
+  String get support => 'Қолдау';
+
+  @override
+  String get license => 'Лицензия';
+
+  @override
+  String get acknowledgments => 'Алғыстар';
+
+  @override
+  String get close => 'Жабу';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

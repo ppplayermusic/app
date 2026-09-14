@@ -530,4 +530,42 @@ class AppLocalizationsGn extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription =>
+      'Peteĩ purahéi ñembopuha ojehepyme\'ẽ\'ỹva ha ojehechaukáva.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Mba\'e $version (Mba\'e $build)';
+  }
+
+  @override
+  String get createdBy => 'Lucas Coelho ojapo';
+
+  @override
+  String get website => 'Web';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Marandu sãsõ';
+
+  @override
+  String get support => 'Pytyvõ';
+
+  @override
+  String get license => 'Liséñsia';
+
+  @override
+  String get acknowledgments => 'Aguyje';
+
+  @override
+  String get close => 'Mboty';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

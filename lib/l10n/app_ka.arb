@@ -306,5 +306,27 @@
   "language": "ენა",
   "@language": {},
   "systemDefault": "სისტემის ნაგულისხმევი",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "უფასო, ღია კოდის მუსიკალური პლეერი.",
+  "versionInfo": "ვერსია {version} (შენება {build})",
+  "createdBy": "შექმნა Lucas Coelho-მ",
+  "website": "ვებსაიტი",
+  "github": "GitHub",
+  "releaseNotes": "გამოშვების შენიშვნები",
+  "support": "მხარდაჭერა",
+  "license": "ლიცენზია",
+  "acknowledgments": "მადლობები",
+  "close": "დახურვა",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

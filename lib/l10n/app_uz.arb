@@ -371,5 +371,27 @@
   "addToPlaylist": "Pleylistga qo'shish",
   "@addToPlaylist": {},
   "addToQueue": "Navbatga qo'shish",
-  "@addToQueue": {}
+  "@addToQueue": {},
+  "aboutDescription": "Bepul va ochiq kodli musiqa pleyeri.",
+  "versionInfo": "Versiya {version} (Yig'ilish {build})",
+  "createdBy": "Lucas Coelho tomonidan yaratilgan",
+  "website": "Veb-sayt",
+  "github": "GitHub",
+  "releaseNotes": "Reliz qaydlari",
+  "support": "Qo'llab-quvvatlash",
+  "license": "Litsenziya",
+  "acknowledgments": "Minnatdorchilik",
+  "close": "Yopish",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

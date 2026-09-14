@@ -261,5 +261,27 @@
   "language": "اللغة",
   "@language": {},
   "systemDefault": "الافتراضي للنظام",
-  "@systemDefault": {}
+  "@systemDefault": {},
+  "aboutDescription": "مشغل موسيقى مجاني ومفتوح المصدر.",
+  "versionInfo": "الإصدار {version} (النسخة {build})",
+  "createdBy": "تم الإنشاء بواسطة Lucas Coelho",
+  "website": "الموقع الإلكتروني",
+  "github": "GitHub",
+  "releaseNotes": "ملاحظات الإصدار",
+  "support": "الدعم",
+  "license": "الترخيص",
+  "acknowledgments": "شكر وتقدير",
+  "close": "إغلاق",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

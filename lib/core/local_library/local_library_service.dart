@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
@@ -101,9 +102,9 @@ class LocalLibraryService {
   }
 
   Future<void> importFolder() async {
-    print('Opening FilePicker for directory...');
+    debugPrint('Opening FilePicker for directory...');
     final rootPath = await FilePicker.getDirectoryPath();
-    print('FilePicker returned: $rootPath');
+    debugPrint('FilePicker returned: $rootPath');
     if (rootPath == null) return;
 
     final String rootId = _uuid.v4();
@@ -168,7 +169,7 @@ class LocalLibraryService {
         // use a platform channel. But for now we only support macOS/Windows/Linux root scanning.
       }
       final dir = Directory(pathToScan);
-      print('Scanning directory: $pathToScan, exists: ${await dir.exists()}');
+      debugPrint('Scanning directory: $pathToScan, exists: ${await dir.exists()}');
       if (await dir.exists()) {
         final List<Directory> dirsToScan = [dir];
         while (dirsToScan.isNotEmpty) {
@@ -187,13 +188,13 @@ class LocalLibraryService {
               }
             }
           } catch (e) {
-            print('Skipping inaccessible directory \${currentDir.path}: $e');
+            debugPrint('Skipping inaccessible directory \${currentDir.path}: $e');
           }
         }
       }
     }
 
-    print('Found ${files.length} audio files');
+    debugPrint('Found ${files.length} audio files');
     for (final f in files) {
       final fileMechanism = mechanism == TrackSourceType.androidContentUri
           ? TrackSourceType.androidContentUri

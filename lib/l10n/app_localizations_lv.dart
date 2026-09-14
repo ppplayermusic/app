@@ -532,4 +532,42 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription =>
+      'Bezmaksas atvērtā pirmkoda mūzikas atskaņotājs.';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return 'Versija $version (Būvējums $build)';
+  }
+
+  @override
+  String get createdBy => 'Izveidoja Lucas Coelho';
+
+  @override
+  String get website => 'Tīmekļa vietne';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => 'Izlaiduma piezīmes';
+
+  @override
+  String get support => 'Atbalsts';
+
+  @override
+  String get license => 'Licence';
+
+  @override
+  String get acknowledgments => 'Pateicības';
+
+  @override
+  String get close => 'Aizvērt';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }

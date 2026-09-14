@@ -15,6 +15,7 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/premium_modals.dart';
 import '../../shared/widgets/profile_modal.dart';
 import 'widgets/api_credentials_modal.dart';
+import 'widgets/about_dialog.dart';
 import '../../core/cache/catalog_cache_repository.dart';
 import '../../core/cache/image_cache_manager.dart';
 import '../../core/api/spotify_repository.dart';
@@ -301,6 +302,14 @@ class SettingsScreen extends ConsumerWidget {
                             error: (e, _) => 'Unknown',
                           ),
                           icon: Icons.info_outline_rounded,
+                          onTap: versionAsync.hasValue 
+                              ? () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const PpAboutDialog(),
+                                  );
+                                }
+                              : null,
                         );
                       },
                     )

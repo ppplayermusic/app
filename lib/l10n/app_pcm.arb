@@ -371,5 +371,27 @@
   "addToPlaylist": "Add to playlist",
   "@addToPlaylist": {},
   "addToQueue": "Add to queue",
-  "@addToQueue": {}
+  "@addToQueue": {},
+  "aboutDescription": "A free open-source music player.",
+  "versionInfo": "Version {version} (Build {build})",
+  "createdBy": "Created by Lucas Coelho",
+  "website": "Website",
+  "github": "GitHub",
+  "releaseNotes": "Release notes",
+  "support": "Support",
+  "license": "License",
+  "acknowledgments": "Acknowledgments",
+  "close": "Close",
+  "@versionInfo": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "copyright": "© {year} PPPlayer contributors",
+  "@copyright": {
+    "placeholders": {
+      "year": {}
+    }
+  }
 }

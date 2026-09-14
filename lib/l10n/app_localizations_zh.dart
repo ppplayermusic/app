@@ -522,4 +522,41 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get trackInfoDuration => 'Duration';
+
+  @override
+  String get aboutDescription => '一个免费的开源音乐播放器。';
+
+  @override
+  String versionInfo(Object version, Object build) {
+    return '版本 $version (Build $build)';
+  }
+
+  @override
+  String get createdBy => '由 Lucas Coelho 创建';
+
+  @override
+  String get website => '网站';
+
+  @override
+  String get github => 'GitHub';
+
+  @override
+  String get releaseNotes => '发行说明';
+
+  @override
+  String get support => '支持';
+
+  @override
+  String get license => '许可协议';
+
+  @override
+  String get acknowledgments => '鸣谢';
+
+  @override
+  String get close => '关闭';
+
+  @override
+  String copyright(Object year) {
+    return '© $year PPPlayer contributors';
+  }
 }
