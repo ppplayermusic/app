@@ -371,27 +371,5 @@
   "addToPlaylist": "প্লেলিস্টে যোগ করুন",
   "@addToPlaylist": {},
   "addToQueue": "সারিতে যোগ করুন",
-  "@addToQueue": {},
-  "aboutDescription": "একটি বিনামূল্যের ওপেন-সোর্স মিউজিক প্লেয়ার।",
-  "versionInfo": "সংস্করণ {version} (বিল্ড {build})",
-  "createdBy": "Lucas Coelho দ্বারা তৈরি",
-  "website": "ওয়েবসাইট",
-  "github": "GitHub",
-  "releaseNotes": "রিলিজ নোট",
-  "support": "সমর্থন",
-  "license": "লাইসেন্স",
-  "acknowledgments": "স্বীকৃতি",
-  "close": "বন্ধ করুন",
-  "@versionInfo": {
-    "placeholders": {
-      "version": {},
-      "build": {}
-    }
-  },
-  "copyright": "© {year} PPPlayer contributors",
-  "@copyright": {
-    "placeholders": {
-      "year": {}
-    }
-  }
+  "@addToQueue": {}
 }

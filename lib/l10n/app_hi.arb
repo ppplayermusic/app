@@ -261,27 +261,5 @@
   "language": "भाषा",
   "@language": {},
   "systemDefault": "सिस्टम डिफ़ॉल्ट",
-  "@systemDefault": {},
-  "aboutDescription": "एक मुफ़्त, ओपन-सोर्स म्यूज़िक प्लेयर।",
-  "versionInfo": "संस्करण {version} (बिल्ड {build})",
-  "createdBy": "Lucas Coelho द्वारा निर्मित",
-  "website": "वेबसाइट",
-  "github": "GitHub",
-  "releaseNotes": "रिलीज़ नोट्स",
-  "support": "समर्थन",
-  "license": "लाइसेंस",
-  "acknowledgments": "आभार",
-  "close": "बंद करें",
-  "@versionInfo": {
-    "placeholders": {
-      "version": {},
-      "build": {}
-    }
-  },
-  "copyright": "© {year} PPPlayer contributors",
-  "@copyright": {
-    "placeholders": {
-      "year": {}
-    }
-  }
+  "@systemDefault": {}
 }

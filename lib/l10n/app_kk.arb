@@ -306,27 +306,5 @@
   "language": "Тіл",
   "@language": {},
   "systemDefault": "Жүйелік әдепкі",
-  "@systemDefault": {},
-  "aboutDescription": "Тегін және ашық бастапқы кодты музыкалық ойнатқыш.",
-  "versionInfo": "Нұсқасы {version} (Құрастыру {build})",
-  "createdBy": "Lucas Coelho жасаған",
-  "website": "Веб-сайт",
-  "github": "GitHub",
-  "releaseNotes": "Шығарылым жазбалары",
-  "support": "Қолдау",
-  "license": "Лицензия",
-  "acknowledgments": "Алғыстар",
-  "close": "Жабу",
-  "@versionInfo": {
-    "placeholders": {
-      "version": {},
-      "build": {}
-    }
-  },
-  "copyright": "© {year} PPPlayer contributors",
-  "@copyright": {
-    "placeholders": {
-      "year": {}
-    }
-  }
+  "@systemDefault": {}
 }

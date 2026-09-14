@@ -306,27 +306,5 @@
   "language": "Bahasa",
   "@language": {},
   "systemDefault": "Default Sistem",
-  "@systemDefault": {},
-  "aboutDescription": "Pemutar musik sumber terbuka dan gratis.",
-  "versionInfo": "Versi {version} (Build {build})",
-  "createdBy": "Dibuat oleh Lucas Coelho",
-  "website": "Situs Web",
-  "github": "GitHub",
-  "releaseNotes": "Catatan rilis",
-  "support": "Dukungan",
-  "license": "Lisensi",
-  "acknowledgments": "Penghargaan",
-  "close": "Tutup",
-  "@versionInfo": {
-    "placeholders": {
-      "version": {},
-      "build": {}
-    }
-  },
-  "copyright": "© {year} PPPlayer contributors",
-  "@copyright": {
-    "placeholders": {
-      "year": {}
-    }
-  }
+  "@systemDefault": {}
 }

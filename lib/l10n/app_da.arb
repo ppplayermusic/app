@@ -306,27 +306,5 @@
   "language": "Sprog",
   "@language": {},
   "systemDefault": "Systemstandard",
-  "@systemDefault": {},
-  "aboutDescription": "En gratis open source musikafspiller.",
-  "versionInfo": "Version {version} (Build {build})",
-  "createdBy": "Oprettet af Lucas Coelho",
-  "website": "Hjemmeside",
-  "github": "GitHub",
-  "releaseNotes": "Udgivelsesnoter",
-  "support": "Support",
-  "license": "Licens",
-  "acknowledgments": "Anerkendelser",
-  "close": "Luk",
-  "@versionInfo": {
-    "placeholders": {
-      "version": {},
-      "build": {}
-    }
-  },
-  "copyright": "© {year} PPPlayer contributors",
-  "@copyright": {
-    "placeholders": {
-      "year": {}
-    }
-  }
+  "@systemDefault": {}
 }

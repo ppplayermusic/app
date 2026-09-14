@@ -306,27 +306,5 @@
   "language": "Jezik",
   "@language": {},
   "systemDefault": "Zadano u sustavu",
-  "@systemDefault": {},
-  "aboutDescription": "Besplatni glazbeni player otvorenog koda.",
-  "versionInfo": "Verzija {version} (Međuverzija {build})",
-  "createdBy": "Autor: Lucas Coelho",
-  "website": "Web stranica",
-  "github": "GitHub",
-  "releaseNotes": "Napomene o izdanju",
-  "support": "Podrška",
-  "license": "Licenca",
-  "acknowledgments": "Zahvale",
-  "close": "Zatvori",
-  "@versionInfo": {
-    "placeholders": {
-      "version": {},
-      "build": {}
-    }
-  },
-  "copyright": "© {year} PPPlayer contributors",
-  "@copyright": {
-    "placeholders": {
-      "year": {}
-    }
-  }
+  "@systemDefault": {}
 }
