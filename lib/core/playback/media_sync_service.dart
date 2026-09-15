@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audio_service/audio_service.dart';
 import '../cache/image_cache_manager.dart';
@@ -37,13 +38,16 @@ class MediaSyncService {
     // 1. Update Metadata if track changed
     if (track != null && track.id != _lastTrackId) {
       _lastTrackId = track.id;
-      handler.updateMetadata(
-        id: track.id,
-        title: track.title,
-        artist: track.artist ?? '',
-        artUri: track.artworkUrl,
-        duration: currentStatus.duration,
-      );
+      // Run asynchronously to avoid Win32 COM message loop pumping during Flutter's internal phases (like MouseTracker device updates)
+      Timer.run(() {
+        handler.updateMetadata(
+          id: track.id,
+          title: track.title,
+          artist: track.artist ?? '',
+          artUri: track.artworkUrl,
+          duration: currentStatus.duration,
+        );
+      });
 
       final artUrl = track.artworkUrl;
       if (artUrl != null && artUrl.isNotEmpty) {
@@ -63,13 +67,16 @@ class MediaSyncService {
       _lastUpdateTime = now;
       _lastStatus = currentStatus;
 
-      handler.updatePlaybackState(
-        playing: currentStatus.isPlaying,
-        position: currentStatus.position,
-        bufferedPosition: currentStatus.buffered,
-        speed: currentStatus.speed,
-        processingState: _mapToAudioProcessingState(currentStatus.state),
-      );
+      // Run asynchronously to avoid Win32 COM message loop pumping during Flutter's internal phases
+      Timer.run(() {
+        handler.updatePlaybackState(
+          playing: currentStatus.isPlaying,
+          position: currentStatus.position,
+          bufferedPosition: currentStatus.buffered,
+          speed: currentStatus.speed,
+          processingState: _mapToAudioProcessingState(currentStatus.state),
+        );
+      });
     }
   }
 
