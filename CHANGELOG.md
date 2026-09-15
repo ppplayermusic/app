@@ -2,6 +2,19 @@
 
 All notable changes to PPPlayer will be documented in this file.
 
+## [1.3.2] - 2026-09-15
+
+### Fixed
+- Fixed an issue where adding a song that was already in a playlist would cause a database error.
+- Fixed a severe UI freeze and crash on Windows when navigating to the Playlists view, caused by a system cursor conflict with periodic audio playback sync.
+
+## [1.3.1] - 2026-09-14
+
+### Added
+- Implemented the Library screen with filtering, sorting, and search capabilities.
+- Added MediaSyncService to synchronize playback status with system OS media controls.
+- Implemented local Drift database for persisting playlists and playback history.
+
 ## [1.3.0] - 2026-09-13
 
 ### Added
