@@ -269,6 +269,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
         track: track,
         state: PlaybackState.preparing,
         isIFrameMode: true,
+        // Set hasVideo: true for online tracks, matching what play() does.
+        // This ensures a restored/paused YouTube track immediately signals
+        // that a video surface should be presented, so the Player Screen
+        // can initialize the native window without waiting for Play to be pressed.
+        hasVideo: true,
         // Set activeVideoId immediately so PlaybackView renders the YouTube
         // player widget before the IFrame fires its first event.
         activeVideoId: track.id,

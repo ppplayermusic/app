@@ -1,5 +1,6 @@
 import '../../shared/widgets/pp_image.dart';
 import 'dart:ui' show lerpDouble;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -35,10 +36,54 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   double? _dragValue;
   Size? _lastWindowSize;
 
+  // --- Video surface lifecycle state ---
+  // Monotonically incremented whenever a new reveal is initiated.
+  // Post-frame callbacks capture this at schedule time and abort if stale.
+  int _videoLayoutGeneration = 0;
+  // Last measured bounds. Used to deduplicate native bounds updates.
+  Rect? _lastVideoBounds;
+  // Guards against stacking multiple slot-unavailable retries.
+  // When the slot isn't in the tree yet we schedule one retry; this flag
+  // prevents additional probes from scheduling redundant retries while one
+  // is already pending.
+  bool _slotRetryPending = false;
+  // Counts consecutive post-frame slot retries within a single trigger sequence.
+  // Capped at _kMaxSlotRetries to prevent an unbounded loop when the slot
+  // cannot exist (structural issue). Reset by every meaningful state-change
+  // trigger so a subsequent real event starts fresh.
+  int _slotRetryCount = 0;
+  static const int _kMaxSlotRetries = 5;
+
   @override
   void initState() {
     super.initState();
-    _scheduleLayoutUpdates();
+    // Post-frame: read current state and attempt surface init.
+    // This is the primary fix for the restored-session case:
+    //   track already non-null, hasVideo already true, view already video
+    //   → no ref.listen ever fires, but this runs unconditionally.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        if (kDebugMode) debugPrint('[VideoInit] Player Screen mounted — checking initial state');
+        _logCurrentState();
+        ensureVideoSurfaceReady('initial_mount');
+      }
+    });
+    // Safety-net probes for slow media resolvers (> 1 frame).
+    // The earlier probes handle the case where the screen opens before
+    // the media has resolved; the later ones handle slow connections.
+    _scheduleInitialLayoutProbes();
+  }
+
+  void _logCurrentState() {
+    if (!kDebugMode) return;
+    final playerView = ref.read(settingsProvider).playerView;
+    final track = ref.read(playerProvider).currentTrack;
+    final hasVideo =
+        ref.read(playbackStatusProvider).asData?.value.hasVideo ?? false;
+    debugPrint('[VideoInit] playerView=$playerView');
+    debugPrint('[VideoInit] activeTrack=${track?.spotifyId ?? 'none'}');
+    debugPrint('[VideoInit] hasVideo=$hasVideo');
+    if (!hasVideo) debugPrint('[VideoInit] waiting for media...');
   }
 
   @override
@@ -48,29 +93,212 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final windowSize = MediaQuery.sizeOf(context);
     if (_lastWindowSize != null && _lastWindowSize != windowSize) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _updateVideoLayout('resize');
+        if (mounted) ensureVideoSurfaceReady('resize');
       });
     }
     _lastWindowSize = windowSize;
   }
 
-  void _scheduleLayoutUpdates() {
-    for (var ms in [0, 50, 100, 250, 500, 800]) {
+  // Safety-net probes for slow media resolvers.
+  // These intentionally do NOT increment the generation counter so they
+  // don't invalidate each other or a concurrent live transition.
+  void _scheduleInitialLayoutProbes() {
+    for (final ms in [500, 1000, 1500, 2000]) {
       Future.delayed(Duration(milliseconds: ms), () {
-        if (mounted) _updateVideoLayout('scheduled_$ms');
+        if (mounted) ensureVideoSurfaceReady('probe_${ms}ms');
       });
     }
   }
 
-  void _updateVideoLayout([String label = 'manual']) {
-    if (!mounted) return;
+  // ──────────────────────────────────────────────────────────────────────────
+  // ensureVideoSurfaceReady
+  //
+  // Single, authoritative entry point for the video surface lifecycle.
+  // Safe to call from any lifecycle event.
+  //
+  // Required conditions (checked in order):
+  //   1. Widget is still mounted.
+  //   2. Player view is VIDEO.
+  //   3. hasVideo is true (media is actually video-capable).
+  //   4. Video slot has measurable bounds in the render tree.
+  //
+  // If the slot is absent but all other conditions are met, schedules one
+  // post-frame retry via _slotRetryPending (de-duplication flag).
+  // The flag is cleared *before* the retry executes so the retry can
+  // re-arm itself if the slot is still not ready on that frame.
+  //
+  // Sequence:
+  //   position (hidden) → apply bounds → wait one Flutter frame → reveal
+  // ──────────────────────────────────────────────────────────────────────────
+  void ensureVideoSurfaceReady([String label = 'manual']) {
+    if (!mounted) {
+      if (kDebugMode) debugPrint('[VideoInit] skipped: unmounted ($label)');
+      return;
+    }
+
+    final isVideoView =
+        ref.read(settingsProvider).playerView == PlayerView.video;
+    if (!isVideoView) {
+      // Not on video view — nothing to do. Do not retry.
+      return;
+    }
+
+    // hasVideo must be true before the slot can even exist.
+    // If it's not, the slot is definitely not in the tree yet.
+    // Return without scheduling a retry — the hasVideo listener will re-trigger
+    // us once media becomes video-capable.
+    final hasVideo =
+        ref.read(playbackStatusProvider).asData?.value.hasVideo ?? false;
+    if (!hasVideo) {
+      if (kDebugMode) {
+        debugPrint('[VideoInit] skipped: hasVideo=false ($label) — waiting for media');
+      }
+      return;
+    }
+
     final RenderBox? box =
         _videoSlotKey.currentContext?.findRenderObject() as RenderBox?;
-    if (box != null) {
-      final position = box.localToGlobal(Offset.zero);
+
+    if (box == null || !box.hasSize) {
+      // All other conditions are satisfied: view=video, hasVideo=true.
+      // The slot just hasn't been laid out yet. Schedule ONE retry, up to
+      // _kMaxSlotRetries consecutive frames. After that, stop the frame
+      // loop and rely on the event-driven triggers (hasVideo, playerView,
+      // track, slot_reflow) to restart initialization.
+      if (!_slotRetryPending) {
+        if (_slotRetryCount >= _kMaxSlotRetries) {
+          if (kDebugMode) {
+            debugPrint(
+              '[VideoInit] slot unavailable after $_kMaxSlotRetries retries — '
+              'stopping frame loop; waiting for event trigger ($label)',
+            );
+          }
+          return;
+        }
+        _slotRetryPending = true;
+        _slotRetryCount++;
+        if (kDebugMode) {
+          debugPrint(
+            '[VideoInit] slot unavailable ($label) → retry '
+            '$_slotRetryCount/$_kMaxSlotRetries',
+          );
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Clear BEFORE retry so a subsequent unavailable result can re-arm.
+          _slotRetryPending = false;
+          if (!mounted) return;
+          // Re-check conditions inside the callback: view or hasVideo may
+          // have changed since the retry was scheduled.
+          final stillVideo =
+              ref.read(settingsProvider).playerView == PlayerView.video;
+          final stillHasVideo =
+              ref.read(playbackStatusProvider).asData?.value.hasVideo ?? false;
+          if (!stillVideo || !stillHasVideo) {
+            if (kDebugMode) {
+              debugPrint(
+                '[VideoInit] retry cancelled: '
+                'view=${stillVideo ? 'video' : 'other'} '
+                'hasVideo=$stillHasVideo',
+              );
+            }
+            _slotRetryCount = 0; // Reset for next valid trigger.
+            return;
+          }
+          ensureVideoSurfaceReady('slot_retry_$_slotRetryCount');
+        });
+      } else {
+        if (kDebugMode) {
+          debugPrint('[VideoInit] slot unavailable ($label) — retry already pending');
+        }
+      }
+      return;
+    }
+
+    // Slot is available — reset the retry counter for the next trigger sequence.
+    _slotRetryCount = 0;
+
+    final position = box.localToGlobal(Offset.zero);
+    final size = box.size;
+    final newBounds =
+        Rect.fromLTWH(position.dx, position.dy, size.width, size.height);
+
+    final currentVisible = ref.read(videoLayoutProvider).isVisible;
+
+    // ── Bounds deduplication ────────────────────────────────────────────────
+    // Skip if bounds haven't changed materially AND already visible.
+    // This prevents redundant native-window commits on each Flutter rebuild.
+    final boundsChanged = _lastVideoBounds == null ||
+        (_lastVideoBounds!.left - newBounds.left).abs() > 1.0 ||
+        (_lastVideoBounds!.top - newBounds.top).abs() > 1.0 ||
+        (_lastVideoBounds!.width - newBounds.width).abs() > 1.0 ||
+        (_lastVideoBounds!.height - newBounds.height).abs() > 1.0;
+
+    if (!boundsChanged && currentVisible) {
+      // Bounds stable and already visible — no-op.
+      return;
+    }
+
+    _lastVideoBounds = newBounds;
+    final generation = ++_videoLayoutGeneration;
+
+    if (kDebugMode) {
+      debugPrint('[VideoInit #$generation] ensureVideoSurfaceReady ($label)');
+      debugPrint('[VideoInit #$generation] slot bounds=$newBounds');
+    }
+
+    if (!currentVisible) {
+      // ── Position first, reveal second ─────────────────────────────────────
+      if (kDebugMode) {
+        debugPrint('[VideoInit #$generation] hidden=true, applying native bounds');
+      }
+
       ref
           .read(videoLayoutProvider.notifier)
-          .updateLayout(box.size, position, label: label);
+          .updateLayout(size, position, isVisible: false,
+              label: 'position_first ($label)');
+
+      if (kDebugMode) {
+        debugPrint('[VideoInit #$generation] scheduling reveal (next frame)');
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          if (kDebugMode) debugPrint('[VideoInit #$generation] reveal skipped: unmounted');
+          return;
+        }
+        if (generation != _videoLayoutGeneration) {
+          if (kDebugMode) {
+            debugPrint(
+              '[VideoInit #$generation] reveal skipped: stale '
+              '(current=$_videoLayoutGeneration)',
+            );
+          }
+          return;
+        }
+        if (ref.read(settingsProvider).playerView != PlayerView.video) {
+          if (kDebugMode) {
+            debugPrint('[VideoInit #$generation] reveal skipped: playerView changed');
+          }
+          return;
+        }
+
+        if (kDebugMode) {
+          debugPrint('[VideoInit #$generation] frame committed → native visible=true');
+        }
+        ref
+            .read(videoLayoutProvider.notifier)
+            .updateLayout(size, position, isVisible: true,
+                label: 'reveal ($label)');
+      });
+    } else {
+      // Already visible but bounds changed (e.g., resize).
+      // Update bounds in place without hiding/showing.
+      if (kDebugMode) {
+        debugPrint('[VideoInit #$generation] bounds update only (already visible)');
+      }
+      ref
+          .read(videoLayoutProvider.notifier)
+          .updateLayout(size, position, isVisible: true, label: label);
     }
   }
 
@@ -81,34 +309,57 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final settings = ref.watch(settingsProvider);
     final track = playerState.currentTrack;
 
-    // When the very first track becomes available after the screen mounts,
-    // initState's _scheduleLayoutUpdates() would have found track==null and
-    // returned the empty scaffold — so _videoSlotKey was never in the tree.
-    // We watch for the first track here and re-schedule measurements so the
-    // video slot can be found and measured correctly.
+    // Trigger surface init whenever we have track info and the screen is
+    // already showing the video slot. This covers the case where the Player
+    // Screen was opened *after* the first track started playing and the
+    // initial probe schedule (from initState) ran before any slot existed.
     ref.listen(playerProvider.select((s) => s.currentTrack?.spotifyId), (prev, next) {
-      if (prev == null && next != null) {
-        // First track just appeared — measure after the frame is rendered.
+      if (next != null) {
+        if (kDebugMode) {
+          debugPrint('[VideoInit] activeTrack changed ($prev -> $next)');
+        }
+        _slotRetryCount = 0; // Fresh retry budget for this trigger.
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _scheduleLayoutUpdates();
+          if (mounted) ensureVideoSurfaceReady('track_change');
         });
       }
     });
 
+    // CRITICAL FIX: Listen for hasVideo becoming true.
+    // This is the primary trigger for the cold-start case:
+    //   - App opens, first track loads, media resolves → hasVideo flips true.
+    //   - The Consumer widget inserts the video slot for the first time.
+    //   - LayoutBuilder fires slot_reflow, but ensureVideoSurfaceReady also
+    //     fires here independently from the status stream, as a belt-and-
+    //     suspenders approach.
+    ref.listen(
+      playbackStatusProvider.select((s) {
+        final data = s.asData;
+        if (data == null) return false;
+        return data.value.hasVideo;
+      }),
+      (prev, next) {
+        if (next == true && prev != true) {
+          if (kDebugMode) debugPrint('[VideoInit] hasVideo became true');
+          _slotRetryCount = 0; // Fresh retry budget for this trigger.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) ensureVideoSurfaceReady('hasVideo_true');
+          });
+        }
+      },
+    );
+
     if (track == null) {
       return Scaffold(
         backgroundColor: Colors.black,
-        body: Center(child: Text(AppLocalizations.of(context)!.noTrackPlaying)),
+        body: const Center(child: SizedBox.shrink()),
       );
     }
 
     ref.listen(settingsProvider.select((s) => s.playerView), (prev, next) {
       if (next == PlayerView.video) {
-        _scheduleLayoutUpdates();
-      } else {
-        ref
-            .read(videoLayoutProvider.notifier)
-            .setVisible(false, label: AppLocalizations.of(context)!.playerscreenviewswitch);
+        _slotRetryCount = 0; // Fresh retry budget for this trigger.
+        ensureVideoSurfaceReady('playerView->video');
       }
     });
 
@@ -116,6 +367,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final isVideoView = settings.playerView == PlayerView.video;
     final colorScheme = Theme.of(context).colorScheme;
     final isPowerSaver = settings.performanceMode == PerformanceMode.powerSaver;
+
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -257,28 +509,42 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                   _ToggleTab(
                                     label: AppLocalizations.of(context)!.video,
                                     isActive: isVideoView,
-                                    onTap:
-                                        () => ref
-                                            .read(settingsProvider.notifier)
-                                            .setPlayerView(PlayerView.video),
+                                    onTap: () {
+                                      if (kDebugMode && !isVideoView) {
+                                        debugPrint('[VideoInit] ${settings.playerView.name} -> video');
+                                      }
+                                      ref
+                                          .read(settingsProvider.notifier)
+                                          .setPlayerView(PlayerView.video);
+                                    },
                                   ),
                                   _ToggleTab(
                                     label: AppLocalizations.of(context)!.artwork,
                                     isActive:
                                         settings.playerView ==
                                         PlayerView.artwork,
-                                    onTap:
-                                        () => ref
-                                            .read(settingsProvider.notifier)
-                                            .setPlayerView(PlayerView.artwork),
+                                    onTap: () {
+                                      if (kDebugMode && isVideoView) {
+                                        debugPrint('[VideoInit] video -> artwork: hiding native surface');
+                                      }
+                                      ref.read(videoLayoutProvider.notifier).setVisible(false, label: 'sync_hide_for_artwork');
+                                      ref
+                                          .read(settingsProvider.notifier)
+                                          .setPlayerView(PlayerView.artwork);
+                                    },
                                   ),
                                   _ToggleTab(
                                     label: AppLocalizations.of(context)!.queue,
                                     isActive: isQueueView,
-                                    onTap:
-                                        () => ref
-                                            .read(settingsProvider.notifier)
-                                            .setPlayerView(PlayerView.queue),
+                                    onTap: () {
+                                      if (kDebugMode && isVideoView) {
+                                        debugPrint('[VideoInit] video -> queue: hiding native surface');
+                                      }
+                                      ref.read(videoLayoutProvider.notifier).setVisible(false, label: 'sync_hide_for_queue');
+                                      ref
+                                          .read(settingsProvider.notifier)
+                                          .setPlayerView(PlayerView.queue);
+                                    },
                                   ),
                                 ],
                               ),
@@ -325,14 +591,31 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 ),
 
                 Expanded(
-                  child:
-                      isQueueView
-                          ? _QueueView(playerState: playerState)
-                          : Column(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Padding(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          switchInCurve: Curves.easeOutCubic,
+                          switchOutCurve: Curves.easeInCubic,
+                          layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+                            return Stack(
+                              alignment: Alignment.center,
+                              children: <Widget>[
+                                ...previousChildren,
+                                if (currentChild != null) currentChild,
+                              ],
+                            );
+                          },
+                          child: isQueueView
+                              ? SizedBox(
+                                  key: const ValueKey('queue_view'),
+                                  width: double.infinity,
+                                  child: _QueueView(playerState: playerState),
+                                )
+                              : Padding(
+                                  key: const ValueKey('presentation_view'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 24.0,
                                   ),
@@ -343,9 +626,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                       ),
                                       child: AspectRatio(
                                         aspectRatio: 16 / 9,
-                                        child:
-                                            isVideoView
-                                                ? Consumer(
+                                        child: AnimatedSwitcher(
+                                          duration: const Duration(milliseconds: 250),
+                                          switchInCurve: Curves.easeOutCubic,
+                                          switchOutCurve: Curves.easeInCubic,
+                                          child: isVideoView
+                                              ? Consumer(
+                                                  key: const ValueKey('video_view'),
                                                   builder: (
                                                     context,
                                                     ref,
@@ -427,11 +714,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
                                                     return LayoutBuilder(
                                                       builder: (context, _) {
-                                                        // Fire on every reflow of the slot itself
-                                                        // (e.g. after AspectRatio recalculates on resize).
                                                         WidgetsBinding.instance
                                                             .addPostFrameCallback(
-                                                              (_) => _updateVideoLayout('slot_reflow'),
+                                                              (_) => ensureVideoSurfaceReady('slot_reflow'),
                                                             );
                                                         return Container(
                                                           key: _videoSlotKey,
@@ -447,35 +732,23 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                     );
                                                   },
                                                 )
-                                                : _VinylArtwork(
-                                                      imageUrl:
-                                                          playerState
-                                                              .currentTrack
-                                                              ?.albumImage ??
-                                                          '',
-                                                      isPlaying:
-                                                          playerState.isPlaying,
-                                                    )
-                                                    .animate()
-                                                    .fadeIn(
-                                                      duration: 800.ms,
-                                                      curve: Curves.easeOut,
-                                                    )
-                                                    .scale(
-                                                      begin: const Offset(
-                                                        0.9,
-                                                        0.9,
-                                                      ),
-                                                      end: const Offset(1, 1),
-                                                      duration: 800.ms,
-                                                      curve:
-                                                          Curves.easeOutCubic,
-                                                    ),
+                                              : _VinylArtwork(
+                                                    key: const ValueKey('artwork_view'),
+                                                    imageUrl:
+                                                        playerState
+                                                            .currentTrack
+                                                            ?.albumImage ??
+                                                        '',
+                                                    isPlaying:
+                                                        playerState.isPlaying,
+                                                  ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
+                        ),
+                      ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
                                   16,
@@ -1256,7 +1529,7 @@ class _VinylArtwork extends StatefulWidget {
   final String imageUrl;
   final bool isPlaying;
 
-  const _VinylArtwork({required this.imageUrl, required this.isPlaying});
+  const _VinylArtwork({super.key, required this.imageUrl, required this.isPlaying});
 
   @override
   State<_VinylArtwork> createState() => _VinylArtworkState();

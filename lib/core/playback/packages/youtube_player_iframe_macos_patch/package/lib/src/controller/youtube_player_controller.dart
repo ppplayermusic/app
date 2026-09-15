@@ -493,7 +493,13 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
   Future<VideoData> get videoData async {
     final videoData = await _evalWithResult('getVideoData()');
 
-    return VideoData.fromMap(jsonDecode(videoData));
+    var decoded = jsonDecode(videoData);
+    // On some platforms (like Windows webview_win_floating), the result might be double-encoded.
+    if (decoded is String) {
+      decoded = jsonDecode(decoded);
+    }
+    
+    return VideoData.fromMap(decoded);
   }
 
   @override

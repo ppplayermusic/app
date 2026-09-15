@@ -468,6 +468,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
     bool isRetry = false,
     String? contextArtistId,
     Duration? position,
+    int? queueIndex,
   }) async {
     if (!isRetry) {
       _prefetchedNextTrackForCurrentLoad = false;
@@ -491,16 +492,23 @@ class PlayerNotifier extends Notifier<PlayerState> {
           );
         }).toList();
 
-    final targetTrack = q.firstWhere(
-      (t) {
-        if (track.queueItemId != null && t.queueItemId != null) {
-          return t.queueItemId == track.queueItemId;
-        }
-        return t.spotifyId == track.spotifyId && t.name == track.name;
-      },
-      orElse: () => q.first,
-    );
-    final idx = q.indexOf(targetTrack);
+    int idx = 0;
+    Track targetTrack;
+    if (queueIndex != null && queueIndex >= 0 && queueIndex < q.length) {
+      idx = queueIndex;
+      targetTrack = q[idx];
+    } else {
+      targetTrack = q.firstWhere(
+        (t) {
+          if (track.queueItemId != null && t.queueItemId != null) {
+            return t.queueItemId == track.queueItemId;
+          }
+          return t.spotifyId == track.spotifyId && t.name == track.name;
+        },
+        orElse: () => q.first,
+      );
+      idx = q.indexOf(targetTrack);
+    }
 
     debugPrint('PlayerNotifier: Resolving track ${track.name}');
 
@@ -730,7 +738,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
     final nextQueue = state.playbackQueue.next();
     if (nextQueue.currentIndex < nextQueue.tracks.length) {
       final track = nextQueue.tracks[nextQueue.currentIndex];
-      playTrack(track, queue: nextQueue.tracks);
+      playTrack(
+        track,
+        queue: nextQueue.tracks,
+        queueIndex: nextQueue.currentIndex,
+      );
     }
 
     // Evaluate autoplay if we didn't play a track but still advanced
@@ -740,7 +752,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
   void skipPrevious() {
     final prevQueue = state.playbackQueue.previous(state.position);
     final track = prevQueue.tracks[prevQueue.currentIndex];
-    playTrack(track, queue: prevQueue.tracks);
+    playTrack(
+      track,
+      queue: prevQueue.tracks,
+      queueIndex: prevQueue.currentIndex,
+    );
   }
 
   void skipTo(int index) {
@@ -748,6 +764,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       playTrack(
         state.playbackQueue.tracks[index],
         queue: state.playbackQueue.tracks,
+        queueIndex: index,
       );
     }
   }

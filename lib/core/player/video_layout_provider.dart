@@ -44,12 +44,12 @@ class VideoLayoutNotifier extends Notifier<VideoLayoutState> {
   @override
   VideoLayoutState build() => VideoLayoutState();
 
-  void updateLayout(Size size, Offset position, {String label = 'unknown'}) {
+  void updateLayout(Size size, Offset position, {bool? isVisible, String label = 'unknown'}) {
     state = state.copyWith(
       size: size,
       position: position,
       isReady: true,
-      isVisible: true,
+      isVisible: isVisible ?? this.state.isVisible,
       debugLabel: label,
       updatedAt: DateTime.now(),
     );

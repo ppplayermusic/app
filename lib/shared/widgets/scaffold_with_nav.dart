@@ -39,6 +39,7 @@ class ScaffoldWithNav extends ConsumerStatefulWidget {
 
 class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
   final GlobalKey _stackKey = GlobalKey();
+  double _lastFinalTop = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -259,13 +260,21 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                             finalLeft = localPos.dx;
                                           }
                                         }
+                                        
+                                        final bool isHidingTransition = (finalTop == kOffScreen || _lastFinalTop == kOffScreen);
+                                        // Update the tracked position for the next frame
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          if (mounted) {
+                                            _lastFinalTop = finalTop;
+                                          }
+                                        });
 
                                         return AnimatedPositioned(
                                           duration:
-                                              isPipMode
+                                              (isPipMode || (isWindows && isHidingTransition))
                                                   ? Duration.zero
                                                   : const Duration(
-                                                    milliseconds: 120,
+                                                    milliseconds: 250,
                                                   ),
                                           curve: Curves.easeOutQuart,
                                           top: finalTop,
@@ -274,10 +283,10 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                           height: renderH,
                                           child: AnimatedContainer(
                                             duration:
-                                                (isPipMode || (!kIsWeb && Platform.isWindows))
+                                                (isPipMode || (!kIsWeb && Platform.isWindows && isHidingTransition))
                                                     ? Duration.zero
                                                     : const Duration(
-                                                      milliseconds: 120,
+                                                      milliseconds: 250,
                                                     ),
                                             curve: Curves.easeOutQuart,
                                             decoration: BoxDecoration(
