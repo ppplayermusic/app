@@ -106,8 +106,10 @@ jobs:
           storeFile=keystore.jks
           EOF
 
-      - name: Build Release APK
-        run: flutter build apk --release
+      - name: Build Release APK & App Bundle
+        run: |
+          flutter build apk --release
+          flutter build appbundle --release
 
 
       - name: Verify APK Signature
@@ -120,6 +122,12 @@ jobs:
         with:
           name: PPPlayer-Android
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: PPPlayer-Android-AAB
+          path: build/app/outputs/bundle/release/app-release.aab
 
   build-macos:
     name: Build macOS App
@@ -278,6 +286,11 @@ jobs:
              echo "::error::Android APK artifact is missing!"
              exit 1
           fi
+
+          if [ ! -f "artifacts/PPPlayer-Android-AAB/app-release.aab" ]; then
+             echo "::error::Android AAB artifact is missing!"
+             exit 1
+          fi
           
           if [ ! -f "artifacts/PPPlayer-macOS-zip/PPPlayer-macOS.zip" ]; then
              echo "::error::macOS ZIP artifact is missing!"
@@ -293,6 +306,7 @@ jobs:
         run: |
           mkdir -p release-assets
           cp artifacts/PPPlayer-Android/app-release.apk release-assets/PPPlayer-Android.apk
+          cp artifacts/PPPlayer-Android-AAB/app-release.aab release-assets/PPPlayer-Android.aab
           cp artifacts/PPPlayer-macOS-zip/PPPlayer-macOS.zip release-assets/PPPlayer-macOS.zip
           cp artifacts/PPPlayer-macOS-dmg/PPPlayer-macOS.dmg release-assets/PPPlayer-macOS.dmg
           
