@@ -36,8 +36,8 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
   ProviderSubscription<AsyncValue<bool>>? _favoriteSub;
 
   void _updateTaskbar(bool isFav, {bool? playing}) {
-    if (kIsWeb || !Platform.isWindows) return;
-    
+    if (kIsWeb || !Platform.isWindows || Platform.environment.containsKey('FLUTTER_TEST')) return;
+
     final playerState = _container.read(playerProvider);
     final isPlaying = playing ?? playerState.isPlaying;
 

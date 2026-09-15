@@ -32,6 +32,12 @@ class EntryService extends fakes.FakePlaybackService {
   ];
 }
 
+Future<void> pump() async {
+  for (var i = 0; i < 10; i++) {
+    await Future<void>(() {});
+  }
+}
+
 void main() {
   for (final entry in ['selection', 'retry', 'queue', 'restore']) {
     test(
@@ -72,13 +78,13 @@ void main() {
           await notifier.persistenceSettled;
           if (entry == 'restore') {
             notifier.resume();
-            await Future<void>(() {});
+            await pump();
           } else {
             await notifier.playTrack(first, queue: [first, second]);
             if (entry == 'retry') await notifier.retryLoad();
             if (entry == 'queue') {
               notifier.skipNext();
-              await Future<void>(() {});
+              await pump();
             }
           }
           final expectedId = entry == 'queue' ? 'videoBBBBBB' : 'videoAAAAAA';
@@ -90,7 +96,7 @@ void main() {
               5.0,
             );
             renderer.emitState(expectedId, yt.PlayerState.cued);
-            await Future<void>(() {});
+            await pump();
           } else {
             expect(renderer.count('cue'), 0);
           }
@@ -99,7 +105,7 @@ void main() {
 
           MediaKitPlaybackEngine.isActivityStopped = false;
           notifier.resume();
-          await Future<void>(() {});
+          await pump();
 
           if (entry == 'restore') {
             // Restore successfully cued, so resume just plays the video.
@@ -159,19 +165,19 @@ void main() {
         await engine.play(const PlaybackTrack(id: 'videoAAAAAA', title: 'A'));
         renderer.emitState('videoAAAAAA', yt.PlayerState.cued);
         renderer.emitState('videoAAAAAA', yt.PlayerState.playing);
-        await Future<void>(() {});
+        await pump();
         expect(container.read(playerProvider).isPlaying, true);
         expect(handler.playbackState.value.playing, true);
         renderer.pauseCompletion = Completer<void>();
         final paused = engine.pause();
         expect(engine.currentStatus.state, PlaybackState.paused);
-        await Future<void>(() {});
+        await pump();
         expect(renderer.pauseCompletion!.isCompleted, false);
         expect(container.read(playerProvider).isPlaying, false);
         expect(handler.playbackState.value.playing, false);
         renderer.emitState('videoAAAAAA', yt.PlayerState.playing);
         renderer.emitState('videoAAAAAA', yt.PlayerState.buffering);
-        await Future<void>(() {});
+        await pump();
         expect(handler.playbackState.value.playing, false);
         renderer.pauseCompletion!.complete();
         await paused;
