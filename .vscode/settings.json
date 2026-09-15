@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/User/Projects/ppplayermusic/app/windows"
+    "cmake.sourceDirectory": "C:/Users/User/Projects/ppplayermusic/app/windows",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
