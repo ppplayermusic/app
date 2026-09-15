@@ -721,7 +721,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                         return Container(
                                                           key: _videoSlotKey,
                                                           decoration: BoxDecoration(
-                                                            color: Colors.black,
+                                                            color: Colors.transparent,
                                                             borderRadius:
                                                                 BorderRadius.circular(
                                                                   24,
