@@ -56,6 +56,7 @@ dependencies:
   metadata_god: ^1.1.0
   macos_file_open_handler: ^0.1.0
   webview_win_floating: ^3.0.3
+  windows_taskbar: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +90,7 @@ flutter:
   generate: true
   assets:
     - assets/
+    - assets/icons/
     - assets/images/
     - assets/images/mix_covers/
     - assets/LICENSE

@@ -1,7 +1,10 @@
+import 'dart:io';
+import 'package:windows_taskbar/windows_taskbar.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../player/player_provider.dart';
+import '../services/favorites_provider.dart';
 
 /// An [AudioHandler] that bridges the Flutter player state with the system media controls.
 /// It doesn't play audio itself (the WebView does), but it reports the state to the OS.
@@ -28,6 +31,45 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
 
   final ProviderContainer Function() _containerProvider;
   ProviderContainer get _container => _containerProvider();
+
+  String? _lastTrackId;
+  ProviderSubscription<AsyncValue<bool>>? _favoriteSub;
+
+  void _updateTaskbar(bool isFav, {bool? playing}) {
+    if (kIsWeb || !Platform.isWindows) return;
+    
+    final playerState = _container.read(playerProvider);
+    final isPlaying = playing ?? playerState.isPlaying;
+
+    WindowsTaskbar.setThumbnailToolbar([
+      ThumbnailToolbarButton(
+        ThumbnailToolbarAssetIcon(isFav ? 'assets/icons/remove.ico' : 'assets/icons/add.ico'),
+        isFav ? 'Remove from library' : 'Add to library',
+        () async {
+          final currentTrack = _container.read(playerProvider).currentTrack;
+          if (currentTrack != null) {
+            final currentFav = _container.read(favoritesStatusProvider((FavoriteType.track, currentTrack.spotifyId))).value ?? currentTrack.isFavorite;
+            await _container.read(favoritesControllerProvider.notifier).toggleTrackFavorite(currentTrack, currentFav);
+          }
+        },
+      ),
+      ThumbnailToolbarButton(
+        ThumbnailToolbarAssetIcon('assets/icons/previous.ico'),
+        'Previous',
+        () => skipToPrevious(),
+      ),
+      ThumbnailToolbarButton(
+        ThumbnailToolbarAssetIcon(isPlaying ? 'assets/icons/pause.ico' : 'assets/icons/play.ico'),
+        isPlaying ? 'Pause' : 'Play',
+        () => isPlaying ? pause() : play(),
+      ),
+      ThumbnailToolbarButton(
+        ThumbnailToolbarAssetIcon('assets/icons/next.ico'),
+        'Next',
+        () => skipToNext(),
+      ),
+    ]);
+  }
 
   /// Update the OS metadata (Title, Artist, Album, Image).
   void updateMetadata({
@@ -93,6 +135,29 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
         speed: speed,
       ),
     );
+
+    final track = _container.read(playerProvider).currentTrack;
+    if (track?.spotifyId != _lastTrackId) {
+      _lastTrackId = track?.spotifyId;
+      _favoriteSub?.close();
+      if (track != null) {
+        _favoriteSub = _container.listen<AsyncValue<bool>>(
+          favoritesStatusProvider((FavoriteType.track, track.spotifyId)),
+          (prev, next) {
+             _updateTaskbar(next.value ?? track.isFavorite, playing: playbackState.value.playing);
+          },
+          fireImmediately: true,
+        );
+      } else {
+        _updateTaskbar(false, playing: playing);
+      }
+    } else {
+      bool isFav = false;
+      if (track != null) {
+        isFav = _container.read(favoritesStatusProvider((FavoriteType.track, track.spotifyId))).value ?? track.isFavorite;
+      }
+      _updateTaskbar(isFav, playing: playing);
+    }
   }
 
   // --- Remote Command Handlers ---
