@@ -18,7 +18,7 @@ jobs:
           # Extract the public certificate as a .pem file
           keytool -export -rfc -keystore keystore.jks -alias "$ANDROID_KEY_ALIAS" -storepass "$ANDROID_KEYSTORE_PASSWORD" -file public_certificate.pem
           
-          echo "✅ Successfully extracted public certificate to public_certificate.pem"
+          echo "Successfully extracted public certificate to public_certificate.pem"
           
           echo "==== CERTIFICATE FINGERPRINTS ===="
           keytool -list -v -keystore keystore.jks -alias "$ANDROID_KEY_ALIAS" -storepass "$ANDROID_KEYSTORE_PASSWORD" | grep -A 8 "Certificate fingerprints:"
