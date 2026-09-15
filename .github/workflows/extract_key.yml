@@ -1,0 +1,30 @@
+name: Extract Public Key
+on:
+  workflow_dispatch:
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decode Keystore & Extract Public Key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          # Decode the keystore from the GitHub Secret
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > keystore.jks
+          
+          # Extract the public certificate as a .pem file
+          keytool -export -rfc -keystore keystore.jks -alias "$ANDROID_KEY_ALIAS" -storepass "$ANDROID_KEYSTORE_PASSWORD" -file public_certificate.pem
+          
+          echo "✅ Successfully extracted public certificate to public_certificate.pem"
+          
+          echo "==== CERTIFICATE FINGERPRINTS ===="
+          keytool -list -v -keystore keystore.jks -alias "$ANDROID_KEY_ALIAS" -storepass "$ANDROID_KEYSTORE_PASSWORD" | grep -A 8 "Certificate fingerprints:"
+
+      - name: Upload Public Certificate Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-certificate
+          path: public_certificate.pem
