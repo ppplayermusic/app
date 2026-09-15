@@ -743,6 +743,7 @@ class AppDatabase extends _$AppDatabase {
         trackSpotifyId: Value(spotifyId),
         position: Value(maxPos + 1),
       ),
+      mode: InsertMode.insertOrIgnore,
     );
   }
 
