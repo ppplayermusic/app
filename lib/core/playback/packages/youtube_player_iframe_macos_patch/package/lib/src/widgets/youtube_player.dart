@@ -133,7 +133,7 @@ class _YoutubePlayerState extends State<YoutubePlayer>
   }
 
   void _updateBackgroundColor(Color? backgroundColor) {
-    if (defaultTargetPlatform == TargetPlatform.macOS) return;
+    if (defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.windows) return;
     final bgColor = backgroundColor ?? Theme.of(context).colorScheme.surface;
     _controller.webViewController.setBackgroundColor(bgColor);
   }

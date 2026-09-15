@@ -76,7 +76,7 @@ class _PlaybackViewState extends State<PlaybackView> {
         'PlaybackView: Building YouTube player for ${widget.status.activeVideoId}',
       );
       return ColoredBox(
-        color: Colors.black,
+        color: Colors.transparent,
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Alternate the width by 0.01px to FORCE a layout pass every build.
@@ -92,6 +92,7 @@ class _PlaybackViewState extends State<PlaybackView> {
                   YoutubePlayer(
                     key: const ValueKey('pp_youtube_iframe'),
                     controller: widget.controller.youtubeController!,
+                    backgroundColor: Colors.transparent,
                   ),
                   if (widget.status.state == PlaybackState.preparing ||
                       widget.status.state == PlaybackState.buffering)
@@ -118,6 +119,7 @@ class _PlaybackViewState extends State<PlaybackView> {
       controller: widget.controller.renderer,
       controls: widget.showControls ? mk.MaterialVideoControls : mk.NoVideoControls,
       fit: widget.fit,
+      fill: Colors.transparent,
     );
   }
 }
