@@ -49,7 +49,7 @@ class VideoLayoutNotifier extends Notifier<VideoLayoutState> {
       size: size,
       position: position,
       isReady: true,
-      isVisible: isVisible ?? this.state.isVisible,
+      isVisible: isVisible ?? state.isVisible,
       debugLabel: label,
       updatedAt: DateTime.now(),
     );
