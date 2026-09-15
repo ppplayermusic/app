@@ -55,15 +55,21 @@ class MediaSyncService {
       }
     }
 
-    // 2. Throttle playback state updates
+    // 2. Throttle playback state updates to avoid unnecessary COM message loop pumping
     final now = DateTime.now();
     final stateChanged = _lastStatus?.state != currentStatus.state;
     final playingChanged = _lastStatus?.isPlaying != currentStatus.isPlaying;
 
-    // Only update OS if state/playing changed OR if we haven't updated for 1 second
-    if (stateChanged ||
-        playingChanged ||
-        now.difference(_lastUpdateTime).inSeconds >= 1) {
+    // Calculate expected position to detect seeks
+    final expectedPosition = _lastStatus != null && _lastStatus!.isPlaying
+        ? _lastStatus!.position + now.difference(_lastUpdateTime)
+        : _lastStatus?.position ?? Duration.zero;
+        
+    // Only update OS if state/playing changed OR if position jumped significantly (seek)
+    final positionJumped = 
+        (currentStatus.position - expectedPosition).inMilliseconds.abs() > 2000;
+
+    if (stateChanged || playingChanged || positionJumped) {
       _lastUpdateTime = now;
       _lastStatus = currentStatus;
 
