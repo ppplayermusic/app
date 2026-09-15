@@ -981,7 +981,7 @@ class _PlaylistsGrid extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
                   childAspectRatio: 0.75,
@@ -1913,7 +1913,7 @@ class _RadiosSliverGrid extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
                   childAspectRatio: 0.75,
