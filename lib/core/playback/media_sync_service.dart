@@ -15,6 +15,7 @@ class MediaSyncService {
   final Ref ref;
   ProviderSubscription? _subscription;
   String? _lastTrackId;
+  bool _isDisposed = false;
 
   void _init() {
     // Listen to playback status and update system media controls
@@ -40,6 +41,7 @@ class MediaSyncService {
       _lastTrackId = track.id;
       // Run asynchronously to avoid Win32 COM message loop pumping during Flutter's internal phases (like MouseTracker device updates)
       Timer.run(() {
+        if (_isDisposed) return;
         handler.updateMetadata(
           id: track.id,
           title: track.title,
@@ -75,6 +77,7 @@ class MediaSyncService {
 
       // Run asynchronously to avoid Win32 COM message loop pumping during Flutter's internal phases
       Timer.run(() {
+        if (_isDisposed) return;
         handler.updatePlaybackState(
           playing: currentStatus.isPlaying,
           position: currentStatus.position,
@@ -117,7 +120,7 @@ class MediaSyncService {
         artworkUrl,
       );
       if (fileInfo != null) {
-        if (_lastTrackId == trackId) {
+        if (_lastTrackId == trackId && !_isDisposed) {
           ref
               .read(audioHandlerProvider)
               .updateMetadata(
@@ -135,7 +138,7 @@ class MediaSyncService {
       // 2. If not yet cached, fetch and save to cache
       final file = await PPImageCacheManager.instance.getSingleFile(artworkUrl);
 
-      if (file.existsSync() && _lastTrackId == trackId) {
+      if (file.existsSync() && _lastTrackId == trackId && !_isDisposed) {
         ref
             .read(audioHandlerProvider)
             .updateMetadata(
@@ -153,6 +156,7 @@ class MediaSyncService {
   }
 
   void dispose() {
+    _isDisposed = true;
     _subscription?.close();
   }
 }
