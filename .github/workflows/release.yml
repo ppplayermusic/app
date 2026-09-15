@@ -109,8 +109,6 @@ jobs:
       - name: Build Release APK
         run: flutter build apk --release
 
-      - name: Setup Android SDK Build-Tools for apksigner
-        uses: android-actions/setup-android@v3
 
       - name: Verify APK Signature
         run: |
