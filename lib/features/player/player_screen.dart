@@ -81,6 +81,20 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final settings = ref.watch(settingsProvider);
     final track = playerState.currentTrack;
 
+    // When the very first track becomes available after the screen mounts,
+    // initState's _scheduleLayoutUpdates() would have found track==null and
+    // returned the empty scaffold — so _videoSlotKey was never in the tree.
+    // We watch for the first track here and re-schedule measurements so the
+    // video slot can be found and measured correctly.
+    ref.listen(playerProvider.select((s) => s.currentTrack?.spotifyId), (prev, next) {
+      if (prev == null && next != null) {
+        // First track just appeared — measure after the frame is rendered.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _scheduleLayoutUpdates();
+        });
+      }
+    });
+
     if (track == null) {
       return Scaffold(
         backgroundColor: Colors.black,

@@ -96,6 +96,12 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     const double kMinW = 160;
     const double kMinH = 90;
     const double kPeek = 2.0; // px kept inside window to avoid JS suspension
+    // On Windows, the Win32 floating webview ignores Flutter layout constraints
+    // and clamps itself to the visible screen area. We must use a large negative
+    // top/left position to truly move it off-screen, while keeping kMinW x kMinH
+    // so the underlying JS engine stays alive.
+    final isWindows = !kIsWeb && Platform.isWindows;
+    const double kOffScreen = -9999.0;
 
     return LayoutBuilder(
       builder: (context, boxConstraints) {
@@ -173,12 +179,14 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                     renderRadius = 24;
                                     showShadow = false;
                                   } else {
-                                    // ARTWORK / QUEUE tabs — keep 2×2 peek so JS stays alive.
-                                    // We place it at the bottom-right of the Stack.
-                                    renderW = kMinW;
-                                    renderH = kMinH;
-                                    renderTop = stackHeight - kPeek;
-                                    renderLeft = screenWidth - kPeek;
+                                    // ARTWORK / QUEUE tabs — keep size so JS stays alive.
+                                    // On Windows, we use kMinW/kMinH and move it far off-screen
+                                    // because Win32 ignores tiny constraints and clamps to visible area.
+                                    // On macOS/others, use the 2×2 peek trick.
+                                    renderW = isWindows ? kMinW : kPeek;
+                                    renderH = isWindows ? kMinH : kPeek;
+                                    renderTop = isWindows ? kOffScreen : stackHeight - kPeek;
+                                    renderLeft = isWindows ? kOffScreen : screenWidth - kPeek;
                                     renderRadius = 0;
                                     showShadow = false;
                                   }
@@ -199,16 +207,18 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                     renderRadius = 12;
                                     showShadow = true;
                                   } else {
-                                    // Miniplayer hidden — keep 2×2 peek at the bottom-right
-                                    renderW = kMinW;
-                                    renderH = kMinH;
-                                    renderTop = stackHeight - kPeek;
-                                    renderLeft =
-                                        screenWidth -
-                                        (isDesktop && !isPlayerScreen
-                                            ? 240
-                                            : 0) -
-                                        kPeek;
+                                    // Miniplayer hidden — keep size so JS stays alive.
+                                    // On Windows, move it far off-screen. On macOS/others, use 2×2 peek.
+                                    renderW = isWindows ? kMinW : kPeek;
+                                    renderH = isWindows ? kMinH : kPeek;
+                                    renderTop = isWindows ? kOffScreen : stackHeight - kPeek;
+                                    renderLeft = isWindows
+                                        ? kOffScreen
+                                        : screenWidth -
+                                              (isDesktop && !isPlayerScreen
+                                                  ? 240
+                                                  : 0) -
+                                              kPeek;
                                     renderRadius = 0;
                                     showShadow = false;
                                   }
@@ -264,7 +274,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                           height: renderH,
                                           child: AnimatedContainer(
                                             duration:
-                                                isPipMode
+                                                (isPipMode || (!kIsWeb && Platform.isWindows))
                                                     ? Duration.zero
                                                     : const Duration(
                                                       milliseconds: 120,
