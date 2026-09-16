@@ -104,492 +104,373 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     final isWindows = !kIsWeb && Platform.isWindows;
     const double kOffScreen = -9999.0;
 
-    return LayoutBuilder(
-      builder: (context, boxConstraints) {
-        final isDesktop = boxConstraints.maxWidth >= 600;
+    final pipPresentation = isPipMode || ref.watch(playerProvider.select((s) => s.isPipRequestPending));
+    final isDesktop = screenSize.width >= 600;
 
-        Widget content = Scaffold(
-          body: SafeArea(
-            bottom: false,
-            child: Row(
-              children: [
-                if (isDesktop && !isPlayerScreen && !isPipMode)
-                  const _DesktopSidebar(),
-                Expanded(
-                  child: Stack(
+    Rect? normalBounds;
+    bool showShadow = false;
+    double renderRadius = 0;
+
+    final stackBox = _stackKey.currentContext?.findRenderObject() as RenderBox?;
+    final stackOffset = stackBox?.localToGlobal(Offset.zero) ?? Offset.zero;
+    final stackHeight = stackBox?.size.height ?? screenSize.height;
+
+    if (isPlayerScreen) {
+      if (isVideoView && videoLayout.isVisible && videoLayout.isReady) {
+        normalBounds = Rect.fromLTWH(
+          videoLayout.position.dx,
+          videoLayout.position.dy,
+          videoLayout.size.width,
+          videoLayout.size.height,
+        );
+        renderRadius = 24;
+      } else {
+        normalBounds = isWindows
+            ? const Rect.fromLTWH(kOffScreen, kOffScreen, kMinW, kMinH)
+            : Rect.fromLTWH(screenWidth - kPeek, screenSize.height - kPeek, kPeek, kPeek);
+      }
+    } else {
+      if (showVideo && hasVideoId) {
+        final left = stackOffset.dx + screenWidth - (isDesktop ? 240 : 0) - kMinW - 16;
+        final top = stackOffset.dy + stackHeight - kMinH - 8;
+        normalBounds = Rect.fromLTWH(left, top, kMinW, kMinH);
+        renderRadius = 12;
+        showShadow = true;
+      } else {
+        normalBounds = isWindows
+            ? const Rect.fromLTWH(kOffScreen, kOffScreen, kMinW, kMinH)
+            : Rect.fromLTWH(screenWidth - (isDesktop ? 240 : 0) - kPeek, screenSize.height - kPeek, kPeek, kPeek);
+      }
+    }
+
+    Widget normalLayout = Scaffold(
+      body: SafeArea(
+        bottom: false,
+        child: Row(
+          children: [
+            if (isDesktop && !isPlayerScreen && !isPipMode)
+              const _DesktopSidebar(),
+            Expanded(
+              child: Stack(
+                children: [
+                  // Gradient Background & Animated Mesh
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      width: 800,
+                      height: 600,
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: const Alignment(0.8, -0.8),
+                          radius: 1.5,
+                          colors: [
+                            const Color(0xFF4A1010).withValues(alpha: 0.5), // Dark red
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                      child: CustomPaint(
+                        painter: _MeshPainter(
+                          primaryColor: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Column(
                     children: [
-                      // Gradient Background & Animated Mesh
-                      Positioned(
-                        top: 0,
-                        right: 0,
+                      if (isDesktop && !isPlayerScreen && !isPipMode)
+                        const _DesktopTopBar(),
+                      Expanded(
+                        child: Stack(
+                          key: _stackKey,
+                          children: [
+                            widget.child,
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: isPlayerScreen || isPipMode
+          ? null
+          : isDesktop
+              ? const _DesktopPlayerBar()
+              : const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [_MiniPlayerBar(), _BottomNavBar()],
+                ),
+    );
+
+    if (!kIsWeb && Platform.isMacOS) {
+      normalLayout = PlatformMenuBar(
+        menus: [
+          PlatformMenu(
+            label: 'PPPlayer',
+            menus: [
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformMenuItem(
+                    label: 'About PPPlayer',
+                    onSelected: () async {
+                      if (context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const PpAboutDialog(),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.servicesSubmenu),
+                ],
+              ),
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.hide),
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.hideOtherApplications),
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.showAllApplications),
+                ],
+              ),
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.quit),
+                ],
+              ),
+            ],
+          ),
+          PlatformMenu(
+            label: 'View',
+            menus: [
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.toggleFullScreen),
+                ],
+              ),
+            ],
+          ),
+          PlatformMenu(
+            label: 'Window',
+            menus: [
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.minimizeWindow),
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.zoomWindow),
+                ],
+              ),
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.arrangeWindowsInFront),
+                ],
+              ),
+            ],
+          ),
+        ],
+        child: normalLayout,
+      );
+    }
+
+    if (kDebugMode) {
+      final time = DateTime.now().toIso8601String().substring(11, 23);
+      debugPrint(
+        '$time [PipRender] '
+        'pending=${ref.read(playerProvider).isPipRequestPending} '
+        'active=${ref.read(playerProvider).isPipMode} '
+        'presentation=$pipPresentation '
+        'bounds=$normalBounds',
+      );
+    }
+
+    return Material(
+      color: pipPresentation ? Colors.black : Theme.of(context).colorScheme.surface,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Offstage(
+            offstage: pipPresentation,
+            child: TickerMode(
+              enabled: !pipPresentation,
+              child: normalLayout,
+            ),
+          ),
+          _PlaybackSurfaceLayer(
+            pipPresentation: pipPresentation,
+            normalBounds: normalBounds,
+            showShadow: showShadow,
+            renderRadius: renderRadius,
+            isWindows: isWindows,
+            child: Stack(
+              children: [
+                if (playbackStatus.track?.isLocal != true)
+                  _StablePlaybackView(
+                    controller: playbackEngine,
+                    status: playbackStatus,
+                  ),
+                if (loadError != null)
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(renderRadius),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Container(
-                          width: 800,
-                          height: 600,
-                          decoration: BoxDecoration(
-                            gradient: RadialGradient(
-                              center: const Alignment(0.8, -0.8),
-                              radius: 1.5,
-                              colors: [
-                                const Color(
-                                  0xFF4A1010,
-                                ).withValues(alpha: 0.5), // Dark red
-                                Colors.transparent,
+                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.error_outline_rounded,
+                                  color: Theme.of(context).colorScheme.error,
+                                  size: 24,
+                                ),
+                                const SizedBox(height: 4),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: Text(
+                                    loadError,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.error,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                TactileTap(
+                                  onTap: () => ref.read(playerProvider.notifier).retryLoad(),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.refresh_rounded,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Retry',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ],
-                            ),
-                          ),
-                          child: CustomPaint(
-                            painter: _MeshPainter(
-                              primaryColor:
-                                  Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),
                       ),
-                      Column(
-                        children: [
-                          if (isDesktop && !isPlayerScreen && !isPipMode)
-                            const _DesktopTopBar(),
-                          Expanded(
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                final stackHeight = constraints.maxHeight;
-
-                                double renderW,
-                                    renderH,
-                                    renderTop,
-                                    renderLeft,
-                                    renderRadius;
-                                bool showShadow;
-
-                                if (isPipMode) {
-                                  renderW = constraints.maxWidth;
-                                  renderH = constraints.maxHeight;
-                                  renderTop = 0;
-                                  renderLeft = 0;
-                                  renderRadius = 0;
-                                  showShadow = false;
-                                } else if (isPlayerScreen) {
-                                  if (isVideoView &&
-                                      videoLayout.isVisible &&
-                                      videoLayout.isReady) {
-                                    // Initial values (will be refined by globalToLocal in the Builder below)
-                                    renderW = videoLayout.size.width;
-                                    renderH = videoLayout.size.height;
-                                    renderTop = 0;
-                                    renderLeft = 0;
-                                    renderRadius = 24;
-                                    showShadow = false;
-                                  } else {
-                                    // ARTWORK / QUEUE tabs — keep size so JS stays alive.
-                                    // On Windows, we use kMinW/kMinH and move it far off-screen
-                                    // because Win32 ignores tiny constraints and clamps to visible area.
-                                    // On macOS/others, use the 2×2 peek trick.
-                                    renderW = isWindows ? kMinW : kPeek;
-                                    renderH = isWindows ? kMinH : kPeek;
-                                    renderTop = isWindows ? kOffScreen : stackHeight - kPeek;
-                                    renderLeft = isWindows ? kOffScreen : screenWidth - kPeek;
-                                    renderRadius = 0;
-                                    showShadow = false;
-                                  }
-                                } else {
-                                  // Not on player screen — show mini floating video if enabled
-                                  if (showVideo && hasVideoId) {
-                                    renderW = kMinW;
-                                    renderH = kMinH;
-                                    renderLeft =
-                                        screenWidth -
-                                        (isDesktop && !isPlayerScreen
-                                            ? 240
-                                            : 0) -
-                                        kMinW -
-                                        16;
-                                    // Sit above the mini-player bar on mobile, or bottom right on desktop
-                                    renderTop = stackHeight - kMinH - 8;
-                                    renderRadius = 12;
-                                    showShadow = true;
-                                  } else {
-                                    // Miniplayer hidden — keep size so JS stays alive.
-                                    // On Windows, move it far off-screen. On macOS/others, use 2×2 peek.
-                                    renderW = isWindows ? kMinW : kPeek;
-                                    renderH = isWindows ? kMinH : kPeek;
-                                    renderTop = isWindows ? kOffScreen : stackHeight - kPeek;
-                                    renderLeft = isWindows
-                                        ? kOffScreen
-                                        : screenWidth -
-                                              (isDesktop && !isPlayerScreen
-                                                  ? 240
-                                                  : 0) -
-                                              kPeek;
-                                    renderRadius = 0;
-                                    showShadow = false;
-                                  }
-                                }
-
-                                return Stack(
-                                  key: _stackKey,
-                                  children: [
-                                    Visibility(
-                                      visible: !isPipMode,
-                                      maintainState: true,
-                                      child: widget.child,
-                                    ),
-                                    // Always-mounted WebView — never removed or hidden via Opacity.
-                                    // Audio plays uninterrupted on all tabs and when minimized.
-                                    Builder(
-                                      builder: (context) {
-                                        double finalTop = renderTop;
-                                        double finalLeft = renderLeft;
-
-                                        // Precise alignment for the video slot in PlayerScreen
-                                        if (isPlayerScreen &&
-                                            isVideoView &&
-                                            videoLayout.isVisible &&
-                                            videoLayout.isReady) {
-                                          final RenderBox? stackBox =
-                                              _stackKey.currentContext
-                                                      ?.findRenderObject()
-                                                  as RenderBox?;
-                                          if (stackBox != null) {
-                                            // globalToLocal is the gold standard for syncing separate widget trees.
-                                            // It automatically handles SafeArea, TabBars, and parent offsets.
-                                            final localPos = stackBox
-                                                .globalToLocal(
-                                                  videoLayout.position,
-                                                );
-                                            finalTop = localPos.dy;
-                                            finalLeft = localPos.dx;
-                                          }
-                                        }
-                                        
-                                        final bool isHidingTransition = (finalTop == kOffScreen || _lastFinalTop == kOffScreen);
-                                        // Update the tracked position for the next frame
-                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                          if (mounted) {
-                                            _lastFinalTop = finalTop;
-                                          }
-                                        });
-
-                                        return AnimatedPositioned(
-                                          duration:
-                                              (isPipMode || (isWindows && isHidingTransition))
-                                                  ? Duration.zero
-                                                  : const Duration(
-                                                    milliseconds: 250,
-                                                  ),
-                                          curve: Curves.easeOutQuart,
-                                          top: finalTop,
-                                          left: finalLeft,
-                                          width: renderW,
-                                          height: renderH,
-                                          child: AnimatedContainer(
-                                            duration:
-                                                (isPipMode || (!kIsWeb && Platform.isWindows && isHidingTransition))
-                                                    ? Duration.zero
-                                                    : const Duration(
-                                                      milliseconds: 250,
-                                                    ),
-                                            curve: Curves.easeOutQuart,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  isPipMode ? Colors.black : Theme.of(
-                                                    context,
-                                                  ).colorScheme.surface,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    renderRadius,
-                                                  ),
-                                              boxShadow: [
-                                                if (showShadow)
-                                                  BoxShadow(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .scrim
-                                                        .withValues(alpha: 0.5),
-                                                    blurRadius: 15,
-                                                    offset: const Offset(0, 6),
-                                                  ),
-                                              ],
-                                            ),
-                                            // clipBehavior is permanently Clip.none.
-                                            // Toggling it (antiAlias ↔ none) remounts the
-                                            // entire child subtree, destroying the WebView.
-                                            // Rounded corners are provided by the BoxDecoration
-                                            // background. Child content is clipped by the
-                                            // ClipRRect below only when renderRadius > 0.
-                                            clipBehavior: Clip.none,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    renderRadius,
-                                                  ),
-                                              child: Stack(
-                                                children: [
-                                                  // Stable WebView host — never remounts during PiP.
-                                                  if (playbackStatus.track?.isLocal != true)
-                                                    _StablePlaybackView(
-                                                      controller: playbackEngine,
-                                                      status: playbackStatus,
-                                                    ),
-
-                                                  if (loadError != null)
-                                                    Positioned.fill(
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              renderRadius,
-                                                            ),
-                                                        child: BackdropFilter(
-                                                          filter:
-                                                              ImageFilter.blur(
-                                                                sigmaX: 10,
-                                                                sigmaY: 10,
-                                                              ),
-                                                          child: Container(
-                                                            color: Theme.of(
-                                                                  context,
-                                                                )
-                                                                .colorScheme
-                                                                .surface
-                                                                .withValues(
-                                                                  alpha: 0.7,
-                                                                ),
-                                                            child: SingleChildScrollView(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                              mainAxisSize: MainAxisSize.min,
-                                                              children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .error_outline_rounded,
-                                                                  color:
-                                                                      Theme.of(
-                                                                        context,
-                                                                      ).colorScheme.error,
-                                                                  size: 24, // Use fixed size instead of renderH * 0.25 to avoid overflow in miniplayer
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: 4,
-                                                                ),
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets.symmetric(
-                                                                        horizontal:
-                                                                            8.0,
-                                                                      ),
-                                                                  child: Text(
-                                                                    loadError,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    maxLines: 2,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color:
-                                                                          Theme.of(
-                                                                            context,
-                                                                          )
-                                                                              .colorScheme
-                                                                              .error,
-                                                                      fontSize:
-                                                                          10,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: 16,
-                                                                ),
-                                                                TactileTap(
-                                                                  onTap:
-                                                                      () =>
-                                                                          ref
-                                                                              .read(
-                                                                                playerProvider.notifier,
-                                                                              )
-                                                                              .retryLoad(),
-                                                                  child: Container(
-                                                                    padding: const EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          24,
-                                                                      vertical:
-                                                                          10,
-                                                                    ),
-                                                                    decoration: BoxDecoration(
-                                                                      color:
-                                                                          Theme.of(
-                                                                            context,
-                                                                          ).colorScheme.primary,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                            20,
-                                                                          ),
-                                                                      boxShadow: [
-                                                                        BoxShadow(
-                                                                          color: Theme.of(
-                                                                            context,
-                                                                          ).colorScheme.primary.withValues(
-                                                                            alpha:
-                                                                                0.3,
-                                                                          ),
-                                                                          blurRadius:
-                                                                              10,
-                                                                          offset: const Offset(
-                                                                            0,
-                                                                            4,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    child: Row(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      children: [
-                                                                        const Icon(
-                                                                          Icons
-                                                                              .refresh_rounded,
-                                                                          color:
-                                                                              Colors.white,
-                                                                          size:
-                                                                              20,
-                                                                        ),
-                                                                        const SizedBox(
-                                                                          width:
-                                                                              8,
-                                                                        ),
-                                                                        const Text(
-                                                                          'Retry',
-                                                                          style: TextStyle(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            fontSize:
-                                                                                14,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ), // Stack
-                                            ), // ClipRRect
-                                          ), // AnimatedContainer
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
-          bottomNavigationBar:
-              isPlayerScreen || isPipMode
-                  ? null
-                  : isDesktop
-                  ? const _DesktopPlayerBar()
-                  : const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [_MiniPlayerBar(), _BottomNavBar()],
-                  ),
-        );
+        ],
+      ),
+    );
+  }
+}
 
-        if (!kIsWeb && Platform.isMacOS) {
-          content = PlatformMenuBar(
-            menus: [
-              PlatformMenu(
-                label: 'PPPlayer',
-                menus: [
-                  PlatformMenuItemGroup(
-                    members: [
-                      PlatformMenuItem(
-                        label: 'About PPPlayer',
-                        onSelected: () async {
-                          if (context.mounted) {
-                            showDialog(
-                              context: context,
-                              builder: (context) => const PpAboutDialog(),
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  PlatformMenuItemGroup(
-                    members: [
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.servicesSubmenu),
-                    ],
-                  ),
-                  PlatformMenuItemGroup(
-                    members: [
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.hide),
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.hideOtherApplications),
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.showAllApplications),
-                    ],
-                  ),
-                  PlatformMenuItemGroup(
-                    members: [
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.quit),
-                    ],
-                  ),
-                ],
-              ),
-              PlatformMenu(
-                label: 'View',
-                menus: [
-                  PlatformMenuItemGroup(
-                    members: [
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.toggleFullScreen),
-                    ],
-                  ),
-                ],
-              ),
-              PlatformMenu(
-                label: 'Window',
-                menus: [
-                  PlatformMenuItemGroup(
-                    members: [
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.minimizeWindow),
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.zoomWindow),
-                    ],
-                  ),
-                  PlatformMenuItemGroup(
-                    members: [
-                      PlatformProvidedMenuItem(type: PlatformProvidedMenuItemType.arrangeWindowsInFront),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-            child: content,
-          );
-        }
+class _PlaybackSurfaceLayer extends StatefulWidget {
+  const _PlaybackSurfaceLayer({
+    required this.pipPresentation,
+    required this.normalBounds,
+    required this.showShadow,
+    required this.renderRadius,
+    required this.isWindows,
+    required this.child,
+  });
 
-        return content;
-      },
+  final bool pipPresentation;
+  final Rect? normalBounds;
+  final bool showShadow;
+  final double renderRadius;
+  final bool isWindows;
+  final Widget child;
+
+  @override
+  State<_PlaybackSurfaceLayer> createState() => _PlaybackSurfaceLayerState();
+}
+
+class _PlaybackSurfaceLayerState extends State<_PlaybackSurfaceLayer> {
+  double _lastFinalTop = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final bounds = widget.pipPresentation
+        ? Rect.fromLTWH(0, 0, screenSize.width, screenSize.height)
+        : (widget.normalBounds ?? Rect.zero);
+
+    final isHidingTransition = (bounds.top == -9999.0 || _lastFinalTop == -9999.0);
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _lastFinalTop = bounds.top;
+      }
+    });
+
+    return AnimatedPositioned(
+      duration: (widget.pipPresentation || (widget.isWindows && isHidingTransition))
+          ? Duration.zero
+          : const Duration(milliseconds: 250),
+      curve: Curves.easeOutQuart,
+      left: bounds.left,
+      top: bounds.top,
+      width: bounds.width,
+      height: bounds.height,
+      child: AnimatedContainer(
+        duration: (widget.pipPresentation || (widget.isWindows && isHidingTransition))
+            ? Duration.zero
+            : const Duration(milliseconds: 250),
+        curve: Curves.easeOutQuart,
+        decoration: BoxDecoration(
+          color: widget.pipPresentation ? Colors.black : Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(widget.pipPresentation ? 0 : widget.renderRadius),
+          boxShadow: [
+            if (widget.showShadow && !widget.pipPresentation)
+              BoxShadow(
+                color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
+                blurRadius: 15,
+                offset: const Offset(0, 6),
+              ),
+          ],
+        ),
+        clipBehavior: Clip.none,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(widget.pipPresentation ? 0 : widget.renderRadius),
+          child: widget.child,
+        ),
+      ),
     );
   }
 }

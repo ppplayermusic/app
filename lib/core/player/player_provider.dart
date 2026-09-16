@@ -26,6 +26,7 @@ class PlayerState {
     this.buffered = Duration.zero,
     this.volume = 1.0,
     this.isPipMode = false,
+    this.isPipRequestPending = false,
   });
 
   final PlaybackQueue playbackQueue;
@@ -38,6 +39,7 @@ class PlayerState {
   final Duration buffered;
   final double volume;
   final bool isPipMode;
+  final bool isPipRequestPending;
 
   // Shortcuts to avoid breaking UI that expects these on state
   List<Track> get queue => playbackQueue.tracks;
@@ -57,6 +59,7 @@ class PlayerState {
     Duration? buffered,
     double? volume,
     bool? isPipMode,
+    bool? isPipRequestPending,
     bool clearLoadError = false,
   }) {
     return PlayerState(
@@ -76,6 +79,7 @@ class PlayerState {
       buffered: buffered ?? this.buffered,
       volume: volume ?? this.volume,
       isPipMode: isPipMode ?? this.isPipMode,
+      isPipRequestPending: isPipRequestPending ?? this.isPipRequestPending,
     );
   }
 }
@@ -135,6 +139,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     PipHandler.addPipModeListener((isPipMode) {
       state = state.copyWith(isPipMode: isPipMode);
+    });
+
+    PipHandler.addPipEntryRequestedListener(() {
+      state = state.copyWith(isPipRequestPending: true);
+    });
+
+    PipHandler.addPipEntryFailedListener(() {
+      state = state.copyWith(isPipRequestPending: false);
     });
 
     PipHandler.addActivityStoppedListener(() {

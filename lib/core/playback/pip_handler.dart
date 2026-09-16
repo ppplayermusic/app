@@ -38,8 +38,8 @@ class PipHandler {
   static final List<void Function(bool)> _pipModeListeners = [];
   static final List<void Function()> _activityStoppedListeners = [];
   static final List<void Function()> _activityStartedListeners = [];
-  // Called when a PiP entry was requested but Android never confirmed it.
   static final List<void Function()> _pipEntryFailedListeners = [];
+  static final List<void Function()> _pipEntryRequestedListeners = [];
 
   static void addPipModeListener(void Function(bool) listener) =>
       _pipModeListeners.add(listener);
@@ -60,6 +60,11 @@ class PipHandler {
       _pipEntryFailedListeners.add(listener);
   static void removePipEntryFailedListener(void Function() listener) =>
       _pipEntryFailedListeners.remove(listener);
+
+  static void addPipEntryRequestedListener(void Function() listener) =>
+      _pipEntryRequestedListeners.add(listener);
+  static void removePipEntryRequestedListener(void Function() listener) =>
+      _pipEntryRequestedListeners.remove(listener);
 
   // ---------------------------------------------------------------------------
   // init — wires up the method-channel handler from the native side.
@@ -86,6 +91,32 @@ class PipHandler {
           );
           for (final l in _pipModeListeners) {
             l(inPip);
+          }
+        } else if (call.method == 'onPipEntryRequested') {
+          // Native side (onUserLeaveHint) notified us that PiP is about to be
+          // entered by Android. Arm the pending guard and watchdog NOW — before
+          // onActivityStopped arrives — so the handoff engine defers correctly.
+          // This covers both Android 12+ auto-enter and Android 8-11 manual entry.
+          if (!_pipRequestPending) {
+            _pipRequestPending = true;
+            _pipRequestWatchdog?.cancel();
+            _pipRequestWatchdog = Timer(const Duration(seconds: 3), () {
+              if (!_pipRequestPending) return;
+              final t = DateTime.now().toIso8601String().substring(11, 23);
+              debugPrint(
+                '$t [PipDebug][HANDLER] event=pipEntryRequested_watchdog_timeout '
+                'activityStopped=$_isActivityStopped',
+              );
+              _resolvePipRequest();
+              notifyPipEntryFailed();
+            });
+            debugPrint(
+              '$time [PipDebug][HANDLER] event=onPipEntryRequested '
+              'pendingArmed=true activityStopped=$_isActivityStopped',
+            );
+            for (final l in _pipEntryRequestedListeners) {
+              l();
+            }
           }
         } else if (call.method == 'onActivityStopped') {
           final oldState = _isActivityStopped;
@@ -176,6 +207,9 @@ class PipHandler {
       '$time [PipDebug][HANDLER] event=enterPip_requested '
       'inPip=$_isInPipMode activityStopped=$_isActivityStopped',
     );
+    for (final l in _pipEntryRequestedListeners) {
+      l();
+    }
 
     try {
       final entered = await _channel.invokeMethod<bool>('enterPip') ?? false;
@@ -254,6 +288,12 @@ class PipHandler {
     for (final l in _pipModeListeners) {
       l(inPip);
     }
+  }
+
+  @visibleForTesting
+  static void simulatePipEntryRequested() {
+    if (_pipRequestPending) return;
+    _pipRequestPending = true;
   }
 
   @visibleForTesting

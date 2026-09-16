@@ -85,12 +85,18 @@ class MainActivity : AudioServiceActivity() {
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
         logNative("onUserLeaveHint")
-        // Android 8–11: auto-enter is not supported; manually enter PiP here.
+
         if (isPipEnabled
             && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-            && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+            && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
         ) {
-            if (packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+            // Notify Flutter BEFORE entering PiP (or before Android 12+ auto-enter fires)
+            // so that _pipRequestPending is armed before onActivityStopped arrives.
+            // This fires on all Android versions when the user presses Home.
+            methodChannel?.invokeMethod("onPipEntryRequested", null)
+
+            // Android 8–11: auto-enter is not supported; manually enter PiP here.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 val params = PictureInPictureParams.Builder()
                     .setAspectRatio(Rational(16, 9))
                     .build()
@@ -98,8 +104,6 @@ class MainActivity : AudioServiceActivity() {
                     val entered = enterPictureInPictureMode(params)
                     Log.d("PipDebug", "enterPictureInPictureMode result=$entered")
                     if (!entered) {
-                        // Notify Flutter that PiP entry failed so deferred
-                        // handoff logic can fall through to background.
                         methodChannel?.invokeMethod("onPipEntryFailed", null)
                     }
                 } catch (e: Exception) {
@@ -107,6 +111,8 @@ class MainActivity : AudioServiceActivity() {
                     methodChannel?.invokeMethod("onPipEntryFailed", null)
                 }
             }
+            // Android 12+: setAutoEnterEnabled(true) handles entry automatically;
+            // onPipModeChanged will confirm or deny and clear _pipRequestPending.
         }
     }
 
