@@ -1,0 +1,1175 @@
+--------- beginning of main
+09-16 07:54:19.106 22025 22025 I om.ppplayer.app: Late-enabling -Xcheck:jni
+09-16 07:54:19.337 22025 22025 I om.ppplayer.app: Using CollectorTypeCC GC.
+09-16 07:54:19.337 22025 22025 W om.ppplayer.app: Unexpected CPU variant for x86: x86_64.
+09-16 07:54:19.337 22025 22025 W om.ppplayer.app: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+09-16 07:54:19.686 22025 22025 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+09-16 07:54:20.041 22025 22025 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+09-16 07:54:20.041 22025 22025 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+09-16 07:54:20.641 22025 22025 D nativeloader: Configuring clns-9 for other apk /data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/lib/x86_64:/data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.ppplayer.app
+09-16 07:54:20.662 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea072833d8) locale list changing from [] to [en-US]
+09-16 07:54:20.679 22025 22025 V GraphicsEnvironment: Currently set values for:
+09-16 07:54:20.679 22025 22025 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+09-16 07:54:20.679 22025 22025 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+09-16 07:54:20.679 22025 22025 V GraphicsEnvironment: com.ppplayer.app is not listed in per-application setting
+09-16 07:54:20.679 22025 22025 V GraphicsEnvironment: ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+09-16 07:54:20.679 22025 22025 V GraphicsEnvironment: com.ppplayer.app is not listed in ANGLE allowlist or settings, returning default
+09-16 07:54:20.679 22025 22025 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+09-16 07:54:20.760 22025 22025 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+--------- beginning of system
+09-16 07:54:21.057 22025 22134 I DisplayManager: Choreographer implicitly registered for the refresh rate.
+09-16 07:54:21.112 22025 22127 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+09-16 07:54:21.156 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea07284698) locale list changing from [] to [en-US]
+09-16 07:54:21.171 22025 22134 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+09-16 07:54:21.175 22025 22134 I EGL_emulation: Opening libGLESv2_emulation.so
+09-16 07:54:21.246 22025 22134 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+09-16 07:54:21.246 22025 22134 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+09-16 07:54:21.261 22025 22127 W om.ppplayer.app: JNI critical lock held for 27.821ms on Thread[15,tid=22127,Runnable,Thread*=0x7eeb0728b760,peer=0x220e3a8,"WM.task-1"]
+09-16 07:54:21.428 22025 22148 I ResourceExtractor: Resource version mismatch res_timestamp-1-1789559625370
+09-16 07:54:21.447 22025 22147 D FlutterJNI: Beginning load of flutter...
+09-16 07:54:21.595 22025 22147 D nativeloader: Load /data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!/lib/x86_64/libflutter.so using class loader ns clns-9 (caller=/data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk): ok
+09-16 07:54:21.598 22025 22147 D FlutterJNI: flutter (null) was loaded normally!
+09-16 07:54:21.641 22025 22154 D skia    : [SkFontMgr Android Parser] '/product/etc/fonts_customization.xml' could not be opened
+09-16 07:54:28.884 22025 22148 I ResourceExtractor: Extracted baseline resource assets/flutter_assets/kernel_blob.bin
+09-16 07:54:28.884 22025 22148 I ResourceExtractor: Extracted baseline resource assets/flutter_assets/vm_snapshot_data
+09-16 07:54:28.953 22025 22148 I ResourceExtractor: Extracted baseline resource assets/flutter_assets/isolate_snapshot_data
+09-16 07:54:28.968 22025 22025 W om.ppplayer.app: type=1400 audit(0.0:236): avc:  denied  { read } for  name="max_map_count" dev="proc" ino=227582 scontext=u:r:untrusted_app:s0:c213,c256,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0 app=com.ppplayer.app
+09-16 07:54:29.051 22025 22304 I flutter : [IMPORTANT:flutter/shell/platform/android/android_context_gl_impeller.cc(104)] Using the Impeller rendering backend (OpenGLES).
+09-16 07:54:29.076 22025 22025 D MediaBrowserCompat: Connecting to a MediaBrowserService.
+09-16 07:54:29.104 22025 22025 D AudioSystem: onNewService: media.audio_policy service obtained 0x7ee9e72ee990
+09-16 07:54:29.104 22025 22025 D AudioSystem: getService: checking for service media.audio_policy: 0x7ee9e72ee990
+09-16 07:54:29.163 22025 22025 D nativeloader: Load /data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!/lib/x86_64/libdartjni.so using class loader ns clns-9 (caller=/data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!classes11.dex): ok
+09-16 07:54:29.172 22025 22025 D nativeloader: Load /data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!/lib/x86_64/libmpv.so using class loader ns clns-9 (caller=/data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!classes8.dex): ok
+09-16 07:54:29.172 22025 22025 I media_kit: package:media_kit_libs_android_video attached.
+09-16 07:54:29.174 22025 22025 D nativeloader: Load /data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!/lib/x86_64/libmediakitandroidhelper.so using class loader ns clns-9 (caller=/data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!classes10.dex): ok
+09-16 07:54:29.174 22025 22025 D media_kit: google
+09-16 07:54:29.174 22025 22025 D media_kit: emu64xa16k
+09-16 07:54:29.174 22025 22025 D media_kit: google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:user/dev-keys
+09-16 07:54:29.175 22025 22025 D media_kit: ranchu
+09-16 07:54:29.175 22025 22025 D media_kit: sdk_gphone16k_x86_64
+09-16 07:54:29.175 22025 22025 D media_kit: Google
+09-16 07:54:29.175 22025 22025 D media_kit: sdk_gphone16k_x86_64
+09-16 07:54:29.175 22025 22025 I media_kit: Saved application context.
+09-16 07:54:29.179 22025 22310 I flutter : The Dart VM service is listening on http://127.0.0.1:34197/xgy0G9QwrMM=/
+09-16 07:54:30.414 22025 22025 I om.ppplayer.app: hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityNodeInfo;->getSourceNodeId()J (runtime_flags=0, domain=platform, api=unsupported,test-api) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app) using reflection: allowed
+09-16 07:54:30.415 22025 22025 I om.ppplayer.app: hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityRecord;->getSourceNodeId()J (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app) using reflection: allowed
+09-16 07:54:30.415 22025 22025 I om.ppplayer.app: hiddenapi: Accessing hidden field Landroid/view/accessibility/AccessibilityNodeInfo;->mChildNodeIds:Landroid/util/LongArray; (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app) using reflection: allowed
+09-16 07:54:30.419 22025 22025 I om.ppplayer.app: hiddenapi: Accessing hidden method Landroid/util/LongArray;->get(I)J (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app) using reflection: allowed
+09-16 07:54:30.428 22025 22025 D AccessibilityBridge: Setting not found: accessibility_display_inversion_enabled, using default: 0
+09-16 07:54:30.507 22025 22025 D FlutterRenderer: Width is zero. 0,0
+09-16 07:54:30.514 22025 22025 D CompatChangeReporter: Compat change id reported: 377864165; UID 10213; state: ENABLED
+09-16 07:54:30.517 22025 22025 D DesktopModeFlags: Toggle override initialized to: OVERRIDE_UNSET
+09-16 07:54:30.577 22025 22025 W HWUI    : Unknown dataspace 0
+09-16 07:54:31.161 22025 22331 D ProfileInstaller: Installing profile for com.ppplayer.app
+09-16 07:54:31.196 22025 22025 I flutter : Warning: .env file not found or could not be loaded. Relying on --dart-define or defaults.
+09-16 07:54:31.362 22025 22025 I Choreographer: Skipped 45 frames!  The application may be doing too much work on its main thread.
+09-16 07:54:31.393 22025 22025 I WindowExtensionsImpl: Initializing Window Extensions, vendor API level=9, activity embedding enabled=true
+09-16 07:54:31.438 22025 22025 D FlutterRenderer: Width is zero. 0,0
+09-16 07:54:31.453 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:54:31.682 22025 22030 I om.ppplayer.app: Compiler allocated 5057KB to compile void android.view.ViewRootImpl.performTraversals()
+09-16 07:54:32.923 22025 22025 I flutter : 2026-09-16T07:54:32.904694 PipHandler: onActivityStarted (isActivityStopped=false isPipMode=false)
+09-16 07:54:33.223 22025 22025 I System.out: flutterEngine warmed up
+09-16 07:54:33.297 22025 22025 I flutter : media_kit: NativeReferenceHolder: Allocated 139546828739424
+09-16 07:54:33.386 22025 22025 I Choreographer: Skipped 116 frames!  The application may be doing too much work on its main thread.
+09-16 07:54:33.407 22025 22025 D WindowLayoutComponentImpl: Register WindowLayoutInfoListener on Context=com.ppplayer.app.MainActivity@802e630, of which baseContext=android.app.ContextImpl@8f3d3f4
+09-16 07:54:33.490 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:54:35.721 22025 22025 I Choreographer: Skipped 131 frames!  The application may be doing too much work on its main thread.
+09-16 07:54:36.301 22025 22025 I flutter : media_kit: Emulator detected.
+09-16 07:54:36.308 22025 22025 I flutter : media_kit: Enforcing S/W rendering.
+09-16 07:54:36.389 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0729ca18) locale list changing from [] to [en-US]
+09-16 07:54:36.413 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0728d338) locale list changing from [] to [en-US]
+09-16 07:54:36.522 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0729f5d8) locale list changing from [] to [en-US]
+09-16 07:54:36.577 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0728e2d8) locale list changing from [] to [en-US]
+09-16 07:54:36.577 22025 22025 I WebViewFactory: Loading com.google.android.webview version 133.0.6943.137 (code 694313738)
+09-16 07:54:36.578 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0728d658) locale list changing from [] to [en-US]
+09-16 07:54:36.578 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0729fc18) locale list changing from [] to [en-US]
+09-16 07:54:36.579 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea072a2af8) locale list changing from [] to [en-US]
+09-16 07:54:36.579 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0729e318) locale list changing from [] to [en-US]
+09-16 07:54:36.580 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0729f2b8) locale list changing from [] to [en-US]
+09-16 07:54:36.581 22025 22025 V ResourcesManager: The following library key has been added: ResourcesKey{ mHash=ec050d69 mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~0PHv9BRuLAZxbi3aYeh4LQ==/com.google.android.webview-VVcGuwQUMmvcv2gZT2hjNw==/WebViewGoogle.apk,/data/app/~~cvtqDjcJ0bnOyaHTOZXm1w==/com.google.android.trichromelibrary_694313738-5fPmudE3UPGNReqMEhvcmQ==/TrichromeLibrary.apk] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={480dpi always-compat} mLoaders=[]}
+09-16 07:54:36.584 22025 22025 W om.ppplayer.app: Failed to find entry 'classes.dex': Entry not found
+09-16 07:54:36.585 22025 22025 D nativeloader: Configuring clns-10 for other apk /data/app/~~cvtqDjcJ0bnOyaHTOZXm1w==/com.google.android.trichromelibrary_694313738-5fPmudE3UPGNReqMEhvcmQ==/TrichromeLibrary.apk. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~0PHv9BRuLAZxbi3aYeh4LQ==/com.google.android.webview-VVcGuwQUMmvcv2gZT2hjNw==/lib/x86_64:/data/app/~~0PHv9BRuLAZxbi3aYeh4LQ==/com.google.android.webview-VVcGuwQUMmvcv2gZT2hjNw==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~cvtqDjcJ0bnOyaHTOZXm1w==/com.google.android.trichromelibrary_694313738-5fPmudE3UPGNReqMEhvcmQ==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+09-16 07:54:36.597 22025 22025 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+09-16 07:54:36.602 22025 22025 D nativeloader: Configuring clns-11 for other apk /data/app/~~0PHv9BRuLAZxbi3aYeh4LQ==/com.google.android.webview-VVcGuwQUMmvcv2gZT2hjNw==/WebViewGoogle.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~0PHv9BRuLAZxbi3aYeh4LQ==/com.google.android.webview-VVcGuwQUMmvcv2gZT2hjNw==/lib/x86_64:/data/app/~~0PHv9BRuLAZxbi3aYeh4LQ==/com.google.android.webview-VVcGuwQUMmvcv2gZT2hjNw==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~cvtqDjcJ0bnOyaHTOZXm1w==/com.google.android.trichromelibrary_694313738-5fPmudE3UPGNReqMEhvcmQ==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+09-16 07:54:37.437 22025 22025 I cr_WVCFactoryProvider: version=133.0.6943.137 (694313738) minSdkVersion=29 isBundle=false multiprocess=true packageId=2
+09-16 07:54:37.463 22025 22025 D nativeloader: Load /data/app/~~cvtqDjcJ0bnOyaHTOZXm1w==/com.google.android.trichromelibrary_694313738-5fPmudE3UPGNReqMEhvcmQ==/TrichromeLibrary.apk!/lib/x86_64/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~0PHv9BRuLAZxbi3aYeh4LQ==/com.google.android.webview-VVcGuwQUMmvcv2gZT2hjNw==/WebViewGoogle.apk): ok
+09-16 07:54:37.470 22025 22025 D nativeloader: Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~0PHv9BRuLAZxbi3aYeh4LQ==/com.google.android.webview-VVcGuwQUMmvcv2gZT2hjNw==/WebViewGoogle.apk): ok
+09-16 07:54:37.486 22025 22487 E chromium: [0916/075437.485467:ERROR:variations_seed_loader.cc(39)] Seed missing signature.
+09-16 07:54:37.488 22025 22487 I chromium: [0916/075437.487138:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
+09-16 07:54:37.524 22025 22025 I cr_LibraryLoader: Successfully loaded native library
+09-16 07:54:37.526 22025 22025 I cr_CachingUmaRecorder: Flushed 6 samples from 6 histograms, 0 samples were dropped.
+09-16 07:54:37.536 22025 22025 I cr_CombinedPProvider: #registerProvider() provider:WV.C8@afe58dd isPolicyCacheEnabled:false policyProvidersSize:0
+09-16 07:54:37.540 22025 22025 I cr_PolicyProvider: #setManagerAndSource() 0
+09-16 07:54:37.605 22025 22025 I cr_CombinedPProvider: #linkNativeInternal() 1
+09-16 07:54:37.607 22025 22025 I cr_AppResProvider: #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+09-16 07:54:37.607 22025 22025 I cr_PolicyProvider: #notifySettingsAvailable() 0
+09-16 07:54:37.607 22025 22025 I cr_CombinedPProvider: #onSettingsAvailable() 0
+09-16 07:54:37.607 22025 22025 I cr_CombinedPProvider: #flushPolicies()
+09-16 07:54:37.741 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea072a1e78) locale list changing from [] to [en-US]
+09-16 07:54:37.742 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea072a1838) locale list changing from [] to [en-US]
+09-16 07:54:37.964 22025 22025 I om.ppplayer.app: AssetManager2(0x7eea0729e958) locale list changing from [] to [en-US]
+09-16 07:54:38.079 22025 22514 W cr_media: BLUETOOTH_CONNECT permission is missing.
+09-16 07:54:38.080 22025 22514 W cr_media: getBluetoothAdapter() requires BLUETOOTH permission
+09-16 07:54:38.080 22025 22514 W cr_media: registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+09-16 07:54:38.099 22025 22025 D CustomWebViewService: WebView initialized in VirtualDisplay
+09-16 07:54:38.266 22025 22564 W libc    : Access denied finding property "vendor.mesa.log"
+09-16 07:54:38.267 22025 22564 W libc    : Access denied finding property "vendor.mesa.log.file"
+09-16 07:54:38.267 22025 22564 E MESA    : Failed to open rendernode: No such file or directory
+09-16 07:54:38.350 22025 22564 D vulkan  : searching for layers in '/data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/lib/x86_64'
+09-16 07:54:38.355 22025 22564 D vulkan  : searching for layers in '/data/app/~~KV7Bbf_nQUAqPQMvtPpjVQ==/com.ppplayer.app-w4TX7UZBaJpUlCFGkRaRVw==/base.apk!/lib/x86_64'
+09-16 07:54:38.504 22025 22564 W libc    : Access denied finding property "vendor.mesa.vk.trace.per.submit"
+09-16 07:54:38.504 22025 22564 W libc    : Access denied finding property "vendor.mesa.gallium.print.optio"
+09-16 07:54:38.504 22025 22564 W libc    : Access denied finding property "vendor.mesa.vk.trace.frame"
+09-16 07:54:38.518 22025 22583 I CameraManagerGlobal: Connecting to camera service
+09-16 07:54:38.557 22025 22537 E adservices: Failed to bind to measurement service: com.android.adservices.shared.common.exception.ServiceUnavailableException: Service is not available.
+09-16 07:54:38.602 22025 22564 W libc    : Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
+09-16 07:54:38.740 22025 22564 W chromium: [WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+09-16 07:54:39.379 22025 22025 I VideoOutputManager: com.alexmercerind.media_kit_video.VideoOutputManager.create: 139546291888064
+09-16 07:54:40.248 22025 22025 I flutter : *** Request ***
+09-16 07:54:40.278 22025 22025 I flutter : uri: https://ppplayer.com/api/spotify/token
+09-16 07:54:40.278 22025 22025 I flutter : method: POST
+09-16 07:54:40.278 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:40.278 22025 22025 I flutter : followRedirects: true
+09-16 07:54:40.278 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:40.280 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:40.280 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:40.280 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:40.280 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:40.280 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:40.282 22025 22025 I flutter : extra: {}
+09-16 07:54:40.282 22025 22025 I flutter : headers:
+09-16 07:54:40.282 22025 22025 I flutter : 
+09-16 07:54:45.089 22025 22568 D CustomWebViewService: JS Log: $message
+09-16 07:54:45.233 22025 22025 I chromium: [INFO:CONSOLE(147)] "Unrecognized feature: 'web-share'.", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (147)
+09-16 07:54:46.942 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:54:46.942 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:54:46.942 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:54:46.943 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:54:47.105 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:54:47.543 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:54:49.928 22025 22025 I Choreographer: Skipped 709 frames!  The application may be doing too much work on its main thread.
+09-16 07:54:50.265 22025 22041 I HWUI    : Davey! duration=12124ms; Flags=1, FrameTimelineVsyncId=23239723, IntendedVsync=32320430184082, Vsync=32332246850276, InputEventId=0, HandleInputStart=32332259151500, AnimationStart=32332259167200, PerformTraversalsStart=32332275405500, DrawStart=32332389975500, FrameDeadline=32320446850748, FrameStartTime=32332257163700, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=32332418150100, SyncStart=32332433416400, IssueDrawCommandsStart=32332433500700, SwapBuffers=32332559437400, FrameCompleted=32332570205800, DequeueBufferDuration=387400, QueueBufferDuration=6280400, GpuCompleted=32332569689800, SwapBuffersCompleted=32332570205800, DisplayPresentTime=3403159395259148322, CommandSubmissionCompleted=32332559437400, 
+09-16 07:54:50.382 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.383 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.383 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.383 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.383 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.384 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.384 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.384 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.384 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.384 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.384 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.386 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.387 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.387 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.387 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:50.640 22025 22025 I flutter : *** Response ***
+09-16 07:54:50.640 22025 22025 I flutter : uri: https://ppplayer.com/api/spotify/token
+09-16 07:54:50.641 22025 22025 I flutter : 
+09-16 07:54:50.873 22025 22025 I flutter : *** Request ***
+09-16 07:54:50.874 22025 22025 I flutter : uri: https://api.spotify.com/v1/search?q=year%3A2025-2026&type=album&limit=10&offset=0&market=US
+09-16 07:54:50.874 22025 22025 I flutter : method: GET
+09-16 07:54:50.874 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:50.874 22025 22025 I flutter : followRedirects: true
+09-16 07:54:50.874 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:50.874 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:50.874 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:50.874 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:50.874 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:50.874 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:50.875 22025 22025 I flutter : extra: {}
+09-16 07:54:50.875 22025 22025 I flutter : headers:
+09-16 07:54:50.875 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:50.875 22025 22025 I flutter : 
+09-16 07:54:50.875 22025 22025 I flutter : *** Request ***
+09-16 07:54:50.875 22025 22025 I flutter : uri: https://api.spotify.com/v1/browse/featured-playlists?limit=20&country=US
+09-16 07:54:50.875 22025 22025 I flutter : method: GET
+09-16 07:54:50.875 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:50.875 22025 22025 I flutter : followRedirects: true
+09-16 07:54:50.875 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:50.875 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:50.875 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:50.875 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:50.875 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:50.875 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:50.875 22025 22025 I flutter : extra: {}
+09-16 07:54:50.875 22025 22025 I flutter : headers:
+09-16 07:54:50.875 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:50.875 22025 22025 I flutter : 
+09-16 07:54:51.968 22025 22025 I flutter : 2026-09-16T07:54:51.966959 PipHandler: onActivityStopped (isActivityStopped=true isPipMode=false)
+09-16 07:54:51.974 22025 22025 I flutter : 2026-09-16T07:54:51.974465 PlayerNotifier: onActivityStopped isPlaying=false isIFrameMode=null track=2q0PdXlD6ODRWFqntNXYbq
+09-16 07:54:53.270 22025 22980 W om.ppplayer.app: ClassLoaderContext classpath size mismatch. expected=1, found=0 (DLC[];PCL[base.apk*3022087169]{PCL[/system/framework/org.apache.http.legacy.jar*4247870504]#PCL[/system/framework/com.android.location.provider.jar*1570284764]#PCL[/system/framework/com.android.media.remotedisplay.jar*487574312]#PCL[/system_ext/framework/com.android.extensions.appfunctions.jar*2880224042]#PCL[/system_ext/framework/androidx.window.extensions.jar*1030441313]#PCL[/system_ext/framework/androidx.window.sidecar.jar*3860983653]} | DLC[];PCL[])
+09-16 07:54:53.276 22025 22025 I Choreographer: Skipped 199 frames!  The application may be doing too much work on its main thread.
+09-16 07:54:53.315 22025 22980 W System  : ClassLoader referenced unknown path: 
+09-16 07:54:53.315 22025 22980 D nativeloader: Configuring clns-12 for other apk . target_sdk_version=37, uses_libraries=, library_path=/data/app/~~9gTjoyGooTiFYZnWcTSi4w==/com.google.android.gms-W2s9AXrb220HbNcC2lTtyg==/lib/x86_64:/data/app/~~9gTjoyGooTiFYZnWcTSi4w==/com.google.android.gms-W2s9AXrb220HbNcC2lTtyg==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms
+09-16 07:54:53.326 22025 22980 I om.ppplayer.app: AssetManager2(0x7eea072d8978) locale list changing from [] to [en-US]
+09-16 07:54:53.746 22025 22025 I flutter : 
+09-16 07:54:53.746 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:54:53.746 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:54:53.746 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:54:53.749 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=1 decodeFail=0
+09-16 07:54:53.749 22025 22025 I flutter : Net  | spotifyRequests=3
+09-16 07:54:53.749 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:54:53.749 22025 22025 I flutter : ======================
+09-16 07:54:53.749 22025 22025 I flutter : 
+09-16 07:54:53.856 22025 22025 I flutter : *** Response ***
+09-16 07:54:53.856 22025 22025 I flutter : uri: https://api.spotify.com/v1/browse/featured-playlists?limit=20&country=US
+09-16 07:54:53.856 22025 22025 I flutter : 
+09-16 07:54:53.937 22025 22025 I flutter : *** Response ***
+09-16 07:54:53.938 22025 22025 I flutter : uri: https://api.spotify.com/v1/search?q=year%3A2025-2026&type=album&limit=10&offset=0&market=US
+09-16 07:54:53.938 22025 22025 I flutter : 
+09-16 07:54:54.185 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.186 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWTkIwO2HDifB/tracks?limit=3&market=US
+09-16 07:54:54.186 22025 22025 I flutter : method: GET
+09-16 07:54:54.186 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.186 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.186 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.186 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.186 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.186 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.186 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.186 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.186 22025 22025 I flutter : extra: {}
+09-16 07:54:54.186 22025 22025 I flutter : headers:
+09-16 07:54:54.186 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.186 22025 22025 I flutter : 
+09-16 07:54:54.202 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.202 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DXdSjVZQzv2tl/tracks?limit=3&market=US
+09-16 07:54:54.202 22025 22025 I flutter : method: GET
+09-16 07:54:54.202 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.202 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.202 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.202 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.202 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.202 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.202 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.202 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.203 22025 22025 I flutter : extra: {}
+09-16 07:54:54.204 22025 22025 I flutter : headers:
+09-16 07:54:54.204 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.204 22025 22025 I flutter : 
+09-16 07:54:54.204 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.204 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX0FOF1IUWK1W/tracks?limit=3&market=US
+09-16 07:54:54.204 22025 22025 I flutter : method: GET
+09-16 07:54:54.204 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.204 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.204 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.204 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.204 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.204 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.204 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.204 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.205 22025 22025 I flutter : extra: {}
+09-16 07:54:54.206 22025 22025 I flutter : headers:
+09-16 07:54:54.206 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.206 22025 22025 I flutter : 
+09-16 07:54:54.207 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.208 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX5lAV5ZGu9ik/tracks?limit=3&market=US
+09-16 07:54:54.208 22025 22025 I flutter : method: GET
+09-16 07:54:54.208 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.208 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.208 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.208 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.208 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.208 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.208 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.208 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.208 22025 22025 I flutter : extra: {}
+09-16 07:54:54.208 22025 22025 I flutter : headers:
+09-16 07:54:54.208 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.208 22025 22025 I flutter : 
+09-16 07:54:54.214 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.217 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX0OEZC3cbQmU/tracks?limit=3&market=US
+09-16 07:54:54.217 22025 22025 I flutter : method: GET
+09-16 07:54:54.217 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.217 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.217 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.217 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.217 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.217 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.217 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.217 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.217 22025 22025 I flutter : extra: {}
+09-16 07:54:54.217 22025 22025 I flutter : headers:
+09-16 07:54:54.217 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.217 22025 22025 I flutter : 
+09-16 07:54:54.222 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.222 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWVjNkaVEkL3X/tracks?limit=3&market=US
+09-16 07:54:54.222 22025 22025 I flutter : method: GET
+09-16 07:54:54.222 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.222 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.222 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.222 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.222 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.222 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.222 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.222 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.223 22025 22025 I flutter : extra: {}
+09-16 07:54:54.223 22025 22025 I flutter : headers:
+09-16 07:54:54.223 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.223 22025 22025 I flutter : 
+09-16 07:54:54.231 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.241 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX3iXpjyhBzel/tracks?limit=3&market=US
+09-16 07:54:54.241 22025 22025 I flutter : method: GET
+09-16 07:54:54.241 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.241 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.241 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.241 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.241 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.241 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.241 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.241 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.241 22025 22025 I flutter : extra: {}
+09-16 07:54:54.241 22025 22025 I flutter : headers:
+09-16 07:54:54.241 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.241 22025 22025 I flutter : 
+09-16 07:54:54.249 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.250 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX5v2FFZSCfVW/tracks?limit=3&market=US
+09-16 07:54:54.250 22025 22025 I flutter : method: GET
+09-16 07:54:54.250 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.250 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.250 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.250 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.250 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.250 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.250 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.250 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.250 22025 22025 I flutter : extra: {}
+09-16 07:54:54.250 22025 22025 I flutter : headers:
+09-16 07:54:54.250 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.250 22025 22025 I flutter : 
+09-16 07:54:54.250 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.252 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWWKap1fTevjS/tracks?limit=3&market=US
+09-16 07:54:54.253 22025 22025 I flutter : method: GET
+09-16 07:54:54.253 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.253 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.253 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.253 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.253 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.253 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.253 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.253 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.253 22025 22025 I flutter : extra: {}
+09-16 07:54:54.253 22025 22025 I flutter : headers:
+09-16 07:54:54.253 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.253 22025 22025 I flutter : 
+09-16 07:54:54.259 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.260 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWT0d3wigiTss/tracks?limit=3&market=US
+09-16 07:54:54.260 22025 22025 I flutter : method: GET
+09-16 07:54:54.260 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.260 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.260 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.260 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.260 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.260 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.260 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.260 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.260 22025 22025 I flutter : extra: {}
+09-16 07:54:54.260 22025 22025 I flutter : headers:
+09-16 07:54:54.260 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.260 22025 22025 I flutter : 
+09-16 07:54:54.261 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.264 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWSlRNWoWejBr/tracks?limit=3&market=US
+09-16 07:54:54.264 22025 22025 I flutter : method: GET
+09-16 07:54:54.264 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.264 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.264 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.264 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.264 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.264 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.264 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.264 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.264 22025 22025 I flutter : extra: {}
+09-16 07:54:54.264 22025 22025 I flutter : headers:
+09-16 07:54:54.264 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.264 22025 22025 I flutter : 
+09-16 07:54:54.277 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.278 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX3R59Eoqqsy8/tracks?limit=3&market=US
+09-16 07:54:54.278 22025 22025 I flutter : method: GET
+09-16 07:54:54.278 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.278 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.278 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.278 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.278 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.278 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.278 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.278 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.278 22025 22025 I flutter : extra: {}
+09-16 07:54:54.278 22025 22025 I flutter : headers:
+09-16 07:54:54.278 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.278 22025 22025 I flutter : 
+09-16 07:54:54.279 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.279 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWXFLyAKm1KMY/tracks?limit=3&market=US
+09-16 07:54:54.279 22025 22025 I flutter : method: GET
+09-16 07:54:54.279 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.279 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.279 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.279 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.279 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.279 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.280 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.280 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.280 22025 22025 I flutter : extra: {}
+09-16 07:54:54.280 22025 22025 I flutter : headers:
+09-16 07:54:54.280 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.280 22025 22025 I flutter : 
+09-16 07:54:54.287 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.287 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DXcedEPj5nsZ0/tracks?limit=3&market=US
+09-16 07:54:54.287 22025 22025 I flutter : method: GET
+09-16 07:54:54.287 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.287 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.287 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.287 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.287 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.287 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.287 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.287 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.287 22025 22025 I flutter : extra: {}
+09-16 07:54:54.287 22025 22025 I flutter : headers:
+09-16 07:54:54.287 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.287 22025 22025 I flutter : 
+09-16 07:54:54.287 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.287 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DZ06evO1YyDbG/tracks?limit=3&market=US
+09-16 07:54:54.287 22025 22025 I flutter : method: GET
+09-16 07:54:54.287 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.287 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.287 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.287 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.287 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.287 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.287 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.287 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.287 22025 22025 I flutter : extra: {}
+09-16 07:54:54.287 22025 22025 I flutter : headers:
+09-16 07:54:54.287 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.287 22025 22025 I flutter : 
+09-16 07:54:54.288 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.288 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX5GJ0BQvLMjM/tracks?limit=3&market=US
+09-16 07:54:54.288 22025 22025 I flutter : method: GET
+09-16 07:54:54.288 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.288 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.288 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.288 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.288 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.288 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.288 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.288 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.288 22025 22025 I flutter : extra: {}
+09-16 07:54:54.288 22025 22025 I flutter : headers:
+09-16 07:54:54.288 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.288 22025 22025 I flutter : 
+09-16 07:54:54.288 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.289 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWUZ5bk6qqDSy/tracks?limit=3&market=US
+09-16 07:54:54.289 22025 22025 I flutter : method: GET
+09-16 07:54:54.289 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.289 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.289 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.289 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.289 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.289 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.289 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.289 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.289 22025 22025 I flutter : extra: {}
+09-16 07:54:54.289 22025 22025 I flutter : headers:
+09-16 07:54:54.289 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.289 22025 22025 I flutter : 
+09-16 07:54:54.290 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.290 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWUIDYTCle9M9/tracks?limit=3&market=US
+09-16 07:54:54.290 22025 22025 I flutter : method: GET
+09-16 07:54:54.290 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.290 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.290 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.291 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.291 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.291 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.291 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.291 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.291 22025 22025 I flutter : extra: {}
+09-16 07:54:54.291 22025 22025 I flutter : headers:
+09-16 07:54:54.291 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.291 22025 22025 I flutter : 
+09-16 07:54:54.291 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.291 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWXHRfd4xP9nx/tracks?limit=3&market=US
+09-16 07:54:54.291 22025 22025 I flutter : method: GET
+09-16 07:54:54.291 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.291 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.291 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.291 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.291 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.291 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.294 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.294 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.294 22025 22025 I flutter : extra: {}
+09-16 07:54:54.295 22025 22025 I flutter : headers:
+09-16 07:54:54.295 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.295 22025 22025 I flutter : 
+09-16 07:54:54.309 22025 22025 I flutter : *** Request ***
+09-16 07:54:54.309 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWYYeOy9vs7I5/tracks?limit=3&market=US
+09-16 07:54:54.309 22025 22025 I flutter : method: GET
+09-16 07:54:54.309 22025 22025 I flutter : responseType: ResponseType.json
+09-16 07:54:54.309 22025 22025 I flutter : followRedirects: true
+09-16 07:54:54.309 22025 22025 I flutter : persistentConnection: true
+09-16 07:54:54.309 22025 22025 I flutter : connectTimeout: null
+09-16 07:54:54.309 22025 22025 I flutter : sendTimeout: null
+09-16 07:54:54.309 22025 22025 I flutter : receiveTimeout: null
+09-16 07:54:54.309 22025 22025 I flutter : transformTimeout: null
+09-16 07:54:54.309 22025 22025 I flutter : receiveDataWhenStatusError: true
+09-16 07:54:54.309 22025 22025 I flutter : extra: {}
+09-16 07:54:54.309 22025 22025 I flutter : headers:
+09-16 07:54:54.309 22025 22025 I flutter :  Authorization: Bearer BQDTyowbs_YwTQlErEP8NiKGiYq7TTi3KToyigXl6Hi1RefR0yIVg7xdPN5dGMJE28jpxDzymPrkAkMfBZhivwuWy5YBHGG0Slg3xtpIY9lOlt2BWsbBERMINugLjGuP5ZN5sbiQQuJm
+09-16 07:54:54.309 22025 22025 I flutter : 
+09-16 07:54:54.315 22025 22980 W om.ppplayer.app: Verification of java.util.concurrent.RunnableFuture com.google.android.gms.internal.ads.zzhbu.newTaskFor(java.lang.Runnable, java.lang.Object) took 103.994ms (48.08 bytecodes/s) (0B arena alloc)
+09-16 07:54:54.336 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:54.336 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:54.336 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:54.336 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:54.336 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:54.336 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:54.385 22025 22025 I flutter : NativeServicePlaybackEngine: Headless WebView Ready
+09-16 07:54:54.439 22025 22031 I om.ppplayer.app: Background concurrent copying GC freed 390KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 4754KB/9508KB, paused 15.563ms,59us total 448.774ms
+09-16 07:54:54.471 22025 22980 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/org.apache.http.legacy.jar
+09-16 07:54:54.471 22025 22980 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.location.provider.jar
+09-16 07:54:54.471 22025 22980 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.media.remotedisplay.jar
+09-16 07:54:54.593 22025 22980 D nativeloader: Configuring clns-13 for other apk /system_ext/framework/com.android.extensions.appfunctions.jar. target_sdk_version=37, uses_libraries=ALL, library_path=/data/app/~~9gTjoyGooTiFYZnWcTSi4w==/com.google.android.gms-W2s9AXrb220HbNcC2lTtyg==/lib/x86_64:/data/app/~~9gTjoyGooTiFYZnWcTSi4w==/com.google.android.gms-W2s9AXrb220HbNcC2lTtyg==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms
+09-16 07:54:54.593 22025 22980 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+09-16 07:54:54.593 22025 22980 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+09-16 07:54:54.624 22025 22980 W om.ppplayer.app: Loading /data/app/~~9gTjoyGooTiFYZnWcTSi4w==/com.google.android.gms-W2s9AXrb220HbNcC2lTtyg==/oat/x86_64/base.odex non-executable as it requires an image which we failed to load
+09-16 07:54:54.644 22025 22980 D nativeloader: Configuring clns-14 for other apk /data/app/~~9gTjoyGooTiFYZnWcTSi4w==/com.google.android.gms-W2s9AXrb220HbNcC2lTtyg==/base.apk. target_sdk_version=37, uses_libraries=, library_path=/data/app/~~9gTjoyGooTiFYZnWcTSi4w==/com.google.android.gms-W2s9AXrb220HbNcC2lTtyg==/lib/x86_64:/data/app/~~9gTjoyGooTiFYZnWcTSi4w==/com.google.android.gms-W2s9AXrb220HbNcC2lTtyg==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms
+09-16 07:54:54.646 22025 22980 I om.ppplayer.app: AssetManager2(0x7eea072d8658) locale list changing from [] to [en-US]
+09-16 07:54:54.667 22025 22025 I flutter : 2026-09-16T07:54:54.667833 PipHandler: onActivityStarted (isActivityStopped=false isPipMode=false)
+09-16 07:54:54.694 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:54.851 22025 22980 W om.ppplayer.app: Verification of void com.google.android.gms.internal.ads.zzhbs.<clinit>() took 119.353ms (1172.99 bytecodes/s) (0B arena alloc)
+09-16 07:54:55.068 22025 22025 I Choreographer: Skipped 107 frames!  The application may be doing too much work on its main thread.
+09-16 07:54:55.753 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:55.754 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:55.938 22025 22980 W om.ppplayer.app: Verification of void com.google.android.gms.internal.ads.zzedw.onSharedPreferenceChanged(android.content.SharedPreferences, java.lang.String) took 245.648ms (179.12 bytecodes/s) (0B arena alloc)
+09-16 07:54:56.160 22025 22980 W om.ppplayer.app: Verification of void com.google.android.gms.internal.ads.zzbmb.zza(com.google.android.gms.internal.ads.zzcaw) took 122.363ms (490.34 bytecodes/s) (0B arena alloc)
+09-16 07:54:56.317 22025 22980 W om.ppplayer.app: Verification of void com.google.android.gms.internal.ads.zzdaw.zzdQ(com.google.android.gms.internal.ads.zzflo) took 154.955ms (6.45 bytecodes/s) (0B arena alloc)
+09-16 07:54:56.430 22025 22482 E SurfaceSyncGroup: Failed to receive transaction ready in 1000ms. Marking SurfaceSyncGroup(wmsSync-VRI[MainActivity]#6) as ready
+09-16 07:54:56.443 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:56.472 22025 22482 E SurfaceSyncGroup: Failed to receive transaction ready in 1000ms. Marking SurfaceSyncGroup(VRI[MainActivity]#7) as ready
+09-16 07:54:56.565 22025 22980 W om.ppplayer.app: Verification of void com.google.android.gms.internal.ads.zzcrj.zze() took 115.515ms (2354.67 bytecodes/s) (0B arena alloc)
+09-16 07:54:56.567 22025 22482 E SurfaceSyncGroup: Failed to receive transaction ready in 1000ms. Marking SurfaceSyncGroup(SurfaceView[com.ppplayer.app/com.ppplayer.app.MainActivity]#5) as ready
+09-16 07:54:57.086 22025 22980 W om.ppplayer.app: Verification of void com.google.android.gms.internal.ads.zzfuf.zzk(long, com.google.android.gms.internal.ads.zzfum, com.google.android.gms.ads.internal.client.zze, int, int, java.lang.String) took 119.256ms (729.52 bytecodes/s) (0B arena alloc)
+09-16 07:54:57.890 22025 23266 W om.ppplayer.app: Verification of void com.google.android.gms.common.api.GoogleApi.<init>(android.content.Context, android.app.Activity, com.google.android.gms.common.api.Api, com.google.android.gms.common.api.Api$ApiOptions, com.google.android.gms.common.api.GoogleApi$Settings) took 116.264ms (1169.75 bytecodes/s) (0B arena alloc)
+09-16 07:54:57.960 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:57.961 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:57.961 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:57.961 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:58.365 22025 23266 W om.ppplayer.app: Verification of com.google.android.gms.common.internal.GmsClientSupervisor com.google.android.gms.common.internal.GmsClientSupervisor.getInstance(android.content.Context) took 110.758ms (397.26 bytecodes/s) (0B arena alloc)
+09-16 07:54:58.435 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:58.505 22025 23315 D CompatChangeReporter: Compat change id reported: 288912692; UID 10213; state: ENABLED
+09-16 07:54:59.674 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:54:59.674 22025 22025 I Choreographer: Skipped 274 frames!  The application may be doing too much work on its main thread.
+09-16 07:54:59.692 22025 22025 I flutter : *** Response ***
+09-16 07:54:59.692 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DXdSjVZQzv2tl/tracks?limit=3&market=US
+09-16 07:54:59.692 22025 22025 I flutter : 
+09-16 07:54:59.765 22025 22025 I flutter : *** Response ***
+09-16 07:54:59.765 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWTkIwO2HDifB/tracks?limit=3&market=US
+09-16 07:54:59.765 22025 22025 I flutter : 
+09-16 07:54:59.791 22025 22041 I HWUI    : Davey! duration=4647ms; Flags=0, FrameTimelineVsyncId=23240981, IntendedVsync=32337430183402, Vsync=32341996849886, InputEventId=0, HandleInputStart=32342005619800, AnimationStart=32342005634300, PerformTraversalsStart=32342009326000, DrawStart=32342009475800, FrameDeadline=32337446850068, FrameStartTime=32342003731800, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=32342009552000, SyncStart=32342017040100, IssueDrawCommandsStart=32342024940700, SwapBuffers=32342025558400, FrameCompleted=32342085514500, DequeueBufferDuration=55140700, QueueBufferDuration=1726400, GpuCompleted=32342035702100, SwapBuffersCompleted=32342085514500, DisplayPresentTime=0, CommandSubmissionCompleted=32342025558400, 
+09-16 07:55:00.620 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:00.633 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:00.714 22025 22025 I flutter : *** Response ***
+09-16 07:55:00.714 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX0OEZC3cbQmU/tracks?limit=3&market=US
+09-16 07:55:00.714 22025 22025 I flutter : 
+09-16 07:55:00.715 22025 22025 I flutter : *** Response ***
+09-16 07:55:00.716 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWSlRNWoWejBr/tracks?limit=3&market=US
+09-16 07:55:00.716 22025 22025 I flutter : 
+09-16 07:55:00.860 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:00.927 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:00.944 22025 22025 I flutter : *** Response ***
+09-16 07:55:00.949 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWWKap1fTevjS/tracks?limit=3&market=US
+09-16 07:55:00.949 22025 22025 I flutter : 
+09-16 07:55:01.056 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.056 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX5v2FFZSCfVW/tracks?limit=3&market=US
+09-16 07:55:01.056 22025 22025 I flutter : 
+09-16 07:55:01.069 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.069 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX0FOF1IUWK1W/tracks?limit=3&market=US
+09-16 07:55:01.069 22025 22025 I flutter : 
+09-16 07:55:01.070 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.071 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.096 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.098 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.098 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWT0d3wigiTss/tracks?limit=3&market=US
+09-16 07:55:01.098 22025 22025 I flutter : 
+09-16 07:55:01.119 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.119 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX5lAV5ZGu9ik/tracks?limit=3&market=US
+09-16 07:55:01.119 22025 22025 I flutter : 
+09-16 07:55:01.122 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.122 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWVjNkaVEkL3X/tracks?limit=3&market=US
+09-16 07:55:01.122 22025 22025 I flutter : 
+09-16 07:55:01.124 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.298 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.301 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWXFLyAKm1KMY/tracks?limit=3&market=US
+09-16 07:55:01.301 22025 22025 I flutter : 
+09-16 07:55:01.303 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.304 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.304 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX3iXpjyhBzel/tracks?limit=3&market=US
+09-16 07:55:01.304 22025 22025 I flutter : 
+09-16 07:55:01.334 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.334 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DZ06evO1YyDbG/tracks?limit=3&market=US
+09-16 07:55:01.334 22025 22025 I flutter : 
+09-16 07:55:01.338 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.340 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DXcedEPj5nsZ0/tracks?limit=3&market=US
+09-16 07:55:01.342 22025 22025 I flutter : 
+09-16 07:55:01.352 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.352 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX3R59Eoqqsy8/tracks?limit=3&market=US
+09-16 07:55:01.353 22025 22025 I flutter : 
+09-16 07:55:01.366 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.368 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWXHRfd4xP9nx/tracks?limit=3&market=US
+09-16 07:55:01.368 22025 22025 I flutter : 
+09-16 07:55:01.405 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.405 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DX5GJ0BQvLMjM/tracks?limit=3&market=US
+09-16 07:55:01.405 22025 22025 I flutter : 
+09-16 07:55:01.410 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.410 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWUZ5bk6qqDSy/tracks?limit=3&market=US
+09-16 07:55:01.410 22025 22025 I flutter : 
+09-16 07:55:01.410 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.410 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWUIDYTCle9M9/tracks?limit=3&market=US
+09-16 07:55:01.410 22025 22025 I flutter : 
+09-16 07:55:01.428 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.482 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.514 22025 22025 I flutter : *** Response ***
+09-16 07:55:01.514 22025 22025 I flutter : uri: https://api.spotify.com/v1/playlists/37i9dQZF1DWYYeOy9vs7I5/tracks?limit=3&market=US
+09-16 07:55:01.514 22025 22025 I flutter : 
+09-16 07:55:01.570 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.752 22025 22514 W cr_media: Requires MODIFY_AUDIO_SETTINGS and RECORD_AUDIO. No audio device will be available for recording
+09-16 07:55:01.876 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.890 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:01.909 22025 22025 I Choreographer: Skipped 133 frames!  The application may be doing too much work on its main thread.
+09-16 07:55:02.019 22025 22025 D InsetsController: hide(ime(), fromIme=false)
+09-16 07:55:02.019 22025 22025 I ImeTracker: com.ppplayer.app:92e380df: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+09-16 07:55:02.155 22025 23415 I Ads     : This request is sent from a test device.
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getDeviceName(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:02.155 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getDeviceId(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:02.170 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getCaptureApiType(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:02.172 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getFacingMode(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:02.189 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isZoomSupported(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:02.222 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getDeviceSupportedFormats(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:02.330 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:02.610 22025 23415 W om.ppplayer.app: Verification of void com.google.android.gms.internal.ads.zzcpx.<init>(com.google.android.gms.internal.ads.zzcpp, com.google.android.gms.internal.ads.zzcwa, com.google.android.gms.internal.ads.zzdov, com.google.android.gms.internal.ads.zzczr, com.google.android.gms.internal.ads.zzfnc, com.google.android.gms.internal.ads.zzdbu, com.google.android.gms.internal.ads.zzeay, com.google.android.gms.internal.ads.zzdjp, com.google.android.gms.internal.ads.zzdcz, com.google.android.gms.internal.ads.zzeqk, com.google.android.gms.internal.ads.zzesg, com.google.android.gms.internal.ads.zzcyd, com.google.android.gms.internal.ads.zzflo, com.google.android.gms.internal.ads.zzfiy, com.google.android.gms.internal.ads.zzfic) took 285.499ms (12683.02 bytecodes/s) (0B arena alloc)
+09-16 07:55:02.790 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:02.833 22025 22025 I flutter : Warning database has been locked for 0:00:10.000000. Make sure you always use the transaction object for database operations during a transaction
+09-16 07:55:03.853 22025 23599 D GASS    : Clearcut logging disabled
+09-16 07:55:04.002 22025 23263 D zzbcg   : File /data/user/0/com.ppplayer.app/cache/1762298034389.dex not found. No need for deletion
+09-16 07:55:04.171 22025 23662 D GASS    : Clearcut logging disabled
+09-16 07:55:05.082 22025 22025 I Ads     : JS: The jsLoaded GMSG has been sent (https://googleads.g.doubleclick.net/mads/static/sdk/native/sdk-core-v40.html:1101)
+09-16 07:55:05.082 22025 22025 I chromium: [INFO:CONSOLE(1101)] "The jsLoaded GMSG has been sent", source: https://googleads.g.doubleclick.net/mads/static/sdk/native/sdk-core-v40.html (1101)
+09-16 07:55:05.360 22025 23261 W Ads     : Invoke Firebase method getInstance error.
+09-16 07:55:05.360 22025 23261 W Ads     : The Google Mobile Ads SDK will not integrate with Firebase. Admob/Firebase integration requires the latest Firebase SDK jar, but Firebase SDK is either missing or out of date
+09-16 07:55:05.531 22025 22031 I om.ppplayer.app: Background young concurrent copying GC freed 3466KB AllocSpace bytes, 9(336KB) LOS objects, 30% free, 6617KB/9508KB, paused 4.082ms,53us total 979.279ms
+09-16 07:55:06.277 22025 22025 I flutter : 07:55:06.276 [BASELINE] STATE PlaybackState.idle → PlaybackState.preparing gen=1 intended=PlaybackState.paused activityStopped=false
+09-16 07:55:06.278 22025 22025 I flutter : MediaKitPlaybackEngine: [INIT] Creating YoutubePlayerController (persistent singleton)
+09-16 07:55:06.457 22025 22025 I flutter : 07:55:06.457 [BASELINE] ENGINE _load() BLOCKED (prepare path): skipping spurious paused emit.
+09-16 07:55:06.457 22025 22025 I flutter : 07:55:06.457 [BASELINE] PREPARE cueVideoById gen=1 videoId=2nxd2IW300I ss=248.325
+09-16 07:55:06.465 22025 22025 I flutter : 2026-09-16T07:55:06.465071 PLAYER status=PlaybackState.preparing
+09-16 07:55:06.467 22025 22025 I flutter : 2026-09-16T07:55:06.467553 PLAYER status=PlaybackState.preparing
+09-16 07:55:06.594 22025 22025 I flutter : 2026-09-16T07:55:06.594040 AUDIO_HANDLER publish playing=false position=0:00:00.000000
+09-16 07:55:06.850 22025 22025 W HWUI    : Image decoding logging dropped!
+09-16 07:55:06.892 22025 22025 W HWUI    : Image decoding logging dropped!
+09-16 07:55:07.079 22025 22025 I flutter : PlaybackView: Building YouTube player for 2nxd2IW300I
+09-16 07:55:07.085 22025 22025 I flutter : YoutubePlayer: calling init()
+09-16 07:55:07.086 22025 22025 I flutter : YoutubePlayerController: init() start
+09-16 07:55:07.088 22025 22025 I flutter : YoutubePlayerController: load() start
+09-16 07:55:07.205 22025 23807 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.START
+09-16 07:55:07.484 22025 22025 I flutter : YoutubePlayerController: generatedHtml length = 5972
+09-16 07:55:07.967 22025 22025 I Choreographer: Skipped 76 frames!  The application may be doing too much work on its main thread.
+09-16 07:55:08.039 22025 22025 I PlatformViewsChannel: Using legacy platform view rendering strategy.
+09-16 07:55:08.040 22025 22025 I PlatformViewsController: Hosting view in view hierarchy for platform view: 0
+09-16 07:55:08.040 22025 22025 I PlatformViewsController: PlatformView is using SurfaceProducer backend
+09-16 07:55:08.340 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:08.342 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:08.611 22025 23835 W HWUI    : Image decoding logging dropped!
+09-16 07:55:08.711 22025 22025 I flutter : YoutubePlayer: init() completed!
+09-16 07:55:08.974 22025 22025 I Choreographer: Skipped 59 frames!  The application may be doing too much work on its main thread.
+09-16 07:55:08.983 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:55:09.180 22025 22911 I HWUI    : Davey! duration=1075ms; Flags=0, FrameTimelineVsyncId=23242261, IntendedVsync=32350313516220, Vsync=32351296849514, InputEventId=0, HandleInputStart=32351304000100, AnimationStart=32351304017800, PerformTraversalsStart=32351311189600, DrawStart=32351324097600, FrameDeadline=32350330182886, FrameStartTime=32351303723000, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=32351370886100, SyncStart=32351458450600, IssueDrawCommandsStart=32351458514100, SwapBuffers=32351458859200, FrameCompleted=32351476160000, DequeueBufferDuration=18300, QueueBufferDuration=6049100, GpuCompleted=32351476071300, SwapBuffersCompleted=32351476160000, DisplayPresentTime=0, CommandSubmissionCompleted=32351458859200, 
+09-16 07:55:09.546 22025 22025 I Choreographer: Skipped 33 frames!  The application may be doing too much work on its main thread.
+09-16 07:55:09.576 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:55:09.855 22025 22041 I HWUI    : Davey! duration=734ms; Flags=0, FrameTimelineVsyncId=23242298, IntendedVsync=32351313516180, Vsync=32351863516158, InputEventId=0, HandleInputStart=32351876447500, AnimationStart=32351876489200, PerformTraversalsStart=32351904759100, DrawStart=32351906865000, FrameDeadline=32351496849506, FrameStartTime=32351875508000, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=32351992219300, SyncStart=32352108812500, IssueDrawCommandsStart=32352108882700, SwapBuffers=32352139954700, FrameCompleted=32352164604900, DequeueBufferDuration=18900, QueueBufferDuration=230500, GpuCompleted=32352164604900, SwapBuffersCompleted=32352146880700, DisplayPresentTime=0, CommandSubmissionCompleted=32352139954700, 
+09-16 07:55:10.380 22025 22514 D AudioSystem: onNewServiceWithAdapter: media.audio_flinger service obtained 0x7eeab73a4640
+09-16 07:55:10.467 22025 22514 D AudioSystem: getService: checking for service media.audio_flinger: 0x7ee9e729c460
+09-16 07:55:10.519 22025 22025 I chromium: [INFO:CONSOLE(147)] "Unrecognized feature: 'web-share'.", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (147)
+09-16 07:55:10.726 22025 22025 I Choreographer: Skipped 68 frames!  The application may be doing too much work on its main thread.
+09-16 07:55:10.802 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:55:11.354 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:55:11.355 22025 22040 I HWUI    : Davey! duration=1291ms; Flags=0, FrameTimelineVsyncId=23242329, IntendedVsync=32351913516156, Vsync=32353046849444, InputEventId=0, HandleInputStart=32353082429600, AnimationStart=32353082467300, PerformTraversalsStart=32353131264200, DrawStart=32353132326100, FrameDeadline=32352196849478, FrameStartTime=32353055251900, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=32353190614500, SyncStart=32353645751300, IssueDrawCommandsStart=32353645781300, SwapBuffers=32353646078500, FrameCompleted=32353660100700, DequeueBufferDuration=24400, QueueBufferDuration=825400, GpuCompleted=32353659947400, SwapBuffersCompleted=32353660100700, DisplayPresentTime=0, CommandSubmissionCompleted=32353646078500, 
+09-16 07:55:11.369 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:55:11.441 22025 22514 I AAudio  : AAudioStreamBuilder_openStream() called ----------------------------------------
+09-16 07:55:11.443 22025 22514 I AudioStreamBuilder: rate   =  44100, channels  = 1, channelMask = 0x1, format   = 5, sharing = SH, dir = OUTPUT
+09-16 07:55:11.443 22025 22514 I AudioStreamBuilder: devices = AUDIO_PORT_HANDLE_NONE, sessionId = -1, perfMode = 11, callback: ON with frames = 4360
+09-16 07:55:11.443 22025 22514 I AudioStreamBuilder: usage  =      1, contentType = 0, inputPreset = 0, allowedCapturePolicy = 0
+09-16 07:55:11.443 22025 22514 I AudioStreamBuilder: privacy sensitive = false, opPackageName = (null), attributionTag = (null)
+09-16 07:55:11.476 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:55:11.507 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:55:11.521 22025 22514 D AudioStreamBuilder: build, global mmap policy is 0
+09-16 07:55:11.540 22025 22514 D AudioStreamBuilder: build, system mmap policy is 1
+09-16 07:55:11.540 22025 22514 D AudioStreamBuilder: build, final mmap policy is 1
+09-16 07:55:11.541 22025 22514 D AudioStreamBuilder: build, system mmap exclusive policy is 1
+09-16 07:55:11.541 22025 22514 D AudioStreamBuilder: build, final mmap exclusive policy is 1
+09-16 07:55:11.541 22025 22514 D AudioStreamBuilder: build() MMAP not used because AAUDIO_PERFORMANCE_MODE_LOW_LATENCY not requested.
+09-16 07:55:11.542 22025 22514 D om.ppplayer.app: PlayerBase::PlayerBase()
+09-16 07:55:11.544 22025 22514 D AudioStreamTrack: open(), request notificationFrames = 0, frameCount = 0
+09-16 07:55:11.679 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:11.736 22025 22025 I Choreographer: Skipped 56 frames!  The application may be doing too much work on its main thread.
+09-16 07:55:11.761 22025 22514 D AudioStreamTrack: open() flags changed from 0x00000008 to 0x00000000
+09-16 07:55:11.761 22025 22514 D AudioStreamTrack: open() perfMode changed from 11 to 10
+09-16 07:55:11.761 22025 22514 D AAudioStream: setState(s#1) from 0 to 2
+09-16 07:55:11.771 22025 22514 I AAudio  : AAudioStreamBuilder_openStream() returns 0 = AAUDIO_OK for s#1 ----------------
+09-16 07:55:11.890 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:11.891 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:55:11.901 22025 22514 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-16 07:55:11.902 22025 22514 D AAudioStream: setState(s#1) from 2 to 3
+09-16 07:55:11.923 22025 22041 I HWUI    : Davey! duration=1027ms; Flags=0, FrameTimelineVsyncId=23242488, IntendedVsync=32353130182774, Vsync=32354063516070, InputEventId=0, HandleInputStart=32354066198900, AnimationStart=32354066214400, PerformTraversalsStart=32354130770100, DrawStart=32354130916100, FrameDeadline=32353680182752, FrameStartTime=32354065537000, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=32354141421400, SyncStart=32354212060700, IssueDrawCommandsStart=32354225253900, SwapBuffers=32354225891300, FrameCompleted=32354228236900, DequeueBufferDuration=15200, QueueBufferDuration=180400, GpuCompleted=32354228151000, SwapBuffersCompleted=32354228236900, DisplayPresentTime=0, CommandSubmissionCompleted=32354225891300, 
+09-16 07:55:11.963 22025 22514 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-16 07:55:12.001 22025 23953 D AAudioStream: setState(s#1) from 3 to 4
+09-16 07:55:12.021 22025 22041 D AudioStreamLegacy: onAudioDeviceUpdate() devices 2 => 2
+09-16 07:55:12.159 22025 23960 W HWUI    : Image decoding logging dropped!
+09-16 07:55:12.187 22025 22025 I chromium: [INFO:CONSOLE(163)] "Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://ppplayer.com').", source: https://www.youtube.com/s/player/8c3fda2d/www-widgetapi.vflset/www-widgetapi.js (163)
+09-16 07:55:12.260 22025 22025 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : warmUpIntegrityToken(868618676952)
+09-16 07:55:12.341 22025 23963 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : Initiate binding to the service.
+09-16 07:55:12.822 22025 22025 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : ServiceConnectionImpl.onServiceConnected(ComponentInfo{com.android.vending/com.google.android.finsky.expressintegrityservice.ExpressIntegrityService})
+09-16 07:55:13.091 22025 23963 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : linkToDeath
+09-16 07:55:13.654 22025 22025 I flutter : 
+09-16 07:55:13.654 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:55:13.654 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:55:13.654 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:55:13.655 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:55:13.655 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:55:13.655 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:55:13.655 22025 22025 I flutter : ======================
+09-16 07:55:13.655 22025 22025 I flutter : 
+09-16 07:55:16.680 22025 23963 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : Unbind from service.
+09-16 07:55:16.713 22025 22041 I PlayCore: UID: [10213]  PID: [22025] OnWarmUpIntegrityTokenCallback : onWarmUpExpressIntegrityToken
+09-16 07:55:18.302 22025 22025 I flutter : 2026-09-16T07:55:18.302466 PLAYER status=PlaybackState.preparing
+09-16 07:55:19.074 22025 22025 I flutter : 2026-09-16T07:55:19.074218 PLAYER status=PlaybackState.preparing
+09-16 07:55:21.903 22025 22025 I Choreographer: Skipped 32 frames!  The application may be doing too much work on its main thread.
+09-16 07:55:22.154 22025 22025 I flutter : 07:55:22.154 [BASELINE] BRIDGE gen=1 iframeState=PlayerState.unStarted engineState=PlaybackState.preparing intended=PlaybackState.paused activityStopped=false
+09-16 07:55:22.155 22025 22025 I flutter : 07:55:22.155 [BASELINE] STATE PlaybackState.preparing → PlaybackState.paused gen=1 intended=PlaybackState.paused activityStopped=false
+09-16 07:55:22.156 22025 22025 I flutter : 2026-09-16T07:55:22.156502 PLAYER status=PlaybackState.paused
+09-16 07:55:22.158 22025 22025 I flutter : PlayerNotifier: restore complete — guard cleared (engine paused)
+09-16 07:55:22.174 22025 22025 I flutter : PlaybackView: Building YouTube player for 2nxd2IW300I
+09-16 07:55:22.272 22025 22025 I flutter : 2026-09-16T07:55:22.251201 AUDIO_HANDLER publish playing=false position=0:04:08.325000
+09-16 07:55:22.314 22025 22025 I flutter : 07:55:22.313 [BASELINE] BRIDGE gen=1 iframeState=PlayerState.cued engineState=PlaybackState.paused intended=PlaybackState.paused activityStopped=false
+09-16 07:55:22.324 22025 22025 I flutter : 2026-09-16T07:55:22.324485 PLAYER status=PlaybackState.paused
+09-16 07:55:23.050 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:23.050 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:24.041 22025 22031 I om.ppplayer.app: Background concurrent copying GC freed 2719KB AllocSpace bytes, 16(944KB) LOS objects, 49% free, 6341KB/12MB, paused 6.317ms,672us total 260.605ms
+09-16 07:55:24.078 22025 22032 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-16 07:55:24.587 22025 22514 W cr_media: Requires MODIFY_AUDIO_SETTINGS and RECORD_AUDIO. No audio device will be available for recording
+09-16 07:55:24.589 22025 22025 I Choreographer: Skipped 43 frames!  The application may be doing too much work on its main thread.
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getDeviceName(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:24.796 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getDeviceId(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:24.886 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getCaptureApiType(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:24.908 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: getCameraCharacteristics: 
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: java.lang.IllegalArgumentException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.utils.ExceptionUtils.throwAsPublicException(ExceptionUtils.java:66)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:790)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:736)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at WV.cY.o(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:15)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.isLegacyOrDeprecatedDevice(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at org.chromium.media.VideoCaptureFactory.getFacingMode(chromium-TrichromeWebViewGoogle6432.aab-stable-694313738:1)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:1333: Unable to retrieve camera characteristics for unknown device 0: No such file or directory (-2) (code 3)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3354)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.createException(Parcel.java:3324)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3307)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.os.Parcel.readException(Parcel.java:3249)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.hardware.ICameraService$Stub$Proxy.getCameraCharacteristics(ICameraService.java:1175)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	at android.hardware.camera2.CameraManager.getCameraCharacteristics(CameraManager.java:782)
+09-16 07:55:24.984 22025 22583 E cr_VideoCapture: 	... 4 more
+09-16 07:55:25.682 22025 22025 I Ads     : JS: The jsLoaded GMSG has been sent (https://googleads.g.doubleclick.net/mads/static/sdk/native/sdk-core-v40.html:1101)
+09-16 07:55:25.683 22025 22025 I chromium: [INFO:CONSOLE(1101)] "The jsLoaded GMSG has been sent", source: https://googleads.g.doubleclick.net/mads/static/sdk/native/sdk-core-v40.html (1101)
+09-16 07:55:27.390 22025 22025 I PlatformViewsChannel: Using legacy platform view rendering strategy.
+09-16 07:55:27.390 22025 22025 I PlatformViewsController: Hosting view in view hierarchy for platform view: 1
+09-16 07:55:27.396 22025 22025 I PlatformViewsController: PlatformView is using SurfaceProducer backend
+09-16 07:55:27.526 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:55:27.626 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:55:28.042 22025 22025 I chromium: [INFO:CONSOLE(1)] "Failed to create WebGPU Context Provider", source:  (1)
+09-16 07:55:28.046 22025 22025 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : requestExpressIntegrityToken(5672085402719616657)
+09-16 07:55:28.046 22025 23963 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : Initiate binding to the service.
+09-16 07:55:28.056 22025 22025 I chromium: [INFO:CONSOLE(1)] "Failed to create WebGPU Context Provider", source:  (1)
+09-16 07:55:28.216 22025 22025 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : ServiceConnectionImpl.onServiceConnected(ComponentInfo{com.android.vending/com.google.android.finsky.expressintegrityservice.ExpressIntegrityService})
+09-16 07:55:28.217 22025 23963 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : linkToDeath
+09-16 07:55:28.290 22025 22336 I PlayCore: UID: [10213]  PID: [22025] OnRequestIntegrityTokenCallback : onRequestExpressIntegrityToken
+09-16 07:55:28.291 22025 23963 I PlayCore: UID: [10213]  PID: [22025] StandardIntegrity : Unbind from service.
+09-16 07:55:31.020 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:31.031 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:33.660 22025 22025 I flutter : 
+09-16 07:55:33.660 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:55:33.660 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:55:33.660 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:55:33.660 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:55:33.660 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:55:33.661 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:55:33.661 22025 22025 I flutter : ======================
+09-16 07:55:33.661 22025 22025 I flutter : 
+09-16 07:55:38.534 22025 22031 I om.ppplayer.app: Background concurrent copying GC freed 2754KB AllocSpace bytes, 8(672KB) LOS objects, 49% free, 6609KB/12MB, paused 1.967ms,55us total 147.161ms
+09-16 07:55:38.543 22025 22032 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-16 07:55:41.503 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:41.504 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:55:53.651 22025 22025 I flutter : 
+09-16 07:55:53.651 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:55:53.651 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:55:53.651 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:55:53.651 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:55:53.652 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:55:53.652 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:55:53.652 22025 22025 I flutter : ======================
+09-16 07:55:53.652 22025 22025 I flutter : 
+09-16 07:56:13.649 22025 22025 I flutter : 
+09-16 07:56:13.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:56:13.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:56:13.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:56:13.649 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:56:13.649 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:56:13.649 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:56:13.649 22025 22025 I flutter : ======================
+09-16 07:56:13.649 22025 22025 I flutter : 
+09-16 07:56:15.797 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:56:15.797 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:56:30.649 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:56:30.650 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:56:33.651 22025 22025 I flutter : 
+09-16 07:56:33.651 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:56:33.651 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:56:33.651 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:56:33.651 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:56:33.651 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:56:33.651 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:56:33.651 22025 22025 I flutter : ======================
+09-16 07:56:33.651 22025 22025 I flutter : 
+09-16 07:56:37.205 22025 22025 I Ads     : This request is sent from a test device.
+09-16 07:56:37.254 22025 24973 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.START
+09-16 07:56:38.201 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:56:38.212 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:56:53.649 22025 22025 I flutter : 
+09-16 07:56:53.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:56:53.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:56:53.650 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:56:53.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:56:53.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:56:53.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:56:53.650 22025 22025 I flutter : ======================
+09-16 07:56:53.650 22025 22025 I flutter : 
+09-16 07:56:58.110 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:56:58.110 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:57:13.649 22025 22025 I flutter : 
+09-16 07:57:13.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:57:13.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:57:13.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:57:13.649 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:57:13.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:57:13.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:57:13.650 22025 22025 I flutter : ======================
+09-16 07:57:13.650 22025 22025 I flutter : 
+09-16 07:57:21.624 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:57:21.625 22025 22025 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-16 07:57:33.650 22025 22025 I flutter : 
+09-16 07:57:33.650 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:57:33.650 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:57:33.650 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:57:33.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:57:33.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:57:33.651 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:57:33.651 22025 22025 I flutter : ======================
+09-16 07:57:33.651 22025 22025 I flutter : 
+09-16 07:57:48.197 22025 22025 I Ads     : This request is sent from a test device.
+09-16 07:57:48.293 22025 25044 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.START
+09-16 07:57:49.266 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:57:49.301 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:57:53.649 22025 22025 I flutter : 
+09-16 07:57:53.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:57:53.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:57:53.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:57:53.649 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:57:53.649 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:57:53.649 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:57:53.649 22025 22025 I flutter : ======================
+09-16 07:57:53.649 22025 22025 I flutter : 
+09-16 07:58:13.650 22025 22025 I flutter : 
+09-16 07:58:13.650 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:58:13.650 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:58:13.650 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:58:13.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:58:13.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:58:13.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:58:13.650 22025 22025 I flutter : ======================
+09-16 07:58:13.650 22025 22025 I flutter : 
+09-16 07:58:33.649 22025 22025 I flutter : 
+09-16 07:58:33.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:58:33.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:58:33.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:58:33.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:58:33.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:58:33.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:58:33.650 22025 22025 I flutter : ======================
+09-16 07:58:33.650 22025 22025 I flutter : 
+09-16 07:58:53.650 22025 22025 I flutter : 
+09-16 07:58:53.650 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:58:53.650 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:58:53.650 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:58:53.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:58:53.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:58:53.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:58:53.650 22025 22025 I flutter : ======================
+09-16 07:58:53.650 22025 22025 I flutter : 
+09-16 07:58:59.265 22025 22025 I Ads     : This request is sent from a test device.
+09-16 07:58:59.307 22025 25124 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.START
+09-16 07:59:00.214 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:59:00.223 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 07:59:13.649 22025 22025 I flutter : 
+09-16 07:59:13.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:59:13.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:59:13.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:59:13.649 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:59:13.649 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:59:13.649 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:59:13.649 22025 22025 I flutter : ======================
+09-16 07:59:13.649 22025 22025 I flutter : 
+09-16 07:59:33.649 22025 22025 I flutter : 
+09-16 07:59:33.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:59:33.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:59:33.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:59:33.649 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:59:33.649 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:59:33.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:59:33.650 22025 22025 I flutter : ======================
+09-16 07:59:33.650 22025 22025 I flutter : 
+09-16 07:59:53.651 22025 22025 I flutter : 
+09-16 07:59:53.651 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 07:59:53.651 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 07:59:53.651 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 07:59:53.651 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 07:59:53.651 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 07:59:53.651 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 07:59:53.651 22025 22025 I flutter : ======================
+09-16 07:59:53.651 22025 22025 I flutter : 
+09-16 08:00:10.200 22025 22025 I Ads     : This request is sent from a test device.
+09-16 08:00:10.243 22025 25280 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.START
+09-16 08:00:11.206 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 08:00:11.232 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 08:00:13.649 22025 22025 I flutter : 
+09-16 08:00:13.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 08:00:13.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 08:00:13.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 08:00:13.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 08:00:13.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 08:00:13.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 08:00:13.650 22025 22025 I flutter : ======================
+09-16 08:00:13.650 22025 22025 I flutter : 
+09-16 08:00:33.649 22025 22025 I flutter : 
+09-16 08:00:33.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 08:00:33.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 08:00:33.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 08:00:33.649 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 08:00:33.649 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 08:00:33.649 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 08:00:33.649 22025 22025 I flutter : ======================
+09-16 08:00:33.649 22025 22025 I flutter : 
+09-16 08:00:53.649 22025 22025 I flutter : 
+09-16 08:00:53.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 08:00:53.650 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 08:00:53.650 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 08:00:53.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 08:00:53.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 08:00:53.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 08:00:53.650 22025 22025 I flutter : ======================
+09-16 08:00:53.650 22025 22025 I flutter : 
+09-16 08:01:13.650 22025 22025 I flutter : 
+09-16 08:01:13.650 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 08:01:13.651 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 08:01:13.651 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 08:01:13.651 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 08:01:13.651 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 08:01:13.651 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 08:01:13.651 22025 22025 I flutter : ======================
+09-16 08:01:13.651 22025 22025 I flutter : 
+09-16 08:01:21.205 22025 22025 I Ads     : This request is sent from a test device.
+09-16 08:01:21.281 22025 25402 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.START
+09-16 08:01:22.276 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 08:01:22.300 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 08:01:33.649 22025 22025 I flutter : 
+09-16 08:01:33.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 08:01:33.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 08:01:33.649 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 08:01:33.649 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 08:01:33.649 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 08:01:33.649 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 08:01:33.649 22025 22025 I flutter : ======================
+09-16 08:01:33.649 22025 22025 I flutter : 
+09-16 08:01:53.650 22025 22025 I flutter : 
+09-16 08:01:53.650 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 08:01:53.650 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 08:01:53.650 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 08:01:53.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 08:01:53.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 08:01:53.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 08:01:53.650 22025 22025 I flutter : ======================
+09-16 08:01:53.650 22025 22025 I flutter : 
+09-16 08:02:13.649 22025 22025 I flutter : 
+09-16 08:02:13.649 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 08:02:13.649 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 08:02:13.650 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 08:02:13.650 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 08:02:13.650 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 08:02:13.650 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 08:02:13.650 22025 22025 I flutter : ======================
+09-16 08:02:13.650 22025 22025 I flutter : 
+09-16 08:02:32.275 22025 22025 I Ads     : This request is sent from a test device.
+09-16 08:02:32.331 22025 25593 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.START
+09-16 08:02:33.213 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 08:02:33.228 22025 22025 D FlutterJNI: Sending viewport metrics to the engine.
+09-16 08:02:33.651 22025 22025 I flutter : 
+09-16 08:02:33.651 22025 22025 I flutter : === [CacheMetrics] ===
+09-16 08:02:33.651 22025 22025 I flutter : L1   | fresh=1 stale=0 miss=7 (Hit Rate: 12.5%)
+09-16 08:02:33.651 22025 22025 I flutter : L2   | fresh=4 stale=3 miss=0 (Hit Rate: 100.0%)
+09-16 08:02:33.651 22025 22025 I flutter : Ops  | dedup=0 refresh=3 writes=3 decodeFail=0
+09-16 08:02:33.651 22025 22025 I flutter : Net  | spotifyRequests=23
+09-16 08:02:33.651 22025 22025 I flutter : YT   | resolves=1 mappingHits=0 negativeHits=0 forcedRetries=0
+09-16 08:02:33.651 22025 22025 I flutter : ======================
+09-16 08:02:33.651 22025 22025 I flutter : 

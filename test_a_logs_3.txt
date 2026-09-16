@@ -1,0 +1,1063 @@
+--------- beginning of main
+09-15 20:53:25.275   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:25.275   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+--------- beginning of system
+09-15 20:53:25.347   865  1407 W ActivityTaskManager: callingPackage for (uid=2000, pid=14338) has no WPC
+09-15 20:53:25.348   865  1407 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@4a69ae0 does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+09-15 20:53:25.348   865  1407 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+09-15 20:53:25.348   865  1407 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+09-15 20:53:25.348   865  1407 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+09-15 20:53:25.348   865  1407 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+09-15 20:53:25.349  1341  1695 D KeyguardService: setOccluded(false)
+09-15 20:53:25.349  1341  1695 D KeyguardViewMediator: setOccluded(false)
+09-15 20:53:25.349   865  1407 I ActivityTaskManager: START u0 {flg=0x10000000 xflg=0x5 cmp=com.ppplayer.app/.MainActivity} with LAUNCH_SINGLE_TOP from uid 2000 (BAL_ALLOW_PERMISSION) result code=3
+09-15 20:53:25.349  1341  1341 D KeyguardViewMediator: handleSetOccluded(false)
+09-15 20:53:25.349  1341  1341 D KeyguardViewMediator: KeyguardViewMediator queue processing message: SET_OCCLUDED
+09-15 20:53:25.350   702   766 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-15 20:53:25.350  1341  1550 D WindowManagerShell: onActivityRestartAttempt: topActivity=ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, wasVisible=true
+09-15 20:53:25.354  1341  1550 D WindowManagerShell: exitPip: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, state=PipTransitionState(mState=entered-pip, mInSwipePipToHomeTransition=false)
+09-15 20:53:25.369  1341  1550 D WindowManagerShell: exitPip: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, dest=Rect(0, 0 - 1280, 2856)
+09-15 20:53:25.370  1341  1550 V WindowManagerShell: Directly starting a new transition type=EXIT_PIP(FIRST_CUSTOM+1) wct=WindowContainerTransaction { changes= {android.os.BinderProxy@cf0be6d={bounds:Rect(0, 0 - 1280, 2856),hasBoundsTransaction,}} hops= [] errorCallbackToken=null taskFragmentOrganizer=null } handler=com.android.wm.shell.pip.PipTransition@987e902
+09-15 20:53:25.380   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:25.380   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:25.381   702   766 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-15 20:53:25.383   702   702 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-15 20:53:25.384   865  1407 W WindowManager: applyWithNextDraw with mSyncState=1, Window{1ac1e00 u0 com.ppplayer.app/com.ppplayer.app.MainActivity}, com.android.server.wm.Task.setMainWindowSizeChangeTransaction:4520 com.android.server.wm.Task.setMainWindowSizeChangeTransaction:4502 com.android.server.wm.WindowOrganizerController.applyTaskChanges:875 com.android.server.wm.WindowOrganizerController.applyWindowContainerChange:2267 com.android.server.wm.WindowOrganizerController.applyTransaction:717 com.android.server.wm.WindowOrganizerController.applyTransaction:598 com.android.server.wm.WindowOrganizerController.lambda$startTransition$3:360 com.android.server.wm.WindowOrganizerController.$r8$lambda$PHnU0rj5Bcvaq0dL-Wi7kOJt8bo:0 
+09-15 20:53:25.384   865  1407 I ActivityTaskManager: Skip adjustForMinimalTaskDimensions for pip task
+09-15 20:53:25.387  1341  1550 D WindowManagerShell: onTaskInfoChanged: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, state=PipTransitionState(mState=exiting-pip, mInSwipePipToHomeTransition=false) oldParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false) newParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false)
+09-15 20:53:25.387  1341  1550 D WindowManagerShell: PipTaskOrganizer: PIP remote actions=[]
+09-15 20:53:25.389 13099 13099 D PipDebug: [NATIVE] event=onPictureInPictureModeChanged pip=false focus=false
+09-15 20:53:25.389 13099 13099 I flutter : [PipDebug][HANDLER] event=onPipModeChanged old=true new=false activityStopped=false
+09-15 20:53:25.389 13099 13099 I flutter : 2026-09-15T20:53:25.389259 PipHandler: onPipModeChanged=false activityStopped=false
+09-15 20:53:25.402 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:25.406 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:25.422   698   807 D AudioFlinger: mixer(0x74f0d414b770) throttle end: throttle time(8)
+09-15 20:53:25.488   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:25.488   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:25.510 14343 14343 W dumpsys : Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: package
+09-15 20:53:25.556  1054  1088 I artd    : GetBestInfo: odex next to the dex file (/product/priv-app/PrebuiltGmsCore/oat/x86_64/PrebuiltGmsCore.odex) is kOatCannotOpen with filter 'verify' executable 'false': Read barrier state mismatch
+09-15 20:53:25.556  1054  1088 I artd    : GetBestInfo: vdex next to the dex file (/product/priv-app/PrebuiltGmsCore/oat/x86_64/PrebuiltGmsCore.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+09-15 20:53:25.560  1054  1088 I artd    : GetBestInfo: vdex next to the dex file (/data/user/0/com.google.android.gms/app_dg_cache/0C4F7ED4FBAFD8F0B9C2015293C70B84A7E731C8/oat/x86_64/the.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+09-15 20:53:25.560  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk has no usable artifacts
+09-15 20:53:25.560  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.apk has no usable artifacts
+09-15 20:53:25.561  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000005/GoogleCertificates.apk has no usable artifacts
+09-15 20:53:25.561  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.apk has no usable artifacts
+09-15 20:53:25.576   865   884 V WindowManager: Sent Transition (#29) createdAt=09-15 20:53:25.371
+09-15 20:53:25.576   865   884 V WindowManager:     startWCT=WindowContainerTransaction { changes= {RemoteToken{6198e6 Task{82d6074 #9 type=standard I=com.ppplayer.app/.MainActivity}}={bounds:Rect(0, 0 - 1280, 2856),hasBoundsTransaction,}} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+09-15 20:53:25.577   865   884 V WindowManager:     info={id=29 t=FIRST_CUSTOM+1 f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+09-15 20:53:25.577   865   884 V WindowManager:         {WCT{RemoteToken{6198e6 Task{82d6074 #9 type=standard I=com.ppplayer.app/.MainActivity}}} m=CHANGE f=TRANSLUCENT leash=Surface(name=Task=9)/@0x6504e3c sb=Rect(522, 1806 - 1232, 2205) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1}
+09-15 20:53:25.577   865   884 V WindowManager:     ]}
+09-15 20:53:25.579   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:25.580  1341  1695 V WindowManagerShell: onTransitionReady(transaction=3715146712061)
+09-15 20:53:25.580  1341  1550 V WindowManagerShell: onTransitionReady (#29) android.os.BinderProxy@3cc0a1: {id=29 t=FIRST_CUSTOM+1 f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+09-15 20:53:25.580  1341  1550 V WindowManagerShell:         {m=CHANGE f=TRANSLUCENT leash=Surface(name=Task=9)/@0xa1542c6 sb=Rect(522, 1806 - 1232, 2205) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1}
+09-15 20:53:25.580  1341  1550 V WindowManagerShell:     ]}
+09-15 20:53:25.580  1341  1550 V WindowManagerShell: Playing animation for (#29) android.os.BinderProxy@3cc0a1@0
+09-15 20:53:25.580  1341  1550 V WindowManagerShell:  try firstHandler com.android.wm.shell.pip.PipTransition@987e902
+09-15 20:53:25.583  1341  1550 D WindowManagerShell: sendOnPipTransitionStarted direction=3, bounds=Rect(522, 1806 - 1232, 2205)
+09-15 20:53:25.589  1341  1550 V WindowManagerShell:  animated by firstHandler
+09-15 20:53:25.590   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:25.591   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:25.593 13099 13099 I flutter : PlaybackView: Building YouTube player for 6kLEQi0u5rA
+09-15 20:53:25.694   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:25.694   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:25.799   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:25.799   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:25.829   698   807 D AudioFlinger: mixer(0x74f0d414b770) throttle end: throttle time(2)
+09-15 20:53:25.903   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:25.903   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:25.919 13099 13099 D PipDebug: [NATIVE] event=onWindowFocusChanged pip=false focus=true
+09-15 20:53:25.947   865  1040 I ImeTracker: com.ppplayer.app:578ed41c: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+09-15 20:53:25.956 12455 12455 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2043 
+09-15 20:53:25.957 12455 12455 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+09-15 20:53:25.957 12455 12455 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1293 onStartInput(EditorInfo{EditorInfo{packageName=com.ppplayer.app, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+09-15 20:53:25.958   865  1677 I ImeTracker: system_server:950fc8d7: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false
+09-15 20:53:25.959   865   887 I ImeTracker: system_server:950fc8d7: onCancelled at PHASE_SERVER_SHOULD_HIDE
+09-15 20:53:25.959 12455 12455 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: EmojiCompatManager.getEmojiCompatIfLoaded():343 EmojiCompat.init() was never called.
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: java.lang.IllegalStateException: EmojiCompat is not initialized. Please call EmojiCompat.init() first
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at asx.p(PG:6)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at axb.b(PG:13)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at jnr.b(PG:2)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at jnr.c(PG:4)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at jnr.f(PG:3)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at jnx.c(PG:3)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at kif.cz(PG:47)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at lhl.run(PG:1025)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at jaf.execute(PG:12)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at nco.v(PG:13)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at lhn.m(PG:96)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at lhn.k(PG:25)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at kgn.onStartInput(PG:250)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService.doStartInput(InputMethodService.java:3521)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.startInput(InputMethodService.java:879)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.dispatchStartInput(InputMethodService.java:908)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at android.inputmethodservice.IInputMethodWrapper.executeMessage(IInputMethodWrapper.java:201)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at android.os.Looper.loopOnce(Looper.java:248)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at android.os.Looper.loop(Looper.java:338)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at android.app.ActivityThread.main(ActivityThread.java:9067)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at java.lang.reflect.Method.invoke(Native Method)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+09-15 20:53:25.959 12455 12455 I EmojiCompatManager: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+09-15 20:53:25.960   865  1407 W PackageConfigPersister: App-specific configuration not found for packageName: com.ppplayer.app and userId: 0
+09-15 20:53:25.965   698   807 D AudioFlinger: mixer(0x74f0d414b770) throttle end: throttle time(25)
+09-15 20:53:26.009   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.009   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.017  1341  1550 D WindowManagerShell: onExitPipFinished: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, state=PipTransitionState(mState=exiting-pip, mInSwipePipToHomeTransition=false) leash=Surface(name=Task=9)/@0xb2bea32
+09-15 20:53:26.037   865   998 W WindowManager: Failed looking up window session=Session{e916a83 1341:u0a10186} callers=com.android.server.wm.WindowManagerService.removeClientToken:2135 com.android.server.wm.Session.remove:270 android.view.IWindowSession$Stub.onTransact:696 
+09-15 20:53:26.040  1341  1550 V WindowManagerShell: Directly starting a new transition type=CLEANUP_PIP_EXIT(FIRST_CUSTOM+19) wct=WindowContainerTransaction { changes= {android.os.BinderProxy@cf0be6d={bounds:Rect(0, 0 - 0, 0),}} hops= [] errorCallbackToken=null taskFragmentOrganizer=null } handler=com.android.wm.shell.pip.PipTransition@987e902
+09-15 20:53:26.099   702   765 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-15 20:53:26.116   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.116   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.135  1341  1550 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#29) android.os.BinderProxy@3cc0a1@0
+09-15 20:53:26.136  1632  1632 W SplitSelectStateCtor: Missing session instanceIds
+09-15 20:53:26.136  1632  1632 D StatsLog: LAUNCHER_SPLIT_SELECTION_EXIT_INTERRUPTED
+09-15 20:53:26.138   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.138   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.138   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.139   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:26.140   865   887 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+09-15 20:53:26.141   865   884 V WindowManager: Finish Transition (#29): created at 09-15 20:53:25.371 collect-started=0.583ms started=0.594ms ready=15.609ms sent=204.878ms commit=9.179ms finished=768.305ms
+09-15 20:53:26.142  1341  1550 V WindowManagerShell: Track 0 became idle
+09-15 20:53:26.142  1341  1550 V WindowManagerShell: PhonePipMenuController: Not going to move PiP, either menu or its parent is not created.
+09-15 20:53:26.142  1341  1550 D WindowManagerShell: sendOnPipTransitionFinished direction=3
+09-15 20:53:26.145  1341  1550 D WindowManagerShell: onActivityUnpinned: null
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.148   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.150   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.150   865   884 V WindowManager: Sent Transition (#30) createdAt=09-15 20:53:26.042
+09-15 20:53:26.150   865   884 V WindowManager:     startWCT=WindowContainerTransaction { changes= {RemoteToken{6198e6 Task{82d6074 #9 type=standard I=com.ppplayer.app/.MainActivity}}={bounds:Rect(0, 0 - 0, 0),}} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+09-15 20:53:26.150  1341  1630 V WindowManagerShell: onTransitionReady(transaction=3715146712072)
+09-15 20:53:26.150   865   884 V WindowManager:     info={id=30 t=FIRST_CUSTOM+19 f=0x0 trk=1 r=[0@Point(0, 0)] c=[
+09-15 20:53:26.150   865   884 V WindowManager:         {WCT{RemoteToken{6198e6 Task{82d6074 #9 type=standard I=com.ppplayer.app/.MainActivity}}} m=CHANGE f=MOVE_TO_TOP leash=Surface(name=Task=9)/@0x6504e3c sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1},
+09-15 20:53:26.150   865   884 V WindowManager:         {WCT{RemoteToken{7c5d1a4 Task{e6948f3 #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x792e912 sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1},
+09-15 20:53:26.150   865   884 V WindowManager:         {m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{1f4f11e showWhenLocked=false})/@0xf63209d sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0}
+09-15 20:53:26.150   865   884 V WindowManager:     ]}
+09-15 20:53:26.150   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.150   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.150   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.151   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.155 13099 13099 D InsetsController: hide(ime(), fromIme=false)
+09-15 20:53:26.155 13099 13099 I ImeTracker: com.ppplayer.app:578ed41c: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+09-15 20:53:26.197  1341  1550 D WindowManagerShell: onTaskVanished: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, state=PipTransitionState(mState=undefined, mInSwipePipToHomeTransition=false)
+09-15 20:53:26.198  1341  1550 V WindowManagerShell: onTransitionReady (#30) android.os.BinderProxy@fc3c5dd: {id=30 t=FIRST_CUSTOM+19 f=0x0 trk=1 r=[0@Point(0, 0)] c=[
+09-15 20:53:26.198  1341  1550 V WindowManagerShell:         {m=CHANGE f=MOVE_TO_TOP leash=Surface(name=Task=9)/@0x93023 sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1},
+09-15 20:53:26.198  1341  1550 V WindowManagerShell:         {m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xea65920 sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1},
+09-15 20:53:26.198  1341  1550 V WindowManagerShell:         {m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{1f4f11e showWhenLocked=false})/@0xabbe2d9 sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0}
+09-15 20:53:26.198  1341  1550 V WindowManagerShell:     ]}
+09-15 20:53:26.212  1341  1550 V WindowManagerShell: Playing animation for (#30) android.os.BinderProxy@fc3c5dd@1
+09-15 20:53:26.212  1341  1550 V WindowManagerShell:  try firstHandler com.android.wm.shell.pip.PipTransition@987e902
+09-15 20:53:26.212  1341  1550 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#30) android.os.BinderProxy@fc3c5dd@1
+09-15 20:53:26.219  1632  1632 D VRI[NexusLauncherActivity]: visibilityChanged oldVisibility=true newVisibility=false
+09-15 20:53:26.221  1632  1632 D NexusLauncherModelDelegate: notifySmartspaceEvent: SmartspaceTargetEvent{mSmartspaceTarget=null, mSmartspaceActionId='null', mEventType=7}
+09-15 20:53:26.224   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.224   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.224  1341  1550 V WindowManagerShell: Track 1 became idle
+09-15 20:53:26.224  1341  1550 V WindowManagerShell: All active transition animations finished
+09-15 20:53:26.224  1341  1550 V WindowManagerShell:  animated by firstHandler
+09-15 20:53:26.224  1341  1550 V WindowManagerShell: Track 1 became idle
+09-15 20:53:26.224  1341  1550 V WindowManagerShell: All active transition animations finished
+09-15 20:53:26.225   865   884 V WindowManager: Finish Transition (#30): created at 09-15 20:53:26.042 collect-started=0.042ms started=0.053ms ready=103.644ms sent=107.08ms commit=75.906ms finished=170.774ms
+09-15 20:53:26.242  1632  1632 D BaseDepthController: setSurface:
+09-15 20:53:26.242  1632  1632 D BaseDepthController: 	mWaitingOnSurfaceValidity: false
+09-15 20:53:26.242  1632  1632 D BaseDepthController: 	mBaseSurface: null
+09-15 20:53:26.242  1632  1632 D BaseDepthController: mSurface is null and mCurrentBlur is: 0
+09-15 20:53:26.247  1632  1632 D StateManager: goToState - fromState: Normal, toState: Normal, partial trace:
+09-15 20:53:26.247  1632  1632 D StateManager: 	at com.android.launcher3.statemanager.StateManager.moveToRestState(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:4)
+09-15 20:53:26.247  1632  1632 D StateManager: 	at com.android.launcher3.statemanager.StateManager.moveToRestState(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:1)
+09-15 20:53:26.247  1632  1632 D StateManager: 	at com.android.launcher3.statemanager.StatefulActivity.onStop(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:34)
+09-15 20:53:26.247  1632  1632 D StatsLog: LAUNCHER_ONSTOP
+09-15 20:53:26.248  1632  1632 D StatsLog: LAUNCHER_GOOGLE_SEARCH_RESTORE_LIST_SIZE_AFTER_ACTIVITY_RESTART
+09-15 20:53:26.253   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.269 13099 13099 D PipDebug: [NATIVE] event=onResume pip=false focus=true
+09-15 20:53:26.277 13099 13099 I flutter : [PipDebug][FLUTTER] state=resumed inPip=false activityStopped=false
+09-15 20:53:26.288 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:26.327   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.327   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.381 13099 13099 I flutter : 20:53:26.381 [BASELINE] RENDERER gen=5 position=22.32402604386902 duration=197.221
+09-15 20:53:26.381 13099 13099 I flutter : 2026-09-15T20:53:26.381721 PLAYER status=PlaybackState.playing
+09-15 20:53:26.415 13099 13099 I flutter : 20:53:26.415 [BASELINE] RENDERER gen=5 position=22.602182950408935 duration=197.221
+09-15 20:53:26.415 13099 13099 I flutter : 2026-09-15T20:53:26.415787 PLAYER status=PlaybackState.playing
+09-15 20:53:26.422  1632  1638 W System  : A resource failed to call release. 
+09-15 20:53:26.422  1632  1638 W System  : A resource failed to call release. 
+09-15 20:53:26.422  1632  1638 W System  : A resource failed to call release. 
+09-15 20:53:26.457   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.457   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.481   865  2499 D WifiNl80211Manager: Scan result ready event
+09-15 20:53:26.481   865  2499 D WifiNative: Scan result ready event
+09-15 20:53:26.482  1712  2442 I WifiScanner: onFullResults
+09-15 20:53:26.486   865  1243 I HalDevMgr: bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+09-15 20:53:26.488   698   807 D AudioFlinger: mixer(0x74f0d414b770) throttle end: throttle time(7)
+09-15 20:53:26.530 13099 13099 I flutter : 20:53:26.530 [BASELINE] RENDERER gen=5 position=22.9317320705719 duration=197.221
+09-15 20:53:26.531 13099 13099 I flutter : 2026-09-15T20:53:26.531115 PLAYER status=PlaybackState.playing
+09-15 20:53:26.562   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.562   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.673   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.674   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.775   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.775   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.835 13099 13099 I Ads     : This request is sent from a test device.
+09-15 20:53:26.861 13099 14397 W GooglePlayServicesUtil: Google Play services out of date for com.ppplayer.app.  Requires 254730000 but found 252635038
+09-15 20:53:26.866   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.887   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.887   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:26.889   865  2499 D ActivityManager: sync unfroze 10727 com.google.android.gms for 6
+09-15 20:53:26.894   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:26.899   865  2499 W ProcessStats: Tracking association SourceState{e1f4ac com.ppplayer.app/10213 BTop #7454} whose proc state 2 is better than process ProcessState{fe3b304 com.google.android.gms/10147 pkg=com.google.android.gms} proc state 14 (0 skipped)
+09-15 20:53:26.991   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:26.991   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.006 13099 14382 I Ads     : SDK version: afma-sdk-a-v262180000.262180000.0
+09-15 20:53:27.006 13099 14382 I Ads     : HTTP timeout: 60000 milliseconds.
+09-15 20:53:27.098   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.098   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.116 13099 13099 I flutter : 20:53:27.116 [BASELINE] RENDERER gen=5 position=23.457421101089476 duration=197.221
+09-15 20:53:27.121 13099 13099 I flutter : 2026-09-15T20:53:27.120975 PLAYER status=PlaybackState.playing
+09-15 20:53:27.146 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:27.147 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:27.202   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.202   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.309   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.310   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.414   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.414   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.518   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.518   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.559 13099 13099 I flutter : 20:53:27.559 [BASELINE] RENDERER gen=5 position=23.94997101525879 duration=197.221
+09-15 20:53:27.559 13099 13099 I flutter : 2026-09-15T20:53:27.559551 PLAYER status=PlaybackState.playing
+09-15 20:53:27.622   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.622   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.731   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.731   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.834   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.834   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:27.939   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:27.939   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.046   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.046   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.073   698   807 D AudioFlinger: mixer(0x74f0d414b770) throttle end: throttle time(1)
+09-15 20:53:28.079 13099 13099 I flutter : 20:53:28.078 [BASELINE] RENDERER gen=5 position=24.43432908392334 duration=197.221
+09-15 20:53:28.079 13099 13099 I flutter : 2026-09-15T20:53:28.079314 PLAYER status=PlaybackState.playing
+09-15 20:53:28.152   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.152   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.255   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.255   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.358   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.358   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.365   865  3524 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+09-15 20:53:28.389   865  1697 D FileUtils: Rounded bytes from 4110135296 to 8000000000
+09-15 20:53:28.462   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.462   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.570   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.571   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.628 13099 13099 I flutter : [PipDebug][IFRAME] event=state_change state=playing videoId=6kLEQi0u5rA
+09-15 20:53:28.628 13099 13099 I flutter : 20:53:28.628 [BASELINE] BRIDGE gen=5 iframeState=PlayerState.playing engineState=PlaybackState.playing intended=PlaybackState.playing activityStopped=false
+09-15 20:53:28.666 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:28.675   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.675   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.696 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:28.698 13207 13272 E chromium: [ERROR:tile_manager.cc(937)] WARNING: tile memory limits exceeded, some content may not draw
+09-15 20:53:28.699 13207 13272 E chromium: [ERROR:tile_manager.cc(937)] WARNING: tile memory limits exceeded, some content may not draw
+09-15 20:53:28.718 13099 13099 I flutter : 20:53:28.718 [BASELINE] RENDERER gen=5 position=24.989675856948853 duration=197.221
+09-15 20:53:28.719 13099 13099 I flutter : 2026-09-15T20:53:28.719059 PLAYER status=PlaybackState.playing
+09-15 20:53:28.782   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.782   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.893   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.893   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:28.994   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:28.994   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.031 13099 13099 I flutter : 20:53:29.030 [BASELINE] RENDERER gen=5 position=25.428912961853026 duration=197.221
+09-15 20:53:29.032 13099 13099 I flutter : 2026-09-15T20:53:29.031981 PLAYER status=PlaybackState.playing
+09-15 20:53:29.101   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.101   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.112   698   807 D AudioFlinger: mixer(0x74f0d414b770) throttle end: throttle time(1)
+09-15 20:53:29.210   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.210   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.310   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.310   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.338 13099 13826 D BufferPoolAccessor2.0: bufferpool2 0x7453b4820b58 : 5(31457280 size) total buffers - 4(25165824 size) used buffers - 647/652 (recycle/alloc) - 10/1301 (fetch/transfer)
+09-15 20:53:29.415   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.415   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.518   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.518   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.521 13099 13099 I flutter : 20:53:29.521 [BASELINE] RENDERER gen=5 position=25.928173897003173 duration=197.221
+09-15 20:53:29.521 13099 13099 I flutter : 2026-09-15T20:53:29.521477 PLAYER status=PlaybackState.playing
+09-15 20:53:29.623   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.623   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.726   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.726   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.830   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.830   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:29.939   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:29.939   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.027 13099 13099 I flutter : 20:53:30.027 [BASELINE] RENDERER gen=5 position=26.433544813079834 duration=197.221
+09-15 20:53:30.028 13099 13099 I flutter : 2026-09-15T20:53:30.028155 PLAYER status=PlaybackState.playing
+09-15 20:53:30.042   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.042   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.146   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.146   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.254   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.254   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.363   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.363   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.467   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.467   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.530 13099 13099 I flutter : PlaybackView: Building YouTube player for 6kLEQi0u5rA
+09-15 20:53:30.575   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.575   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.679   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.679   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.686   865  2499 D CoreBackPreview: Window{1ac1e00 u0 com.ppplayer.app/com.ppplayer.app.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@bc69680, mPriority=0, mIsAnimationCallback=true, mOverrideBehavior=0}
+09-15 20:53:30.783   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.783   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.892   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.892   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:30.978 13099 13099 I flutter : *** Request ***
+09-15 20:53:30.978 13099 13099 I flutter : uri: https://ppplayer.com/api/spotify/token
+09-15 20:53:30.978 13099 13099 I flutter : method: POST
+09-15 20:53:30.978 13099 13099 I flutter : responseType: ResponseType.json
+09-15 20:53:30.978 13099 13099 I flutter : followRedirects: true
+09-15 20:53:30.978 13099 13099 I flutter : persistentConnection: true
+09-15 20:53:30.978 13099 13099 I flutter : connectTimeout: null
+09-15 20:53:30.978 13099 13099 I flutter : sendTimeout: null
+09-15 20:53:30.978 13099 13099 I flutter : receiveTimeout: null
+09-15 20:53:30.978 13099 13099 I flutter : transformTimeout: null
+09-15 20:53:30.978 13099 13099 I flutter : receiveDataWhenStatusError: true
+09-15 20:53:30.979 13099 13099 I flutter : extra: {}
+09-15 20:53:30.979 13099 13099 I flutter : headers:
+09-15 20:53:30.979 13099 13099 I flutter : 
+09-15 20:53:30.999   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:30.999   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.107   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.108   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.213   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.213   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.315   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.315   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.418 13099 13099 I flutter : 20:53:31.418 [BASELINE] RENDERER gen=5 position=27.538493856948854 duration=197.221
+09-15 20:53:31.418 13099 13099 I flutter : 2026-09-15T20:53:31.418556 PLAYER status=PlaybackState.playing
+09-15 20:53:31.419   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.419   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.525   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.525   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.617 13099 13099 I flutter : 20:53:31.616 [BASELINE] RENDERER gen=5 position=27.98016105722046 duration=197.221
+09-15 20:53:31.617 13099 13099 I flutter : 2026-09-15T20:53:31.617289 PLAYER status=PlaybackState.playing
+09-15 20:53:31.631   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.632   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.717 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:31.718 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:31.734   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.734   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.839   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.839   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:31.942   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:31.942   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.045 13099 13099 I flutter : 20:53:32.045 [BASELINE] RENDERER gen=5 position=28.426438895095824 duration=197.221
+09-15 20:53:32.046 13099 13099 I flutter : 2026-09-15T20:53:32.045970 PLAYER status=PlaybackState.playing
+09-15 20:53:32.048   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.048   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.151   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.151   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.260   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.260   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.362   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.362   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.470   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.470   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.526 13099 13099 I flutter : 20:53:32.526 [BASELINE] RENDERER gen=5 position=28.92740787220764 duration=197.221
+09-15 20:53:32.526 13099 13099 I flutter : 2026-09-15T20:53:32.526552 PLAYER status=PlaybackState.playing
+09-15 20:53:32.571   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.571   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.642 13099 13099 I flutter : 
+09-15 20:53:32.642 13099 13099 I flutter : === [CacheMetrics] ===
+09-15 20:53:32.642 13099 13099 I flutter : L1   | fresh=0 stale=0 miss=12 (Hit Rate: 0.0%)
+09-15 20:53:32.642 13099 13099 I flutter : L2   | fresh=11 stale=1 miss=0 (Hit Rate: 100.0%)
+09-15 20:53:32.642 13099 13099 I flutter : Ops  | dedup=0 refresh=1 writes=0 decodeFail=0
+09-15 20:53:32.642 13099 13099 I flutter : Net  | spotifyRequests=1
+09-15 20:53:32.642 13099 13099 I flutter : YT   | resolves=1 mappingHits=2 negativeHits=0 forcedRetries=0
+09-15 20:53:32.642 13099 13099 I flutter : ======================
+09-15 20:53:32.642 13099 13099 I flutter : 
+09-15 20:53:32.643 13099 13099 I flutter : *** Response ***
+09-15 20:53:32.643 13099 13099 I flutter : uri: https://ppplayer.com/api/spotify/token
+09-15 20:53:32.643 13099 13099 I flutter : 
+09-15 20:53:32.646 13099 13099 I flutter : *** Request ***
+09-15 20:53:32.647 13099 13099 I flutter : uri: https://api.spotify.com/v1/search?q=Featuring+Olivia+Dean&type=track%2Cartist%2Calbum%2Cplaylist&limit=12&market=US
+09-15 20:53:32.647 13099 13099 I flutter : method: GET
+09-15 20:53:32.647 13099 13099 I flutter : responseType: ResponseType.json
+09-15 20:53:32.647 13099 13099 I flutter : followRedirects: true
+09-15 20:53:32.647 13099 13099 I flutter : persistentConnection: true
+09-15 20:53:32.647 13099 13099 I flutter : connectTimeout: null
+09-15 20:53:32.647 13099 13099 I flutter : sendTimeout: null
+09-15 20:53:32.647 13099 13099 I flutter : receiveTimeout: null
+09-15 20:53:32.647 13099 13099 I flutter : transformTimeout: null
+09-15 20:53:32.647 13099 13099 I flutter : receiveDataWhenStatusError: true
+09-15 20:53:32.647 13099 13099 I flutter : extra: {}
+09-15 20:53:32.647 13099 13099 I flutter : headers:
+09-15 20:53:32.647 13099 13099 I flutter :  Authorization: Bearer BQDFh78AGB3AVOepjGRhgq_WITmmKg_3R4xnYRFaZwIg3q5mYFt50eHCetElBtn5kpLyW-X60_BaX0iAT7uEdAahXoec0RWIRk3Gxx1Njm2kA7REu78vhuQS4HVOdlZVrmWMrBZeZd0g
+09-15 20:53:32.647 13099 13099 I flutter : 
+09-15 20:53:32.676   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.676   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.778   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.778   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.883   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.883   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:32.991   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:32.992   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.037 13099 13099 I flutter : 20:53:33.037 [BASELINE] RENDERER gen=5 position=29.435479066757203 duration=197.221
+09-15 20:53:33.038 13099 13099 I flutter : 2026-09-15T20:53:33.038038 PLAYER status=PlaybackState.playing
+09-15 20:53:33.094   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.094   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.204   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.204   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.307   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.307   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.410   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.410   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.454  1452  1802 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+09-15 20:53:33.514   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.514   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.577 13099 13099 I flutter : 20:53:33.577 [BASELINE] RENDERER gen=5 position=29.931704053405763 duration=197.221
+09-15 20:53:33.577 13099 13099 I flutter : 2026-09-15T20:53:33.577520 PLAYER status=PlaybackState.playing
+09-15 20:53:33.620   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.620   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.723   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.723   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.827   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.827   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:33.937   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:33.937   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.028 13099 13099 I flutter : 20:53:34.028 [BASELINE] RENDERER gen=5 position=30.429845990463257 duration=197.221
+09-15 20:53:34.028 13099 13099 I flutter : 2026-09-15T20:53:34.028836 PLAYER status=PlaybackState.playing
+09-15 20:53:34.039   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.039   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.146   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.147   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.256   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.256   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.362   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.362   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.466   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.466   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.532 13099 13099 I flutter : 20:53:34.532 [BASELINE] RENDERER gen=5 position=30.933789925613404 duration=197.221
+09-15 20:53:34.532 13099 13099 I flutter : 2026-09-15T20:53:34.532790 PLAYER status=PlaybackState.playing
+09-15 20:53:34.562 13099 13826 D BufferPoolAccessor2.0: bufferpool2 0x7453b4820b58 : 5(31457280 size) total buffers - 4(25165824 size) used buffers - 778/783 (recycle/alloc) - 11/1563 (fetch/transfer)
+09-15 20:53:34.574   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.574   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.676   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.676   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.698  1561  1561 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+09-15 20:53:34.779   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.779   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.804 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:34.805 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:34.834 13099 13099 I flutter : *** Response ***
+09-15 20:53:34.834 13099 13099 I flutter : uri: https://api.spotify.com/v1/search?q=Featuring+Olivia+Dean&type=track%2Cartist%2Calbum%2Cplaylist&limit=12&market=US
+09-15 20:53:34.834 13099 13099 I flutter : 
+09-15 20:53:34.886   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.886   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:34.996   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:34.997   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.028 13099 13099 I flutter : 20:53:35.027 [BASELINE] RENDERER gen=5 position=31.429978005722045 duration=197.221
+09-15 20:53:35.028 13099 13099 I flutter : 2026-09-15T20:53:35.028408 PLAYER status=PlaybackState.playing
+09-15 20:53:35.099   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.099   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.203   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.203   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.310   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.310   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.418   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.418   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.519   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.519   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.520 14451 14451 W dumpsys : Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: package
+09-15 20:53:35.588  1054  1088 I artd    : GetBestInfo: odex next to the dex file (/product/priv-app/PrebuiltGmsCore/oat/x86_64/PrebuiltGmsCore.odex) is kOatCannotOpen with filter 'verify' executable 'false': Read barrier state mismatch
+09-15 20:53:35.591  1054  1088 I artd    : GetBestInfo: vdex next to the dex file (/product/priv-app/PrebuiltGmsCore/oat/x86_64/PrebuiltGmsCore.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+09-15 20:53:35.593  1054  1088 I artd    : GetBestInfo: vdex next to the dex file (/data/user/0/com.google.android.gms/app_dg_cache/0C4F7ED4FBAFD8F0B9C2015293C70B84A7E731C8/oat/x86_64/the.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+09-15 20:53:35.594  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk has no usable artifacts
+09-15 20:53:35.594  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.apk has no usable artifacts
+09-15 20:53:35.595  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000005/GoogleCertificates.apk has no usable artifacts
+09-15 20:53:35.596  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.apk has no usable artifacts
+09-15 20:53:35.628   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.628   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.671 13099 13099 I flutter : 20:53:35.671 [BASELINE] RENDERER gen=5 position=31.927891961853028 duration=197.221
+09-15 20:53:35.672 13099 13099 I flutter : 2026-09-15T20:53:35.671978 PLAYER status=PlaybackState.playing
+09-15 20:53:35.726   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.726   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.830   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.830   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:35.934   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:35.934   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.043   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.043   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.108 13099 13099 I flutter : 20:53:36.108 [BASELINE] RENDERER gen=5 position=32.458770868392946 duration=197.221
+09-15 20:53:36.108 13099 13099 I flutter : 2026-09-15T20:53:36.108659 PLAYER status=PlaybackState.playing
+09-15 20:53:36.146   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.146   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.255   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.255   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.366   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.366   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.466   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.466   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.561 13099 13099 I flutter : 20:53:36.561 [BASELINE] RENDERER gen=5 position=32.967934990463256 duration=197.221
+09-15 20:53:36.561 13099 13099 I flutter : 2026-09-15T20:53:36.561631 PLAYER status=PlaybackState.playing
+09-15 20:53:36.570   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.570   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.679   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.679   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.783   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.783   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.887   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.888   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:36.919   865  1020 D ActivityManager: freezing 10727 com.google.android.gms
+09-15 20:53:36.996   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:36.996   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.067 13099 13099 I flutter : 20:53:37.067 [BASELINE] RENDERER gen=5 position=33.45718013160705 duration=197.221
+09-15 20:53:37.067 13099 13099 I flutter : 2026-09-15T20:53:37.067629 PLAYER status=PlaybackState.playing
+09-15 20:53:37.102   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.102   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.206   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.208   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.314   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.314   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.423   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.423   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.525   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.525   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.534 13099 13099 I flutter : 20:53:37.534 [BASELINE] RENDERER gen=5 position=33.928911961853025 duration=197.221
+09-15 20:53:37.535 13099 13099 I flutter : 2026-09-15T20:53:37.535225 PLAYER status=PlaybackState.playing
+09-15 20:53:37.634   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.634   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.738   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.739   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.850   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.850   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:37.958   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:37.958   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.027 13099 13099 I flutter : 20:53:38.026 [BASELINE] RENDERER gen=5 position=34.42601611444092 duration=197.221
+09-15 20:53:38.027 13099 13099 I flutter : 2026-09-15T20:53:38.027220 PLAYER status=PlaybackState.playing
+09-15 20:53:38.067   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.067   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.174   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.176   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.282   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.282   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.386   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.387   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.495   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.495   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.564 13099 13099 I flutter : 20:53:38.564 [BASELINE] RENDERER gen=5 position=34.949229917984006 duration=197.221
+09-15 20:53:38.564 13099 13099 I flutter : 2026-09-15T20:53:38.564342 PLAYER status=PlaybackState.playing
+09-15 20:53:38.594   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.594   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.702   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.702   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.811   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.811   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:38.914   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:38.914   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.020   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.020   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.027 13099 13099 I flutter : 20:53:39.027 [BASELINE] RENDERER gen=5 position=35.42945296566772 duration=197.221
+09-15 20:53:39.027 13099 13099 I flutter : 2026-09-15T20:53:39.027921 PLAYER status=PlaybackState.playing
+09-15 20:53:39.096 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:39.097 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:39.125   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.125   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.227   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.227   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.336   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.336   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.438   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.439   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.534 13099 13099 I flutter : 20:53:39.534 [BASELINE] RENDERER gen=5 position=35.92832409727478 duration=197.221
+09-15 20:53:39.534 13099 13099 I flutter : 2026-09-15T20:53:39.534750 PLAYER status=PlaybackState.playing
+09-15 20:53:39.542   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.542   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.651   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.651   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.759   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.759   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.803 13099 13826 D BufferPoolAccessor2.0: bufferpool2 0x7453b4820b58 : 5(31457280 size) total buffers - 4(25165824 size) used buffers - 909/914 (recycle/alloc) - 12/1825 (fetch/transfer)
+09-15 20:53:39.867   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.867   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:39.976   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:39.976   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.035 13099 13099 I flutter : 20:53:40.035 [BASELINE] RENDERER gen=5 position=36.42596008392334 duration=197.221
+09-15 20:53:40.035 13099 13099 I flutter : 2026-09-15T20:53:40.035901 PLAYER status=PlaybackState.playing
+09-15 20:53:40.075   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.075   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.179   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.179   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.282   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.282   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.387   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.387   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.496   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.497   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.521 13099 13099 I flutter : 20:53:40.520 [BASELINE] RENDERER gen=5 position=36.92908910299683 duration=197.221
+09-15 20:53:40.521 13099 13099 I flutter : 2026-09-15T20:53:40.521272 PLAYER status=PlaybackState.playing
+09-15 20:53:40.598   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.598   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.707   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.707   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.810   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.810   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:40.914   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:40.914   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.018   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.018   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.123   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.123   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.152   698   807 D AudioFlinger: mixer(0x74f0d414b770) throttle end: throttle time(3)
+09-15 20:53:41.167 13099 13099 I flutter : 20:53:41.167 [BASELINE] RENDERER gen=5 position=37.478336897003174 duration=197.221
+09-15 20:53:41.167 13099 13099 I flutter : 2026-09-15T20:53:41.167432 PLAYER status=PlaybackState.playing
+09-15 20:53:41.231   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.231   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.334   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.334   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.438   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.438   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.524 13099 13099 I flutter : 20:53:41.523 [BASELINE] RENDERER gen=5 position=37.9267090038147 duration=197.221
+09-15 20:53:41.524 13099 13099 I flutter : 2026-09-15T20:53:41.524547 PLAYER status=PlaybackState.playing
+09-15 20:53:41.543   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.543   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.647   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.647   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.752   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.753   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.854   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.854   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:41.961   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:41.961   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.031 13099 13099 I flutter : 20:53:42.031 [BASELINE] RENDERER gen=5 position=38.42609393896485 duration=197.221
+09-15 20:53:42.031 13099 13099 I flutter : 2026-09-15T20:53:42.031511 PLAYER status=PlaybackState.playing
+09-15 20:53:42.063   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.063   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.167   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.167   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.270   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.271   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.378   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.378   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.482   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.482   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.528 13099 13099 I flutter : 20:53:42.528 [BASELINE] RENDERER gen=5 position=38.93233791798401 duration=197.221
+09-15 20:53:42.528 13099 13099 I flutter : 2026-09-15T20:53:42.528636 PLAYER status=PlaybackState.playing
+09-15 20:53:42.590   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.591   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.641  1561  1561 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+09-15 20:53:42.698   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.698   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.802   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.803   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:42.906   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:42.906   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.015   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.015   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.033 13099 13099 I flutter : 20:53:43.033 [BASELINE] RENDERER gen=5 position=39.42592402861023 duration=197.221
+09-15 20:53:43.033 13099 13099 I flutter : 2026-09-15T20:53:43.033876 PLAYER status=PlaybackState.playing
+09-15 20:53:43.119   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.119   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.224   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.224   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.328   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.328   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.436   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.436   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.453  1452  1802 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+09-15 20:53:43.528 13099 13099 I flutter : 20:53:43.528 [BASELINE] RENDERER gen=5 position=39.92690496376038 duration=197.221
+09-15 20:53:43.528 13099 13099 I flutter : 2026-09-15T20:53:43.528542 PLAYER status=PlaybackState.playing
+09-15 20:53:43.538   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.538   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.642   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.642   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.660  1341  1341 I vol.VolumeDialogImpl: mDialog.dismiss() reason: volume_controller from: com.android.systemui.volume.VolumeDialogImpl$7.onDismissRequested:3
+09-15 20:53:43.661   865   885 W ActivityTaskManager: callingPackage for (uid=-1, pid=0) has no WPC
+09-15 20:53:43.661   865   885 W ActivityStartInterceptor: Starting home with component specified, uid=0
+09-15 20:53:43.661   865   885 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+09-15 20:53:43.661   865   885 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+09-15 20:53:43.661   865   885 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+09-15 20:53:43.661   865   885 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+09-15 20:53:43.661   865   885 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@ce0b8700 does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+09-15 20:53:43.663   865   885 I ActivityTaskManager: Skip adjustForMinimalTaskDimensions for pip task
+09-15 20:53:43.664   865   885 D WindowManager: a delayed check for potentially aborting PiP if in a wrong state is scheduled.
+09-15 20:53:43.664  1341  1550 V WindowManagerShell: Transition requested (#31): android.os.BinderProxy@6461411 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=6 effectiveUid=10181 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.google.android.apps.nexuslauncher/.NexusLauncherActivity } baseActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} origActivity=null realActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} numActivities=1 lastActiveTime=3097447 supportsMultiWindow=true resizeMode=2 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@c19e976} topActivityType=2 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{36e8b77 com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(329, 830 - 952, 2110) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1280, 2856) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 31 }
+09-15 20:53:43.664  1341  1550 D ShellSplitScreen: logExit: no-op, mLoggerSessionId is null
+09-15 20:53:43.665   865   885 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.google.android.apps.nexuslauncher/.NexusLauncherActivity (has extras)} with LAUNCH_SINGLE_TASK from uid 0 (BAL_ALLOW_ALLOWLISTED_UID) result code=2
+09-15 20:53:43.666   702   916 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-15 20:53:43.666 13099 13099 D PipDebug: [NATIVE] event=onPause pip=true focus=true isFinishing=false isChangingConfigurations=false
+09-15 20:53:43.668  1341  1550 D WindowManagerShell: PipTaskOrganizer: PIP remote actions=[]
+09-15 20:53:43.668  1341  1550 D WindowManagerShell: onTaskAppeared: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, state=PipTransitionState(mState=task-appeared, mInSwipePipToHomeTransition=false), taskId=9
+09-15 20:53:43.668   702   702 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-15 20:53:43.675  1341  1550 D WindowManagerShell: onActivityPinned: com.ppplayer.app
+09-15 20:53:43.676 13099 13099 I flutter : [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-15 20:53:43.678   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:43.680  1632  1632 D ViewRootImpl: Skipping stats log for color mode
+09-15 20:53:43.681  1632  1632 D TFOManager: playPanelCloseAnimation() duration=200 traceTag=LauncherOverlay-hide isHomeButtonTap=true
+09-15 20:53:43.681  1632  1632 D TFOManager: Skipped creating panel close animation because -1 is invisible.
+09-15 20:53:43.681  1632  1632 D OverviewCommandHelper: clearing pending commands: []
+09-15 20:53:43.681   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:43.681   865  1297 D BackgroundInstallControlService: Package event received: 0
+09-15 20:53:43.681  1632  1632 D StatsLog: LAUNCHER_ONRESUME
+09-15 20:53:43.683  1632  1632 D NexusLauncherModelDelegate: notifySmartspaceEvent: SmartspaceTargetEvent{mSmartspaceTarget=null, mSmartspaceActionId='null', mEventType=6}
+09-15 20:53:43.695  1632  1632 D BaseDepthController: setSurface:
+09-15 20:53:43.695  1632  1632 D BaseDepthController: 	mWaitingOnSurfaceValidity: false
+09-15 20:53:43.695  1632  1632 D BaseDepthController: 	mBaseSurface: Surface(name=com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity)/@0x8d208c1
+09-15 20:53:43.718  1632  1657 D QuickstepModelDelegate: notifyAppTargetEvent action=1 launchLocation=workspace/0/[-1,-1]/[1,1]
+09-15 20:53:43.722  5972  6042 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+09-15 20:53:43.722  5972  6042 I AiAiEcho: EchoTargets: 
+09-15 20:53:43.722  5972  6042 I AiAiEcho: Filtered by AiAi flag check: 
+09-15 20:53:43.722  5972  6042 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+09-15 20:53:43.722  5972  6042 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+09-15 20:53:43.723  5972  6042 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+09-15 20:53:43.740  1341  1550 D WindowManagerShell: onActivityRestartAttempt: topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}, wasVisible=false
+09-15 20:53:43.741  1341  1550 D WindowManagerShell: PipTaskOrganizer: Defer onTaskInfoChange in current state: 1
+09-15 20:53:43.741  1341  1550 D WindowManagerShell: setLauncherKeepClearAreaHeight: visible=false, height=603
+09-15 20:53:43.741  1341  1550 D WindowManagerShell: setLauncherKeepClearAreaHeight: visible=true, height=603
+09-15 20:53:43.746   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.746   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.837  1632  1632 D ActivityAllAppsContainerView: rebindAdapters: force: false
+09-15 20:53:43.837  1632  1632 D ActivityAllAppsContainerView: rebindAdapters: Not needed.
+09-15 20:53:43.840  1632  1632 I NotificationListener: Handling notification state refresh for com.ppplayer.app#0
+09-15 20:53:43.840  1632  1632 I NotificationListener: Handling notification state refresh for com.android.vending#0
+09-15 20:53:43.840  1632  1632 I NotificationListener: Handling notification state refresh for com.android.systemui#0
+09-15 20:53:43.840  1632  1632 D SsBaseTemplateCard: No text view can be set up
+09-15 20:53:43.840  1632  1632 D SsBaseTemplateCard: Passed-in item info is null
+09-15 20:53:43.840  1632  1632 D SsBaseTemplateCard: Passed-in item info is null
+09-15 20:53:43.840  1632  1632 D SsBaseTemplateCard: Passed-in item info is null
+09-15 20:53:43.840  1632  1632 I SsBaseTemplateCard: Secondary card pane is null
+09-15 20:53:43.844  1341  1630 V WindowManagerShell: onTransitionReady(transaction=3715146712102)
+09-15 20:53:43.844  1341  1550 V WindowManagerShell: onTransitionReady (#31) android.os.BinderProxy@6461411: {id=31 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+09-15 20:53:43.844  1341  1550 V WindowManagerShell:         {m=CHANGE f=NONE leash=Surface(name=Task=9)/@0x895726f sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1},
+09-15 20:53:43.844  1341  1550 V WindowManagerShell:         {m=TO_FRONT f=SHOW_WALLPAPER|IS_OCCLUDED|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x159bb7c sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1},
+09-15 20:53:43.844  1341  1550 V WindowManagerShell:         {m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{1f4f11e showWhenLocked=false})/@0x83ccc05 sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0}
+09-15 20:53:43.844  1341  1550 V WindowManagerShell:     ]}
+09-15 20:53:43.844  1341  1550 V WindowManagerShell: Playing animation for (#31) android.os.BinderProxy@6461411@0
+09-15 20:53:43.844  1341  1550 D WindowManagerShell: isSourceRectHintValidForEnterPip=false, empty hint
+09-15 20:53:43.854   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.858   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.858   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:43.879   865  1040 I ImeTracker: com.google.android.apps.nexuslauncher:6902bac5: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+09-15 20:53:43.879   865   884 V WindowManager: Sent Transition (#31) createdAt=09-15 20:53:43.662 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=6 effectiveUid=10181 displayId=0 isRunning=true baseIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.google.android.apps.nexuslauncher/.NexusLauncherActivity } baseActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} origActivity=null realActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} numActivities=1 lastActiveTime=3097447 supportsMultiWindow=true resizeMode=2 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{b6bb0a4 Task{4ad3ed1 #6 type=home I=com.google.android.apps.nexuslauncher/.NexusLauncherActivity}}} topActivityType=2 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{f845e0d com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(329, 830 - 952, 2110) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1280, 2856) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 31 }
+09-15 20:53:43.879   865   884 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+09-15 20:53:43.879   865   884 V WindowManager:     info={id=31 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+09-15 20:53:43.879   865   884 V WindowManager:         {WCT{RemoteToken{6198e6 Task{82d6074 #9 type=standard I=com.ppplayer.app/.MainActivity}}} m=CHANGE f=NONE leash=Surface(name=Task=9)/@0x6504e3c sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1},
+09-15 20:53:43.879   865   884 V WindowManager:         {WCT{RemoteToken{7c5d1a4 Task{e6948f3 #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER|IS_OCCLUDED|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x792e912 sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0 taskParent=-1},
+09-15 20:53:43.879   865   884 V WindowManager:         {m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{1f4f11e showWhenLocked=false})/@0xf63209d sb=Rect(0, 0 - 1280, 2856) eb=Rect(0, 0 - 1280, 2856) epz=Point(1280, 2856) d=0}
+09-15 20:53:43.879   865   884 V WindowManager:     ]}
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880  1632  1632 D InsetsController: hide(ime(), fromIme=false)
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.880   865   887 W IPCThreadState: Sending oneway calls to frozen process.
+09-15 20:53:43.881  1632  1632 I ImeTracker: com.google.android.apps.nexuslauncher:6902bac5: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+09-15 20:53:43.881 12455 12455 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2043 
+09-15 20:53:43.881 12455 12455 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+09-15 20:53:43.885   865  2466 I ImeTracker: system_server:3cdbf438: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false
+09-15 20:53:43.887 12455 12455 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1293 onStartInput(EditorInfo{EditorInfo{packageName=com.google.android.apps.nexuslauncher, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+09-15 20:53:43.891 12455 12455 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: EmojiCompatManager.getEmojiCompatIfLoaded():343 EmojiCompat.init() was never called.
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: java.lang.IllegalStateException: EmojiCompat is not initialized. Please call EmojiCompat.init() first
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at asx.p(PG:6)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at axb.b(PG:13)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at jnr.b(PG:2)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at jnr.c(PG:4)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at jnr.f(PG:3)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at jnx.c(PG:3)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at kif.cz(PG:47)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at lhl.run(PG:1025)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at jaf.execute(PG:12)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at nco.v(PG:13)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at lhn.m(PG:96)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at lhn.k(PG:25)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at kgn.onStartInput(PG:250)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService.doStartInput(InputMethodService.java:3521)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.startInput(InputMethodService.java:879)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.dispatchStartInput(InputMethodService.java:908)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at android.inputmethodservice.IInputMethodWrapper.executeMessage(IInputMethodWrapper.java:201)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at android.os.Looper.loopOnce(Looper.java:248)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at android.os.Looper.loop(Looper.java:338)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at android.app.ActivityThread.main(ActivityThread.java:9067)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at java.lang.reflect.Method.invoke(Native Method)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+09-15 20:53:43.892 12455 12455 I EmojiCompatManager: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+09-15 20:53:43.892   865  2466 W PackageConfigPersister: App-specific configuration not found for packageName: com.google.android.apps.nexuslauncher and userId: 0
+09-15 20:53:43.894   865   887 I ImeTracker: system_server:3cdbf438: onCancelled at PHASE_SERVER_SHOULD_HIDE
+09-15 20:53:43.966   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:43.966   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.011 13099 13099 D PipDebug: [NATIVE] event=onWindowFocusChanged pip=true focus=false
+09-15 20:53:44.012  1341  1355 W System  : A resource failed to call release. 
+09-15 20:53:44.013  1341  1355 W System  : A resource failed to call release. 
+09-15 20:53:44.013  1341  1355 W System  : A resource failed to call release. 
+09-15 20:53:44.013  1341  1355 W System  : A resource failed to call release. 
+09-15 20:53:44.013  1341  1355 W System  : A resource failed to call release. 
+09-15 20:53:44.048  1341  1550 D WindowManagerShell: sendOnPipTransitionStarted direction=2, bounds=Rect(0, 0 - 0, 0)
+09-15 20:53:44.049  1341  1550 V WindowManagerShell:  animated by com.android.wm.shell.pip.PipTransition@987e902
+09-15 20:53:44.051   673   724 I RanchuHwc: logCompositionFallbackIfChanged: layer 51 CompositionType fallback from 2 to 1
+09-15 20:53:44.051   673   724 I RanchuHwc: logCompositionFallbackIfChanged: layer 52 CompositionType fallback from 2 to 1
+09-15 20:53:44.076   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.076   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.182   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.182   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.291   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.291   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.378 13099 13099 I flutter : 20:53:44.378 [BASELINE] RENDERER gen=5 position=40.554300064849855 duration=197.221
+09-15 20:53:44.379 13099 13099 I flutter : 2026-09-15T20:53:44.379468 PLAYER status=PlaybackState.playing
+09-15 20:53:44.395   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.395   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.484  1341  1550 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#31) android.os.BinderProxy@6461411@0
+09-15 20:53:44.491   865  1677 E TransitionChain: Can't collect into a chain with no transition
+09-15 20:53:44.492   865  1677 I ActivityTaskManager: Skip adjustForMinimalTaskDimensions for pip task
+09-15 20:53:44.493   865  1677 D WindowOrganizerController: Task and activity windowing modes match, so remove any timeout abort PiP callbacks scheduled if needed; task_win_mode=2, activity_win_mode=0
+09-15 20:53:44.500   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.500   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.510  1341  1550 V WindowManagerShell: Track 0 became idle
+09-15 20:53:44.510  1341  1550 V WindowManagerShell: All active transition animations finished
+09-15 20:53:44.510   865   884 V WindowManager: Finish Transition (#31): created at 09-15 20:53:43.662 collect-started=0.016ms request-sent=2.32ms started=4.978ms ready=17.209ms sent=180.743ms commit=18.572ms finished=847.6ms
+09-15 20:53:44.511  1341  1550 D WindowManagerShell: sendOnPipTransitionFinished direction=2
+09-15 20:53:44.511  1341  1550 D WindowManagerShell: onTaskInfoChanged: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, state=PipTransitionState(mState=entered-pip, mInSwipePipToHomeTransition=false) oldParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false) newParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false)
+09-15 20:53:44.511  1341  1550 D WindowManagerShell: PipTaskOrganizer: PIP remote actions=[]
+09-15 20:53:44.570  1341  1550 D WindowManagerShell: onTaskInfoChanged: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, state=PipTransitionState(mState=entered-pip, mInSwipePipToHomeTransition=false) oldParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false) newParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false)
+09-15 20:53:44.570  1341  1550 D WindowManagerShell: PipTaskOrganizer: PIP remote actions=[]
+09-15 20:53:44.570 13099 13099 D PipDebug: [NATIVE] event=onPictureInPictureModeChanged pip=true focus=false
+09-15 20:53:44.571 13099 13099 I flutter : [PipDebug][HANDLER] event=onPipModeChanged old=false new=true activityStopped=false
+09-15 20:53:44.571 13099 13099 I flutter : 2026-09-15T20:53:44.571298 PipHandler: onPipModeChanged=true activityStopped=false
+09-15 20:53:44.572 13099 13099 I om.ppplayer.app: AssetManager2(0x74533486c538) locale list changing from [] to [en-US]
+09-15 20:53:44.584 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:44.594 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:44.612   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.612   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.704  1341  1550 D WindowManagerShell: PipPerfHintController: high perf session [com.android.wm.shell.common.pip.PipPerfHintController$PipHighPerfSession@95cd44f] initially started due to: PipTaskOrganizer::mPipAnimationCallback is started
+09-15 20:53:44.704  1341  1550 D WindowManagerShell: sendOnPipTransitionStarted direction=0, bounds=Rect(522, 1805 - 1232, 2204)
+09-15 20:53:44.714   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.714   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.716   702   702 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+09-15 20:53:44.719 13099 13099 I flutter : PlaybackView: Building YouTube player for 6kLEQi0u5rA
+09-15 20:53:44.818   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.818   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.926   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:44.926   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:44.966 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:45.035   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.035   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.102 13099 13826 D BufferPoolAccessor2.0: bufferpool2 0x7453b4820b58 : 5(31457280 size) total buffers - 4(25165824 size) used buffers - 1035/1040 (recycle/alloc) - 13/2075 (fetch/transfer)
+09-15 20:53:45.102 13099 13099 I flutter : 20:53:45.102 [BASELINE] RENDERER gen=5 position=41.11868903433228 duration=197.221
+09-15 20:53:45.102 13099 13099 I flutter : 2026-09-15T20:53:45.102960 PLAYER status=PlaybackState.playing
+09-15 20:53:45.136  1341  1550 D WindowManagerShell: PipPerfHintController: high perf session [com.android.wm.shell.common.pip.PipPerfHintController$PipHighPerfSession@95cd44f] initially started due to: PipTaskOrganizer::mPipAnimationCallback is closed
+09-15 20:53:45.139   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.139   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.142   865  2499 E TransitionChain: Can't collect into a chain with no transition
+09-15 20:53:45.143   865  2499 I ActivityTaskManager: Skip adjustForMinimalTaskDimensions for pip task
+09-15 20:53:45.147  1341  1550 D WindowManagerShell: sendOnPipTransitionFinished direction=0
+09-15 20:53:45.148  1341  1550 D WindowManagerShell: onTaskInfoChanged: ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity}, state=PipTransitionState(mState=entered-pip, mInSwipePipToHomeTransition=false) oldParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false) newParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false)
+09-15 20:53:45.148  1341  1550 D WindowManagerShell: PipTaskOrganizer: PIP remote actions=[]
+09-15 20:53:45.154 13099 13099 I om.ppplayer.app: AssetManager2(0x745334852ef8) locale list changing from [] to [en-US]
+09-15 20:53:45.182 13099 13099 D FlutterJNI: Sending viewport metrics to the engine.
+09-15 20:53:45.208 13099 13099 I flutter : 20:53:45.208 [BASELINE] RENDERER gen=5 position=41.52323182833862 duration=197.221
+09-15 20:53:45.210 13099 13099 I flutter : 2026-09-15T20:53:45.209908 PLAYER status=PlaybackState.playing
+09-15 20:53:45.219  1341  1550 W WindowManagerShell: removeContentOverlay: TaskInfo{userId=0 taskId=9 effectiveUid=10213 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.ppplayer.app/.MainActivity } baseActivity=ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity} topActivity=ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity} origActivity=null realActivity=ComponentInfo{com.ppplayer.app/com.ppplayer.app.MainActivity} numActivities=1 lastActiveTime=3114980 supportsMultiWindow=true resizeMode=2 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@aa4b0e5} topActivityType=1 pictureInPictureParams=PictureInPictureParams( aspectRatio=16/9 expandedAspectRatio=null sourceRectHint=null hasSetActions=false hasSetCloseAction=false isAutoPipEnabled=true isSeamlessResizeEnabled=false title=null subtitle=null isLaunchIntoPip=false) shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{c2347ba com.ppplayer.app.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(329, 830 - 952, 2110) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1280, 2856) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, state=PipTransitionState(mState=entered-pip, mInSwipePipToHomeTransition=false), surface=Surface(name=PipContentOverlay)/@0xdfd76bd
+09-15 20:53:45.243   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.243   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.347   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.347   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.450   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.450   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.525 13099 13099 I flutter : 20:53:45.525 [BASELINE] RENDERER gen=5 position=41.927201931335446 duration=197.221
+09-15 20:53:45.526 13099 13099 I flutter : 2026-09-15T20:53:45.526260 PLAYER status=PlaybackState.playing
+09-15 20:53:45.557   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.557   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.600 14477 14477 W dumpsys : Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: package
+09-15 20:53:45.663   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.663   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.765  1054  1088 I artd    : GetBestInfo: odex next to the dex file (/product/priv-app/PrebuiltGmsCore/oat/x86_64/PrebuiltGmsCore.odex) is kOatCannotOpen with filter 'verify' executable 'false': Read barrier state mismatch
+09-15 20:53:45.766  1054  1088 I artd    : GetBestInfo: vdex next to the dex file (/product/priv-app/PrebuiltGmsCore/oat/x86_64/PrebuiltGmsCore.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+09-15 20:53:45.767   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.767   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.769  1054  1088 I artd    : GetBestInfo: vdex next to the dex file (/data/user/0/com.google.android.gms/app_dg_cache/0C4F7ED4FBAFD8F0B9C2015293C70B84A7E731C8/oat/x86_64/the.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+09-15 20:53:45.774  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk has no usable artifacts
+09-15 20:53:45.779  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.apk has no usable artifacts
+09-15 20:53:45.783  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000005/GoogleCertificates.apk has no usable artifacts
+09-15 20:53:45.783  1054  1088 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.apk has no usable artifacts
+09-15 20:53:45.874   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.874   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:45.953 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:45.954 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:45.978   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:45.978   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.026 13099 13099 I flutter : 20:53:46.026 [BASELINE] RENDERER gen=5 position=42.42890395994568 duration=197.221
+09-15 20:53:46.026 13099 13099 I flutter : 2026-09-15T20:53:46.026603 PLAYER status=PlaybackState.playing
+09-15 20:53:46.086   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.086   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.191   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.191   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.298   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.298   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.403   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.403   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.499  2007  2198 I bbax    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+09-15 20:53:46.507   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.507   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.532 13099 13099 I flutter : [PipDebug][IFRAME] event=state_change state=playing videoId=6kLEQi0u5rA
+09-15 20:53:46.533 13099 13099 I flutter : 20:53:46.533 [BASELINE] BRIDGE gen=5 iframeState=PlayerState.playing engineState=PlaybackState.playing intended=PlaybackState.playing activityStopped=false
+09-15 20:53:46.609 13099 13099 I flutter : 20:53:46.609 [BASELINE] RENDERER gen=5 position=42.93361401144409 duration=197.221
+09-15 20:53:46.619 13099 13099 I flutter : 2026-09-15T20:53:46.619118 PLAYER status=PlaybackState.playing
+09-15 20:53:46.620   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.620   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.675   865  3524 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+09-15 20:53:46.722   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.722   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.827   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.827   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:46.934   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:46.934   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.032 13099 13099 I flutter : 20:53:47.031 [BASELINE] RENDERER gen=5 position=43.42230995613098 duration=197.221
+09-15 20:53:47.032 13099 13099 I flutter : 2026-09-15T20:53:47.032346 PLAYER status=PlaybackState.playing
+09-15 20:53:47.043   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.043   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.150   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.152   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.255   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.255   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.364   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.364   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.467   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.467   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.527 13099 13099 I flutter : 20:53:47.527 [BASELINE] RENDERER gen=5 position=43.92560603623962 duration=197.221
+09-15 20:53:47.528 13099 13099 I flutter : 2026-09-15T20:53:47.528528 PLAYER status=PlaybackState.playing
+09-15 20:53:47.571   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.571   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.674   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.674   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.779   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.779   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.883   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.883   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:47.987   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:47.987   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.030 13099 13099 I flutter : 20:53:48.030 [BASELINE] RENDERER gen=5 position=44.42478401335144 duration=197.221
+09-15 20:53:48.030 13099 13099 I flutter : 2026-09-15T20:53:48.030594 PLAYER status=PlaybackState.playing
+09-15 20:53:48.090   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.090   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.194   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.194   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.298   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.298   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.403   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.403   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.511   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.511   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.522 13099 13099 I flutter : 20:53:48.522 [BASELINE] RENDERER gen=5 position=44.92851313542175 duration=197.221
+09-15 20:53:48.522 13099 13099 I flutter : 2026-09-15T20:53:48.522804 PLAYER status=PlaybackState.playing
+09-15 20:53:48.619   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.619   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.724   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.724   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.830   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.830   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:48.934   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:48.934   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.024 13099 13099 I flutter : 20:53:49.024 [BASELINE] RENDERER gen=5 position=45.428405977111815 duration=197.221
+09-15 20:53:49.025 13099 13099 I flutter : 2026-09-15T20:53:49.025601 PLAYER status=PlaybackState.playing
+09-15 20:53:49.038   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.038   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.142   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.142   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.246   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.246   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.352   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.352   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.459   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.459   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.524 13099 13099 I flutter : 20:53:49.524 [BASELINE] RENDERER gen=5 position=45.92817481880188 duration=197.221
+09-15 20:53:49.525 13099 13099 I flutter : 2026-09-15T20:53:49.525263 PLAYER status=PlaybackState.playing
+09-15 20:53:49.567   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.567   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.670   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.674   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.779   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.779   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.882   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.882   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:49.986   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:49.986   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.035 13099 13099 I flutter : 20:53:50.035 [BASELINE] RENDERER gen=5 position=46.43017088937378 duration=197.221
+09-15 20:53:50.035 13099 13099 I flutter : 2026-09-15T20:53:50.035710 PLAYER status=PlaybackState.playing
+09-15 20:53:50.091   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.092   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.179 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:50.180 13099 13099 I chromium: [INFO:CONSOLE(0)] "The resource https://ppplayer.com/_next/static/media/3fd1b3eda9c5392f-s.p.0p-f7yd42daun.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.", source: https://ppplayer.com/ (0)
+09-15 20:53:50.199   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.199   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.300   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.300   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.302 13099 14309 D BufferPoolAccessor2.0: bufferpool2 0x7453b4820b58 : 5(31457280 size) total buffers - 4(25165824 size) used buffers - 1173/1178 (recycle/alloc) - 16/2352 (fetch/transfer)
+09-15 20:53:50.402   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.402   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.511   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.511   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.522 13099 13099 I flutter : 20:53:50.522 [BASELINE] RENDERER gen=5 position=46.928540135421756 duration=197.221
+09-15 20:53:50.523 13099 13099 I flutter : 2026-09-15T20:53:50.522976 PLAYER status=PlaybackState.playing
+09-15 20:53:50.575  1561  1561 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+09-15 20:53:50.614   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.615   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.718   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.718   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.826   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.826   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:50.934   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:50.939   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:51.035   698   807 D AudioFlinger: mixer(0x74f0d414b770) throttle end: throttle time(5)
+09-15 20:53:51.047   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:51.047   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:51.085 13099 13099 I flutter : 20:53:51.085 [BASELINE] RENDERER gen=5 position=47.47166695994568 duration=197.221
+09-15 20:53:51.085 13099 13099 I flutter : 2026-09-15T20:53:51.085648 PLAYER status=PlaybackState.playing
+09-15 20:53:51.151   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:51.151   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:51.258   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:51.258   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:51.367   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:51.367   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:51.470   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:51.470   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:51.532 13099 13099 I flutter : 20:53:51.532 [BASELINE] RENDERER gen=5 position=47.93010682070923 duration=197.221
+09-15 20:53:51.532 13099 13099 I flutter : 2026-09-15T20:53:51.532767 PLAYER status=PlaybackState.playing
+09-15 20:53:51.578   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:51.578   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1
+09-15 20:53:51.678   649 13340 W android.hardware.audio@7.1-impl.ranchu: pcmWrite:259 pcm_writei failed with 'cannot read/write stream data: I/O error' (-1)
+09-15 20:53:51.678   649 13340 E android.hardware.audio@7.1-impl.ranchu: pcmWrite:260 failure: -1

@@ -291,7 +291,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                             curve: Curves.easeOutQuart,
                                             decoration: BoxDecoration(
                                               color:
-                                                  Theme.of(
+                                                  isPipMode ? Colors.black : Theme.of(
                                                     context,
                                                   ).colorScheme.surface,
                                               borderRadius:

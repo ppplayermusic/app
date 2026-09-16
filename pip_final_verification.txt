@@ -1,0 +1,46 @@
+
+09-16 12:09:04.873 19033 19033 D PipDebug: 12:09:04.837 [NATIVE] event=onStart pip=false focus=false size=0x0 isFinishing=false
+09-16 12:09:04.883 19033 19033 D PipDebug: 12:09:04.881 [NATIVE] event=onResume pip=false focus=false size=0x0 isFinishing=false
+09-16 12:09:07.527 19033 19033 D PipDebug: 12:09:07.526 [NATIVE] event=onUserLeaveHint pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:07.537 19033 19033 D PipDebug: 12:09:07.537 [NATIVE] event=onPause pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:16.783 19033 19033 D PipDebug: 12:09:16.783 [NATIVE] event=onStop pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:20.150 19033 19033 D PipDebug: 12:09:20.111 [NATIVE] event=onStart pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:23.760 19033 19033 D PipDebug: 12:09:23.760 [NATIVE] event=onResume pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:23.962 19033 19033 I flutter : 12:09:23.954 [PipDebug][HANDLER] event=onActivityStarted old=false new=false inPip=false enteringPip=false
+09-16 12:09:42.218 19033 19033 D PipDebug: 12:09:42.216 [NATIVE] event=onUserLeaveHint pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:42.232 19033 19033 I flutter : 12:09:42.230 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:09:42.244 19033 19033 D PipDebug: 12:09:42.236 [NATIVE] event=onPause pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:42.774 19033 19033 I flutter : 12:09:42.774 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:09:42.774 19033 19033 I flutter : 12:09:42.774 [PipDebug][FLUTTER] state=paused inPip=false activityStopped=false
+09-16 12:09:42.775 19033 19033 D PipDebug: 12:09:42.775 [NATIVE] event=onStop pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:42.775 19033 19033 I flutter : 12:09:42.775 [PipDebug][HANDLER] event=onActivityStopped old=false new=true inPip=false enteringPip=false
+09-16 12:09:43.169 19033 19033 D PipDebug: 12:09:43.169 [NATIVE] event=onStart pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:43.170 19033 19033 I flutter : 12:09:43.170 [PipDebug][HANDLER] event=onActivityStarted old=true new=false inPip=false enteringPip=false
+09-16 12:09:43.187 19033 19033 I flutter : 12:09:43.187 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:09:43.190 19033 19033 I flutter : 12:09:43.190 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:09:43.191 19033 19033 I flutter : 12:09:43.190 [PipDebug][FLUTTER] state=resumed inPip=false activityStopped=false
+09-16 12:09:43.198 19033 19033 D PipDebug: 12:09:43.198 [NATIVE] event=onResume pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:45.818 19033 19033 I flutter : 12:09:45.818 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:09:45.844 19033 19033 D PipDebug: 12:09:45.820 [NATIVE] event=onWindowFocusChanged focus=false pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:46.282 19033 19033 D PipDebug: 12:09:46.281 [NATIVE] event=onUserLeaveHint pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:46.307 19033 19033 D PipDebug: 12:09:46.307 [NATIVE] event=onPause pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:53.115 19033 19033 I flutter : 12:09:53.115 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:09:53.117 19033 19033 I flutter : 12:09:53.116 [PipDebug][FLUTTER] state=paused inPip=false activityStopped=false
+09-16 12:09:53.281 19033 19033 D PipDebug: 12:09:53.242 [NATIVE] event=onStop pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:53.282 19033 19033 I flutter : 12:09:53.282 [PipDebug][HANDLER] event=onActivityStopped old=false new=true inPip=false enteringPip=false
+09-16 12:09:59.337 19033 19033 D PipDebug: 12:09:59.335 [NATIVE] event=onStart pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:09:59.337 19033 19033 I flutter : 12:09:59.337 [PipDebug][HANDLER] event=onActivityStarted old=true new=false inPip=false enteringPip=false
+09-16 12:09:59.358 19033 19033 I flutter : 12:09:59.358 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:09:59.358 19033 19033 I flutter : 12:09:59.358 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:09:59.360 19033 19033 D PipDebug: 12:09:59.359 [NATIVE] event=onResume pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:10:01.565 19033 19033 I flutter : 12:10:01.565 [PipDebug][FLUTTER] state=resumed inPip=false activityStopped=false
+09-16 12:10:01.626 19033 19033 D PipDebug: 12:10:01.625 [NATIVE] event=onWindowFocusChanged focus=true pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:10:11.169 19033 19033 D PipDebug: 12:10:11.168 [NATIVE] event=onUserLeaveHint pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:10:11.172 19033 19033 I flutter : 12:10:11.171 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:10:11.178 19033 19033 D PipDebug: 12:10:11.177 [NATIVE] event=onPause pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:10:14.178 19033 19033 I flutter : 12:10:14.177 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:10:14.178 19033 19033 I flutter : 12:10:14.178 [PipDebug][FLUTTER] state=paused inPip=false activityStopped=false
+09-16 12:10:14.180 19033 19033 D PipDebug: 12:10:14.179 [NATIVE] event=onStop pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:10:14.180 19033 19033 I flutter : 12:10:14.180 [PipDebug][HANDLER] event=onActivityStopped old=false new=true inPip=false enteringPip=false
+09-16 12:10:14.382 19033 19033 D PipDebug: 12:10:14.382 [NATIVE] event=onWindowFocusChanged focus=false pip=false focus=false size=1280x2856 isFinishing=false
+

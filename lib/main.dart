@@ -148,12 +148,45 @@ void main() async {
     globalContainer.read(cacheMetricsProvider).startLogging();
   }
 
+  // Instrument Flutter Lifecycle
+  AppLifecycleListener(
+    onStateChange: (AppLifecycleState state) {
+    },
+  );
+
   runApp(
     UncontrolledProviderScope(
       container: globalContainer,
-      child: const PpPlayerApp(),
+      child: const _AppLifecycleLogger(child: PpPlayerApp()),
     ),
   );
+}
+
+class _AppLifecycleLogger extends StatefulWidget {
+  final Widget child;
+  const _AppLifecycleLogger({required this.child});
+  @override
+  State<_AppLifecycleLogger> createState() => _AppLifecycleLoggerState();
+}
+
+class _AppLifecycleLoggerState extends State<_AppLifecycleLogger> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final time = DateTime.now().toIso8601String().substring(11, 23);
+    debugPrint('$time [PipDebug][FLUTTER] state=${state.name} inPip=${PipHandler.isInPipMode} activityStopped=${PipHandler.isActivityStopped}');
+  }
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class PpPlayerApp extends ConsumerWidget {

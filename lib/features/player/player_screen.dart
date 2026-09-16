@@ -13,6 +13,7 @@ import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+
 import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/artists_links.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
@@ -136,10 +137,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       return;
     }
 
+    final isPipMode = ref.read(playerProvider).isPipMode;
     final isVideoView =
         ref.read(settingsProvider).playerView == PlayerView.video;
-    if (!isVideoView) {
-      // Not on video view — nothing to do. Do not retry.
+    
+    // In PiP mode, we MUST render the video surface regardless of the active tab.
+    if (!isVideoView && !isPipMode) {
+      // Not on video view and not in PiP — nothing to do. Do not retry.
       return;
     }
 
@@ -189,15 +193,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           if (!mounted) return;
           // Re-check conditions inside the callback: view or hasVideo may
           // have changed since the retry was scheduled.
+          final stillPipMode = ref.read(playerProvider).isPipMode;
           final stillVideo =
-              ref.read(settingsProvider).playerView == PlayerView.video;
+              ref.read(settingsProvider).playerView == PlayerView.video || stillPipMode;
           final stillHasVideo =
               ref.read(playbackStatusProvider).asData?.value.hasVideo ?? false;
           if (!stillVideo || !stillHasVideo) {
             if (kDebugMode) {
               debugPrint(
                 '[VideoInit] retry cancelled: '
-                'view=${stillVideo ? 'video' : 'other'} '
+                'view=${stillVideo ? 'video/pip' : 'other'} '
                 'hasVideo=$stillHasVideo',
               );
             }
@@ -214,12 +219,19 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       return;
     }
 
+    if (box.size.width <= 0 || box.size.height <= 0) {
+      if (kDebugMode) {
+        debugPrint('[VideoInit] skipped: invalid slot size (${box.size}) ($label)');
+      }
+      return;
+    }
+
     // Slot is available — reset the retry counter for the next trigger sequence.
     _slotRetryCount = 0;
 
     final position = box.localToGlobal(Offset.zero);
     final size = box.size;
-    final newBounds =
+    var newBounds =
         Rect.fromLTWH(position.dx, position.dy, size.width, size.height);
 
     final currentVisible = ref.read(videoLayoutProvider).isVisible;
@@ -242,8 +254,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final generation = ++_videoLayoutGeneration;
 
     if (kDebugMode) {
-      debugPrint('[VideoInit #$generation] ensureVideoSurfaceReady ($label)');
-      debugPrint('[VideoInit #$generation] slot bounds=$newBounds');
+      final time = DateTime.now().toIso8601String().substring(11, 23);
+      debugPrint('$time [PipDebug][VIDEO_SURFACE] event=ensureVideoSurfaceReady reason=$label hasVideo=$hasVideo videoView=$isVideoView visible=$currentVisible slotExists=true slotSize=${size.width}x${size.height} rect=$newBounds providerBounds=$_lastVideoBounds generation=$generation');
     }
 
     if (!currentVisible) {
@@ -325,6 +337,17 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       }
     });
 
+    ref.listen(
+      playerProvider.select((s) => s.isPipMode),
+      (prev, next) {
+        if (next == false && prev == true) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) ensureVideoSurfaceReady('pip_exit_restored');
+          });
+        }
+      },
+    );
+
     // CRITICAL FIX: Listen for hasVideo becoming true.
     // This is the primary trigger for the cold-start case:
     //   - App opens, first track loads, media resolves → hasVideo flips true.
@@ -367,7 +390,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final isVideoView = settings.playerView == PlayerView.video;
     final colorScheme = Theme.of(context).colorScheme;
     final isPowerSaver = settings.performanceMode == PerformanceMode.powerSaver;
+    final isPipMode = playerState.isPipMode;
 
+    if (isPipMode) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: SizedBox.expand(
+          child: _buildPipVideoSlot(),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -713,12 +745,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                     }
 
                                                     return LayoutBuilder(
-                                                      builder: (context, _) {
+                                                      builder: (context, constraints) {
                                                         WidgetsBinding.instance
                                                             .addPostFrameCallback(
                                                               (_) => ensureVideoSurfaceReady('slot_reflow'),
                                                             );
-                                                        return Container(
+                                                        Widget child = Container(
                                                           key: _videoSlotKey,
                                                           decoration: BoxDecoration(
                                                             color: Colors.transparent,
@@ -728,6 +760,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                                 ),
                                                           ),
                                                         );
+                                                        return child;
                                                       },
                                                     );
                                                   },
@@ -1277,6 +1310,25 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPipVideoSlot() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => ensureVideoSurfaceReady('pip_layout_ready'),
+        );
+        // INVARIANT: The native WebView is rendered via a PlatformView which
+        // sits BEHIND the Flutter UI layer on Android. This container marks
+        // the dimensions of the video slot but MUST remain transparent. 
+        // Adding an opaque color (like Colors.black) here will permanently 
+        // block the video surface from being visible to the user.
+        return Container(
+          key: _videoSlotKey,
+          color: Colors.transparent,
+        );
+      },
     );
   }
 }

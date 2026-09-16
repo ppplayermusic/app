@@ -15,6 +15,11 @@ class HybridPlaybackEngine implements PlaybackController {
   bool _isTransferring = false;
   int _handoffGeneration = 0;
 
+  // True when a background handoff was requested but deferred because the app
+  // was entering or already in PiP. Flushed when PiP exits while the activity
+  // remains stopped.
+  bool _backgroundHandoffDeferred = false;
+
   final _statusController = StreamController<PlaybackStatus>.broadcast();
   final _eventController = StreamController<PlaybackEvent>.broadcast();
 
@@ -26,6 +31,10 @@ class HybridPlaybackEngine implements PlaybackController {
   int _playGeneration = 0;
   int _lastCompletedGeneration = -1;
   Timer? _handoffTimeout;
+
+  // Exposed for testing only.
+  @visibleForTesting
+  EngineOwner get owner => _owner;
 
   HybridPlaybackEngine({
     PlaybackController? foregroundEngine,
@@ -50,14 +59,91 @@ class HybridPlaybackEngine implements PlaybackController {
 
     PipHandler.addActivityStoppedListener(_onActivityStopped);
     PipHandler.addActivityStartedListener(_onActivityStarted);
+    PipHandler.addPipModeListener(_onPipModeChanged);
+    PipHandler.addPipEntryFailedListener(_onPipEntryFailed);
   }
 
+  // ---------------------------------------------------------------------------
+  // Lifecycle callbacks
+  // ---------------------------------------------------------------------------
+
   void _onActivityStopped() {
+    // Guard against the ordering race:
+    //   onActivityStopped fires BEFORE onPipModeChanged(true)
+    // Both isPipRequestPending (set before the native call) and isInPipMode
+    // (confirmed by Android) can protect this window.
+    if (PipHandler.isPipRequestPending || PipHandler.isInPipMode) {
+      _backgroundHandoffDeferred = true;
+      _log(
+        'Background handoff deferred: '
+        'pipRequestPending=${PipHandler.isPipRequestPending} '
+        'inPip=${PipHandler.isInPipMode} '
+        'owner=$_owner gen=$_handoffGeneration',
+      );
+      return;
+    }
     _initiateHandoff(EngineOwner.background);
   }
 
   void _onActivityStarted() {
+    _backgroundHandoffDeferred = false;
+    // Only initiate if we are not already on foreground and not already
+    // mid-transfer toward foreground, to avoid redundant handoffs.
+    if (_owner == EngineOwner.foreground && !_isTransferring) return;
     _initiateHandoff(EngineOwner.foreground);
+  }
+
+  // SAFETY NET: onPipModeChanged(true) is the authoritative confirmation that
+  // PiP is active. It also recovers from the race where onActivityStopped
+  // arrived before this event and a background handoff slipped through.
+  void _onPipModeChanged(bool inPip) {
+    if (inPip) {
+      // PiP is now confirmed active. Clear the deferred flag (already on
+      // foreground, or about to recover to it).
+      _backgroundHandoffDeferred = false;
+      if (_owner != EngineOwner.foreground) {
+        _log(
+          'SAFETY NET: PiP confirmed active but owner=$_owner; '
+          'recovering to foreground. gen=$_handoffGeneration',
+        );
+        _initiateHandoff(EngineOwner.foreground);
+      } else {
+        _log(
+          'PiP confirmed active; owner already foreground. gen=$_handoffGeneration',
+        );
+      }
+    } else {
+      // PiP ended. The correct action depends solely on whether the Activity
+      // is currently stopped — not on the deferred flag, which may be stale.
+      //
+      // PiP false + Activity stopped  → background (user dismissed PiP window)
+      // PiP false + Activity visible  → foreground (user expanded PiP; already owner)
+      //
+      // Snapshot isActivityStopped before clearing the deferred flag so the
+      // decision is based on current state rather than a potentially stale bool.
+      final shouldBackground = PipHandler.isActivityStopped;
+      _backgroundHandoffDeferred = false;
+
+      if (shouldBackground) {
+        _log(
+          'PiP exited while activity stopped; initiating background handoff. '
+          'gen=$_handoffGeneration',
+        );
+        _initiateHandoff(EngineOwner.background);
+      }
+      // If activity is running (user expanded PiP → fullscreen), foreground
+      // is already owner; nothing to do.
+    }
+  }
+
+  // PiP entry failed — clear deferred flag and, if the activity is already
+  // stopped, do the background handoff that was deferred unnecessarily.
+  void _onPipEntryFailed() {
+    _backgroundHandoffDeferred = false;
+    _log('PiP entry failed. activityStopped=${PipHandler.isActivityStopped}');
+    if (PipHandler.isActivityStopped) {
+      _initiateHandoff(EngineOwner.background);
+    }
   }
 
   void _updateStatus(PlaybackStatus status) {
@@ -154,7 +240,8 @@ class HybridPlaybackEngine implements PlaybackController {
   }
 
   void _log(String msg) {
-    debugPrint('HybridPlaybackEngine: $msg');
+    final time = DateTime.now().toIso8601String().substring(11, 23);
+    debugPrint('$time [PipDebug][ENGINE] $msg');
   }
 
   PlaybackController get _activeEngine =>
@@ -176,7 +263,16 @@ class HybridPlaybackEngine implements PlaybackController {
     final myTrackId = _currentTrack!.id;
 
     _log(
-      'Initiating handoff to $targetOwner (gen: $myGen) intendedState: $_intendedState',
+      'event=handoff_requested '
+      'target=$targetOwner ownerBefore=$_owner '
+      'inPip=${PipHandler.isInPipMode} '
+      'pipRequestPending=${PipHandler.isPipRequestPending} '
+      'activityStopped=${PipHandler.isActivityStopped} '
+      'deferred=$_backgroundHandoffDeferred '
+      'gen=$_handoffGeneration '
+      'fg=${_foregroundEngine.currentStatus.state.name} '
+      'bg=${_backgroundEngine.currentStatus.state.name} '
+      'pos=${_activeEngine.currentStatus.position.inMilliseconds}ms',
     );
 
     _isTransferring = true;
@@ -191,6 +287,7 @@ class HybridPlaybackEngine implements PlaybackController {
       // If source cannot confirm silence, we cannot safely start the destination.
       try {
         await sourceEngine.pause(caller: 'handoff', failOnTimeout: true);
+
       } on TimeoutException catch (e) {
         _log('Handoff ABORTED: source pause unconfirmed — $e');
         // Roll back owner; destination was never started, so no audio overlap.
@@ -426,6 +523,8 @@ class HybridPlaybackEngine implements PlaybackController {
     _disposed = true;
     PipHandler.removeActivityStoppedListener(_onActivityStopped);
     PipHandler.removeActivityStartedListener(_onActivityStarted);
+    PipHandler.removePipModeListener(_onPipModeChanged);
+    PipHandler.removePipEntryFailedListener(_onPipEntryFailed);
     _handoffTimeout?.cancel();
     _foregroundEngine.dispose();
     _backgroundEngine.dispose();

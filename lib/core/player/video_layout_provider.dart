@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 final videoLayerLinkProvider = Provider((ref) => LayerLink());
 
 /// Holds the size and position of the video "hole" in the PlayerScreen
@@ -45,11 +44,13 @@ class VideoLayoutNotifier extends Notifier<VideoLayoutState> {
   VideoLayoutState build() => VideoLayoutState();
 
   void updateLayout(Size size, Offset position, {bool? isVisible, String label = 'unknown'}) {
+    final newVisible = isVisible ?? state.isVisible;
+
     state = state.copyWith(
       size: size,
       position: position,
       isReady: true,
-      isVisible: isVisible ?? state.isVisible,
+      isVisible: newVisible,
       debugLabel: label,
       updatedAt: DateTime.now(),
     );

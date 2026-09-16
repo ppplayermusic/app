@@ -1,0 +1,62 @@
+
+09-16 12:19:11.458 21352 21352 D PipDebug: 12:19:11.448 [NATIVE] event=onStart pip=false focus=false size=0x0 isFinishing=false
+09-16 12:19:11.464 21352 21352 D PipDebug: 12:19:11.463 [NATIVE] event=onResume pip=false focus=false size=0x0 isFinishing=false
+09-16 12:19:13.207 21352 21352 I flutter : 12:19:13.200 [PipDebug][HANDLER] event=onActivityStarted old=false new=false inPip=false enteringPip=false
+09-16 12:19:28.204 21352 21352 D PipDebug: 12:19:28.204 [NATIVE] event=onUserLeaveHint pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:28.214 21352 21352 I flutter : 12:19:28.213 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:19:28.235 21352 21352 D PipDebug: 12:19:28.234 [NATIVE] event=onPause pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:29.718 21352 21352 I flutter : 12:19:29.714 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:19:29.719 21352 21352 I flutter : 12:19:29.718 [PipDebug][FLUTTER] state=paused inPip=false activityStopped=false
+09-16 12:19:29.723 21352 21352 D PipDebug: 12:19:29.722 [NATIVE] event=onStop pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:29.723 21352 21352 I flutter : 12:19:29.723 [PipDebug][HANDLER] event=onActivityStopped old=false new=true inPip=false enteringPip=false
+09-16 12:19:31.551 21352 21352 D PipDebug: 12:19:31.551 [NATIVE] event=onStart pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:31.552 21352 21352 I flutter : 12:19:31.552 [PipDebug][HANDLER] event=onActivityStarted old=true new=false inPip=false enteringPip=false
+09-16 12:19:31.557 21352 21352 I flutter : 12:19:31.557 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:19:31.557 21352 21352 I flutter : 12:19:31.557 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:19:31.558 21352 21352 I flutter : 12:19:31.558 [PipDebug][FLUTTER] state=resumed inPip=false activityStopped=false
+09-16 12:19:31.559 21352 21352 D PipDebug: 12:19:31.559 [NATIVE] event=onResume pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:31.739 21352 21352 I flutter : 12:19:31.739 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:19:31.763 21352 21352 D PipDebug: 12:19:31.762 [NATIVE] event=onWindowFocusChanged focus=false pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:32.570 21352 21352 D PipDebug: 12:19:32.570 [NATIVE] event=onUserLeaveHint pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:32.605 21352 21352 D PipDebug: 12:19:32.604 [NATIVE] event=onPause pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:32.921 21352 21352 I flutter : 12:19:32.921 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:19:32.921 21352 21352 I flutter : 12:19:32.921 [PipDebug][FLUTTER] state=paused inPip=false activityStopped=false
+09-16 12:19:32.923 21352 21352 D PipDebug: 12:19:32.922 [NATIVE] event=onStop pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:32.925 21352 21352 I flutter : 12:19:32.924 [PipDebug][HANDLER] event=onActivityStopped old=false new=true inPip=false enteringPip=false
+09-16 12:19:38.620 21352 21352 D PipDebug: 12:19:38.620 [NATIVE] event=onStart pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:38.621 21352 21352 I flutter : 12:19:38.620 [PipDebug][HANDLER] event=onActivityStarted old=true new=false inPip=false enteringPip=false
+09-16 12:19:38.634 21352 21352 I flutter : 12:19:38.633 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:19:38.634 21352 21352 I flutter : 12:19:38.634 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:19:38.635 21352 21352 D PipDebug: 12:19:38.635 [NATIVE] event=onResume pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:40.039 21352 21352 I flutter : 12:19:40.039 [PipDebug][FLUTTER] state=resumed inPip=false activityStopped=false
+09-16 12:19:40.041 21352 21352 D PipDebug: 12:19:40.041 [NATIVE] event=onWindowFocusChanged focus=true pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:19:43.734 21352 21352 D PipDebug: 12:19:43.733 [NATIVE] event=onUserLeaveHint pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:19:43.737 21352 21352 I flutter : 12:19:43.737 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:19:43.739 21352 21352 D PipDebug: 12:19:43.739 [NATIVE] event=onPause pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:19:43.971 21352 21352 D PipDebug: 12:19:43.971 [NATIVE] event=onWindowFocusChanged focus=false pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:45.501 21352 21352 I flutter : 12:19:45.500 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:19:45.501 21352 21352 I flutter : 12:19:45.501 [PipDebug][FLUTTER] state=paused inPip=false activityStopped=false
+09-16 12:19:45.532 21352 21352 D PipDebug: 12:19:45.532 [NATIVE] event=onStop pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:45.533 21352 21352 I flutter : 12:19:45.533 [PipDebug][HANDLER] event=onActivityStopped old=false new=true inPip=false enteringPip=false
+09-16 12:19:45.533 21352 21352 I flutter : 12:19:45.533 [PipDebug][ENGINE] event=handoff_requested target=EngineOwner.background ownerBefore=EngineOwner.foreground inPip=false enteringPip=false activityStopped=true deferred=false gen=3 fg=preparing bg=idle pos=0ms
+09-16 12:19:47.585 21352 21352 I flutter : 12:19:47.585 [PipDebug][ENGINE] Handoff ABORTED: source pause unconfirmed — TimeoutException after 0:00:02.000000: Source pause unconfirmed by IFrame
+09-16 12:19:47.585 21352 21352 I flutter : 12:19:47.585 [PipDebug][ENGINE] Handoff complete
+09-16 12:19:56.441 21352 21352 D PipDebug: 12:19:56.441 [NATIVE] event=onStart pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:56.442 21352 21352 I flutter : 12:19:56.442 [PipDebug][HANDLER] event=onActivityStarted old=true new=false inPip=false enteringPip=false
+09-16 12:19:56.449 21352 21352 I flutter : 12:19:56.449 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:19:56.449 21352 21352 I flutter : 12:19:56.449 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:19:56.454 21352 21352 D PipDebug: 12:19:56.450 [NATIVE] event=onResume pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:19:58.472 21352 21352 I flutter : 12:19:58.472 [PipDebug][FLUTTER] state=resumed inPip=false activityStopped=false
+09-16 12:19:58.479 21352 21352 D PipDebug: 12:19:58.478 [NATIVE] event=onWindowFocusChanged focus=true pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:20:01.570 21352 21352 D PipDebug: 12:20:01.569 [NATIVE] event=onUserLeaveHint pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:20:01.575 21352 21352 I flutter : 12:20:01.575 [PipDebug][FLUTTER] state=inactive inPip=false activityStopped=false
+09-16 12:20:01.576 21352 21352 D PipDebug: 12:20:01.575 [NATIVE] event=onPause pip=false focus=true size=1280x2856 isFinishing=false
+09-16 12:20:01.654 21352 21352 D PipDebug: 12:20:01.654 [NATIVE] event=onWindowFocusChanged focus=false pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:20:02.923 21352 21352 I flutter : 12:20:02.923 [PipDebug][FLUTTER] state=hidden inPip=false activityStopped=false
+09-16 12:20:02.923 21352 21352 I flutter : 12:20:02.923 [PipDebug][FLUTTER] state=paused inPip=false activityStopped=false
+09-16 12:20:02.929 21352 21352 D PipDebug: 12:20:02.929 [NATIVE] event=onStop pip=false focus=false size=1280x2856 isFinishing=false
+09-16 12:20:02.930 21352 21352 I flutter : 12:20:02.930 [PipDebug][HANDLER] event=onActivityStopped old=false new=true inPip=false enteringPip=false
+09-16 12:20:02.930 21352 21352 I flutter : 12:20:02.930 [PipDebug][ENGINE] event=handoff_requested target=EngineOwner.background ownerBefore=EngineOwner.foreground inPip=false enteringPip=false activityStopped=true deferred=false gen=4 fg=paused bg=idle pos=0ms
+09-16 12:20:02.958 21352 21352 I flutter : 12:20:02.958 [PipDebug][ENGINE] Handoff: play(startAt: 0:00:00.000000) on EngineOwner.background
+09-16 12:20:07.961 21352 21352 I flutter : 12:20:07.961 [PipDebug][ENGINE] Handoff complete
+
