@@ -116,6 +116,8 @@ dependency_overrides:
   # fire on macOS because 'macos' was missing from sendPlatformMessage().
   youtube_player_iframe:
     path: lib/core/playback/packages/youtube_player_iframe_macos_patch/package
+  metadata_god:
+    path: lib/core/playback/packages/metadata_god
   freezed_annotation: ^3.1.0
   flutter_rust_bridge: 2.11.1
 

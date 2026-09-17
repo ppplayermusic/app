@@ -1058,10 +1058,9 @@ packages:
   metadata_god:
     dependency: "direct main"
     description:
-      name: metadata_god
-      sha256: "2b19b7e88cf5ab7016fe8d1f868bb35a193aaef06fd96cfc7de4ec3eacc16eb0"
-      url: "https://pub.dev"
-    source: hosted
+      path: "lib/core/playback/packages/metadata_god"
+      relative: true
+    source: path
     version: "1.1.0"
   mime:
     dependency: transitive
