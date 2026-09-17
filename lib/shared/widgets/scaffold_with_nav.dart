@@ -111,9 +111,11 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     bool showShadow = false;
     double renderRadius = 0;
 
-    final stackBox = _stackKey.currentContext?.findRenderObject() as RenderBox?;
-    final stackOffset = stackBox?.localToGlobal(Offset.zero) ?? Offset.zero;
-    final stackHeight = stackBox?.size.height ?? screenSize.height;
+    // Calculate bottom bar height mathematically to avoid 1-frame RenderBox lag out of Offstage
+    final safeBottom = MediaQuery.paddingOf(context).bottom;
+    final bottomBarHeight = (isPlayerScreen || pipPresentation)
+        ? 0.0
+        : (isDesktop ? 90.0 : (68.0 + safeBottom + 72.0)); // 68 (nav) + 72 (miniplayer)
 
     if (isPlayerScreen) {
       if (isVideoView && videoLayout.isVisible && videoLayout.isReady) {
@@ -131,8 +133,8 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
       }
     } else {
       if (showVideo && hasVideoId) {
-        final left = stackOffset.dx + screenWidth - (isDesktop ? 240 : 0) - kMinW - 16;
-        final top = stackOffset.dy + stackHeight - kMinH - 8;
+        final left = screenWidth - (isDesktop ? 240 : 0) - kMinW - 16;
+        final top = screenSize.height - bottomBarHeight - kMinH - 8;
         normalBounds = Rect.fromLTWH(left, top, kMinW, kMinH);
         renderRadius = 12;
         showShadow = true;
