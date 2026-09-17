@@ -15,6 +15,8 @@ class MediaSyncService {
   final Ref ref;
   ProviderSubscription? _subscription;
   String? _lastTrackId;
+  Duration? _lastDuration;
+  String? _lastArtCacheFile;
   bool _isDisposed = false;
 
   void _init() {
@@ -36,24 +38,24 @@ class MediaSyncService {
     final handler = ref.read(audioHandlerProvider);
     final track = currentStatus.track;
 
-    // 1. Update Metadata if track changed
-    if (track != null && track.id != _lastTrackId) {
-      _lastTrackId = track.id;
-      // Run asynchronously to avoid Win32 COM message loop pumping during Flutter's internal phases (like MouseTracker device updates)
-      Timer.run(() {
-        if (_isDisposed) return;
-        handler.updateMetadata(
-          id: track.id,
-          title: track.title,
-          artist: track.artist ?? '',
-          artUri: track.artworkUrl,
-          duration: currentStatus.duration,
-        );
-      });
+    final trackChanged = track != null && track.id != _lastTrackId;
+    final durationChanged = track != null && currentStatus.duration != _lastDuration;
 
-      final artUrl = track.artworkUrl;
-      if (artUrl != null && artUrl.isNotEmpty) {
-        _resolveArtwork(track.id, artUrl, track, currentStatus.duration);
+    if (trackChanged) {
+      _lastArtCacheFile = null;
+    }
+
+    if (trackChanged || durationChanged) {
+      _lastTrackId = track.id;
+      _lastDuration = currentStatus.duration;
+
+      _pushMetadata(track, currentStatus.duration);
+
+      if (trackChanged) {
+        final artUrl = track.artworkUrl;
+        if (artUrl != null && artUrl.isNotEmpty) {
+          _resolveArtwork(track.id, artUrl);
+        }
       }
     }
 
@@ -108,11 +110,24 @@ class MediaSyncService {
     }
   }
 
+  void _pushMetadata(engine.PlaybackTrack track, Duration duration) {
+    final handler = ref.read(audioHandlerProvider);
+    Timer.run(() {
+      if (_isDisposed) return;
+      handler.updateMetadata(
+        id: track.id,
+        title: track.title,
+        artist: track.artist ?? '',
+        artUri: track.artworkUrl,
+        artCacheFile: _lastArtCacheFile,
+        duration: duration,
+      );
+    });
+  }
+
   Future<void> _resolveArtwork(
     String trackId,
     String artworkUrl,
-    engine.PlaybackTrack track,
-    Duration? duration,
   ) async {
     try {
       // 1. Check if already cached locally
@@ -121,16 +136,10 @@ class MediaSyncService {
       );
       if (fileInfo != null) {
         if (_lastTrackId == trackId && !_isDisposed) {
-          ref
-              .read(audioHandlerProvider)
-              .updateMetadata(
-                id: track.id,
-                title: track.title,
-                artist: track.artist ?? '',
-                artUri: track.artworkUrl,
-                artCacheFile: fileInfo.file.path,
-                duration: duration,
-              );
+          _lastArtCacheFile = fileInfo.file.path;
+          if (_lastStatus?.track != null) {
+            _pushMetadata(_lastStatus!.track!, _lastDuration ?? Duration.zero);
+          }
         }
         return;
       }
@@ -139,16 +148,10 @@ class MediaSyncService {
       final file = await PPImageCacheManager.instance.getSingleFile(artworkUrl);
 
       if (file.existsSync() && _lastTrackId == trackId && !_isDisposed) {
-        ref
-            .read(audioHandlerProvider)
-            .updateMetadata(
-              id: track.id,
-              title: track.title,
-              artist: track.artist ?? '',
-              artUri: track.artworkUrl,
-              artCacheFile: file.path,
-              duration: duration,
-            );
+        _lastArtCacheFile = file.path;
+        if (_lastStatus?.track != null) {
+          _pushMetadata(_lastStatus!.track!, _lastDuration ?? Duration.zero);
+        }
       }
     } catch (_) {
       // Graceful fallback: text metadata and artUri are already active

@@ -39,7 +39,6 @@ class ScaffoldWithNav extends ConsumerStatefulWidget {
 
 class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
   final GlobalKey _stackKey = GlobalKey();
-  double _lastFinalTop = 0.0;
 
   @override
   Widget build(BuildContext context) {
