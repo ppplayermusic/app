@@ -2,6 +2,15 @@
 
 All notable changes to PPPlayer will be documented in this file.
 
+## [1.3.4] - 2026-09-16
+
+### Added
+- Added automated MSIX packaging for Windows releases, including Microsoft Store publishing support.
+
+### Fixed
+- Fixed splash screen flashing white on startup when dark mode is enabled on some platforms.
+- Fixed problems with Picture-in-Picture (PiP) mode.
+
 ## [1.3.2] - 2026-09-15
 
 ### Fixed
