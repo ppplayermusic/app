@@ -98,15 +98,15 @@ flutter:
 flutter_native_splash:
   color: "#0A0A0A"
   color_dark: "#0A0A0A"
-  image: "assets/logo.png"
-  image_dark: "assets/logo.png"
+  image: "assets/logo_splash.png"
+  image_dark: "assets/logo_splash.png"
   android: true
   ios: true
   android_12:
     color: "#0A0A0A"
     color_dark: "#0A0A0A"
-    image: "assets/logo.png"
-    image_dark: "assets/logo.png"
+    image: "assets/logo_splash.png"
+    image_dark: "assets/logo_splash.png"
 
 dependency_overrides:
   # Local patch of youtube_player_iframe that adds macOS to the JS bridge
