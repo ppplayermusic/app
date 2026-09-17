@@ -45,6 +45,11 @@ app.*.map.json
 /android/app/release
 .env
 
+# Nested android build artifacts
+**/.gradle/
+**/android/build/
+**/example/build/
+
 # Scratch and test files
 dump
 dump_swizzle
