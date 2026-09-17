@@ -199,7 +199,7 @@ class PpPlayerApp extends ConsumerWidget {
     final themeColor = AppTheme.themeColors[settings.themeIndex];
 
     return MaterialApp.router(
-      title: 'PPPLAYER',
+      title: 'PPPlayer',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark(primaryColor: themeColor),
       scrollBehavior: const AppScrollBehavior(),
