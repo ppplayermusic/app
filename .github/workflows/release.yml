@@ -258,12 +258,42 @@ jobs:
           name: PPPlayer-macOS-dmg
           path: build/macos/Build/Products/Release/PPPlayer-macOS.dmg
 
-  # TODO: Build Windows App (build-windows)
+  build-windows:
+    name: Build Windows App
+    needs: validate-and-test
+    if: needs.validate-and-test.outputs.is_new_version == 'true'
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Windows App
+        run: flutter build windows --release
+
+      - name: Create MSIX Package
+        run: dart run msix:create
+
+      - name: Upload Windows MSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: PPPlayer-Windows-MSIX
+          path: build/windows/x64/runner/Release/*.msix
+
   # TODO: Build Linux App (build-linux)
 
   publish-release:
     name: Publish GitHub Release
-    needs: [validate-and-test, build-android, build-macos]
+    needs: [validate-and-test, build-android, build-macos, build-windows]
     if: needs.validate-and-test.outputs.is_new_version == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -302,6 +332,12 @@ jobs:
              exit 1
           fi
 
+          MSIX_FILE=$(find artifacts/PPPlayer-Windows-MSIX -name "*.msix" | head -n 1)
+          if [ -z "$MSIX_FILE" ]; then
+             echo "::error::Windows MSIX artifact is missing!"
+             exit 1
+          fi
+
       - name: Prepare Assets & Checksums
         run: |
           mkdir -p release-assets
@@ -309,6 +345,7 @@ jobs:
           cp artifacts/PPPlayer-Android-AAB/app-release.aab release-assets/PPPlayer-Android.aab
           cp artifacts/PPPlayer-macOS-zip/PPPlayer-macOS.zip release-assets/PPPlayer-macOS.zip
           cp artifacts/PPPlayer-macOS-dmg/PPPlayer-macOS.dmg release-assets/PPPlayer-macOS.dmg
+          cp artifacts/PPPlayer-Windows-MSIX/*.msix release-assets/PPPlayer-Windows.msix
           
           cd release-assets
           shasum -a 256 * > checksums.txt
