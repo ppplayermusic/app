@@ -121,3 +121,4 @@ msix_config:
   logo_path: assets/logo.png
   architecture: x64
   capabilities: internetClient, musicLibrary
+  store: true
