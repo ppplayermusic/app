@@ -434,22 +434,42 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (_selectedFilter == LibraryFilter.all) ...[
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _LikedSongsCard(database: database)
-                                .animate()
-                                .fadeIn(duration: 400.ms)
-                                .slideY(begin: 0.1, end: 0),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _LocalMusicCard(database: database)
-                                .animate()
-                                .fadeIn(duration: 400.ms, delay: 100.ms)
-                                .slideY(begin: 0.1, end: 0),
-                          ),
-                        ],
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.maxWidth < 700) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _LikedSongsCard(database: database)
+                                    .animate()
+                                    .fadeIn(duration: 400.ms)
+                                    .slideY(begin: 0.1, end: 0),
+                                const SizedBox(height: 16),
+                                _LocalMusicCard(database: database)
+                                    .animate()
+                                    .fadeIn(duration: 400.ms, delay: 100.ms)
+                                    .slideY(begin: 0.1, end: 0),
+                              ],
+                            );
+                          }
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: _LikedSongsCard(database: database)
+                                    .animate()
+                                    .fadeIn(duration: 400.ms)
+                                    .slideY(begin: 0.1, end: 0),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: _LocalMusicCard(database: database)
+                                    .animate()
+                                    .fadeIn(duration: 400.ms, delay: 100.ms)
+                                    .slideY(begin: 0.1, end: 0),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -699,16 +719,20 @@ class _LikedSongsCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              AppLocalizations.of(context)!.likedSongs,
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimaryContainer
-                                    .withValues(alpha: 0.9),
-                                fontSize: 28,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -1.5,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                AppLocalizations.of(context)!.likedSongs,
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                      .withValues(alpha: 0.9),
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -1.5,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 6),

@@ -2,6 +2,11 @@
 
 All notable changes to PPPlayer will be documented in this file.
 
+## [1.3.5] - 2026-09-16
+
+### Fixed
+- Fixed responsiveness issues on the Library screen cards ("Liked Songs" and "Local Music") where text would wrap awkwardly on smaller window widths.
+
 ## [1.3.4] - 2026-09-16
 
 ### Added
