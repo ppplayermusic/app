@@ -132,7 +132,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
       }
     } else {
       if (showVideo && hasVideoId) {
-        final left = screenWidth - (isDesktop ? 240 : 0) - kMinW - 16;
+        final left = screenWidth - kMinW - 16;
         final top = screenSize.height - bottomBarHeight - kMinH - 8;
         normalBounds = Rect.fromLTWH(left, top, kMinW, kMinH);
         renderRadius = 12;
@@ -140,7 +140,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
       } else {
         normalBounds = isWindows
             ? const Rect.fromLTWH(kOffScreen, kOffScreen, kMinW, kMinH)
-            : Rect.fromLTWH(screenWidth - (isDesktop ? 240 : 0) - kPeek, screenSize.height - kPeek, kPeek, kPeek);
+            : Rect.fromLTWH(screenWidth - kPeek, screenSize.height - kPeek, kPeek, kPeek);
       }
     }
 
