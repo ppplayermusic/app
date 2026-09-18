@@ -206,7 +206,7 @@
   "goodEvening": "مساء الخير",
   "greetingWithName": "{greeting}, {name}",
   "yourMusicIsWaiting": "موسيقاك في انتظارك.",
-  "dailyMix": "Daily Mix {bad_placeholder}",
+  "dailyMix": "Daily Mix {number}",
   "yourFavoritesAndNewDiscoveries": "مفضلاتك\nواكتشافات جديدة",
   "discoverWeekly": "Discover Weekly",
   "releaseRadar": "Release Radar",
@@ -478,5 +478,8 @@
   "@discoverMusic": {},
   "@importLocalMusic": {},
   "@importAudioFiles": {},
-  "@importFolder": {}
+  "@importFolder": {},
+  "genresTab": "Genres",
+  "noLocalGenres": "No local genres found",
+  "playbackSpeed": "Playback Speed"
 }

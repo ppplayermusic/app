@@ -59,6 +59,9 @@ class FakePlaybackService implements PlaybackService {
 }
 
 class FakePlaybackController implements PlaybackController {
+  @override
+  bool get supportsSpeed => true;
+
   final _statusController = StreamController<PlaybackStatus>.broadcast();
 
   void emitStatus(PlaybackStatus s) => _statusController.add(s);

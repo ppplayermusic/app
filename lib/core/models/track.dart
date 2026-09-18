@@ -35,6 +35,7 @@ abstract class Track with _$Track {
     /// 'available' | 'missing' | 'permissionRevoked' | 'decodingError'
     @Default('available') String localAvailabilityStatus,
     String? localAlbumGroupKey,
+    DateTime? localAddedAt,
   }) = _Track;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
@@ -68,6 +69,7 @@ abstract class Track with _$Track {
     bool isFavorite = false,
     int playCount = 0,
     String localAvailabilityStatus = 'available',
+    DateTime? localAddedAt,
   }) {
     return Track(
       spotifyId: libraryId,
@@ -83,6 +85,7 @@ abstract class Track with _$Track {
       localFilePath: localFilePath,
       localArtworkPath: localArtworkPath,
       localAvailabilityStatus: localAvailabilityStatus,
+      localAddedAt: localAddedAt,
       isFavorite: isFavorite,
       playCount: playCount,
     );

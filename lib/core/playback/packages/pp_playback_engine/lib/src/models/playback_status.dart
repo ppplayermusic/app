@@ -23,6 +23,7 @@ class PlaybackStatus {
   final String? error;
   final double volume;
   final double speed;
+  final bool supportsSpeed;
   final int? generation;
 
   const PlaybackStatus({
@@ -37,6 +38,7 @@ class PlaybackStatus {
     this.error,
     this.volume = 1.0,
     this.speed = 1.0,
+    this.supportsSpeed = false,
     this.generation,
   });
 
@@ -60,6 +62,7 @@ class PlaybackStatus {
     bool clearError = false,
     double? volume,
     double? speed,
+    bool? supportsSpeed,
     int? generation,
   }) {
     return PlaybackStatus(
@@ -77,6 +80,7 @@ class PlaybackStatus {
               : (identical(error, _sentinel) ? this.error : error as String?),
       volume: volume ?? this.volume,
       speed: speed ?? this.speed,
+      supportsSpeed: supportsSpeed ?? this.supportsSpeed,
       generation: generation ?? this.generation,
     );
   }

@@ -478,5 +478,8 @@
   "@radioStations": {},
   "@importLocalMusic": {},
   "@importAudioFiles": {},
-  "@importFolder": {}
+  "@importFolder": {},
+  "genresTab": "Genres",
+  "noLocalGenres": "No local genres found",
+  "playbackSpeed": "Playback Speed"
 }

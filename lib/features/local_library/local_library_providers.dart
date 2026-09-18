@@ -4,21 +4,55 @@ import '../../core/models/track.dart' as model;
 import '../../core/models/local_album.dart';
 import '../../core/models/local_artist.dart';
 import '../../core/models/local_folder.dart';
-
+import '../../core/models/local_genre.dart';
+import 'package:hive_ce/hive_ce.dart';
 
 enum LocalSortOption { title, artist, album, duration, dateAdded }
 
 class LocalSortOptionNotifier extends Notifier<LocalSortOption> {
+  static const _boxName = 'settings';
+  static const _key = 'local_sort_option';
+
   @override
-  LocalSortOption build() => LocalSortOption.title;
-  void update(LocalSortOption value) => state = value;
+  LocalSortOption build() {
+    _load();
+    return LocalSortOption.title; // Default, will update after load
+  }
+
+  Future<void> _load() async {
+    final box = await Hive.openBox(_boxName);
+    final idx = box.get(_key, defaultValue: LocalSortOption.title.index) as int;
+    state = LocalSortOption.values[idx.clamp(0, LocalSortOption.values.length - 1)];
+  }
+
+  Future<void> update(LocalSortOption value) async {
+    state = value;
+    final box = await Hive.openBox(_boxName);
+    await box.put(_key, value.index);
+  }
 }
 final localSortOptionProvider = NotifierProvider<LocalSortOptionNotifier, LocalSortOption>(LocalSortOptionNotifier.new);
 
 class LocalSortAscendingNotifier extends Notifier<bool> {
+  static const _boxName = 'settings';
+  static const _key = 'local_sort_ascending';
+
   @override
-  bool build() => true;
-  void update(bool value) => state = value;
+  bool build() {
+    _load();
+    return true; // Default, will update after load
+  }
+
+  Future<void> _load() async {
+    final box = await Hive.openBox(_boxName);
+    state = box.get(_key, defaultValue: true) as bool;
+  }
+
+  Future<void> update(bool value) async {
+    state = value;
+    final box = await Hive.openBox(_boxName);
+    await box.put(_key, value);
+  }
 }
 final localSortAscendingProvider = NotifierProvider<LocalSortAscendingNotifier, bool>(LocalSortAscendingNotifier.new);
 
@@ -66,7 +100,8 @@ final sortedLocalSongsProvider = Provider<AsyncValue<List<model.Track>>>((ref) {
           result = (a.durationMs ?? 0).compareTo(b.durationMs ?? 0);
           break;
         case LocalSortOption.dateAdded:
-          result = a.name.compareTo(b.name);
+          result = (a.localAddedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+              .compareTo(b.localAddedAt ?? DateTime.fromMillisecondsSinceEpoch(0));
           break;
       }
       return isAscending ? result : -result;
@@ -120,4 +155,24 @@ final localArtistsProvider = Provider<AsyncValue<List<LocalArtist>>>((ref) {
 
 final localFoldersProvider = StreamProvider<List<LocalFolder>>((ref) {
   return ref.watch(appDatabaseProvider).watchLocalFolders();
+});
+
+final _localGenresStreamProvider = StreamProvider<List<LocalGenre>>((ref) {
+  return ref.watch(appDatabaseProvider).watchLocalGenres();
+});
+
+final localGenresProvider = Provider<AsyncValue<List<LocalGenre>>>((ref) {
+  final genresAsync = ref.watch(_localGenresStreamProvider);
+  final searchQuery = ref.watch(localSearchQueryProvider).toLowerCase();
+
+  return genresAsync.whenData((genres) {
+    var filtered = genres;
+    if (searchQuery.isNotEmpty) {
+      filtered = genres.where((a) => a.name.toLowerCase().contains(searchQuery)).toList();
+    }
+    
+    final sorted = List<LocalGenre>.from(filtered);
+    sorted.sort((a, b) => a.name.compareTo(b.name));
+    return sorted;
+  });
 });

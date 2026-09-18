@@ -121,7 +121,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
   final _statusController = StreamController<PlaybackStatus>.broadcast();
   final _eventController = StreamController<PlaybackEvent>.broadcast();
 
-  PlaybackStatus _currentStatus = const PlaybackStatus();
+  PlaybackStatus _currentStatus = const PlaybackStatus(supportsSpeed: true);
   PlaybackState? _intendedState;
 
   void _ensureMediaKitInitialized() {
@@ -909,6 +909,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
     }
     _updateStatus(_currentStatus.copyWith(volume: volume));
   }
+
+  @override
+  bool get supportsSpeed => true;
 
   @override
   Future<void> setSpeed(double speed) async {

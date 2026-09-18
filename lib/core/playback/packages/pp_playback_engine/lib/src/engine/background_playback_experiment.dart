@@ -26,6 +26,8 @@ class BackgroundPlaybackExperiment {
   /// True only when BOTH the compile-time flag is set AND we are in debug mode.
   static bool get enabled => _compileFlagSet && kDebugMode;
 
+  static bool get supportsSpeed => false;
+
   /// Embedded in every diagnostic line for post-hoc logcat filtering.
   static String get tag => enabled ? '[BG-EXP]' : '[BASELINE]';
 }

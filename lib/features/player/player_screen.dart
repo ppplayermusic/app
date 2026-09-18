@@ -590,6 +590,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                             curve: Curves.easeOutCubic,
                           ),
                       const Spacer(),
+                      if (playerState.supportsSpeed) ...[
+                        Builder(
+                          builder:
+                              (btnContext) => TactileIconButton(
+                                icon: Icons.speed,
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.8,
+                                ),
+                                hoverColor: colorScheme.primary,
+                                tooltip: 'Playback Speed',
+                                onTap:
+                                    () => _showSpeedMenu(
+                                      btnContext,
+                                      playerNotifier,
+                                      playerState.speed,
+                                    ),
+                              ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
                       Builder(
                         builder:
                             (btnContext) => TactileIconButton(
@@ -1330,6 +1350,51 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         );
       },
     );
+  }
+
+  void _showSpeedMenu(
+    BuildContext context,
+    PlayerNotifier playerNotifier,
+    double currentSpeed,
+  ) {
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(
+          button.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    final speeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    showMenu<double>(
+      context: context,
+      position: position,
+      items:
+          speeds.map((speed) {
+            return PopupMenuItem<double>(
+              value: speed,
+              child: Row(
+                children: [
+                  Text('${speed}x'),
+                  if (currentSpeed == speed) ...[
+                    const Spacer(),
+                    const Icon(Icons.check, size: 16),
+                  ],
+                ],
+              ),
+            );
+          }).toList(),
+    ).then((selected) {
+      if (selected != null) {
+        playerNotifier.setSpeed(selected);
+      }
+    });
   }
 }
 

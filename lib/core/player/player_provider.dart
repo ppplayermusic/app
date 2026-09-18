@@ -25,6 +25,8 @@ class PlayerState {
     this.duration = Duration.zero,
     this.buffered = Duration.zero,
     this.volume = 1.0,
+    this.speed = 1.0,
+    this.supportsSpeed = false,
     this.isPipMode = false,
     this.isPipRequestPending = false,
   });
@@ -38,6 +40,8 @@ class PlayerState {
   final Duration duration;
   final Duration buffered;
   final double volume;
+  final double speed;
+  final bool supportsSpeed;
   final bool isPipMode;
   final bool isPipRequestPending;
 
@@ -58,6 +62,8 @@ class PlayerState {
     Duration? duration,
     Duration? buffered,
     double? volume,
+    double? speed,
+    bool? supportsSpeed,
     bool? isPipMode,
     bool? isPipRequestPending,
     bool clearLoadError = false,
@@ -78,6 +84,8 @@ class PlayerState {
       duration: duration ?? this.duration,
       buffered: buffered ?? this.buffered,
       volume: volume ?? this.volume,
+      speed: speed ?? this.speed,
+      supportsSpeed: supportsSpeed ?? this.supportsSpeed,
       isPipMode: isPipMode ?? this.isPipMode,
       isPipRequestPending: isPipRequestPending ?? this.isPipRequestPending,
     );
@@ -238,6 +246,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
       position: hasLivePosition ? status.position : state.position,
       duration: hasLiveDuration ? status.duration : state.duration,
       buffered: hasLivePosition ? status.buffered : state.buffered,
+      speed: status.speed,
+      supportsSpeed: status.supportsSpeed,
     );
     _scheduleSaveState();
 
@@ -544,6 +554,30 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     try {
       final service = ref.read(playbackServiceProvider);
+      
+      if (targetTrack.isLocal) {
+        if (_disposed || myGen != _playbackGeneration) return;
+        await _controller.stop();
+        if (_disposed || myGen != _playbackGeneration) return;
+        
+        state = state.copyWith(isLoadingVideo: true);
+        
+        await _controller.play(
+          targetTrack.toPlaybackTrack(),
+          startAt: position ?? Duration.zero,
+        );
+        
+        if (_disposed || myGen != _playbackGeneration) return;
+        _controller.setVolume(state.volume);
+        if (_controller.supportsSpeed) {
+          _controller.setSpeed(state.speed);
+        } else if (state.speed != 1.0) {
+          state = state.copyWith(speed: 1.0);
+        }
+        await service.recordPlay(targetTrack);
+        return;
+      }
+
       final candidates = await service.resolveCandidates(targetTrack, null);
 
       if (_disposed || myGen != _playbackGeneration) return;
@@ -613,6 +647,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
     );
     if (_disposed || myGen != _playbackGeneration) return;
     _controller.setVolume(state.volume);
+    if (_controller.supportsSpeed) {
+      _controller.setSpeed(state.speed);
+    } else if (state.speed != 1.0) {
+      state = state.copyWith(speed: 1.0);
+    }
 
     await service.recordPlay(newTrack);
   }
@@ -843,7 +882,15 @@ class PlayerNotifier extends Notifier<PlayerState> {
     await _controller.setVolume(volume);
   }
 
-  void seekTo(Duration position) => _controller.seekTo(position);
+  Future<void> seekTo(Duration position) async {
+    await _controller.seekTo(position);
+  }
+
+  Future<void> setSpeed(double speed) async {
+    if (!_controller.supportsSpeed) return;
+    state = state.copyWith(speed: speed);
+    await _controller.setSpeed(speed);
+  }
 
   Future<void> toggleFavorite(Track track) async {
     final newValue = !track.isFavorite;

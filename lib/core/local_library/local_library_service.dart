@@ -139,6 +139,52 @@ class LocalLibraryService {
     );
   }
 
+  Future<void> rescanLibrary({void Function(String?)? onProgress}) async {
+    final existingRoots = await _db.select(_db.importRoots).get();
+    final existingFiles = await _db.select(_db.localFiles).get();
+
+    for (final root in existingRoots) {
+      onProgress?.call('Scanning folder: ${root.displayPath}...');
+      final mechanism = TrackSourceType.values.byName(root.mechanism);
+      await _scanRoot(id: root.id, mechanism: mechanism, locator: root.rootLocator);
+    }
+    
+    // Verify standalone files
+    int verified = 0;
+    for (final file in existingFiles) {
+      if (file.importRootLocator != null) continue; // Handled by folder scan
+      
+      onProgress?.call('Verifying standalone files ($verified/${existingFiles.length})...');
+      final mechanism = TrackSourceType.values.byName(file.mechanism);
+      
+      final source = LocalTrackSource(
+        libraryId: file.libraryId,
+        locator: file.locator,
+        displayPath: file.displayPath,
+        mechanism: mechanism,
+        deduplicationKey: file.deduplicationKey,
+        lastScannedAt: file.lastScannedAt,
+        availabilityStatus: TrackAvailabilityStatus.values.firstWhere(
+          (e) => e.name == file.availabilityStatus,
+          orElse: () => TrackAvailabilityStatus.available,
+        ),
+        importRootLocator: file.importRootLocator,
+      );
+      final resolver = LocalFileResolver.forSource(source);
+      final status = await resolver.checkAccess(source);
+      
+      if (status != TrackAvailabilityStatus.available) {
+        await _db.update(_db.localFiles)
+          .replace(file.copyWith(availabilityStatus: status.name));
+      } else {
+        await _db.update(_db.localFiles)
+          .replace(file.copyWith(availabilityStatus: 'available'));
+      }
+      verified++;
+    }
+    onProgress?.call(null);
+  }
+
   Future<String?> _moveToManagedCopy(String tempPath, String name) async {
     try {
       final appDir = await getApplicationDocumentsDirectory();

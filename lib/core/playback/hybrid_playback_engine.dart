@@ -513,6 +513,9 @@ class HybridPlaybackEngine implements PlaybackController {
   }
 
   @override
+  bool get supportsSpeed => _activeEngine.supportsSpeed;
+
+  @override
   Future<void> setSpeed(double speed) async {
     await _foregroundEngine.setSpeed(speed);
     await _backgroundEngine.setSpeed(speed);

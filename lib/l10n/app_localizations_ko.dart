@@ -435,6 +435,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get albumsTab => '앨범';
 
   @override
+  String get genresTab => 'Genres';
+
+  @override
+  String get noLocalGenres => 'No local genres found';
+
+  @override
+  String get playbackSpeed => 'Playback Speed';
+
+  @override
   String get addMusic => '음악 추가';
 
   @override
@@ -579,7 +588,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get yourMusicIsWaiting => '당신의 음악이 기다리고 있습니다.';
 
   @override
-  String dailyMix(Object number, Object bad_placeholder) {
+  String dailyMix(Object number) {
     return 'Daily Mix $number';
   }
 

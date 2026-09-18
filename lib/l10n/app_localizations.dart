@@ -968,6 +968,24 @@ abstract class AppLocalizations {
   /// **'Albums'**
   String get albumsTab;
 
+  /// No description provided for @genresTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres'**
+  String get genresTab;
+
+  /// No description provided for @noLocalGenres.
+  ///
+  /// In en, this message translates to:
+  /// **'No genres found'**
+  String get noLocalGenres;
+
+  /// No description provided for @playbackSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback Speed'**
+  String get playbackSpeed;
+
   /// No description provided for @addMusic.
   ///
   /// In en, this message translates to:
@@ -1230,7 +1248,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Daily Mix {number}'**
-  String dailyMix(Object number, Object bad_placeholder);
+  String dailyMix(Object number);
 
   /// No description provided for @yourFavoritesAndNewDiscoveries.
   ///

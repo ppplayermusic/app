@@ -267,6 +267,9 @@ class NativeServicePlaybackEngine implements PlaybackController {
   }
 
   @override
+  bool get supportsSpeed => false;
+
+  @override
   Future<void> setSpeed(double speed) async {
     // Not implemented in headless for now
   }

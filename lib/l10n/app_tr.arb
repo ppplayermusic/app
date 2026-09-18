@@ -478,5 +478,8 @@
   "importFolder": "Klasör İçe Aktar",
   "@importFolder": {},
   "importFolderSubtitle": "Klasörü İçe Aktarma Altyazısı",
-  "@importFolderSubtitle": {}
+  "@importFolderSubtitle": {},
+  "genresTab": "Genres",
+  "noLocalGenres": "No local genres found",
+  "playbackSpeed": "Playback Speed"
 }

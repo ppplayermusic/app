@@ -287,26 +287,22 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, TrackEntry> {
   TrackEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TrackEntry(
-      spotifyId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}spotify_id'],
-          )!,
-      name:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}name'],
-          )!,
-      artistId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}artist_id'],
-          )!,
-      artistName:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}artist_name'],
-          )!,
+      spotifyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}spotify_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      artistId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artist_id'],
+      )!,
+      artistName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artist_name'],
+      )!,
       albumId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}album_id'],
@@ -331,16 +327,14 @@ class $TracksTable extends Tracks with TableInfo<$TracksTable, TrackEntry> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}youtube_resolved_at'],
       ),
-      playCount:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}play_count'],
-          )!,
-      isFavorite:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}is_favorite'],
-          )!,
+      playCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}play_count'],
+      )!,
+      isFavorite: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_favorite'],
+      )!,
       lastPlayedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_played_at'],
@@ -422,36 +416,29 @@ class TrackEntry extends DataClass implements Insertable<TrackEntry> {
       name: Value(name),
       artistId: Value(artistId),
       artistName: Value(artistName),
-      albumId:
-          albumId == null && nullToAbsent
-              ? const Value.absent()
-              : Value(albumId),
-      albumName:
-          albumName == null && nullToAbsent
-              ? const Value.absent()
-              : Value(albumName),
-      albumImage:
-          albumImage == null && nullToAbsent
-              ? const Value.absent()
-              : Value(albumImage),
-      durationMs:
-          durationMs == null && nullToAbsent
-              ? const Value.absent()
-              : Value(durationMs),
-      youtubeVideoId:
-          youtubeVideoId == null && nullToAbsent
-              ? const Value.absent()
-              : Value(youtubeVideoId),
-      youtubeResolvedAt:
-          youtubeResolvedAt == null && nullToAbsent
-              ? const Value.absent()
-              : Value(youtubeResolvedAt),
+      albumId: albumId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(albumId),
+      albumName: albumName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(albumName),
+      albumImage: albumImage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(albumImage),
+      durationMs: durationMs == null && nullToAbsent
+          ? const Value.absent()
+          : Value(durationMs),
+      youtubeVideoId: youtubeVideoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(youtubeVideoId),
+      youtubeResolvedAt: youtubeResolvedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(youtubeResolvedAt),
       playCount: Value(playCount),
       isFavorite: Value(isFavorite),
-      lastPlayedAt:
-          lastPlayedAt == null && nullToAbsent
-              ? const Value.absent()
-              : Value(lastPlayedAt),
+      lastPlayedAt: lastPlayedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastPlayedAt),
     );
   }
 
@@ -521,12 +508,12 @@ class TrackEntry extends DataClass implements Insertable<TrackEntry> {
     albumName: albumName.present ? albumName.value : this.albumName,
     albumImage: albumImage.present ? albumImage.value : this.albumImage,
     durationMs: durationMs.present ? durationMs.value : this.durationMs,
-    youtubeVideoId:
-        youtubeVideoId.present ? youtubeVideoId.value : this.youtubeVideoId,
-    youtubeResolvedAt:
-        youtubeResolvedAt.present
-            ? youtubeResolvedAt.value
-            : this.youtubeResolvedAt,
+    youtubeVideoId: youtubeVideoId.present
+        ? youtubeVideoId.value
+        : this.youtubeVideoId,
+    youtubeResolvedAt: youtubeResolvedAt.present
+        ? youtubeResolvedAt.value
+        : this.youtubeResolvedAt,
     playCount: playCount ?? this.playCount,
     isFavorite: isFavorite ?? this.isFavorite,
     lastPlayedAt: lastPlayedAt.present ? lastPlayedAt.value : this.lastPlayedAt,
@@ -536,29 +523,30 @@ class TrackEntry extends DataClass implements Insertable<TrackEntry> {
       spotifyId: data.spotifyId.present ? data.spotifyId.value : this.spotifyId,
       name: data.name.present ? data.name.value : this.name,
       artistId: data.artistId.present ? data.artistId.value : this.artistId,
-      artistName:
-          data.artistName.present ? data.artistName.value : this.artistName,
+      artistName: data.artistName.present
+          ? data.artistName.value
+          : this.artistName,
       albumId: data.albumId.present ? data.albumId.value : this.albumId,
       albumName: data.albumName.present ? data.albumName.value : this.albumName,
-      albumImage:
-          data.albumImage.present ? data.albumImage.value : this.albumImage,
-      durationMs:
-          data.durationMs.present ? data.durationMs.value : this.durationMs,
-      youtubeVideoId:
-          data.youtubeVideoId.present
-              ? data.youtubeVideoId.value
-              : this.youtubeVideoId,
-      youtubeResolvedAt:
-          data.youtubeResolvedAt.present
-              ? data.youtubeResolvedAt.value
-              : this.youtubeResolvedAt,
+      albumImage: data.albumImage.present
+          ? data.albumImage.value
+          : this.albumImage,
+      durationMs: data.durationMs.present
+          ? data.durationMs.value
+          : this.durationMs,
+      youtubeVideoId: data.youtubeVideoId.present
+          ? data.youtubeVideoId.value
+          : this.youtubeVideoId,
+      youtubeResolvedAt: data.youtubeResolvedAt.present
+          ? data.youtubeResolvedAt.value
+          : this.youtubeResolvedAt,
       playCount: data.playCount.present ? data.playCount.value : this.playCount,
-      isFavorite:
-          data.isFavorite.present ? data.isFavorite.value : this.isFavorite,
-      lastPlayedAt:
-          data.lastPlayedAt.present
-              ? data.lastPlayedAt.value
-              : this.lastPlayedAt,
+      isFavorite: data.isFavorite.present
+          ? data.isFavorite.value
+          : this.isFavorite,
+      lastPlayedAt: data.lastPlayedAt.present
+          ? data.lastPlayedAt.value
+          : this.lastPlayedAt,
     );
   }
 
@@ -966,16 +954,14 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
   Artist map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Artist(
-      spotifyId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}spotify_id'],
-          )!,
-      name:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}name'],
-          )!,
+      spotifyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}spotify_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
       imageUrl: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}image_url'],
@@ -988,11 +974,10 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
         DriftSqlType.int,
         data['${effectivePrefix}followers'],
       ),
-      isFollowed:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}is_followed'],
-          )!,
+      isFollowed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_followed'],
+      )!,
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -1048,23 +1033,19 @@ class Artist extends DataClass implements Insertable<Artist> {
     return ArtistsCompanion(
       spotifyId: Value(spotifyId),
       name: Value(name),
-      imageUrl:
-          imageUrl == null && nullToAbsent
-              ? const Value.absent()
-              : Value(imageUrl),
-      imageSmall:
-          imageSmall == null && nullToAbsent
-              ? const Value.absent()
-              : Value(imageSmall),
-      followers:
-          followers == null && nullToAbsent
-              ? const Value.absent()
-              : Value(followers),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
+      imageSmall: imageSmall == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageSmall),
+      followers: followers == null && nullToAbsent
+          ? const Value.absent()
+          : Value(followers),
       isFollowed: Value(isFollowed),
-      updatedAt:
-          updatedAt == null && nullToAbsent
-              ? const Value.absent()
-              : Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -1119,11 +1100,13 @@ class Artist extends DataClass implements Insertable<Artist> {
       spotifyId: data.spotifyId.present ? data.spotifyId.value : this.spotifyId,
       name: data.name.present ? data.name.value : this.name,
       imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
-      imageSmall:
-          data.imageSmall.present ? data.imageSmall.value : this.imageSmall,
+      imageSmall: data.imageSmall.present
+          ? data.imageSmall.value
+          : this.imageSmall,
       followers: data.followers.present ? data.followers.value : this.followers,
-      isFollowed:
-          data.isFollowed.present ? data.isFollowed.value : this.isFollowed,
+      isFollowed: data.isFollowed.present
+          ? data.isFollowed.value
+          : this.isFollowed,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
@@ -1492,26 +1475,22 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
   Album map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Album(
-      spotifyId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}spotify_id'],
-          )!,
-      name:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}name'],
-          )!,
-      artistId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}artist_id'],
-          )!,
-      artistName:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}artist_name'],
-          )!,
+      spotifyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}spotify_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      artistId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artist_id'],
+      )!,
+      artistName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artist_name'],
+      )!,
       imageUrl: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}image_url'],
@@ -1524,11 +1503,10 @@ class $AlbumsTable extends Albums with TableInfo<$AlbumsTable, Album> {
         DriftSqlType.int,
         data['${effectivePrefix}total_tracks'],
       ),
-      isLiked:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}is_liked'],
-          )!,
+      isLiked: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_liked'],
+      )!,
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -1592,23 +1570,19 @@ class Album extends DataClass implements Insertable<Album> {
       name: Value(name),
       artistId: Value(artistId),
       artistName: Value(artistName),
-      imageUrl:
-          imageUrl == null && nullToAbsent
-              ? const Value.absent()
-              : Value(imageUrl),
-      releaseDate:
-          releaseDate == null && nullToAbsent
-              ? const Value.absent()
-              : Value(releaseDate),
-      totalTracks:
-          totalTracks == null && nullToAbsent
-              ? const Value.absent()
-              : Value(totalTracks),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
+      releaseDate: releaseDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(releaseDate),
+      totalTracks: totalTracks == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalTracks),
       isLiked: Value(isLiked),
-      updatedAt:
-          updatedAt == null && nullToAbsent
-              ? const Value.absent()
-              : Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -1671,13 +1645,16 @@ class Album extends DataClass implements Insertable<Album> {
       spotifyId: data.spotifyId.present ? data.spotifyId.value : this.spotifyId,
       name: data.name.present ? data.name.value : this.name,
       artistId: data.artistId.present ? data.artistId.value : this.artistId,
-      artistName:
-          data.artistName.present ? data.artistName.value : this.artistName,
+      artistName: data.artistName.present
+          ? data.artistName.value
+          : this.artistName,
       imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
-      releaseDate:
-          data.releaseDate.present ? data.releaseDate.value : this.releaseDate,
-      totalTracks:
-          data.totalTracks.present ? data.totalTracks.value : this.totalTracks,
+      releaseDate: data.releaseDate.present
+          ? data.releaseDate.value
+          : this.releaseDate,
+      totalTracks: data.totalTracks.present
+          ? data.totalTracks.value
+          : this.totalTracks,
       isLiked: data.isLiked.present ? data.isLiked.value : this.isLiked,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1990,16 +1967,14 @@ class $PlaylistsTable extends Playlists
   Playlist map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Playlist(
-      id:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}id'],
-          )!,
-      name:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}name'],
-          )!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
       spotifyId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}spotify_id'],
@@ -2008,11 +1983,10 @@ class $PlaylistsTable extends Playlists
         DriftSqlType.string,
         data['${effectivePrefix}image_url'],
       ),
-      createdAt:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}created_at'],
-          )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
     );
   }
 
@@ -2054,14 +2028,12 @@ class Playlist extends DataClass implements Insertable<Playlist> {
     return PlaylistsCompanion(
       id: Value(id),
       name: Value(name),
-      spotifyId:
-          spotifyId == null && nullToAbsent
-              ? const Value.absent()
-              : Value(spotifyId),
-      imageUrl:
-          imageUrl == null && nullToAbsent
-              ? const Value.absent()
-              : Value(imageUrl),
+      spotifyId: spotifyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(spotifyId),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
       createdAt: Value(createdAt),
     );
   }
@@ -2314,21 +2286,18 @@ class $PlaylistTracksTable extends PlaylistTracks
   PlaylistTrack map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PlaylistTrack(
-      playlistId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}playlist_id'],
-          )!,
-      trackSpotifyId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}track_spotify_id'],
-          )!,
-      position:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}position'],
-          )!,
+      playlistId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}playlist_id'],
+      )!,
+      trackSpotifyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}track_spotify_id'],
+      )!,
+      position: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}position'],
+      )!,
     );
   }
 
@@ -2396,12 +2365,12 @@ class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
   );
   PlaylistTrack copyWithCompanion(PlaylistTracksCompanion data) {
     return PlaylistTrack(
-      playlistId:
-          data.playlistId.present ? data.playlistId.value : this.playlistId,
-      trackSpotifyId:
-          data.trackSpotifyId.present
-              ? data.trackSpotifyId.value
-              : this.trackSpotifyId,
+      playlistId: data.playlistId.present
+          ? data.playlistId.value
+          : this.playlistId,
+      trackSpotifyId: data.trackSpotifyId.present
+          ? data.trackSpotifyId.value
+          : this.trackSpotifyId,
       position: data.position.present ? data.position.value : this.position,
     );
   }
@@ -2647,30 +2616,26 @@ class $RadiosTable extends Radios with TableInfo<$RadiosTable, Radio> {
   Radio map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Radio(
-      seedId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}seed_id'],
-          )!,
-      seedType:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}seed_type'],
-          )!,
-      title:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}title'],
-          )!,
+      seedId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seed_id'],
+      )!,
+      seedType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seed_type'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
       imageUrl: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}image_url'],
       ),
-      isFollowed:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.bool,
-            data['${effectivePrefix}is_followed'],
-          )!,
+      isFollowed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_followed'],
+      )!,
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -2720,15 +2685,13 @@ class Radio extends DataClass implements Insertable<Radio> {
       seedId: Value(seedId),
       seedType: Value(seedType),
       title: Value(title),
-      imageUrl:
-          imageUrl == null && nullToAbsent
-              ? const Value.absent()
-              : Value(imageUrl),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
       isFollowed: Value(isFollowed),
-      updatedAt:
-          updatedAt == null && nullToAbsent
-              ? const Value.absent()
-              : Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -2780,8 +2743,9 @@ class Radio extends DataClass implements Insertable<Radio> {
       seedType: data.seedType.present ? data.seedType.value : this.seedType,
       title: data.title.present ? data.title.value : this.title,
       imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
-      isFollowed:
-          data.isFollowed.present ? data.isFollowed.value : this.isFollowed,
+      isFollowed: data.isFollowed.present
+          ? data.isFollowed.value
+          : this.isFollowed,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
@@ -3082,36 +3046,30 @@ class $CatalogCacheEntriesTable extends CatalogCacheEntries
   CatalogCacheEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return CatalogCacheEntry(
-      key:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}key'],
-          )!,
-      payload:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}payload'],
-          )!,
-      fetchedAt:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}fetched_at'],
-          )!,
-      lastAccessedAt:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}last_accessed_at'],
-          )!,
-      payloadVersion:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.int,
-            data['${effectivePrefix}payload_version'],
-          )!,
-      resourceType:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}resource_type'],
-          )!,
+      key: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      fetchedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}fetched_at'],
+      )!,
+      lastAccessedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_accessed_at'],
+      )!,
+      payloadVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}payload_version'],
+      )!,
+      resourceType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resource_type'],
+      )!,
     );
   }
 
@@ -3207,18 +3165,15 @@ class CatalogCacheEntry extends DataClass
       key: data.key.present ? data.key.value : this.key,
       payload: data.payload.present ? data.payload.value : this.payload,
       fetchedAt: data.fetchedAt.present ? data.fetchedAt.value : this.fetchedAt,
-      lastAccessedAt:
-          data.lastAccessedAt.present
-              ? data.lastAccessedAt.value
-              : this.lastAccessedAt,
-      payloadVersion:
-          data.payloadVersion.present
-              ? data.payloadVersion.value
-              : this.payloadVersion,
-      resourceType:
-          data.resourceType.present
-              ? data.resourceType.value
-              : this.resourceType,
+      lastAccessedAt: data.lastAccessedAt.present
+          ? data.lastAccessedAt.value
+          : this.lastAccessedAt,
+      payloadVersion: data.payloadVersion.present
+          ? data.payloadVersion.value
+          : this.payloadVersion,
+      resourceType: data.resourceType.present
+          ? data.resourceType.value
+          : this.resourceType,
     );
   }
 
@@ -3574,6 +3529,18 @@ class $LocalFilesTable extends LocalFiles
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _addedAtMeta = const VerificationMeta(
+    'addedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> addedAt = GeneratedColumn<DateTime>(
+    'added_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     libraryId,
@@ -3594,6 +3561,7 @@ class $LocalFilesTable extends LocalFiles
     releaseYear,
     artworkPath,
     artworkMimeType,
+    addedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3760,6 +3728,12 @@ class $LocalFilesTable extends LocalFiles
         ),
       );
     }
+    if (data.containsKey('added_at')) {
+      context.handle(
+        _addedAtMeta,
+        addedAt.isAcceptableOrUnknown(data['added_at']!, _addedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -3769,41 +3743,34 @@ class $LocalFilesTable extends LocalFiles
   LocalFile map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return LocalFile(
-      libraryId:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}library_id'],
-          )!,
-      mechanism:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}mechanism'],
-          )!,
-      locator:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}locator'],
-          )!,
-      displayPath:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}display_path'],
-          )!,
-      deduplicationKey:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}deduplication_key'],
-          )!,
-      availabilityStatus:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}availability_status'],
-          )!,
-      lastScannedAt:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}last_scanned_at'],
-          )!,
+      libraryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}library_id'],
+      )!,
+      mechanism: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mechanism'],
+      )!,
+      locator: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}locator'],
+      )!,
+      displayPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}display_path'],
+      )!,
+      deduplicationKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}deduplication_key'],
+      )!,
+      availabilityStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}availability_status'],
+      )!,
+      lastScannedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_scanned_at'],
+      )!,
       importRootLocator: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}import_root_locator'],
@@ -3848,6 +3815,10 @@ class $LocalFilesTable extends LocalFiles
         DriftSqlType.string,
         data['${effectivePrefix}artwork_mime_type'],
       ),
+      addedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}added_at'],
+      )!,
     );
   }
 
@@ -3876,6 +3847,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
   final int? releaseYear;
   final String? artworkPath;
   final String? artworkMimeType;
+  final DateTime addedAt;
   const LocalFile({
     required this.libraryId,
     required this.mechanism,
@@ -3895,6 +3867,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     this.releaseYear,
     this.artworkPath,
     this.artworkMimeType,
+    required this.addedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3939,6 +3912,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     if (!nullToAbsent || artworkMimeType != null) {
       map['artwork_mime_type'] = Variable<String>(artworkMimeType);
     }
+    map['added_at'] = Variable<DateTime>(addedAt);
     return map;
   }
 
@@ -3951,48 +3925,40 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
       deduplicationKey: Value(deduplicationKey),
       availabilityStatus: Value(availabilityStatus),
       lastScannedAt: Value(lastScannedAt),
-      importRootLocator:
-          importRootLocator == null && nullToAbsent
-              ? const Value.absent()
-              : Value(importRootLocator),
-      albumArtist:
-          albumArtist == null && nullToAbsent
-              ? const Value.absent()
-              : Value(albumArtist),
-      albumGroupKey:
-          albumGroupKey == null && nullToAbsent
-              ? const Value.absent()
-              : Value(albumGroupKey),
-      trackNumber:
-          trackNumber == null && nullToAbsent
-              ? const Value.absent()
-              : Value(trackNumber),
-      trackTotal:
-          trackTotal == null && nullToAbsent
-              ? const Value.absent()
-              : Value(trackTotal),
-      discNumber:
-          discNumber == null && nullToAbsent
-              ? const Value.absent()
-              : Value(discNumber),
-      discTotal:
-          discTotal == null && nullToAbsent
-              ? const Value.absent()
-              : Value(discTotal),
-      genre:
-          genre == null && nullToAbsent ? const Value.absent() : Value(genre),
-      releaseYear:
-          releaseYear == null && nullToAbsent
-              ? const Value.absent()
-              : Value(releaseYear),
-      artworkPath:
-          artworkPath == null && nullToAbsent
-              ? const Value.absent()
-              : Value(artworkPath),
-      artworkMimeType:
-          artworkMimeType == null && nullToAbsent
-              ? const Value.absent()
-              : Value(artworkMimeType),
+      importRootLocator: importRootLocator == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importRootLocator),
+      albumArtist: albumArtist == null && nullToAbsent
+          ? const Value.absent()
+          : Value(albumArtist),
+      albumGroupKey: albumGroupKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(albumGroupKey),
+      trackNumber: trackNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(trackNumber),
+      trackTotal: trackTotal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(trackTotal),
+      discNumber: discNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(discNumber),
+      discTotal: discTotal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(discTotal),
+      genre: genre == null && nullToAbsent
+          ? const Value.absent()
+          : Value(genre),
+      releaseYear: releaseYear == null && nullToAbsent
+          ? const Value.absent()
+          : Value(releaseYear),
+      artworkPath: artworkPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(artworkPath),
+      artworkMimeType: artworkMimeType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(artworkMimeType),
+      addedAt: Value(addedAt),
     );
   }
 
@@ -4024,6 +3990,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
       releaseYear: serializer.fromJson<int?>(json['releaseYear']),
       artworkPath: serializer.fromJson<String?>(json['artworkPath']),
       artworkMimeType: serializer.fromJson<String?>(json['artworkMimeType']),
+      addedAt: serializer.fromJson<DateTime>(json['addedAt']),
     );
   }
   @override
@@ -4048,6 +4015,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
       'releaseYear': serializer.toJson<int?>(releaseYear),
       'artworkPath': serializer.toJson<String?>(artworkPath),
       'artworkMimeType': serializer.toJson<String?>(artworkMimeType),
+      'addedAt': serializer.toJson<DateTime>(addedAt),
     };
   }
 
@@ -4070,6 +4038,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     Value<int?> releaseYear = const Value.absent(),
     Value<String?> artworkPath = const Value.absent(),
     Value<String?> artworkMimeType = const Value.absent(),
+    DateTime? addedAt,
   }) => LocalFile(
     libraryId: libraryId ?? this.libraryId,
     mechanism: mechanism ?? this.mechanism,
@@ -4078,13 +4047,13 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     deduplicationKey: deduplicationKey ?? this.deduplicationKey,
     availabilityStatus: availabilityStatus ?? this.availabilityStatus,
     lastScannedAt: lastScannedAt ?? this.lastScannedAt,
-    importRootLocator:
-        importRootLocator.present
-            ? importRootLocator.value
-            : this.importRootLocator,
+    importRootLocator: importRootLocator.present
+        ? importRootLocator.value
+        : this.importRootLocator,
     albumArtist: albumArtist.present ? albumArtist.value : this.albumArtist,
-    albumGroupKey:
-        albumGroupKey.present ? albumGroupKey.value : this.albumGroupKey,
+    albumGroupKey: albumGroupKey.present
+        ? albumGroupKey.value
+        : this.albumGroupKey,
     trackNumber: trackNumber.present ? trackNumber.value : this.trackNumber,
     trackTotal: trackTotal.present ? trackTotal.value : this.trackTotal,
     discNumber: discNumber.present ? discNumber.value : this.discNumber,
@@ -4092,54 +4061,58 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     genre: genre.present ? genre.value : this.genre,
     releaseYear: releaseYear.present ? releaseYear.value : this.releaseYear,
     artworkPath: artworkPath.present ? artworkPath.value : this.artworkPath,
-    artworkMimeType:
-        artworkMimeType.present ? artworkMimeType.value : this.artworkMimeType,
+    artworkMimeType: artworkMimeType.present
+        ? artworkMimeType.value
+        : this.artworkMimeType,
+    addedAt: addedAt ?? this.addedAt,
   );
   LocalFile copyWithCompanion(LocalFilesCompanion data) {
     return LocalFile(
       libraryId: data.libraryId.present ? data.libraryId.value : this.libraryId,
       mechanism: data.mechanism.present ? data.mechanism.value : this.mechanism,
       locator: data.locator.present ? data.locator.value : this.locator,
-      displayPath:
-          data.displayPath.present ? data.displayPath.value : this.displayPath,
-      deduplicationKey:
-          data.deduplicationKey.present
-              ? data.deduplicationKey.value
-              : this.deduplicationKey,
-      availabilityStatus:
-          data.availabilityStatus.present
-              ? data.availabilityStatus.value
-              : this.availabilityStatus,
-      lastScannedAt:
-          data.lastScannedAt.present
-              ? data.lastScannedAt.value
-              : this.lastScannedAt,
-      importRootLocator:
-          data.importRootLocator.present
-              ? data.importRootLocator.value
-              : this.importRootLocator,
-      albumArtist:
-          data.albumArtist.present ? data.albumArtist.value : this.albumArtist,
-      albumGroupKey:
-          data.albumGroupKey.present
-              ? data.albumGroupKey.value
-              : this.albumGroupKey,
-      trackNumber:
-          data.trackNumber.present ? data.trackNumber.value : this.trackNumber,
-      trackTotal:
-          data.trackTotal.present ? data.trackTotal.value : this.trackTotal,
-      discNumber:
-          data.discNumber.present ? data.discNumber.value : this.discNumber,
+      displayPath: data.displayPath.present
+          ? data.displayPath.value
+          : this.displayPath,
+      deduplicationKey: data.deduplicationKey.present
+          ? data.deduplicationKey.value
+          : this.deduplicationKey,
+      availabilityStatus: data.availabilityStatus.present
+          ? data.availabilityStatus.value
+          : this.availabilityStatus,
+      lastScannedAt: data.lastScannedAt.present
+          ? data.lastScannedAt.value
+          : this.lastScannedAt,
+      importRootLocator: data.importRootLocator.present
+          ? data.importRootLocator.value
+          : this.importRootLocator,
+      albumArtist: data.albumArtist.present
+          ? data.albumArtist.value
+          : this.albumArtist,
+      albumGroupKey: data.albumGroupKey.present
+          ? data.albumGroupKey.value
+          : this.albumGroupKey,
+      trackNumber: data.trackNumber.present
+          ? data.trackNumber.value
+          : this.trackNumber,
+      trackTotal: data.trackTotal.present
+          ? data.trackTotal.value
+          : this.trackTotal,
+      discNumber: data.discNumber.present
+          ? data.discNumber.value
+          : this.discNumber,
       discTotal: data.discTotal.present ? data.discTotal.value : this.discTotal,
       genre: data.genre.present ? data.genre.value : this.genre,
-      releaseYear:
-          data.releaseYear.present ? data.releaseYear.value : this.releaseYear,
-      artworkPath:
-          data.artworkPath.present ? data.artworkPath.value : this.artworkPath,
-      artworkMimeType:
-          data.artworkMimeType.present
-              ? data.artworkMimeType.value
-              : this.artworkMimeType,
+      releaseYear: data.releaseYear.present
+          ? data.releaseYear.value
+          : this.releaseYear,
+      artworkPath: data.artworkPath.present
+          ? data.artworkPath.value
+          : this.artworkPath,
+      artworkMimeType: data.artworkMimeType.present
+          ? data.artworkMimeType.value
+          : this.artworkMimeType,
+      addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
     );
   }
 
@@ -4163,7 +4136,8 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
           ..write('genre: $genre, ')
           ..write('releaseYear: $releaseYear, ')
           ..write('artworkPath: $artworkPath, ')
-          ..write('artworkMimeType: $artworkMimeType')
+          ..write('artworkMimeType: $artworkMimeType, ')
+          ..write('addedAt: $addedAt')
           ..write(')'))
         .toString();
   }
@@ -4188,6 +4162,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     releaseYear,
     artworkPath,
     artworkMimeType,
+    addedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -4210,7 +4185,8 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
           other.genre == this.genre &&
           other.releaseYear == this.releaseYear &&
           other.artworkPath == this.artworkPath &&
-          other.artworkMimeType == this.artworkMimeType);
+          other.artworkMimeType == this.artworkMimeType &&
+          other.addedAt == this.addedAt);
 }
 
 class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
@@ -4232,6 +4208,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
   final Value<int?> releaseYear;
   final Value<String?> artworkPath;
   final Value<String?> artworkMimeType;
+  final Value<DateTime> addedAt;
   final Value<int> rowid;
   const LocalFilesCompanion({
     this.libraryId = const Value.absent(),
@@ -4252,6 +4229,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     this.releaseYear = const Value.absent(),
     this.artworkPath = const Value.absent(),
     this.artworkMimeType = const Value.absent(),
+    this.addedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalFilesCompanion.insert({
@@ -4273,6 +4251,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     this.releaseYear = const Value.absent(),
     this.artworkPath = const Value.absent(),
     this.artworkMimeType = const Value.absent(),
+    this.addedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : libraryId = Value(libraryId),
        mechanism = Value(mechanism),
@@ -4299,6 +4278,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     Expression<int>? releaseYear,
     Expression<String>? artworkPath,
     Expression<String>? artworkMimeType,
+    Expression<DateTime>? addedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4320,6 +4300,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
       if (releaseYear != null) 'release_year': releaseYear,
       if (artworkPath != null) 'artwork_path': artworkPath,
       if (artworkMimeType != null) 'artwork_mime_type': artworkMimeType,
+      if (addedAt != null) 'added_at': addedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4343,6 +4324,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     Value<int?>? releaseYear,
     Value<String?>? artworkPath,
     Value<String?>? artworkMimeType,
+    Value<DateTime>? addedAt,
     Value<int>? rowid,
   }) {
     return LocalFilesCompanion(
@@ -4364,6 +4346,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
       releaseYear: releaseYear ?? this.releaseYear,
       artworkPath: artworkPath ?? this.artworkPath,
       artworkMimeType: artworkMimeType ?? this.artworkMimeType,
+      addedAt: addedAt ?? this.addedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4425,6 +4408,9 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     if (artworkMimeType.present) {
       map['artwork_mime_type'] = Variable<String>(artworkMimeType.value);
     }
+    if (addedAt.present) {
+      map['added_at'] = Variable<DateTime>(addedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4452,6 +4438,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
           ..write('releaseYear: $releaseYear, ')
           ..write('artworkPath: $artworkPath, ')
           ..write('artworkMimeType: $artworkMimeType, ')
+          ..write('addedAt: $addedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4589,31 +4576,26 @@ class $ImportRootsTable extends ImportRoots
   ImportRoot map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ImportRoot(
-      id:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}id'],
-          )!,
-      mechanism:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}mechanism'],
-          )!,
-      rootLocator:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}root_locator'],
-          )!,
-      displayPath:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.string,
-            data['${effectivePrefix}display_path'],
-          )!,
-      addedAt:
-          attachedDatabase.typeMapping.read(
-            DriftSqlType.dateTime,
-            data['${effectivePrefix}added_at'],
-          )!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      mechanism: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mechanism'],
+      )!,
+      rootLocator: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}root_locator'],
+      )!,
+      displayPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}display_path'],
+      )!,
+      addedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}added_at'],
+      )!,
     );
   }
 
@@ -4699,10 +4681,12 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
     return ImportRoot(
       id: data.id.present ? data.id.value : this.id,
       mechanism: data.mechanism.present ? data.mechanism.value : this.mechanism,
-      rootLocator:
-          data.rootLocator.present ? data.rootLocator.value : this.rootLocator,
-      displayPath:
-          data.displayPath.present ? data.displayPath.value : this.displayPath,
+      rootLocator: data.rootLocator.present
+          ? data.rootLocator.value
+          : this.rootLocator,
+      displayPath: data.displayPath.present
+          ? data.displayPath.value
+          : this.displayPath,
       addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
     );
   }
@@ -5132,12 +5116,12 @@ class $$TracksTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$TracksTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$TracksTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$TracksTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$TracksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TracksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TracksTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> spotifyId = const Value.absent(),
@@ -5202,20 +5186,18 @@ class $$TracksTableTableManager
                 lastPlayedAt: lastPlayedAt,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<$TracksTable, TrackEntry>(table),
-                          BaseReferences<
-                            _$AppDatabase,
-                            $TracksTable,
-                            TrackEntry
-                          >(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TracksTable, TrackEntry>(table),
+                  BaseReferences<_$AppDatabase, $TracksTable, TrackEntry>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -5403,12 +5385,12 @@ class $$ArtistsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$ArtistsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$ArtistsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$ArtistsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$ArtistsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ArtistsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ArtistsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> spotifyId = const Value.absent(),
@@ -5449,20 +5431,18 @@ class $$ArtistsTableTableManager
                 updatedAt: updatedAt,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<$ArtistsTable, Artist>(table),
-                          BaseReferences<_$AppDatabase, $ArtistsTable, Artist>(
-                            db,
-                            table,
-                            e,
-                          ),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ArtistsTable, Artist>(table),
+                  BaseReferences<_$AppDatabase, $ArtistsTable, Artist>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -5682,12 +5662,12 @@ class $$AlbumsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$AlbumsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$AlbumsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$AlbumsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$AlbumsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AlbumsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AlbumsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> spotifyId = const Value.absent(),
@@ -5736,20 +5716,18 @@ class $$AlbumsTableTableManager
                 updatedAt: updatedAt,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<$AlbumsTable, Album>(table),
-                          BaseReferences<_$AppDatabase, $AlbumsTable, Album>(
-                            db,
-                            table,
-                            e,
-                          ),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AlbumsTable, Album>(table),
+                  BaseReferences<_$AppDatabase, $AlbumsTable, Album>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -5901,12 +5879,12 @@ class $$PlaylistsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$PlaylistsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$PlaylistsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$PlaylistsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$PlaylistsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PlaylistsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PlaylistsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -5935,20 +5913,18 @@ class $$PlaylistsTableTableManager
                 imageUrl: imageUrl,
                 createdAt: createdAt,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<$PlaylistsTable, Playlist>(table),
-                          BaseReferences<
-                            _$AppDatabase,
-                            $PlaylistsTable,
-                            Playlist
-                          >(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PlaylistsTable, Playlist>(table),
+                  BaseReferences<_$AppDatabase, $PlaylistsTable, Playlist>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -6081,16 +6057,12 @@ class $$PlaylistTracksTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$PlaylistTracksTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () =>
-                  $$PlaylistTracksTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$PlaylistTracksTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+          createFilteringComposer: () =>
+              $$PlaylistTracksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PlaylistTracksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PlaylistTracksTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> playlistId = const Value.absent(),
@@ -6115,22 +6087,18 @@ class $$PlaylistTracksTableTableManager
                 position: position,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<$PlaylistTracksTable, PlaylistTrack>(
-                            table,
-                          ),
-                          BaseReferences<
-                            _$AppDatabase,
-                            $PlaylistTracksTable,
-                            PlaylistTrack
-                          >(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PlaylistTracksTable, PlaylistTrack>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $PlaylistTracksTable,
+                    PlaylistTrack
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -6304,12 +6272,12 @@ class $$RadiosTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$RadiosTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$RadiosTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$RadiosTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$RadiosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RadiosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RadiosTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> seedId = const Value.absent(),
@@ -6346,20 +6314,18 @@ class $$RadiosTableTableManager
                 updatedAt: updatedAt,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<$RadiosTable, Radio>(table),
-                          BaseReferences<_$AppDatabase, $RadiosTable, Radio>(
-                            db,
-                            table,
-                            e,
-                          ),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$RadiosTable, Radio>(table),
+                  BaseReferences<_$AppDatabase, $RadiosTable, Radio>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -6543,18 +6509,15 @@ class $$CatalogCacheEntriesTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$CatalogCacheEntriesTableFilterComposer(
+          createFilteringComposer: () =>
+              $$CatalogCacheEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CatalogCacheEntriesTableOrderingComposer(
                 $db: db,
                 $table: table,
               ),
-          createOrderingComposer:
-              () => $$CatalogCacheEntriesTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer:
-              () => $$CatalogCacheEntriesTableAnnotationComposer(
+          createComputedFieldComposer: () =>
+              $$CatalogCacheEntriesTableAnnotationComposer(
                 $db: db,
                 $table: table,
               ),
@@ -6594,23 +6557,20 @@ class $$CatalogCacheEntriesTableTableManager
                 resourceType: resourceType,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<
-                            $CatalogCacheEntriesTable,
-                            CatalogCacheEntry
-                          >(table),
-                          BaseReferences<
-                            _$AppDatabase,
-                            $CatalogCacheEntriesTable,
-                            CatalogCacheEntry
-                          >(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CatalogCacheEntriesTable, CatalogCacheEntry>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $CatalogCacheEntriesTable,
+                    CatalogCacheEntry
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -6657,6 +6617,7 @@ typedef $$LocalFilesTableCreateCompanionBuilder =
       Value<int?> releaseYear,
       Value<String?> artworkPath,
       Value<String?> artworkMimeType,
+      Value<DateTime> addedAt,
       Value<int> rowid,
     });
 typedef $$LocalFilesTableUpdateCompanionBuilder =
@@ -6679,6 +6640,7 @@ typedef $$LocalFilesTableUpdateCompanionBuilder =
       Value<int?> releaseYear,
       Value<String?> artworkPath,
       Value<String?> artworkMimeType,
+      Value<DateTime> addedAt,
       Value<int> rowid,
     });
 
@@ -6778,6 +6740,11 @@ class $$LocalFilesTableFilterComposer
 
   ColumnFilters<String> get artworkMimeType => $composableBuilder(
     column: $table.artworkMimeType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -6880,6 +6847,11 @@ class $$LocalFilesTableOrderingComposer
     column: $table.artworkMimeType,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LocalFilesTableAnnotationComposer
@@ -6970,6 +6942,9 @@ class $$LocalFilesTableAnnotationComposer
     column: $table.artworkMimeType,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get addedAt =>
+      $composableBuilder(column: $table.addedAt, builder: (column) => column);
 }
 
 class $$LocalFilesTableTableManager
@@ -6995,12 +6970,12 @@ class $$LocalFilesTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$LocalFilesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$LocalFilesTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () => $$LocalFilesTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$LocalFilesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocalFilesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocalFilesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> libraryId = const Value.absent(),
@@ -7021,6 +6996,7 @@ class $$LocalFilesTableTableManager
                 Value<int?> releaseYear = const Value.absent(),
                 Value<String?> artworkPath = const Value.absent(),
                 Value<String?> artworkMimeType = const Value.absent(),
+                Value<DateTime> addedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalFilesCompanion(
                 libraryId: libraryId,
@@ -7041,6 +7017,7 @@ class $$LocalFilesTableTableManager
                 releaseYear: releaseYear,
                 artworkPath: artworkPath,
                 artworkMimeType: artworkMimeType,
+                addedAt: addedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -7063,6 +7040,7 @@ class $$LocalFilesTableTableManager
                 Value<int?> releaseYear = const Value.absent(),
                 Value<String?> artworkPath = const Value.absent(),
                 Value<String?> artworkMimeType = const Value.absent(),
+                Value<DateTime> addedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalFilesCompanion.insert(
                 libraryId: libraryId,
@@ -7083,22 +7061,21 @@ class $$LocalFilesTableTableManager
                 releaseYear: releaseYear,
                 artworkPath: artworkPath,
                 artworkMimeType: artworkMimeType,
+                addedAt: addedAt,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<$LocalFilesTable, LocalFile>(table),
-                          BaseReferences<
-                            _$AppDatabase,
-                            $LocalFilesTable,
-                            LocalFile
-                          >(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$LocalFilesTable, LocalFile>(table),
+                  BaseReferences<_$AppDatabase, $LocalFilesTable, LocalFile>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -7259,13 +7236,12 @@ class $$ImportRootsTableTableManager
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer:
-              () => $$ImportRootsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer:
-              () => $$ImportRootsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer:
-              () =>
-                  $$ImportRootsTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () =>
+              $$ImportRootsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ImportRootsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ImportRootsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
@@ -7298,20 +7274,18 @@ class $$ImportRootsTableTableManager
                 addedAt: addedAt,
                 rowid: rowid,
               ),
-          withReferenceMapper:
-              (p0) =>
-                  p0
-                      .map(
-                        (e) => (
-                          e.readTable<$ImportRootsTable, ImportRoot>(table),
-                          BaseReferences<
-                            _$AppDatabase,
-                            $ImportRootsTable,
-                            ImportRoot
-                          >(db, table, e),
-                        ),
-                      )
-                      .toList(),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ImportRootsTable, ImportRoot>(table),
+                  BaseReferences<_$AppDatabase, $ImportRootsTable, ImportRoot>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );

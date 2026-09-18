@@ -444,6 +444,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get albumsTab => 'एल्बम';
 
   @override
+  String get genresTab => 'Genres';
+
+  @override
+  String get noLocalGenres => 'No local genres found';
+
+  @override
+  String get playbackSpeed => 'Playback Speed';
+
+  @override
   String get addMusic => 'संगीत जोड़ें';
 
   @override
@@ -588,7 +597,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get yourMusicIsWaiting => 'आपका संगीत आपकी प्रतीक्षा कर रहा है।';
 
   @override
-  String dailyMix(Object number, Object bad_placeholder) {
+  String dailyMix(Object number) {
     return 'Daily Mix $number';
   }
 

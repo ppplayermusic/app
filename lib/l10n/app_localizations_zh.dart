@@ -434,6 +434,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get albumsTab => '专辑';
 
   @override
+  String get genresTab => 'Genres';
+
+  @override
+  String get noLocalGenres => 'No local genres found';
+
+  @override
+  String get playbackSpeed => 'Playback Speed';
+
+  @override
   String get addMusic => '添加音乐';
 
   @override
@@ -578,7 +587,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get yourMusicIsWaiting => '你的音乐在等你。';
 
   @override
-  String dailyMix(Object number, Object bad_placeholder) {
+  String dailyMix(Object number) {
     return 'Daily Mix $number';
   }
 

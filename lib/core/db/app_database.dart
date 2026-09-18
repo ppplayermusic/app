@@ -9,6 +9,7 @@ import '../models/track.dart' as model;
 import '../models/local_album.dart';
 import '../models/local_artist.dart';
 import '../models/local_folder.dart';
+import '../models/local_genre.dart';
 
 part 'app_database.g.dart';
 
@@ -146,6 +147,8 @@ class LocalFiles extends Table {
   TextColumn get artworkPath => text().nullable()();
   TextColumn get artworkMimeType => text().nullable()();
 
+  DateTimeColumn get addedAt => dateTime().withDefault(currentDateAndTime)();
+
   @override
   Set<Column> get primaryKey => {libraryId};
 }
@@ -183,7 +186,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -230,6 +233,10 @@ class AppDatabase extends _$AppDatabase {
       if (from < 8) {
         await m.createTable(localFiles);
         await m.createTable(importRoots);
+      }
+      if (from < 9) {
+        await m.alterTable(TableMigration(localFiles, newColumns: [localFiles.addedAt]));
+        await customStatement('UPDATE local_files SET added_at = last_scanned_at');
       }
     },
   );
@@ -295,6 +302,7 @@ class AppDatabase extends _$AppDatabase {
         localArtworkPath: lf.artworkPath,
         localAvailabilityStatus: lf.availabilityStatus,
         localAlbumGroupKey: lf.albumGroupKey,
+        localAddedAt: lf.addedAt,
       );
     }
     
@@ -612,6 +620,29 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Stream<List<LocalGenre>> watchLocalGenres() {
+    final query = selectOnly(localFiles)
+      ..addColumns([localFiles.genre, localFiles.genre.count()])
+      ..where(localFiles.genre.isNotNull())
+      ..where(localFiles.genre.equals('').not())
+      ..groupBy([localFiles.genre]);
+
+    return query.watch().map((rows) {
+      return rows.map((row) => LocalGenre(
+        name: row.read(localFiles.genre)!,
+        trackCount: row.read(localFiles.genre.count()) ?? 0,
+      )).toList();
+    });
+  }
+
+  Future<List<model.Track>> getGenreAppTracks(String genre) async {
+    final query = select(tracks).join([
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+    ])..where(localFiles.genre.equals(genre));
+    final rows = await query.get();
+    return rows.map(_mapTrackWithLocal).toList()..sort((a, b) => a.name.compareTo(b.name));
+  }
+
   Stream<List<LocalFolder>> watchLocalFolders() {
     final query = selectOnly(localFiles)
       ..addColumns([localFiles.importRootLocator])
@@ -803,8 +834,36 @@ class AppDatabase extends _$AppDatabase {
       (select(localFiles)
         ..where((f) => f.deduplicationKey.equals(key))).getSingleOrNull();
 
+  /// Inserts a new local file record, or updates metadata fields on conflict.
+  /// [addedAt] is intentionally excluded from the UPDATE so that re-scanning
+  /// a file preserves the original import timestamp used for date-added sorting.
   Future<void> upsertLocalFile(LocalFilesCompanion entry) =>
-      into(localFiles).insertOnConflictUpdate(entry);
+      into(localFiles).insert(
+        entry,
+        onConflict: DoUpdate(
+          (_) => LocalFilesCompanion(
+            mechanism: entry.mechanism,
+            locator: entry.locator,
+            displayPath: entry.displayPath,
+            deduplicationKey: entry.deduplicationKey,
+            availabilityStatus: entry.availabilityStatus,
+            lastScannedAt: entry.lastScannedAt,
+            importRootLocator: entry.importRootLocator,
+            albumArtist: entry.albumArtist,
+            albumGroupKey: entry.albumGroupKey,
+            trackNumber: entry.trackNumber,
+            trackTotal: entry.trackTotal,
+            discNumber: entry.discNumber,
+            discTotal: entry.discTotal,
+            genre: entry.genre,
+            releaseYear: entry.releaseYear,
+            artworkPath: entry.artworkPath,
+            artworkMimeType: entry.artworkMimeType,
+            // addedAt intentionally absent — preserves the original import timestamp
+          ),
+          target: [localFiles.libraryId],
+        ),
+      );
 
   Future<void> updateLocalFileStatus(
     String libraryId,

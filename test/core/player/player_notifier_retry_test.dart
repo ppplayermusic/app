@@ -75,6 +75,9 @@ class FakePlaybackService implements PlaybackService {
 
 /// Fake PlaybackController that records play() calls.
 class FakePlaybackController implements PlaybackController {
+  @override
+  bool get supportsSpeed => true;
+
   final _statusController = StreamController<PlaybackStatus>.broadcast();
   final List<String> playedIds = [];
   Completer<void>? nextPlay;
@@ -510,6 +513,41 @@ void main() {
         ); // Now running candidate 2
       },
     );
+  });
+
+  group('Local Source Routing Regression', () {
+    test('local track bypasses youtube resolution', () async {
+      final service = FakePlaybackService(
+        candidates: [
+          const ResolvedVideoCandidate(
+            videoId: 'online_vid',
+            title: 'T',
+            channel: 'C',
+            confidenceScore: 1.0,
+          )
+        ],
+      );
+      final fakeController = FakePlaybackController();
+      final container = makeContainer(service: service, controller: fakeController);
+      final notifier = container.read(playerProvider.notifier);
+      
+      const localTrack = Track(
+        spotifyId: 'local:1',
+        name: 'Local',
+        artistId: '1',
+        artistName: 'Artist',
+        durationMs: 1000,
+        sourceType: TrackSourceType.local,
+      );
+      
+      await notifier.playTrack(localTrack);
+      await Future.delayed(Duration.zero);
+      
+      expect(service.resolveCallCount, 0, reason: 'Should not resolve candidates for local track');
+      expect(fakeController.playedIds, contains('local:1'));
+      
+      await disposeContainer(container, fakeController);
+    });
   });
 }
 

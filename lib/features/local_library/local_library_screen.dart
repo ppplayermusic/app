@@ -7,6 +7,7 @@ import 'local_songs_tab.dart';
 import 'local_folders_tab.dart';
 import 'local_artists_tab.dart';
 import 'local_albums_tab.dart';
+import 'local_genres_tab.dart';
 import 'local_library_providers.dart';
 import 'package:ppplayer/l10n/app_localizations.dart';
 
@@ -22,11 +23,12 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
+  String? _scanStatus;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     
     _searchController.addListener(() {
       ref.read(localSearchQueryProvider.notifier).update(_searchController.text);
@@ -52,6 +54,26 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (_scanStatus != null)
+              Container(
+                width: double.infinity,
+                color: colorScheme.primaryContainer,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                child: Row(
+                  children: [
+                    SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.onPrimaryContainer)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _scanStatus!,
+                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimaryContainer),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: _isSearching
@@ -89,7 +111,7 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
                         ),
                         const SizedBox(width: 16),
                         Text(
-                          'Local Music', // Could be localized if there's a key for it
+                          l10n.localMusicCard,
                           style: textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
@@ -111,13 +133,19 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
                           tooltip: l10n.addMusic,
                           color: colorScheme.surfaceContainerHighest,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          onSelected: (value) {
+                          onSelected: (value) async {
                             if (value == 'files') {
                               ref.read(localLibraryServiceProvider).importFiles();
                             } else if (value == 'folder') {
                               ref.read(localLibraryServiceProvider).importFolder();
                             } else if (value == 'rescan') {
-                              // Rescan logic here if available
+                              setState(() => _scanStatus = l10n.rescanLibrary);
+                              await ref.read(localLibraryServiceProvider).rescanLibrary(
+                                onProgress: (msg) {
+                                  if (mounted) setState(() => _scanStatus = msg);
+                                },
+                              );
+                              if (mounted) setState(() => _scanStatus = null);
                             }
                           },
                           itemBuilder: (context) => [
@@ -185,6 +213,7 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
                 Tab(text: l10n.foldersTab),
                 Tab(text: l10n.artistsTab),
                 Tab(text: l10n.albumsTab),
+                Tab(text: l10n.genresTab),
               ],
             ),
             Expanded(
@@ -195,6 +224,7 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
                   LocalFoldersTab(),
                   LocalArtistsTab(),
                   LocalAlbumsTab(),
+                  LocalGenresTab(),
                 ],
               ),
             ),

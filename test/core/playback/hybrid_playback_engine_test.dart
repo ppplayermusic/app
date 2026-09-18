@@ -9,6 +9,9 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 // Controllable fake engine — lets tests pause/resume play/pause at will.
 // ---------------------------------------------------------------------------
 class FakeEngine implements PlaybackController {
+  @override
+  bool get supportsSpeed => true;
+
   final String name;
   FakeEngine(this.name);
 
@@ -584,4 +587,10 @@ void main() {
       // change the state model or remove the safety-net.
     },
   );
+
+  test('17. setSpeed propagates to both underlying engines', () async {
+    await engine.setSpeed(1.5);
+    expect(fg.callLog, contains('setSpeed(1.5)'));
+    expect(bg.callLog, contains('setSpeed(1.5)'));
+  });
 }
