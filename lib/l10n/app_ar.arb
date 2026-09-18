@@ -206,7 +206,7 @@
   "goodEvening": "مساء الخير",
   "greetingWithName": "{greeting}, {name}",
   "yourMusicIsWaiting": "موسيقاك في انتظارك.",
-  "dailyMix": "Daily Mix {number}",
+  "dailyMix": "Daily Mix {bad_placeholder}",
   "yourFavoritesAndNewDiscoveries": "مفضلاتك\nواكتشافات جديدة",
   "discoverWeekly": "Discover Weekly",
   "releaseRadar": "Release Radar",
@@ -216,5 +216,267 @@
   "focusMix": "Focus Mix",
   "deepFocusAndProductivity": "تركيز عميق\nوإنتاجية",
   "artistRadio": "راديو {artist}",
-  "genreRadio": "راديو {genre}"
+  "genreRadio": "راديو {genre}",
+  "importFolderSubtitle": "اختر مجلدًا يحتوي على ملفات صوتية",
+  "@importFolderSubtitle": {},
+  "@appTitle": {},
+  "@titleSubtitle": {
+    "placeholders": {
+      "title": {},
+      "subtitle": {}
+    }
+  },
+  "@albums": {},
+  "@api": {},
+  "@artists": {},
+  "@artwork": {},
+  "@appVersion": {},
+  "@artist": {},
+  "@artistsYouFollow": {},
+  "@autoplay": {},
+  "@becauseYouListenedTo": {},
+  "@browseAll": {},
+  "@cancel": {},
+  "@clearAppCache": {},
+  "@clearCache": {},
+  "@clearHistory": {},
+  "@clearRecentlyPlayed": {},
+  "@contentMarket": {},
+  "@continueListening": {},
+  "@continueVideoPlaybackInASmallWindow": {},
+  "@create": {},
+  "@createAPlaylistToGetStarted": {},
+  "@currentSelectedcountry": {
+    "placeholders": {
+      "country": {}
+    }
+  },
+  "@deletePlaylist": {},
+  "@editProfile": {},
+  "@errorLoadingMarkets": {
+    "placeholders": {
+      "err": {}
+    }
+  },
+  "@error": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@explore": {
+    "placeholders": {
+      "genre": {}
+    }
+  },
+  "@fansAlsoLike": {},
+  "@featuringTouppercase": {
+    "placeholders": {
+      "artist": {}
+    }
+  },
+  "@featuredPlaylists": {},
+  "@followArtistsToSeeThemHere": {},
+  "@followStationsToSeeThemHere": {},
+  "@forceAudioonlyStreamsToSaveData": {},
+  "@freesUpSpaceAndForcesFreshDataOnNextLoad": {},
+  "@fromYourFavorites": {},
+  "@goBack": {},
+  "@inspiredByName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@keepPlayingSimilarTracksWhenQueueEnds": {},
+  "@library": {},
+  "@likeAlbumsToSeeThemHere": {},
+  "@likedSongs": {},
+  "@lowDataMode": {},
+  "@madeForYou": {},
+  "@moreLikeName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@moreOptions": {},
+  "@nameYourMasterpiece": {},
+  "@newPlaylist": {},
+  "@newReleases": {},
+  "@next": {},
+  "@noAlbumsFound": {},
+  "@noArtistsFollowed": {},
+  "@noArtistsFound": {},
+  "@noLikedAlbums": {},
+  "@noPlaylistsFound": {},
+  "@noPlaylistsYet": {},
+  "@noResultsFound": {},
+  "@noStationsFollowed": {},
+  "@noTrackPlaying": {},
+  "@noTracksFound": {},
+  "@playlists": {},
+  "@popular": {},
+  "@permanentlyRemoveListeningHistory": {},
+  "@pictureinpicturePip": {},
+  "@popularAlbums": {},
+  "@popularArtists": {},
+  "@popularGenres": {},
+  "@popularSongs": {},
+  "@popularTracks": {},
+  "@popularHitsRightNow": {},
+  "@previous": {},
+  "@queue": {},
+  "@recentSearches": {},
+  "@recommendedForYou": {},
+  "@scraping": {},
+  "@search": {},
+  "@searchInAlbum": {},
+  "@searchInLibrary": {},
+  "@searchInPlaylist": {},
+  "@searchLikedSongs": {},
+  "@searchPopularSongs": {},
+  "@selectMarket": {},
+  "@settings": {},
+  "@showVideoPlayer": {},
+  "@shuffle": {},
+  "@spotifyCredentials": {},
+  "@suggestedStations": {},
+  "@tracks": {},
+  "@trending": {},
+  "@tryAgain": {},
+  "@tryADifferentSearchTerm": {},
+  "@useYoutubePlayerWhenAvailable": {},
+  "@video": {},
+  "@whatDoYouWantToListenTo": {},
+  "@youtubeCredentials": {},
+  "@yourLibrary": {},
+  "@playerscreenviewswitch": {},
+  "@addToPlaylist": {},
+  "@addToQueue": {},
+  "@copyId": {},
+  "@copyLink": {},
+  "@discover": {},
+  "@enterYourName": {},
+  "@favorites": {},
+  "@goToAlbum": {},
+  "@goToArtist": {},
+  "@goToArtistRadio": {},
+  "@goToPlaylist": {},
+  "@goToSongRadio": {},
+  "@home": {},
+  "@myAwesomePlaylist": {},
+  "@myPlaylist": {},
+  "@newPlaylist1": {},
+  "@play": {},
+  "@playStation": {},
+  "@playNext": {},
+  "@playlist": {},
+  "@playlistName": {},
+  "@playlists1": {},
+  "@queue1": {},
+  "@recentlyPlayed": {},
+  "@removeFromQueue": {},
+  "@retry": {},
+  "@searchMusicArtistsAlbums": {},
+  "@share": {},
+  "@featuringArtist": {
+    "placeholders": {
+      "artistName": {
+        "type": "String"
+      }
+    }
+  },
+  "@currentCountry": {
+    "placeholders": {
+      "country": {
+        "type": "String"
+      }
+    }
+  },
+  "@queueTooltip": {},
+  "@searchHint": {},
+  "@language": {},
+  "@systemDefault": {},
+  "@songsTab": {},
+  "@foldersTab": {},
+  "@artistsTab": {},
+  "@albumsTab": {},
+  "@addMusic": {},
+  "@addFiles": {},
+  "@addFolder": {},
+  "@rescanLibrary": {},
+  "@sortTitle": {},
+  "@sortArtist": {},
+  "@sortAlbum": {},
+  "@sortDuration": {},
+  "@sortDateAdded": {},
+  "@trackInformation": {},
+  "@removeFromLibrary": {},
+  "@showInFolder": {},
+  "@unknownArtist": {},
+  "@unknownAlbum": {},
+  "@importedFiles": {},
+  "@playFolder": {},
+  "@shuffleFolder": {},
+  "@playAll": {},
+  "@includeSubfolders": {},
+  "@noLocalSongs": {},
+  "@searchLocalMusic": {},
+  "@viewAsList": {},
+  "@viewAsGrid": {},
+  "@trackInfoPath": {},
+  "@trackInfoFormat": {},
+  "@trackInfoDuration": {},
+  "@aboutDescription": {},
+  "@createdBy": {},
+  "@website": {},
+  "@github": {},
+  "@releaseNotes": {},
+  "@support": {},
+  "@license": {},
+  "@acknowledgments": {},
+  "@close": {},
+  "@goodMorning": {},
+  "@goodAfternoon": {},
+  "@goodEvening": {},
+  "@greetingWithName": {
+    "placeholders": {
+      "greeting": {},
+      "name": {}
+    }
+  },
+  "@yourMusicIsWaiting": {},
+  "@dailyMix": {
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "@yourFavoritesAndNewDiscoveries": {},
+  "@discoverWeekly": {},
+  "@releaseRadar": {},
+  "@newMusicJustForYou": {},
+  "@chillMix": {},
+  "@relaxAndUnwind": {},
+  "@focusMix": {},
+  "@deepFocusAndProductivity": {},
+  "@artistRadio": {
+    "placeholders": {
+      "artist": {}
+    }
+  },
+  "@genreRadio": {
+    "placeholders": {
+      "genre": {}
+    }
+  },
+  "@filterAll": {},
+  "@filterPlaylists": {},
+  "@filterArtists": {},
+  "@filterAlbums": {},
+  "@filterStations": {},
+  "@localMusicCard": {},
+  "@createPlaylistButton": {},
+  "@radioStations": {},
+  "@discoverMusic": {},
+  "@importLocalMusic": {},
+  "@importAudioFiles": {},
+  "@importFolder": {}
 }

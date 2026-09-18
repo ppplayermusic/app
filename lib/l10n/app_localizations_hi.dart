@@ -588,7 +588,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get yourMusicIsWaiting => 'आपका संगीत आपकी प्रतीक्षा कर रहा है।';
 
   @override
-  String dailyMix(Object number) {
+  String dailyMix(Object number, Object bad_placeholder) {
     return 'Daily Mix $number';
   }
 
@@ -663,6 +663,5 @@ class AppLocalizationsHi extends AppLocalizations {
   String get importFolder => 'फ़ोल्डर आयात करें';
 
   @override
-  String get importFolderSubtitle =>
-      'Note: Audio files are hidden in the folder picker. This is normal.';
+  String get importFolderSubtitle => 'ऑडियो फ़ाइलों वाले एक फ़ोल्डर को चुनें';
 }

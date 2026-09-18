@@ -584,7 +584,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yourMusicIsWaiting => 'Your music is waiting.';
 
   @override
-  String dailyMix(Object number) {
+  String dailyMix(Object number, Object bad_placeholder) {
     return 'Daily Mix $number';
   }
 

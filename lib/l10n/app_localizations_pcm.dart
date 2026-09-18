@@ -50,13 +50,13 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
-  String get clearAppCache => 'Clear App Cache?';
+  String get clearAppCache => 'Comot App Cache?';
 
   @override
-  String get clearCache => 'Clear Cache';
+  String get clearCache => 'Comot Cache';
 
   @override
-  String get clearHistory => 'Clear History?';
+  String get clearHistory => 'Comot History?';
 
   @override
   String get clearRecentlyPlayed => 'Clear Recent Songs';
@@ -247,7 +247,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get queue => 'Queue';
 
   @override
-  String get recentSearches => 'Recent searches';
+  String get recentSearches => 'Wetin you find before';
 
   @override
   String get recommendedForYou => 'Recommended For You';
@@ -271,7 +271,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get searchLikedSongs => 'Search songs wey yu like...';
 
   @override
-  String get searchPopularSongs => 'Search popular songs...';
+  String get searchPopularSongs => 'Find popular songs...';
 
   @override
   String get selectMarket => 'Pick Market';
@@ -283,7 +283,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get showVideoPlayer => 'Show Video Player';
 
   @override
-  String get shuffle => 'Shuffle';
+  String get shuffle => 'Scatter am';
 
   @override
   String get spotifyCredentials => 'Spotify Credentials';
@@ -322,10 +322,10 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get playerscreenviewswitch => 'player_screen_view_switch';
 
   @override
-  String get addToPlaylist => 'Add to playlist';
+  String get addToPlaylist => 'Put for playlist';
 
   @override
-  String get addToQueue => 'Add to queue';
+  String get addToQueue => 'Put for queue';
 
   @override
   String get copyId => 'Copy ID';
@@ -337,25 +337,25 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get discover => 'Discover';
 
   @override
-  String get enterYourName => 'Enter your name';
+  String get enterYourName => 'Put your name';
 
   @override
   String get favorites => 'Favorites';
 
   @override
-  String get goToAlbum => 'Go to album';
+  String get goToAlbum => 'Go album side';
 
   @override
-  String get goToArtist => 'Go to artist';
+  String get goToArtist => 'Go artist side';
 
   @override
-  String get goToArtistRadio => 'Go to artist radio';
+  String get goToArtistRadio => 'Go artist radio';
 
   @override
-  String get goToPlaylist => 'Go to playlist';
+  String get goToPlaylist => 'Go playlist side';
 
   @override
-  String get goToSongRadio => 'Go to song radio';
+  String get goToSongRadio => 'Go song radio';
 
   @override
   String get home => 'Home';
@@ -370,7 +370,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get newPlaylist1 => 'New playlist';
 
   @override
-  String get play => 'Play';
+  String get play => 'Play am';
 
   @override
   String get playStation => 'Play Station';
@@ -394,16 +394,16 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get recentlyPlayed => 'Recently Played';
 
   @override
-  String get removeFromQueue => 'Remove from queue';
+  String get removeFromQueue => 'Comot from queue';
 
   @override
   String get retry => 'Try again';
 
   @override
-  String get searchMusicArtistsAlbums => 'Search music, artists, albums...';
+  String get searchMusicArtistsAlbums => 'Find music, artists, albums...';
 
   @override
-  String get share => 'Share';
+  String get share => 'Share am';
 
   @override
   String featuringArtist(String artistName) {
@@ -419,7 +419,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get queueTooltip => 'Queue';
 
   @override
-  String get searchHint => 'Search music, artists, albums...';
+  String get searchHint => 'Find music, artists, albums...';
 
   @override
   String get language => 'Language';
@@ -560,7 +560,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get acknowledgments => 'Acknowledgments';
 
   @override
-  String get close => 'Close';
+  String get close => 'Close am';
 
   @override
   String copyright(Object year) {
@@ -585,7 +585,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get yourMusicIsWaiting => 'Your music dey wait.';
 
   @override
-  String dailyMix(Object number) {
+  String dailyMix(Object number, Object bad_placeholder) {
     return 'Daily Mix $number';
   }
 
@@ -648,7 +648,7 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get radioStations => 'Radio Stations';
 
   @override
-  String get discoverMusic => 'Discover Music';
+  String get discoverMusic => 'Find Music';
 
   @override
   String get importLocalMusic => 'Import Local Music';
@@ -660,6 +660,5 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get importFolder => 'Import Folder';
 
   @override
-  String get importFolderSubtitle =>
-      'Note: Audio files are hidden in the folder picker. This is normal.';
+  String get importFolderSubtitle => 'Choose folder wey get audio files';
 }

@@ -1230,7 +1230,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Daily Mix {number}'**
-  String dailyMix(Object number);
+  String dailyMix(Object number, Object bad_placeholder);
 
   /// No description provided for @yourFavoritesAndNewDiscoveries.
   ///

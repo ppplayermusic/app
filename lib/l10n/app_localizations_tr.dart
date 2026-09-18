@@ -431,152 +431,152 @@ class AppLocalizationsTr extends AppLocalizations {
   String get systemDefault => 'Sistem Varsayılanı';
 
   @override
-  String get songsTab => 'Songs';
+  String get songsTab => 'Şarkılar';
 
   @override
-  String get foldersTab => 'Folders';
+  String get foldersTab => 'Klasörler';
 
   @override
-  String get artistsTab => 'Artists';
+  String get artistsTab => 'Sanatçılar';
 
   @override
-  String get albumsTab => 'Albums';
+  String get albumsTab => 'Albümler';
 
   @override
-  String get addMusic => 'Add music';
+  String get addMusic => 'Müzik Ekle';
 
   @override
-  String get addFiles => 'Add files';
+  String get addFiles => 'Dosya Ekle';
 
   @override
-  String get addFolder => 'Add folder';
+  String get addFolder => 'Klasör Ekle';
 
   @override
-  String get rescanLibrary => 'Rescan library';
+  String get rescanLibrary => 'Kitaplığı Yeniden Tara';
 
   @override
-  String get sortTitle => 'Title';
+  String get sortTitle => 'Başlığa Göre Sırala';
 
   @override
-  String get sortArtist => 'Artist';
+  String get sortArtist => 'Sanatçıya Göre Sırala';
 
   @override
-  String get sortAlbum => 'Album';
+  String get sortAlbum => 'Albüme Göre Sırala';
 
   @override
-  String get sortDuration => 'Duration';
+  String get sortDuration => 'Süreye Göre Sırala';
 
   @override
-  String get sortDateAdded => 'Date Added';
+  String get sortDateAdded => 'Eklenme Tarihine Göre Sırala';
 
   @override
-  String get trackInformation => 'Track Information';
+  String get trackInformation => 'Parça Bilgisi';
 
   @override
-  String get removeFromLibrary => 'Remove from library';
+  String get removeFromLibrary => 'Kitaplıktan Kaldır';
 
   @override
-  String get showInFolder => 'Show in folder';
+  String get showInFolder => 'Klasörde Göster';
 
   @override
-  String get unknownArtist => 'Unknown Artist';
+  String get unknownArtist => 'Bilinmeyen Sanatçı';
 
   @override
-  String get unknownAlbum => 'Unknown Album';
+  String get unknownAlbum => 'Bilinmeyen Albüm';
 
   @override
-  String get importedFiles => 'Imported Files';
+  String get importedFiles => 'İçe Aktarılan Dosyalar';
 
   @override
-  String get playFolder => 'Play folder';
+  String get playFolder => 'Klasörü Çal';
 
   @override
-  String get shuffleFolder => 'Shuffle folder';
+  String get shuffleFolder => 'Klasörü Karışık Çal';
 
   @override
-  String get playAll => 'Play all';
+  String get playAll => 'Tümünü Çal';
 
   @override
-  String get includeSubfolders => 'Include subfolders';
+  String get includeSubfolders => 'Alt klasörleri dahil et';
 
   @override
   String trackCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count tracks',
-      one: '1 track',
-      zero: '0 tracks',
+      other: '$count parça',
+      one: '1 parça',
+      zero: '0 parça',
     );
     return '$_temp0';
   }
 
   @override
-  String get noLocalSongs => 'No local songs imported';
+  String get noLocalSongs => 'Yerel Şarkı Yok';
 
   @override
-  String get searchLocalMusic => 'Search local music';
+  String get searchLocalMusic => 'Yerel müzik ara...';
 
   @override
-  String get viewAsList => 'View as list';
+  String get viewAsList => 'Liste olarak görüntüle';
 
   @override
-  String get viewAsGrid => 'View as grid';
+  String get viewAsGrid => 'Izgara olarak görüntüle';
 
   @override
-  String get trackInfoPath => 'Path';
+  String get trackInfoPath => 'Yol';
 
   @override
   String get trackInfoFormat => 'Format';
 
   @override
-  String get trackInfoDuration => 'Duration';
+  String get trackInfoDuration => 'Süre';
 
   @override
-  String get aboutDescription => 'A free, open-source music player.';
+  String get aboutDescription => 'Hakkında açıklaması';
 
   @override
   String versionInfo(Object version, Object build) {
-    return 'Version $version (Build $build)';
+    return 'Sürüm $version (Derleme $build)';
   }
 
   @override
-  String get createdBy => 'Created by Lucas Coelho';
+  String get createdBy => 'Lucas Coelho tarafından oluşturuldu';
 
   @override
-  String get website => 'Website';
+  String get website => 'Web Sitesi';
 
   @override
   String get github => 'GitHub';
 
   @override
-  String get releaseNotes => 'Release notes';
+  String get releaseNotes => 'Sürüm Notları';
 
   @override
-  String get support => 'Support';
+  String get support => 'Destek';
 
   @override
-  String get license => 'License';
+  String get license => 'Lisans';
 
   @override
-  String get acknowledgments => 'Acknowledgments';
+  String get acknowledgments => 'Teşekkürler';
 
   @override
-  String get close => 'Close';
+  String get close => 'Kapat';
 
   @override
   String copyright(Object year) {
-    return '© $year PPPlayer contributors';
+    return '© $year PPPlayer';
   }
 
   @override
-  String get goodMorning => 'Good morning';
+  String get goodMorning => 'Günaydın';
 
   @override
-  String get goodAfternoon => 'Good afternoon';
+  String get goodAfternoon => 'İyi Öğleden Sonralar';
 
   @override
-  String get goodEvening => 'Good evening';
+  String get goodEvening => 'İyi Akşamlar';
 
   @override
   String greetingWithName(Object greeting, Object name) {
@@ -584,85 +584,83 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get yourMusicIsWaiting => 'Your music is waiting.';
+  String get yourMusicIsWaiting => 'Müziğin seni bekliyor';
 
   @override
-  String dailyMix(Object number) {
-    return 'Daily Mix $number';
+  String dailyMix(Object number, Object bad_placeholder) {
+    return 'Günlük Karışım $number';
   }
 
   @override
-  String get yourFavoritesAndNewDiscoveries =>
-      'Your favorites\nand new discoveries';
+  String get yourFavoritesAndNewDiscoveries => 'Favorilerin ve Yeni Keşiflerin';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Haftalık Keşif';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Yeni Çıkanlar Radarı';
 
   @override
-  String get newMusicJustForYou => 'New music\njust for you';
+  String get newMusicJustForYou => 'Senin İçin Yeni Müzik';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Sakin Karışım';
 
   @override
-  String get relaxAndUnwind => 'Relax and unwind';
+  String get relaxAndUnwind => 'Rahatla ve Gevşe';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Odaklanma Karışımı';
 
   @override
-  String get deepFocusAndProductivity => 'Deep focus\nand productivity';
+  String get deepFocusAndProductivity => 'Derin Odaklanma ve Verimlilik';
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return '$artist Radyosu';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return '$genre Radyosu';
   }
 
   @override
-  String get filterAll => 'All';
+  String get filterAll => 'Tümü';
 
   @override
-  String get filterPlaylists => 'Playlists';
+  String get filterPlaylists => 'Çalma Listeleri';
 
   @override
-  String get filterArtists => 'Artists';
+  String get filterArtists => 'Sanatçılar';
 
   @override
-  String get filterAlbums => 'Albums';
+  String get filterAlbums => 'Albümler';
 
   @override
-  String get filterStations => 'Stations';
+  String get filterStations => 'İstasyonlar';
 
   @override
-  String get localMusicCard => 'Local Music';
+  String get localMusicCard => 'Yerel Müzik';
 
   @override
-  String get createPlaylistButton => 'Create Playlist';
+  String get createPlaylistButton => 'Çalma Listesi Oluştur';
 
   @override
-  String get radioStations => 'Radio Stations';
+  String get radioStations => 'Radyo İstasyonları';
 
   @override
-  String get discoverMusic => 'Discover Music';
+  String get discoverMusic => 'Müzik Keşfet';
 
   @override
-  String get importLocalMusic => 'Import Local Music';
+  String get importLocalMusic => 'Yerel Müzik İçe Aktar';
 
   @override
-  String get importAudioFiles => 'Import Audio Files';
+  String get importAudioFiles => 'Ses Dosyalarını İçe Aktar';
 
   @override
-  String get importFolder => 'Import Folder';
+  String get importFolder => 'Klasör İçe Aktar';
 
   @override
-  String get importFolderSubtitle =>
-      'Note: Audio files are hidden in the folder picker. This is normal.';
+  String get importFolderSubtitle => 'Klasörü İçe Aktarma Altyazısı';
 }
