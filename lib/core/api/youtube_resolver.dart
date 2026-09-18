@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+// ignore_for_file: use_null_aware_elements
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

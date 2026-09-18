@@ -1,4 +1,5 @@
-import 'package:drift/drift.dart' as drift;
+// ignore_for_file: depend_on_referenced_packages
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ppplayer/core/db/app_database.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
