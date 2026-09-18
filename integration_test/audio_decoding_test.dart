@@ -14,9 +14,6 @@ void main() {
   Future<void> testFormat(String extension) async {
     final player = Player();
     final assetUri = 'asset://assets/test_fixtures/test.$extension';
-    
-    await player.open(Media(assetUri), play: false);
-    
     bool completed = false;
     bool hasError = false;
     
@@ -28,6 +25,7 @@ void main() {
       completed = event;
     });
     
+    await player.open(Media(assetUri), play: false);
     await player.play();
     
     // Wait for the 0.5s audio to complete
