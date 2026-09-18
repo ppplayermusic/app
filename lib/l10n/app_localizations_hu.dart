@@ -674,4 +674,11 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get importFolderSubtitle =>
       'Válasszon egy mappát, amely hangfájlokat tartalmaz';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

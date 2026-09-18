@@ -672,4 +672,11 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => 'Pilih folder yang mengandungi fail audio';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

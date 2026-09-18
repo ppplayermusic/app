@@ -671,4 +671,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get importFolderSubtitle =>
       'Note: Audio files are hidden in the folder picker. This is normal.';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

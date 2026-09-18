@@ -337,7 +337,13 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                   child: Text(
-                                    loadError,
+                                    loadError.startsWith('error:') 
+                                      ? (loadError == 'error:unsupported_format' 
+                                          ? AppLocalizations.of(context)!.playbackErrorUnsupportedFormat 
+                                          : (loadError == 'error:file_inaccessible' 
+                                              ? AppLocalizations.of(context)!.playbackErrorFileInaccessible 
+                                              : loadError))
+                                      : loadError,
                                     textAlign: TextAlign.center,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,

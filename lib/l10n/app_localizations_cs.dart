@@ -674,4 +674,11 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get importFolderSubtitle =>
       'Vyberte složku obsahující zvukové soubory';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

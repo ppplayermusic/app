@@ -675,4 +675,11 @@ class AppLocalizationsBn extends AppLocalizations {
   @override
   String get importFolderSubtitle =>
       'অডিও ফাইল ধারণকারী একটি ফোল্ডার চয়ন করুন';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

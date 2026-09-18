@@ -481,5 +481,12 @@
   "@importFolderSubtitle": {},
   "genresTab": "Genres",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed"
+  "playbackSpeed": "Playback Speed",
+  "@genresTab": {},
+  "@noLocalGenres": {},
+  "@playbackSpeed": {},
+  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "@playbackErrorUnsupportedFormat": {},
+  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "@playbackErrorFileInaccessible": {}
 }

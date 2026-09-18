@@ -677,4 +677,11 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get importFolderSubtitle =>
       'Odaberite mapu koja sadrži audio datoteke';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

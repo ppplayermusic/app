@@ -670,4 +670,11 @@ class AppLocalizationsPcm extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => 'Choose folder wey get audio files';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

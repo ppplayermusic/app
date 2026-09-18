@@ -1387,6 +1387,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Note: Audio files are hidden in the folder picker. This is normal.'**
   String get importFolderSubtitle;
+
+  /// No description provided for @playbackErrorUnsupportedFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported format or corrupted file'**
+  String get playbackErrorUnsupportedFormat;
+
+  /// No description provided for @playbackErrorFileInaccessible.
+  ///
+  /// In en, this message translates to:
+  /// **'File inaccessible or not found'**
+  String get playbackErrorFileInaccessible;
 }
 
 class _AppLocalizationsDelegate

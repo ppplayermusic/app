@@ -671,4 +671,11 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => 'Välj en mapp som innehåller ljudfiler';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

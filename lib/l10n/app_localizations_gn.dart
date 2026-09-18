@@ -673,4 +673,11 @@ class AppLocalizationsGn extends AppLocalizations {
   @override
   String get importFolderSubtitle =>
       'Eiporavo peteĩ ñongatupy oguerekóva ñe\'ẽ';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

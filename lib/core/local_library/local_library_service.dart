@@ -13,6 +13,7 @@ import 'package:ppplayer/core/models/track.dart' show Track;
 import 'local_track_source.dart';
 import 'metadata_extractor.dart';
 import 'local_file_resolver.dart';
+import 'audio_format_registry.dart';
 
 final localLibraryServiceProvider = Provider<LocalLibraryService>((ref) {
   return LocalLibraryService(ref.watch(appDatabaseProvider));
@@ -27,7 +28,8 @@ class LocalLibraryService {
   /// Prompts the user to pick audio files and imports them.
   Future<void> importFiles() async {
     final result = await FilePicker.pickFiles(
-      type: FileType.audio,
+      type: FileType.custom,
+      allowedExtensions: AudioFormatRegistry.importCandidates.map((e) => e.replaceAll('.', '')).toList(),
     );
 
     if (result.isEmpty) return;
@@ -226,9 +228,7 @@ class LocalLibraryService {
                 dirsToScan.add(entity);
               } else if (entity is File) {
                 final ext = entity.path.toLowerCase();
-                if (ext.endsWith('.mp3') || ext.endsWith('.m4a') || 
-                    ext.endsWith('.flac') || ext.endsWith('.wav') ||
-                    ext.endsWith('.aac') || ext.endsWith('.ogg')) {
+                if (AudioFormatRegistry.isRecognizedImportCandidate(ext)) {
                   files.add(entity.path);
                 }
               }

@@ -671,4 +671,11 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => 'پوشه‌ای حاوی فایل‌های صوتی انتخاب کنید';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

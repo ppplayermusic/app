@@ -663,4 +663,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => '选择一个包含音频文件的文件夹';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

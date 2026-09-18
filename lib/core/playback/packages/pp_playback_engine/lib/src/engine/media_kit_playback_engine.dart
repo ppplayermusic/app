@@ -165,8 +165,17 @@ class MediaKitPlaybackEngine implements PlaybackController {
       }),
       _player!.stream.error.listen((err) {
         if (!_currentStatus.isIFrameMode) {
+          final errStr = err.toString().toLowerCase();
+          String errorCode = 'error:playback_failed';
+          if (errStr.contains('timeout')) {
+            errorCode = 'error:playback_timeout';
+          } else if (errStr.contains('format') || errStr.contains('codec') || errStr.contains('corrupt')) {
+            errorCode = 'error:unsupported_format';
+          } else if (errStr.contains('access') || errStr.contains('permission') || errStr.contains('not found')) {
+            errorCode = 'error:file_inaccessible';
+          }
           _updateStatus(
-            _currentStatus.copyWith(state: PlaybackState.error, error: err),
+            _currentStatus.copyWith(state: PlaybackState.error, error: errorCode),
           );
         }
       }),
@@ -243,7 +252,14 @@ class MediaKitPlaybackEngine implements PlaybackController {
         }
         _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
       } catch (e) {
-        _updateStatus(_currentStatus.copyWith(state: PlaybackState.error, error: e));
+        final errStr = e.toString().toLowerCase();
+        String errorCode = 'error:playback_failed';
+        if (errStr.contains('format') || errStr.contains('codec')) {
+          errorCode = 'error:unsupported_format';
+        } else if (errStr.contains('access') || errStr.contains('not found') || errStr.contains('no such file')) {
+          errorCode = 'error:file_inaccessible';
+        }
+        _updateStatus(_currentStatus.copyWith(state: PlaybackState.error, error: errorCode));
       }
       return;
     }
@@ -371,7 +387,14 @@ class MediaKitPlaybackEngine implements PlaybackController {
         }
       } catch (e) {
         if (_valid(myGen)) {
-          _failAttempt(myGen, 'Local playback failed: $e');
+          final errStr = e.toString().toLowerCase();
+          String errorCode = 'error:playback_failed';
+          if (errStr.contains('format') || errStr.contains('codec')) {
+            errorCode = 'error:unsupported_format';
+          } else if (errStr.contains('access') || errStr.contains('not found') || errStr.contains('no such file')) {
+            errorCode = 'error:file_inaccessible';
+          }
+          _failAttempt(myGen, errorCode);
         }
       }
       return;

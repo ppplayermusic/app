@@ -664,4 +664,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => 'オーディオファイルを含むフォルダを選択してください';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

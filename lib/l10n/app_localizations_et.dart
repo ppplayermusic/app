@@ -671,4 +671,11 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => 'Vali kaust, mis sisaldab helifaile';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

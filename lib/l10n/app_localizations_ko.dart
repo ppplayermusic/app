@@ -664,4 +664,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => '오디오 파일이 포함된 폴더를 선택하세요';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

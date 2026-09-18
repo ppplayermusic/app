@@ -672,4 +672,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get importFolderSubtitle => 'Klasörü İçe Aktarma Altyazısı';
+
+  @override
+  String get playbackErrorUnsupportedFormat =>
+      'Unsupported format or corrupted file';
+
+  @override
+  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 }

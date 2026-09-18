@@ -59,6 +59,8 @@ dependencies:
   windows_taskbar: ^1.1.2
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
@@ -92,6 +94,7 @@ flutter:
   generate: true
   assets:
     - assets/
+    - assets/test_fixtures/
     - assets/icons/
     - assets/images/
     - assets/images/mix_covers/
