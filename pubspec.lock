@@ -656,7 +656,7 @@ packages:
     source: sdk
     version: "0.0.0"
   fullscreen_window:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: fullscreen_window
       sha256: "262a19366157542c3e1fa07232ee7e8a5c82e5223d912b04a2771c47aa6a048d"
@@ -1496,7 +1496,7 @@ packages:
     source: hosted
     version: "0.7.0+eol"
   sqlite3:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: sqlite3
       sha256: "4c7fe79840389aaeaf05fd093f795b631b5a98e2bd28d54e555c100f4a9c7a1c"

@@ -256,6 +256,7 @@ class HybridPlaybackEngine implements PlaybackController {
     if (_owner == targetOwner) return;
     if (_disposed) return;
     if (_currentTrack == null) return;
+    if (_currentTrack!.isLocal) return;
 
     _handoffGeneration++;
     final myGen = _handoffGeneration;
@@ -519,6 +520,12 @@ class HybridPlaybackEngine implements PlaybackController {
   Future<void> setSpeed(double speed) async {
     await _foregroundEngine.setSpeed(speed);
     await _backgroundEngine.setSpeed(speed);
+  }
+
+  @override
+  Future<void> setSubtitleTrack(String? uri) async {
+    await _foregroundEngine.setSubtitleTrack(uri);
+    await _backgroundEngine.setSubtitleTrack(uri);
   }
 
   @override

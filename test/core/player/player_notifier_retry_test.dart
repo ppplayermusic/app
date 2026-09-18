@@ -139,6 +139,9 @@ class FakePlaybackController implements PlaybackController {
     disposed = true;
     _statusController.close();
   }
+
+  @override
+  Future<void> setSubtitleTrack(String? uri) async {}
 }
 
 // ---------------------------------------------------------------------------

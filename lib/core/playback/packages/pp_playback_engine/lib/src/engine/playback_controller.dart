@@ -16,6 +16,7 @@ abstract class PlaybackController {
   Future<void> seekTo(Duration position);
   Future<void> setVolume(double volume);
   Future<void> setSpeed(double speed);
+  Future<void> setSubtitleTrack(String? uri);
   bool get supportsSpeed;
 
   /// A platform-specific renderer (e.g. VideoController for media_kit)

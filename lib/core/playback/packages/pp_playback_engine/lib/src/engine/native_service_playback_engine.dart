@@ -267,11 +267,21 @@ class NativeServicePlaybackEngine implements PlaybackController {
   }
 
   @override
-  bool get supportsSpeed => false;
+  bool get supportsSpeed => true;
 
   @override
   Future<void> setSpeed(double speed) async {
-    // Not implemented in headless for now
+    if (_disposed) return;
+    try {
+      await _channel.invokeMethod('setSpeed', {'speed': speed});
+    } catch (e) {
+      debugPrint('NativeServicePlaybackEngine: setSpeed error: $e');
+    }
+  }
+
+  @override
+  Future<void> setSubtitleTrack(String? uri) async {
+    // No-op for background native service (only plays YouTube audio)
   }
 
   @override

@@ -29,6 +29,8 @@ class TrackTile extends ConsumerStatefulWidget {
     this.isActive,
     this.margin,
     this.padding,
+    this.playlistId,
+    this.playlistEntryId,
   });
 
   final model.Track track;
@@ -41,6 +43,8 @@ class TrackTile extends ConsumerStatefulWidget {
   final bool? isActive;
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
+  final int? playlistId;
+  final int? playlistEntryId;
 
   @override
   ConsumerState<TrackTile> createState() => _TrackTileState();
@@ -50,9 +54,11 @@ class TrackTile extends ConsumerStatefulWidget {
     WidgetRef ref,
     model.Track track, [
     Offset? position,
+    int? playlistId,
+    int? playlistEntryId,
   ]) {
     if (track.isLocal) {
-      showLocalTrackContextMenu(context, ref, track);
+      showLocalTrackContextMenu(context, ref, track, playlistId: playlistId, playlistEntryId: playlistEntryId);
       return;
     }
     
@@ -64,7 +70,7 @@ class TrackTile extends ConsumerStatefulWidget {
       context,
       ref,
       position: pos,
-      target: TrackContextTarget(track),
+      target: TrackContextTarget(track, playlistId: playlistId, playlistEntryId: playlistEntryId),
     );
   }
 
@@ -613,6 +619,8 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                                           ? offset +
                                               Offset(0, renderBox!.size.height)
                                           : null,
+                                      widget.playlistId,
+                                      widget.playlistEntryId,
                                     );
                                   },
                                 ),

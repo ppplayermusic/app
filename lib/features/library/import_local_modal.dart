@@ -64,6 +64,36 @@ void showImportLocalModal(BuildContext context, WidgetRef ref) {
             ),
           ),
           const SizedBox(height: 12),
+          TactileTap(
+            onTap: () {
+              Navigator.pop(dialogContext);
+              ref.read(localLibraryServiceProvider).importPlaylist();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.queue_music, color: Theme.of(context).colorScheme.onSurface),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(AppLocalizations.of(context)!.importPlaylist, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 2),
+                        Text(AppLocalizations.of(context)!.importPlaylistSubtitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
         ],
       ),
     ),

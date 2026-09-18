@@ -25,6 +25,7 @@ class PlaybackStatus {
   final double speed;
   final bool supportsSpeed;
   final int? generation;
+  final double? videoAspectRatio;
 
   const PlaybackStatus({
     this.track,
@@ -40,6 +41,7 @@ class PlaybackStatus {
     this.speed = 1.0,
     this.supportsSpeed = false,
     this.generation,
+    this.videoAspectRatio,
   });
 
   bool get isPlaying => state == PlaybackState.playing;
@@ -64,6 +66,7 @@ class PlaybackStatus {
     double? speed,
     bool? supportsSpeed,
     int? generation,
+    double? videoAspectRatio,
   }) {
     return PlaybackStatus(
       track: track ?? this.track,
@@ -82,6 +85,7 @@ class PlaybackStatus {
       speed: speed ?? this.speed,
       supportsSpeed: supportsSpeed ?? this.supportsSpeed,
       generation: generation ?? this.generation,
+      videoAspectRatio: videoAspectRatio ?? this.videoAspectRatio,
     );
   }
 

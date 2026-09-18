@@ -33,6 +33,7 @@ _Track _$TrackFromJson(Map<String, dynamic> json) => _Track(
   localAddedAt: json['localAddedAt'] == null
       ? null
       : DateTime.parse(json['localAddedAt'] as String),
+  isVideoFile: json['isVideoFile'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
@@ -55,6 +56,7 @@ Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
   'localAvailabilityStatus': instance.localAvailabilityStatus,
   'localAlbumGroupKey': instance.localAlbumGroupKey,
   'localAddedAt': instance.localAddedAt?.toIso8601String(),
+  'isVideoFile': instance.isVideoFile,
 };
 
 const _$QueueItemOriginEnumMap = {

@@ -8,6 +8,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
+import '../../features/player/player_providers.dart';
 import '../../core/services/settings_provider.dart';
 import '../../core/providers/search_provider.dart';
 import '../../core/providers/recent_searches_provider.dart';
@@ -23,6 +24,9 @@ import '../../core/models/track.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../../features/settings/widgets/about_dialog.dart';
+import '../../core/local_library/local_library_service.dart';
+import 'package:flutter/services.dart';
+import 'package:fullscreen_window/fullscreen_window.dart';
 
 class ScaffoldWithNav extends ConsumerStatefulWidget {
   const ScaffoldWithNav({
@@ -71,6 +75,8 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     ) && !isLocalTrack;
     final loadError = ref.watch(playerProvider.select((s) => s.loadError));
     final isPipMode = ref.watch(playerProvider.select((s) => s.isPipMode));
+    final isFullscreen = ref.watch(isFullscreenProvider);
+    final videoFit = ref.watch(videoFitProvider);
 
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
@@ -149,7 +155,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
         bottom: false,
         child: Row(
           children: [
-            if (isDesktop && !isPlayerScreen && !isPipMode)
+            if (isDesktop && !isPlayerScreen && !isPipMode && !isFullscreen)
               const _DesktopSidebar(),
             Expanded(
               child: Stack(
@@ -180,7 +186,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                   ),
                   Column(
                     children: [
-                      if (isDesktop && !isPlayerScreen && !isPipMode)
+                      if (isDesktop && !isPlayerScreen && !isPipMode && !isFullscreen)
                         const _DesktopTopBar(),
                       Expanded(
                         child: Stack(
@@ -198,7 +204,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
           ],
         ),
       ),
-      bottomNavigationBar: isPlayerScreen || isPipMode
+      bottomNavigationBar: isPlayerScreen || isPipMode || isFullscreen
           ? null
           : isDesktop
               ? const _DesktopPlayerBar()
@@ -249,6 +255,51 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
             ],
           ),
           PlatformMenu(
+            label: 'File',
+            menus: [
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformMenuItem(
+                    label: 'Open File...',
+                    shortcut: const SingleActivator(LogicalKeyboardKey.keyO, meta: true),
+                    onSelected: () async {
+                      final tracks = await ref.read(localLibraryServiceProvider).importFiles();
+                      if (tracks.isNotEmpty) {
+                        ref.read(playerProvider.notifier).playTrack(tracks.first);
+                      }
+                    },
+                  ),
+                  PlatformMenuItem(
+                    label: 'Open Folder...',
+                    shortcut: const SingleActivator(LogicalKeyboardKey.keyO, meta: true, shift: true),
+                    onSelected: () => ref.read(localLibraryServiceProvider).importFolder(),
+                  ),
+                ],
+              ),
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformMenuItem(
+                    label: 'Import Playlist...',
+                    onSelected: () => ref.read(localLibraryServiceProvider).importPlaylist(),
+                  ),
+                ],
+              ),
+              PlatformMenuItemGroup(
+                members: [
+                  PlatformMenuItem(
+                    label: 'Export Queue...',
+                    onSelected: () {
+                      final queue = ref.read(playerProvider).playbackQueue.tracks;
+                      if (queue.isNotEmpty) {
+                        ref.read(localLibraryServiceProvider).exportQueue(queue);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          PlatformMenu(
             label: 'View',
             menus: [
               PlatformMenuItemGroup(
@@ -290,14 +341,45 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
       );
     }
 
-    return Material(
-      color: pipPresentation ? Colors.black : Theme.of(context).colorScheme.surface,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Offstage(
-            offstage: pipPresentation,
-            child: TickerMode(
+    return Focus(
+      autofocus: true,
+      canRequestFocus: true,
+      onKeyEvent: (node, event) {
+        // Only handle key down events to prevent triggering twice
+        if (event is! KeyDownEvent) return KeyEventResult.ignored;
+
+        // Skip handling if a text field or other input has primary focus
+        final primaryFocus = FocusManager.instance.primaryFocus;
+        if (primaryFocus != null && primaryFocus.context?.widget is EditableText) {
+          return KeyEventResult.ignored;
+        }
+
+        if (event.logicalKey == LogicalKeyboardKey.space) {
+          final isPlaying = ref.read(playerProvider).isPlaying;
+          if (isPlaying) {
+            ref.read(playbackControllerProvider).pause();
+          } else {
+            ref.read(playbackControllerProvider).resume();
+          }
+          return KeyEventResult.handled;
+        }
+        
+        if (event.logicalKey == LogicalKeyboardKey.keyF) {
+          final next = ref.read(isFullscreenProvider.notifier).toggle();
+          FullScreenWindow.setFullScreen(next);
+          return KeyEventResult.handled;
+        }
+
+        return KeyEventResult.ignored;
+      },
+      child: Material(
+        color: pipPresentation ? Colors.black : Theme.of(context).colorScheme.surface,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Offstage(
+              offstage: pipPresentation,
+              child: TickerMode(
               enabled: !pipPresentation,
               child: normalLayout,
             ),
@@ -310,10 +392,11 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
             isWindows: isWindows,
             child: Stack(
               children: [
-                if (playbackStatus.track?.isLocal != true)
+                if (playbackStatus.track?.isLocal != true || playbackStatus.hasVideo)
                   _StablePlaybackView(
                     controller: playbackEngine,
                     status: playbackStatus,
+                    fit: videoFit,
                   ),
                 if (loadError != null)
                   Positioned.fill(
@@ -403,7 +486,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 
@@ -2145,8 +2228,13 @@ class _MeshPainter extends CustomPainter {
 class _StablePlaybackView extends StatefulWidget {
   final PlaybackController controller;
   final PlaybackStatus status;
+  final BoxFit fit;
 
-  const _StablePlaybackView({required this.controller, required this.status});
+  const _StablePlaybackView({
+    required this.controller,
+    required this.status,
+    required this.fit,
+  });
 
   @override
   State<_StablePlaybackView> createState() => _StablePlaybackViewState();
@@ -2161,7 +2249,7 @@ class _StablePlaybackViewState extends State<_StablePlaybackView>
   Widget build(BuildContext context) {
     super.build(context); // required for AutomaticKeepAliveClientMixin
     return RepaintBoundary(
-      child: PlaybackView(controller: widget.controller, status: widget.status),
+      child: PlaybackView(controller: widget.controller, status: widget.status, fit: widget.fit),
     );
   }
 }

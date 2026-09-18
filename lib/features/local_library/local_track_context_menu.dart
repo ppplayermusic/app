@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/track.dart' as model;
 import '../../core/player/player_provider.dart';
+import '../../core/db/app_database.dart' as db;
 import 'local_artist_detail_screen.dart';
 import 'local_album_detail_screen.dart';
 
-void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track track) {
+void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track track, {int? playlistId, int? playlistEntryId}) {
   final colorScheme = Theme.of(context).colorScheme;
   
   showModalBottomSheet(
@@ -82,6 +83,15 @@ void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track 
                 ref.read(playerProvider.notifier).addToQueue(track);
               },
             ),
+            if (playlistId != null && playlistEntryId != null)
+              ListTile(
+                leading: const Icon(Icons.remove_circle_outline_rounded),
+                title: const Text('Remove from playlist'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await ref.read(db.appDatabaseProvider).removeFromPlaylist(playlistEntryId);
+                },
+              ),
             if (track.artistName.isNotEmpty)
               ...track.artistName.split(', ').map((artist) => ListTile(
                 leading: const Icon(Icons.person_outline_rounded),

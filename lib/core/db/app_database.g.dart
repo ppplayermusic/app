@@ -2203,6 +2203,19 @@ class $PlaylistTracksTable extends PlaylistTracks
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $PlaylistTracksTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
   static const VerificationMeta _playlistIdMeta = const VerificationMeta(
     'playlistId',
   );
@@ -2237,7 +2250,12 @@ class $PlaylistTracksTable extends PlaylistTracks
     requiredDuringInsert: true,
   );
   @override
-  List<GeneratedColumn> get $columns => [playlistId, trackSpotifyId, position];
+  List<GeneratedColumn> get $columns => [
+    id,
+    playlistId,
+    trackSpotifyId,
+    position,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2250,6 +2268,9 @@ class $PlaylistTracksTable extends PlaylistTracks
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
     if (data.containsKey('playlist_id')) {
       context.handle(
         _playlistIdMeta,
@@ -2281,11 +2302,15 @@ class $PlaylistTracksTable extends PlaylistTracks
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {playlistId, trackSpotifyId};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   PlaylistTrack map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PlaylistTrack(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
       playlistId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}playlist_id'],
@@ -2308,10 +2333,12 @@ class $PlaylistTracksTable extends PlaylistTracks
 }
 
 class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
+  final int id;
   final int playlistId;
   final String trackSpotifyId;
   final int position;
   const PlaylistTrack({
+    required this.id,
     required this.playlistId,
     required this.trackSpotifyId,
     required this.position,
@@ -2319,6 +2346,7 @@ class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
     map['playlist_id'] = Variable<int>(playlistId);
     map['track_spotify_id'] = Variable<String>(trackSpotifyId);
     map['position'] = Variable<int>(position);
@@ -2327,6 +2355,7 @@ class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
 
   PlaylistTracksCompanion toCompanion(bool nullToAbsent) {
     return PlaylistTracksCompanion(
+      id: Value(id),
       playlistId: Value(playlistId),
       trackSpotifyId: Value(trackSpotifyId),
       position: Value(position),
@@ -2339,6 +2368,7 @@ class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PlaylistTrack(
+      id: serializer.fromJson<int>(json['id']),
       playlistId: serializer.fromJson<int>(json['playlistId']),
       trackSpotifyId: serializer.fromJson<String>(json['trackSpotifyId']),
       position: serializer.fromJson<int>(json['position']),
@@ -2348,6 +2378,7 @@ class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
       'playlistId': serializer.toJson<int>(playlistId),
       'trackSpotifyId': serializer.toJson<String>(trackSpotifyId),
       'position': serializer.toJson<int>(position),
@@ -2355,16 +2386,19 @@ class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
   }
 
   PlaylistTrack copyWith({
+    int? id,
     int? playlistId,
     String? trackSpotifyId,
     int? position,
   }) => PlaylistTrack(
+    id: id ?? this.id,
     playlistId: playlistId ?? this.playlistId,
     trackSpotifyId: trackSpotifyId ?? this.trackSpotifyId,
     position: position ?? this.position,
   );
   PlaylistTrack copyWithCompanion(PlaylistTracksCompanion data) {
     return PlaylistTrack(
+      id: data.id.present ? data.id.value : this.id,
       playlistId: data.playlistId.present
           ? data.playlistId.value
           : this.playlistId,
@@ -2378,6 +2412,7 @@ class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
   @override
   String toString() {
     return (StringBuffer('PlaylistTrack(')
+          ..write('id: $id, ')
           ..write('playlistId: $playlistId, ')
           ..write('trackSpotifyId: $trackSpotifyId, ')
           ..write('position: $position')
@@ -2386,66 +2421,70 @@ class PlaylistTrack extends DataClass implements Insertable<PlaylistTrack> {
   }
 
   @override
-  int get hashCode => Object.hash(playlistId, trackSpotifyId, position);
+  int get hashCode => Object.hash(id, playlistId, trackSpotifyId, position);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is PlaylistTrack &&
+          other.id == this.id &&
           other.playlistId == this.playlistId &&
           other.trackSpotifyId == this.trackSpotifyId &&
           other.position == this.position);
 }
 
 class PlaylistTracksCompanion extends UpdateCompanion<PlaylistTrack> {
+  final Value<int> id;
   final Value<int> playlistId;
   final Value<String> trackSpotifyId;
   final Value<int> position;
-  final Value<int> rowid;
   const PlaylistTracksCompanion({
+    this.id = const Value.absent(),
     this.playlistId = const Value.absent(),
     this.trackSpotifyId = const Value.absent(),
     this.position = const Value.absent(),
-    this.rowid = const Value.absent(),
   });
   PlaylistTracksCompanion.insert({
+    this.id = const Value.absent(),
     required int playlistId,
     required String trackSpotifyId,
     required int position,
-    this.rowid = const Value.absent(),
   }) : playlistId = Value(playlistId),
        trackSpotifyId = Value(trackSpotifyId),
        position = Value(position);
   static Insertable<PlaylistTrack> custom({
+    Expression<int>? id,
     Expression<int>? playlistId,
     Expression<String>? trackSpotifyId,
     Expression<int>? position,
-    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (id != null) 'id': id,
       if (playlistId != null) 'playlist_id': playlistId,
       if (trackSpotifyId != null) 'track_spotify_id': trackSpotifyId,
       if (position != null) 'position': position,
-      if (rowid != null) 'rowid': rowid,
     });
   }
 
   PlaylistTracksCompanion copyWith({
+    Value<int>? id,
     Value<int>? playlistId,
     Value<String>? trackSpotifyId,
     Value<int>? position,
-    Value<int>? rowid,
   }) {
     return PlaylistTracksCompanion(
+      id: id ?? this.id,
       playlistId: playlistId ?? this.playlistId,
       trackSpotifyId: trackSpotifyId ?? this.trackSpotifyId,
       position: position ?? this.position,
-      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
     if (playlistId.present) {
       map['playlist_id'] = Variable<int>(playlistId.value);
     }
@@ -2455,19 +2494,16 @@ class PlaylistTracksCompanion extends UpdateCompanion<PlaylistTrack> {
     if (position.present) {
       map['position'] = Variable<int>(position.value);
     }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('PlaylistTracksCompanion(')
+          ..write('id: $id, ')
           ..write('playlistId: $playlistId, ')
           ..write('trackSpotifyId: $trackSpotifyId, ')
-          ..write('position: $position, ')
-          ..write('rowid: $rowid')
+          ..write('position: $position')
           ..write(')'))
         .toString();
   }
@@ -3541,6 +3577,21 @@ class $LocalFilesTable extends LocalFiles
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _isVideoMeta = const VerificationMeta(
+    'isVideo',
+  );
+  @override
+  late final GeneratedColumn<bool> isVideo = GeneratedColumn<bool>(
+    'is_video',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_video" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     libraryId,
@@ -3562,6 +3613,7 @@ class $LocalFilesTable extends LocalFiles
     artworkPath,
     artworkMimeType,
     addedAt,
+    isVideo,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3734,6 +3786,12 @@ class $LocalFilesTable extends LocalFiles
         addedAt.isAcceptableOrUnknown(data['added_at']!, _addedAtMeta),
       );
     }
+    if (data.containsKey('is_video')) {
+      context.handle(
+        _isVideoMeta,
+        isVideo.isAcceptableOrUnknown(data['is_video']!, _isVideoMeta),
+      );
+    }
     return context;
   }
 
@@ -3819,6 +3877,10 @@ class $LocalFilesTable extends LocalFiles
         DriftSqlType.dateTime,
         data['${effectivePrefix}added_at'],
       )!,
+      isVideo: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_video'],
+      )!,
     );
   }
 
@@ -3848,6 +3910,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
   final String? artworkPath;
   final String? artworkMimeType;
   final DateTime addedAt;
+  final bool isVideo;
   const LocalFile({
     required this.libraryId,
     required this.mechanism,
@@ -3868,6 +3931,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     this.artworkPath,
     this.artworkMimeType,
     required this.addedAt,
+    required this.isVideo,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3913,6 +3977,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
       map['artwork_mime_type'] = Variable<String>(artworkMimeType);
     }
     map['added_at'] = Variable<DateTime>(addedAt);
+    map['is_video'] = Variable<bool>(isVideo);
     return map;
   }
 
@@ -3959,6 +4024,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
           ? const Value.absent()
           : Value(artworkMimeType),
       addedAt: Value(addedAt),
+      isVideo: Value(isVideo),
     );
   }
 
@@ -3991,6 +4057,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
       artworkPath: serializer.fromJson<String?>(json['artworkPath']),
       artworkMimeType: serializer.fromJson<String?>(json['artworkMimeType']),
       addedAt: serializer.fromJson<DateTime>(json['addedAt']),
+      isVideo: serializer.fromJson<bool>(json['isVideo']),
     );
   }
   @override
@@ -4016,6 +4083,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
       'artworkPath': serializer.toJson<String?>(artworkPath),
       'artworkMimeType': serializer.toJson<String?>(artworkMimeType),
       'addedAt': serializer.toJson<DateTime>(addedAt),
+      'isVideo': serializer.toJson<bool>(isVideo),
     };
   }
 
@@ -4039,6 +4107,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     Value<String?> artworkPath = const Value.absent(),
     Value<String?> artworkMimeType = const Value.absent(),
     DateTime? addedAt,
+    bool? isVideo,
   }) => LocalFile(
     libraryId: libraryId ?? this.libraryId,
     mechanism: mechanism ?? this.mechanism,
@@ -4065,6 +4134,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
         ? artworkMimeType.value
         : this.artworkMimeType,
     addedAt: addedAt ?? this.addedAt,
+    isVideo: isVideo ?? this.isVideo,
   );
   LocalFile copyWithCompanion(LocalFilesCompanion data) {
     return LocalFile(
@@ -4113,6 +4183,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
           ? data.artworkMimeType.value
           : this.artworkMimeType,
       addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
+      isVideo: data.isVideo.present ? data.isVideo.value : this.isVideo,
     );
   }
 
@@ -4137,7 +4208,8 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
           ..write('releaseYear: $releaseYear, ')
           ..write('artworkPath: $artworkPath, ')
           ..write('artworkMimeType: $artworkMimeType, ')
-          ..write('addedAt: $addedAt')
+          ..write('addedAt: $addedAt, ')
+          ..write('isVideo: $isVideo')
           ..write(')'))
         .toString();
   }
@@ -4163,6 +4235,7 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
     artworkPath,
     artworkMimeType,
     addedAt,
+    isVideo,
   );
   @override
   bool operator ==(Object other) =>
@@ -4186,7 +4259,8 @@ class LocalFile extends DataClass implements Insertable<LocalFile> {
           other.releaseYear == this.releaseYear &&
           other.artworkPath == this.artworkPath &&
           other.artworkMimeType == this.artworkMimeType &&
-          other.addedAt == this.addedAt);
+          other.addedAt == this.addedAt &&
+          other.isVideo == this.isVideo);
 }
 
 class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
@@ -4209,6 +4283,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
   final Value<String?> artworkPath;
   final Value<String?> artworkMimeType;
   final Value<DateTime> addedAt;
+  final Value<bool> isVideo;
   final Value<int> rowid;
   const LocalFilesCompanion({
     this.libraryId = const Value.absent(),
@@ -4230,6 +4305,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     this.artworkPath = const Value.absent(),
     this.artworkMimeType = const Value.absent(),
     this.addedAt = const Value.absent(),
+    this.isVideo = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LocalFilesCompanion.insert({
@@ -4252,6 +4328,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     this.artworkPath = const Value.absent(),
     this.artworkMimeType = const Value.absent(),
     this.addedAt = const Value.absent(),
+    this.isVideo = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : libraryId = Value(libraryId),
        mechanism = Value(mechanism),
@@ -4279,6 +4356,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     Expression<String>? artworkPath,
     Expression<String>? artworkMimeType,
     Expression<DateTime>? addedAt,
+    Expression<bool>? isVideo,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4301,6 +4379,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
       if (artworkPath != null) 'artwork_path': artworkPath,
       if (artworkMimeType != null) 'artwork_mime_type': artworkMimeType,
       if (addedAt != null) 'added_at': addedAt,
+      if (isVideo != null) 'is_video': isVideo,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4325,6 +4404,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     Value<String?>? artworkPath,
     Value<String?>? artworkMimeType,
     Value<DateTime>? addedAt,
+    Value<bool>? isVideo,
     Value<int>? rowid,
   }) {
     return LocalFilesCompanion(
@@ -4347,6 +4427,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
       artworkPath: artworkPath ?? this.artworkPath,
       artworkMimeType: artworkMimeType ?? this.artworkMimeType,
       addedAt: addedAt ?? this.addedAt,
+      isVideo: isVideo ?? this.isVideo,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4411,6 +4492,9 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
     if (addedAt.present) {
       map['added_at'] = Variable<DateTime>(addedAt.value);
     }
+    if (isVideo.present) {
+      map['is_video'] = Variable<bool>(isVideo.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4439,6 +4523,7 @@ class LocalFilesCompanion extends UpdateCompanion<LocalFile> {
           ..write('artworkPath: $artworkPath, ')
           ..write('artworkMimeType: $artworkMimeType, ')
           ..write('addedAt: $addedAt, ')
+          ..write('isVideo: $isVideo, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4504,6 +4589,18 @@ class $ImportRootsTable extends ImportRoots
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _mediaScopeMeta = const VerificationMeta(
+    'mediaScope',
+  );
+  @override
+  late final GeneratedColumn<String> mediaScope = GeneratedColumn<String>(
+    'media_scope',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('audio'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -4511,6 +4608,7 @@ class $ImportRootsTable extends ImportRoots
     rootLocator,
     displayPath,
     addedAt,
+    mediaScope,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4567,6 +4665,12 @@ class $ImportRootsTable extends ImportRoots
     } else if (isInserting) {
       context.missing(_addedAtMeta);
     }
+    if (data.containsKey('media_scope')) {
+      context.handle(
+        _mediaScopeMeta,
+        mediaScope.isAcceptableOrUnknown(data['media_scope']!, _mediaScopeMeta),
+      );
+    }
     return context;
   }
 
@@ -4596,6 +4700,10 @@ class $ImportRootsTable extends ImportRoots
         DriftSqlType.dateTime,
         data['${effectivePrefix}added_at'],
       )!,
+      mediaScope: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}media_scope'],
+      )!,
     );
   }
 
@@ -4611,12 +4719,14 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
   final String rootLocator;
   final String displayPath;
   final DateTime addedAt;
+  final String mediaScope;
   const ImportRoot({
     required this.id,
     required this.mechanism,
     required this.rootLocator,
     required this.displayPath,
     required this.addedAt,
+    required this.mediaScope,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4626,6 +4736,7 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
     map['root_locator'] = Variable<String>(rootLocator);
     map['display_path'] = Variable<String>(displayPath);
     map['added_at'] = Variable<DateTime>(addedAt);
+    map['media_scope'] = Variable<String>(mediaScope);
     return map;
   }
 
@@ -4636,6 +4747,7 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
       rootLocator: Value(rootLocator),
       displayPath: Value(displayPath),
       addedAt: Value(addedAt),
+      mediaScope: Value(mediaScope),
     );
   }
 
@@ -4650,6 +4762,7 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
       rootLocator: serializer.fromJson<String>(json['rootLocator']),
       displayPath: serializer.fromJson<String>(json['displayPath']),
       addedAt: serializer.fromJson<DateTime>(json['addedAt']),
+      mediaScope: serializer.fromJson<String>(json['mediaScope']),
     );
   }
   @override
@@ -4661,6 +4774,7 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
       'rootLocator': serializer.toJson<String>(rootLocator),
       'displayPath': serializer.toJson<String>(displayPath),
       'addedAt': serializer.toJson<DateTime>(addedAt),
+      'mediaScope': serializer.toJson<String>(mediaScope),
     };
   }
 
@@ -4670,12 +4784,14 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
     String? rootLocator,
     String? displayPath,
     DateTime? addedAt,
+    String? mediaScope,
   }) => ImportRoot(
     id: id ?? this.id,
     mechanism: mechanism ?? this.mechanism,
     rootLocator: rootLocator ?? this.rootLocator,
     displayPath: displayPath ?? this.displayPath,
     addedAt: addedAt ?? this.addedAt,
+    mediaScope: mediaScope ?? this.mediaScope,
   );
   ImportRoot copyWithCompanion(ImportRootsCompanion data) {
     return ImportRoot(
@@ -4688,6 +4804,9 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
           ? data.displayPath.value
           : this.displayPath,
       addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
+      mediaScope: data.mediaScope.present
+          ? data.mediaScope.value
+          : this.mediaScope,
     );
   }
 
@@ -4698,14 +4817,15 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
           ..write('mechanism: $mechanism, ')
           ..write('rootLocator: $rootLocator, ')
           ..write('displayPath: $displayPath, ')
-          ..write('addedAt: $addedAt')
+          ..write('addedAt: $addedAt, ')
+          ..write('mediaScope: $mediaScope')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, mechanism, rootLocator, displayPath, addedAt);
+      Object.hash(id, mechanism, rootLocator, displayPath, addedAt, mediaScope);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4714,7 +4834,8 @@ class ImportRoot extends DataClass implements Insertable<ImportRoot> {
           other.mechanism == this.mechanism &&
           other.rootLocator == this.rootLocator &&
           other.displayPath == this.displayPath &&
-          other.addedAt == this.addedAt);
+          other.addedAt == this.addedAt &&
+          other.mediaScope == this.mediaScope);
 }
 
 class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
@@ -4723,6 +4844,7 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
   final Value<String> rootLocator;
   final Value<String> displayPath;
   final Value<DateTime> addedAt;
+  final Value<String> mediaScope;
   final Value<int> rowid;
   const ImportRootsCompanion({
     this.id = const Value.absent(),
@@ -4730,6 +4852,7 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
     this.rootLocator = const Value.absent(),
     this.displayPath = const Value.absent(),
     this.addedAt = const Value.absent(),
+    this.mediaScope = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ImportRootsCompanion.insert({
@@ -4738,6 +4861,7 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
     required String rootLocator,
     required String displayPath,
     required DateTime addedAt,
+    this.mediaScope = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        mechanism = Value(mechanism),
@@ -4750,6 +4874,7 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
     Expression<String>? rootLocator,
     Expression<String>? displayPath,
     Expression<DateTime>? addedAt,
+    Expression<String>? mediaScope,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4758,6 +4883,7 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
       if (rootLocator != null) 'root_locator': rootLocator,
       if (displayPath != null) 'display_path': displayPath,
       if (addedAt != null) 'added_at': addedAt,
+      if (mediaScope != null) 'media_scope': mediaScope,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4768,6 +4894,7 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
     Value<String>? rootLocator,
     Value<String>? displayPath,
     Value<DateTime>? addedAt,
+    Value<String>? mediaScope,
     Value<int>? rowid,
   }) {
     return ImportRootsCompanion(
@@ -4776,6 +4903,7 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
       rootLocator: rootLocator ?? this.rootLocator,
       displayPath: displayPath ?? this.displayPath,
       addedAt: addedAt ?? this.addedAt,
+      mediaScope: mediaScope ?? this.mediaScope,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4798,6 +4926,9 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
     if (addedAt.present) {
       map['added_at'] = Variable<DateTime>(addedAt.value);
     }
+    if (mediaScope.present) {
+      map['media_scope'] = Variable<String>(mediaScope.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4812,6 +4943,7 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
           ..write('rootLocator: $rootLocator, ')
           ..write('displayPath: $displayPath, ')
           ..write('addedAt: $addedAt, ')
+          ..write('mediaScope: $mediaScope, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5946,17 +6078,17 @@ typedef $$PlaylistsTableProcessedTableManager =
     >;
 typedef $$PlaylistTracksTableCreateCompanionBuilder =
     PlaylistTracksCompanion Function({
+      Value<int> id,
       required int playlistId,
       required String trackSpotifyId,
       required int position,
-      Value<int> rowid,
     });
 typedef $$PlaylistTracksTableUpdateCompanionBuilder =
     PlaylistTracksCompanion Function({
+      Value<int> id,
       Value<int> playlistId,
       Value<String> trackSpotifyId,
       Value<int> position,
-      Value<int> rowid,
     });
 
 class $$PlaylistTracksTableFilterComposer
@@ -5968,6 +6100,11 @@ class $$PlaylistTracksTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get playlistId => $composableBuilder(
     column: $table.playlistId,
     builder: (column) => ColumnFilters(column),
@@ -5993,6 +6130,11 @@ class $$PlaylistTracksTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get playlistId => $composableBuilder(
     column: $table.playlistId,
     builder: (column) => ColumnOrderings(column),
@@ -6018,6 +6160,9 @@ class $$PlaylistTracksTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
   GeneratedColumn<int> get playlistId => $composableBuilder(
     column: $table.playlistId,
     builder: (column) => column,
@@ -6065,27 +6210,27 @@ class $$PlaylistTracksTableTableManager
               $$PlaylistTracksTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
+                Value<int> id = const Value.absent(),
                 Value<int> playlistId = const Value.absent(),
                 Value<String> trackSpotifyId = const Value.absent(),
                 Value<int> position = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
               }) => PlaylistTracksCompanion(
+                id: id,
                 playlistId: playlistId,
                 trackSpotifyId: trackSpotifyId,
                 position: position,
-                rowid: rowid,
               ),
           createCompanionCallback:
               ({
+                Value<int> id = const Value.absent(),
                 required int playlistId,
                 required String trackSpotifyId,
                 required int position,
-                Value<int> rowid = const Value.absent(),
               }) => PlaylistTracksCompanion.insert(
+                id: id,
                 playlistId: playlistId,
                 trackSpotifyId: trackSpotifyId,
                 position: position,
-                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -6618,6 +6763,7 @@ typedef $$LocalFilesTableCreateCompanionBuilder =
       Value<String?> artworkPath,
       Value<String?> artworkMimeType,
       Value<DateTime> addedAt,
+      Value<bool> isVideo,
       Value<int> rowid,
     });
 typedef $$LocalFilesTableUpdateCompanionBuilder =
@@ -6641,6 +6787,7 @@ typedef $$LocalFilesTableUpdateCompanionBuilder =
       Value<String?> artworkPath,
       Value<String?> artworkMimeType,
       Value<DateTime> addedAt,
+      Value<bool> isVideo,
       Value<int> rowid,
     });
 
@@ -6745,6 +6892,11 @@ class $$LocalFilesTableFilterComposer
 
   ColumnFilters<DateTime> get addedAt => $composableBuilder(
     column: $table.addedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isVideo => $composableBuilder(
+    column: $table.isVideo,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -6852,6 +7004,11 @@ class $$LocalFilesTableOrderingComposer
     column: $table.addedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isVideo => $composableBuilder(
+    column: $table.isVideo,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LocalFilesTableAnnotationComposer
@@ -6945,6 +7102,9 @@ class $$LocalFilesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get addedAt =>
       $composableBuilder(column: $table.addedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isVideo =>
+      $composableBuilder(column: $table.isVideo, builder: (column) => column);
 }
 
 class $$LocalFilesTableTableManager
@@ -6997,6 +7157,7 @@ class $$LocalFilesTableTableManager
                 Value<String?> artworkPath = const Value.absent(),
                 Value<String?> artworkMimeType = const Value.absent(),
                 Value<DateTime> addedAt = const Value.absent(),
+                Value<bool> isVideo = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalFilesCompanion(
                 libraryId: libraryId,
@@ -7018,6 +7179,7 @@ class $$LocalFilesTableTableManager
                 artworkPath: artworkPath,
                 artworkMimeType: artworkMimeType,
                 addedAt: addedAt,
+                isVideo: isVideo,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -7041,6 +7203,7 @@ class $$LocalFilesTableTableManager
                 Value<String?> artworkPath = const Value.absent(),
                 Value<String?> artworkMimeType = const Value.absent(),
                 Value<DateTime> addedAt = const Value.absent(),
+                Value<bool> isVideo = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LocalFilesCompanion.insert(
                 libraryId: libraryId,
@@ -7062,6 +7225,7 @@ class $$LocalFilesTableTableManager
                 artworkPath: artworkPath,
                 artworkMimeType: artworkMimeType,
                 addedAt: addedAt,
+                isVideo: isVideo,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -7102,6 +7266,7 @@ typedef $$ImportRootsTableCreateCompanionBuilder =
       required String rootLocator,
       required String displayPath,
       required DateTime addedAt,
+      Value<String> mediaScope,
       Value<int> rowid,
     });
 typedef $$ImportRootsTableUpdateCompanionBuilder =
@@ -7111,6 +7276,7 @@ typedef $$ImportRootsTableUpdateCompanionBuilder =
       Value<String> rootLocator,
       Value<String> displayPath,
       Value<DateTime> addedAt,
+      Value<String> mediaScope,
       Value<int> rowid,
     });
 
@@ -7145,6 +7311,11 @@ class $$ImportRootsTableFilterComposer
 
   ColumnFilters<DateTime> get addedAt => $composableBuilder(
     column: $table.addedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mediaScope => $composableBuilder(
+    column: $table.mediaScope,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -7182,6 +7353,11 @@ class $$ImportRootsTableOrderingComposer
     column: $table.addedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get mediaScope => $composableBuilder(
+    column: $table.mediaScope,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ImportRootsTableAnnotationComposer
@@ -7211,6 +7387,11 @@ class $$ImportRootsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get addedAt =>
       $composableBuilder(column: $table.addedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get mediaScope => $composableBuilder(
+    column: $table.mediaScope,
+    builder: (column) => column,
+  );
 }
 
 class $$ImportRootsTableTableManager
@@ -7249,6 +7430,7 @@ class $$ImportRootsTableTableManager
                 Value<String> rootLocator = const Value.absent(),
                 Value<String> displayPath = const Value.absent(),
                 Value<DateTime> addedAt = const Value.absent(),
+                Value<String> mediaScope = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ImportRootsCompanion(
                 id: id,
@@ -7256,6 +7438,7 @@ class $$ImportRootsTableTableManager
                 rootLocator: rootLocator,
                 displayPath: displayPath,
                 addedAt: addedAt,
+                mediaScope: mediaScope,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -7265,6 +7448,7 @@ class $$ImportRootsTableTableManager
                 required String rootLocator,
                 required String displayPath,
                 required DateTime addedAt,
+                Value<String> mediaScope = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ImportRootsCompanion.insert(
                 id: id,
@@ -7272,6 +7456,7 @@ class $$ImportRootsTableTableManager
                 rootLocator: rootLocator,
                 displayPath: displayPath,
                 addedAt: addedAt,
+                mediaScope: mediaScope,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

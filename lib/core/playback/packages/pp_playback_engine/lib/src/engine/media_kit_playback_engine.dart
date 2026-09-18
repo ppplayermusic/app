@@ -196,6 +196,24 @@ class MediaKitPlaybackEngine implements PlaybackController {
           );
         }
       }),
+      _player!.stream.videoParams.listen((params) {
+        if (!_currentStatus.isIFrameMode) {
+          final w = params.w ?? 0;
+          final h = params.h ?? 0;
+          final hasVideo = w > 0 && h > 0;
+          double? ar;
+          if (hasVideo) {
+            // Handle rotation swapping width/height
+            // Not all media_kit platforms expose rotation reliably yet, but if they did we'd swap them.
+            // But we can check if it's there. media_kit's VideoParams currently doesn't expose rotation.
+            ar = w / h;
+          }
+          _updateStatus(_currentStatus.copyWith(
+            hasVideo: hasVideo,
+            videoAspectRatio: ar,
+          ));
+        }
+      }),
     ]);
   }
 
@@ -230,12 +248,14 @@ class MediaKitPlaybackEngine implements PlaybackController {
       _intentRevision++;
       _intendedState = PlaybackState.paused;
       _playGeneration++;
+      final myGen = _playGeneration;
       
       _updateStatus(_currentStatus.copyWith(
         track: track,
         state: PlaybackState.preparing,
         isIFrameMode: false,
         activeVideoId: track.id,
+        hasVideo: track.isVideo,
       ));
       
       if (_currentStatus.isIFrameMode) {
@@ -246,12 +266,16 @@ class MediaKitPlaybackEngine implements PlaybackController {
       
       try {
         await _player!.open(Media(track.localMediaUri!), play: false);
+        if (_disposed || _playGeneration != myGen) return;
+        
         if (position != null) {
           await _player!.seek(position);
+          if (_disposed || _playGeneration != myGen) return;
           _updateStatus(_currentStatus.copyWith(position: position));
         }
         _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
       } catch (e) {
+        if (_disposed || _playGeneration != myGen) return;
         final errStr = e.toString().toLowerCase();
         String errorCode = 'error:playback_failed';
         if (errStr.contains('format') || errStr.contains('codec')) {
@@ -273,6 +297,12 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _intendedState = PlaybackState.paused;
     _playGeneration++;
     final myGen = _playGeneration;
+
+    if (!_currentStatus.isIFrameMode) {
+      try {
+        await _player?.stop();
+      } catch (_) {}
+    }
 
     final ss =
         position?.inMilliseconds != null
@@ -374,7 +404,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
           state: PlaybackState.preparing,
           clearError: true,
           activeVideoId: testVideoId,
-          hasVideo: false,
+          hasVideo: track.isVideo,
           isIFrameMode: false,
           generation: myGen,
         ),
@@ -382,8 +412,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
       
       try {
         await _player!.open(Media(track.localMediaUri!));
+        if (_disposed || _playGeneration != myGen) return;
+        
         if (startAt > Duration.zero) {
           await _player!.seek(startAt);
+          if (_disposed || _playGeneration != myGen) return;
         }
       } catch (e) {
         if (_valid(myGen)) {
@@ -942,6 +975,16 @@ class MediaKitPlaybackEngine implements PlaybackController {
       await _youtubeController?.setPlaybackRate(speed);
     } else {
       await _player?.setRate(speed);
+    }
+  }
+
+  @override
+  Future<void> setSubtitleTrack(String? uri) async {
+    if (_currentStatus.isIFrameMode) return;
+    if (uri == null) {
+      await _player?.setSubtitleTrack(SubtitleTrack.no());
+    } else {
+      await _player?.setSubtitleTrack(SubtitleTrack.uri(uri));
     }
   }
 

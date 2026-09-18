@@ -476,6 +476,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sortDateAdded => 'Date Added';
 
   @override
+  String get sortBy => 'Sort by';
+
+  @override
   String get trackInformation => 'Track Information';
 
   @override
@@ -673,9 +676,47 @@ class AppLocalizationsEn extends AppLocalizations {
       'Note: Audio files are hidden in the folder picker. This is normal.';
 
   @override
+  String get importPlaylist => 'Import Playlist';
+
+  @override
+  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+
+  @override
+  String get exportPlaylist => 'Export Playlist';
+
+  @override
   String get playbackErrorUnsupportedFormat =>
       'Unsupported format or corrupted file';
 
   @override
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+
+  @override
+  String get localVideosCard => 'Local Videos';
+
+  @override
+  String get noLocalVideos => 'No videos found';
+
+  @override
+  String get searchLocalVideos => 'Search local videos';
+
+  @override
+  String get addVideos => 'Add Videos';
+
+  @override
+  String get subtitles => 'Subtitles';
+
+  @override
+  String get audioTracks => 'Audio Tracks';
+
+  @override
+  String get loadSubtitleFile => 'Load subtitle file...';
+
+  @override
+  String errorLoadingSubtitle(String error) {
+    return 'Error loading subtitle: $error';
+  }
+
+  @override
+  String get off => 'Off';
 }

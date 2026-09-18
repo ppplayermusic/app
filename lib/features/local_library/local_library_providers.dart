@@ -64,7 +64,9 @@ class LocalSearchQueryNotifier extends Notifier<String> {
 final localSearchQueryProvider = NotifierProvider<LocalSearchQueryNotifier, String>(LocalSearchQueryNotifier.new);
 
 final _localTracksStreamProvider = StreamProvider<List<model.Track>>((ref) {
-  return ref.watch(appDatabaseProvider).watchLocalAppTracks();
+  // Audio-only: excludes confirmed video files (is_video = true).
+  // This drives songs, albums, artists, genres, and folders tabs.
+  return ref.watch(appDatabaseProvider).watchLocalAudioTracks();
 });
 
 final sortedLocalSongsProvider = Provider<AsyncValue<List<model.Track>>>((ref) {

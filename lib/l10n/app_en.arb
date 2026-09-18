@@ -339,6 +339,8 @@
   "@sortDuration": {},
   "sortDateAdded": "Date Added",
   "@sortDateAdded": {},
+  "sortBy": "Sort by",
+  "@sortBy": {},
   "trackInformation": "Track Information",
   "@trackInformation": {},
   "removeFromLibrary": "Remove from library",
@@ -404,7 +406,7 @@
   "@acknowledgments": {},
   "close": "Close",
   "@close": {},
-  "copyright": "© {year} PPPlayer contributors",
+  "copyright": "\u00a9 {year} PPPlayer contributors",
   "@copyright": {
     "placeholders": {
       "year": {}
@@ -485,8 +487,38 @@
   "@importFolder": {},
   "importFolderSubtitle": "Note: Audio files are hidden in the folder picker. This is normal.",
   "@importFolderSubtitle": {},
+  "importPlaylist": "Import Playlist",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Import .m3u or .m3u8 files",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Export Playlist",
+  "@exportPlaylist": {},
   "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
   "@playbackErrorUnsupportedFormat": {},
   "playbackErrorFileInaccessible": "File inaccessible or not found",
-  "@playbackErrorFileInaccessible": {}
+  "@playbackErrorFileInaccessible": {},
+  "localVideosCard": "Local Videos",
+  "@localVideosCard": {},
+  "noLocalVideos": "No videos found",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Search local videos",
+  "@searchLocalVideos": {},
+  "addVideos": "Add Videos",
+  "@addVideos": {},
+  "subtitles": "Subtitles",
+  "@subtitles": {},
+  "audioTracks": "Audio Tracks",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Load subtitle file...",
+  "@loadSubtitleFile": {},
+  "errorLoadingSubtitle": "Error loading subtitle: {error}",
+  "@errorLoadingSubtitle": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "off": "Off",
+  "@off": {}
 }

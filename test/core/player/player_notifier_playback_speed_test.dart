@@ -107,6 +107,9 @@ class SpeedMockEngine implements PlaybackController {
   void dispose() {
     _statusController.close();
   }
+
+  @override
+  Future<void> setSubtitleTrack(String? uri) async {}
 }
 
 void main() {

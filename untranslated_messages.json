@@ -1,1 +1,466 @@
-{}
+{
+  "ar": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "bn": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "cs": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "da": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "de": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "es": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "et": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "fa": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "fil": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "fr": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "gn": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "hi": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "hr": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "hu": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "id": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "it": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "ja": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "ka": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "kk": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "ko": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "lv": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "ms": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "my": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "pcm": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "pl": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "pt": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "ru": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "sv": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "tr": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "uz": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ],
+
+  "zh": [
+    "sortBy",
+    "importPlaylist",
+    "importPlaylistSubtitle",
+    "exportPlaylist",
+    "localVideosCard",
+    "noLocalVideos",
+    "searchLocalVideos",
+    "addVideos",
+    "subtitles",
+    "audioTracks",
+    "loadSubtitleFile",
+    "off"
+  ]
+}

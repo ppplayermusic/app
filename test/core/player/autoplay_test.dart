@@ -115,6 +115,9 @@ class FakePlaybackController implements PlaybackController {
   void dispose() {
     _statusController.close();
   }
+
+  @override
+  Future<void> setSubtitleTrack(String? uri) async {}
 }
 
 class FakeSpotifyRepository implements SpotifyRepository {

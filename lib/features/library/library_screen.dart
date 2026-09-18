@@ -449,6 +449,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                     .animate()
                                     .fadeIn(duration: 400.ms, delay: 100.ms)
                                     .slideY(begin: 0.1, end: 0),
+                                const SizedBox(height: 16),
+                                _LocalVideoCard(database: database)
+                                    .animate()
+                                    .fadeIn(duration: 400.ms, delay: 200.ms)
+                                    .slideY(begin: 0.1, end: 0),
                               ],
                             );
                           }
@@ -826,7 +831,7 @@ class _LocalMusicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<model.Track>>(
-      stream: database.watchLocalAppTracks(),
+      stream: database.watchLocalAudioTracks(),
       builder: (context, snap) {
         final count = snap.data?.length ?? 0;
         return TactileTap(
@@ -920,6 +925,124 @@ class _LocalMusicCard extends StatelessWidget {
                       Icons.play_arrow_rounded,
                       color: Theme.of(context).colorScheme.onTertiary.withValues(alpha: 0.5),
                       size: 32,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _LocalVideoCard extends StatelessWidget {
+  const _LocalVideoCard({required this.database});
+  final db.AppDatabase database;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<int>(
+      stream: database.watchLocalVideoTracksCount(),
+      builder: (context, snapshot) {
+        final count = snapshot.data ?? 0;
+        return TactileTap(
+          onTap: () => context.push('/local-videos'),
+          child: Container(
+            height: 160,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Theme.of(context).colorScheme.primaryContainer,
+                  Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.8),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 30,
+                  offset: const Offset(0, 15),
+                ),
+              ],
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
+                width: 0.5,
+              ),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              children: [
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.video_library_rounded,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.localVideosCard,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '$count VIDEOS',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Decorative Play Icon
+                Positioned(
+                  right: 24,
+                  bottom: 24,
+                  child: Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.play_circle_fill_rounded,
+                      size: 32,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
                     ),
                   ),
                 ),

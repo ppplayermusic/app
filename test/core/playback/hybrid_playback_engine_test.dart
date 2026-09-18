@@ -105,6 +105,8 @@ class FakeEngine implements PlaybackController {
   dynamic get renderer => null;
   @override
   YoutubePlayerController? get youtubeController => null;
+  @override
+  Future<void> setSubtitleTrack(String? uri) async {}
 }
 
 // ---------------------------------------------------------------------------

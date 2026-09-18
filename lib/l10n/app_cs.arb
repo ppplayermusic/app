@@ -488,5 +488,15 @@
   "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
   "@playbackErrorUnsupportedFormat": {},
   "playbackErrorFileInaccessible": "File inaccessible or not found",
-  "@playbackErrorFileInaccessible": {}
+  "@playbackErrorFileInaccessible": {},
+  "errorLoadingSubtitle": "Chyba při načítání titulků: {error}",
+  "@errorLoadingSubtitle": {
+    "description": "Error message shown when a subtitle file fails to load",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The specific error message"
+      }
+    }
+  }
 }

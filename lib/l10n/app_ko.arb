@@ -488,5 +488,15 @@
   "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
   "@playbackErrorUnsupportedFormat": {},
   "playbackErrorFileInaccessible": "File inaccessible or not found",
-  "@playbackErrorFileInaccessible": {}
+  "@playbackErrorFileInaccessible": {},
+  "errorLoadingSubtitle": "자막을 로드하는 중 오류 발생: {error}",
+  "@errorLoadingSubtitle": {
+    "description": "Error message shown when a subtitle file fails to load",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The specific error message"
+      }
+    }
+  }
 }

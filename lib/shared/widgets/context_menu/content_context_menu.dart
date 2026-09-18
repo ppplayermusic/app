@@ -12,6 +12,7 @@ import '../../../core/services/favorites_provider.dart';
 import '../premium_modals.dart';
 import '../tactile_buttons.dart';
 import '../track_tile.dart';
+import '../../../core/local_library/local_library_service.dart';
 
 // ==========================================
 // 1. CONTEXT MENU TARGET ABSTRACTIONS
@@ -25,11 +26,15 @@ class TrackContextTarget extends ContextMenuTarget {
   final Track track;
   final bool isInQueue;
   final int? queueIndex;
+  final int? playlistId;
+  final int? playlistEntryId;
 
   const TrackContextTarget(
     this.track, {
     this.isInQueue = false,
     this.queueIndex,
+    this.playlistId,
+    this.playlistEntryId,
   });
 }
 
@@ -826,6 +831,25 @@ class _ContentContextMenuOverlayState
         },
       ),
       const _ContextMenuDivider(),
+      if (target.isLocal && target.localId != null)
+        _ContextMenuItem(
+          icon: Icons.file_upload_outlined,
+          label: AppLocalizations.of(context)!.exportPlaylist,
+          onTap: () async {
+            Navigator.of(context).pop();
+            try {
+              final result = await _container.read(localLibraryServiceProvider).exportPlaylist(target.localId!);
+              if (result != null) {
+                final msg = result.skippedCount > 0 
+                    ? 'Exported playlist (${result.skippedCount} items skipped)'
+                    : 'Playlist exported';
+                _showToast(msg);
+              }
+            } catch (e) {
+              _showToast('Failed to export: $e');
+            }
+          },
+        ),
       _ContextMenuItem(
         icon: Icons.share_outlined,
         label: AppLocalizations.of(context)!.share,

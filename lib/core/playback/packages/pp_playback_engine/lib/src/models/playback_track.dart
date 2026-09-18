@@ -13,6 +13,7 @@ class PlaybackTrack {
   /// For local tracks: the URI string to pass to media_kit Media().
   /// Built via Uri.file(path).toString() or passed as content:// URI opaquely.
   final String? localMediaUri;
+  final bool isVideo;
 
   const PlaybackTrack({
     required this.id,
@@ -23,6 +24,7 @@ class PlaybackTrack {
     this.duration,
     this.sourceType = PlaybackSourceType.online,
     this.localMediaUri,
+    this.isVideo = false,
   });
 
   bool get isLocal => sourceType == PlaybackSourceType.local;

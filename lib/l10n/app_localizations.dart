@@ -1040,6 +1040,12 @@ abstract class AppLocalizations {
   /// **'Date Added'**
   String get sortDateAdded;
 
+  /// No description provided for @sortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortBy;
+
   /// No description provided for @trackInformation.
   ///
   /// In en, this message translates to:
@@ -1388,6 +1394,24 @@ abstract class AppLocalizations {
   /// **'Note: Audio files are hidden in the folder picker. This is normal.'**
   String get importFolderSubtitle;
 
+  /// No description provided for @importPlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Playlist'**
+  String get importPlaylist;
+
+  /// No description provided for @importPlaylistSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import .m3u or .m3u8 files'**
+  String get importPlaylistSubtitle;
+
+  /// No description provided for @exportPlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Playlist'**
+  String get exportPlaylist;
+
   /// No description provided for @playbackErrorUnsupportedFormat.
   ///
   /// In en, this message translates to:
@@ -1399,6 +1423,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'File inaccessible or not found'**
   String get playbackErrorFileInaccessible;
+
+  /// No description provided for @localVideosCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Videos'**
+  String get localVideosCard;
+
+  /// No description provided for @noLocalVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'No videos found'**
+  String get noLocalVideos;
+
+  /// No description provided for @searchLocalVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Search local videos'**
+  String get searchLocalVideos;
+
+  /// No description provided for @addVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Videos'**
+  String get addVideos;
+
+  /// No description provided for @subtitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitles'**
+  String get subtitles;
+
+  /// No description provided for @audioTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio Tracks'**
+  String get audioTracks;
+
+  /// No description provided for @loadSubtitleFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Load subtitle file...'**
+  String get loadSubtitleFile;
+
+  /// No description provided for @errorLoadingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading subtitle: {error}'**
+  String errorLoadingSubtitle(String error);
+
+  /// No description provided for @off.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get off;
 }
 
 class _AppLocalizationsDelegate

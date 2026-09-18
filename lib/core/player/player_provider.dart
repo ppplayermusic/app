@@ -29,6 +29,7 @@ class PlayerState {
     this.supportsSpeed = false,
     this.isPipMode = false,
     this.isPipRequestPending = false,
+    this.subtitleUri,
   });
 
   final PlaybackQueue playbackQueue;
@@ -44,6 +45,7 @@ class PlayerState {
   final bool supportsSpeed;
   final bool isPipMode;
   final bool isPipRequestPending;
+  final String? subtitleUri;
 
   // Shortcuts to avoid breaking UI that expects these on state
   List<Track> get queue => playbackQueue.tracks;
@@ -66,6 +68,7 @@ class PlayerState {
     bool? supportsSpeed,
     bool? isPipMode,
     bool? isPipRequestPending,
+    Object? subtitleUri = _sentinel,
     bool clearLoadError = false,
   }) {
     return PlayerState(
@@ -88,6 +91,9 @@ class PlayerState {
       supportsSpeed: supportsSpeed ?? this.supportsSpeed,
       isPipMode: isPipMode ?? this.isPipMode,
       isPipRequestPending: isPipRequestPending ?? this.isPipRequestPending,
+      subtitleUri: identical(subtitleUri, _sentinel)
+          ? this.subtitleUri
+          : subtitleUri as String?,
     );
   }
 }
@@ -183,7 +189,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     ref.listen(settingsProvider, (previous, next) {
       if (previous?.continuePlaybackInPip != next.continuePlaybackInPip) {
-        PipHandler.setPipEnabled(next.continuePlaybackInPip && state.isPlaying);
+        final status = ref.read(playbackStatusProvider).value;
+        final wantPip = next.continuePlaybackInPip && state.isPlaying && (status?.hasVideo ?? false);
+        PipHandler.setPipEnabled(
+          wantPip,
+          aspectRatio: status?.videoAspectRatio ?? (16 / 9),
+        );
       }
     });
 
@@ -219,10 +230,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
     // Only call setPipEnabled when the desired state changes to avoid calling
     // setPictureInPictureParams during non-foreground states (causes Android
     // ensureValidPictureInPictureActivityParams to throw on Android 12+).
-    final wantPip = pipEnabled && isPlaying;
+    final wantPip = pipEnabled && isPlaying && status.hasVideo;
+    // We should also update PiP params if aspect ratio changes, but since Android 12
+    // requires this to be done only when the activity is foregrounded, we just pass it when wantPip changes.
+    // If we are currently playing a video and the aspect ratio changes, we might want to update it.
+    // Let's just pass the current aspect ratio.
     if (wantPip != _lastPipEnabled) {
       _lastPipEnabled = wantPip;
-      PipHandler.setPipEnabled(wantPip);
+      PipHandler.setPipEnabled(wantPip, aspectRatio: status.videoAspectRatio ?? (16 / 9));
     }
 
     // During 'preparing' the engine position/duration are always Duration.zero
@@ -560,7 +575,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
         await _controller.stop();
         if (_disposed || myGen != _playbackGeneration) return;
         
-        state = state.copyWith(isLoadingVideo: true);
+        state = state.copyWith(
+          isLoadingVideo: true,
+          subtitleUri: null, // Clear subtitles when a new track plays
+        );
         
         await _controller.play(
           targetTrack.toPlaybackTrack(),
@@ -629,6 +647,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       state = state.copyWith(
         playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
         isLoadingVideo: true,
+        subtitleUri: null, // Clear subtitles on manual track transition
       );
     }
 
@@ -890,6 +909,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
     if (!_controller.supportsSpeed) return;
     state = state.copyWith(speed: speed);
     await _controller.setSpeed(speed);
+  }
+
+  Future<void> setSubtitleTrack(String? uri) async {
+    state = state.copyWith(subtitleUri: uri);
+    await _controller.setSubtitleTrack(uri);
   }
 
   Future<void> toggleFavorite(Track track) async {

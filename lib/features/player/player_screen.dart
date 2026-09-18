@@ -1,6 +1,8 @@
 import '../../shared/widgets/pp_image.dart';
 import 'dart:ui' show lerpDouble;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:ppplayer/core/local_library/local_library_service.dart';
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -11,6 +13,8 @@ import 'package:ppplayer/core/cache/image_cache_manager.dart';
 import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
+import 'player_providers.dart';
+import 'package:fullscreen_window/fullscreen_window.dart';
 import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
@@ -18,6 +22,8 @@ import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/artists_links.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
 import '../../core/db/app_database.dart' as db;
+import 'widgets/video_controls_overlay.dart';
+import '../../core/models/track.dart';
 
 String _formatDuration(Duration d) {
   final minutes = d.inMinutes;
@@ -55,9 +61,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   int _slotRetryCount = 0;
   static const int _kMaxSlotRetries = 5;
 
+  final FocusNode _focusNode = FocusNode(debugLabel: 'PlayerScreenFocus');
+  double? _previousVolume;
+  bool _ownedFullscreen = false;
+
   @override
   void initState() {
     super.initState();
+    _focusNode.requestFocus();
     // Post-frame: read current state and attempt surface init.
     // This is the primary fix for the restored-session case:
     //   track already non-null, hasVideo already true, view already video
@@ -315,10 +326,27 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   }
 
   @override
+  void dispose() {
+    if (_ownedFullscreen) {
+      FullScreenWindow.setFullScreen(false);
+    }
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _setFullscreen(bool next) {
+    ref.read(isFullscreenProvider.notifier).setFullscreen(next);
+    FullScreenWindow.setFullScreen(next);
+    _ownedFullscreen = next;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final playerState = ref.watch(playerProvider);
     final playerNotifier = ref.read(playerProvider.notifier);
     final settings = ref.watch(settingsProvider);
+    final isFullscreen = ref.watch(isFullscreenProvider);
+    final videoFit = ref.watch(videoFitProvider);
     final track = playerState.currentTrack;
 
     // Trigger surface init whenever we have track info and the screen is
@@ -383,6 +411,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       if (next == PlayerView.video) {
         _slotRetryCount = 0; // Fresh retry budget for this trigger.
         ensureVideoSurfaceReady('playerView->video');
+        _focusNode.requestFocus();
       }
     });
 
@@ -401,8 +430,71 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
+    return Focus(
+      focusNode: _focusNode,
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        // Prevent duplicate execution (only act on down events)
+        if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+          return KeyEventResult.ignored;
+        }
+
+        // Do not intercept modified shortcuts (Ctrl, Alt, Meta)
+        if (event.logicalKey != LogicalKeyboardKey.escape &&
+            (HardwareKeyboard.instance.isControlPressed ||
+             HardwareKeyboard.instance.isAltPressed ||
+             HardwareKeyboard.instance.isMetaPressed)) {
+          return KeyEventResult.ignored;
+        }
+
+        final pNotifier = ref.read(playerProvider.notifier);
+        final pState = ref.read(playerProvider);
+
+        if (event.logicalKey == LogicalKeyboardKey.space) {
+          pNotifier.togglePlay();
+          return KeyEventResult.handled;
+        } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
+          final next = !ref.read(isFullscreenProvider);
+          _setFullscreen(next);
+          return KeyEventResult.handled;
+        } else if (event.logicalKey == LogicalKeyboardKey.escape) {
+          // If fullscreen, exit. (Overlay dismiss is implicitly handled by Navigator if it's a route).
+          if (ref.read(isFullscreenProvider)) {
+            _setFullscreen(false);
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+          pNotifier.seekTo(pState.position - const Duration(seconds: 5));
+          return KeyEventResult.handled;
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+          pNotifier.seekTo(pState.position + const Duration(seconds: 5));
+          return KeyEventResult.handled;
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+          final newVol = (pState.volume + 0.05).clamp(0.0, 1.0);
+          pNotifier.setVolume(newVol);
+          return KeyEventResult.handled;
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+          final newVol = (pState.volume - 0.05).clamp(0.0, 1.0);
+          pNotifier.setVolume(newVol);
+          return KeyEventResult.handled;
+        } else if (event.logicalKey == LogicalKeyboardKey.keyM) {
+          // Simple mute toggle: if volume > 0, set to 0, otherwise set to 1.
+          // Wait, the user asked to "remember the previous volume".
+          // We can just rely on the player provider's `setVolume` to handle it, or we implement it here.
+          // Let's implement it inside the player provider later, for now we will just call a toggleMute method if we add it, or handle it here.
+          if (pState.volume > 0) {
+            _previousVolume = pState.volume;
+            pNotifier.setVolume(0.0);
+          } else {
+            pNotifier.setVolume(_previousVolume ?? 1.0);
+          }
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Scaffold(
+        backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
           Positioned.fill(
@@ -770,16 +862,36 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                                             .addPostFrameCallback(
                                                               (_) => ensureVideoSurfaceReady('slot_reflow'),
                                                             );
+                                                        final isLocalVideo = track.sourceType == TrackSourceType.local && hasVideo;
+                                                        
                                                         Widget child = Container(
                                                           key: _videoSlotKey,
                                                           decoration: BoxDecoration(
                                                             color: Colors.transparent,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  24,
-                                                                ),
+                                                            borderRadius: BorderRadius.circular(24),
                                                           ),
                                                         );
+                                                        
+                                                        if (isLocalVideo) {
+                                                          child = Stack(
+                                                            fit: StackFit.expand,
+                                                            children: [
+                                                              child,
+                                                              VideoControlsOverlay(
+                                                                isFullscreen: isFullscreen,
+                                                                onToggleFullscreen: () {
+                                                                  final next = !isFullscreen;
+                                                                  _setFullscreen(next);
+                                                                },
+                                                                isFill: videoFit == BoxFit.cover,
+                                                                onToggleFit: () {
+                                                                  ref.read(videoFitProvider.notifier).toggle();
+                                                                },
+                                                              ),
+                                                            ],
+                                                          );
+                                                        }
+                                                        
                                                         return child;
                                                       },
                                                     );
@@ -1330,7 +1442,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildPipVideoSlot() {
@@ -1453,7 +1565,51 @@ class _QueueView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView.builder(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.queue,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              TextButton.icon(
+                key: const ValueKey('export_queue_button'),
+                onPressed: () async {
+                   try {
+                     final result = await ProviderScope.containerOf(context, listen: false)
+                         .read(localLibraryServiceProvider)
+                         .exportQueue(playerState.queue);
+                     if (context.mounted) {
+                        if (result == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Export cancelled.')),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Exported playlist. Skipped ${result.skippedCount} items.')),
+                          );
+                        }
+                     }
+                   } catch (e) {
+                     if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Export failed: $e')),
+                        );
+                     }
+                   }
+                },
+                icon: const Icon(Icons.download_rounded, size: 20),
+                label: Text(AppLocalizations.of(context)!.exportPlaylist),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ReorderableListView.builder(
       buildDefaultDragHandles: false,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: playerState.queue.length,
@@ -1638,6 +1794,9 @@ class _QueueView extends StatelessWidget {
               .slideX(begin: 0.1, duration: 400.ms, curve: Curves.easeOutCubic),
         );
       },
+    ),
+    ),
+    ],
     );
   }
 }

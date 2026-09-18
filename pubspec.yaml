@@ -57,6 +57,7 @@ dependencies:
   macos_file_open_handler: ^0.1.0
   webview_win_floating: ^3.0.3
   windows_taskbar: ^1.1.2
+  fullscreen_window: ^1.2.1
 
 dev_dependencies:
   integration_test:
@@ -74,6 +75,7 @@ dev_dependencies:
   mocktail: ^1.0.4
   mockito: ^5.7.0
   msix: ^3.18.0
+  sqlite3: ^3.5.2
 
 flutter_launcher_icons:
   android: "ic_launcher"

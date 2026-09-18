@@ -480,6 +480,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sortDateAdded => 'जोड़ने की तिथि के अनुसार क्रमित करें';
 
   @override
+  String get sortBy => 'Sort by';
+
+  @override
   String get trackInformation => 'ट्रैक की जानकारी';
 
   @override
@@ -675,9 +678,47 @@ class AppLocalizationsHi extends AppLocalizations {
   String get importFolderSubtitle => 'ऑडियो फ़ाइलों वाले एक फ़ोल्डर को चुनें';
 
   @override
+  String get importPlaylist => 'Import Playlist';
+
+  @override
+  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+
+  @override
+  String get exportPlaylist => 'Export Playlist';
+
+  @override
   String get playbackErrorUnsupportedFormat =>
       'Unsupported format or corrupted file';
 
   @override
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+
+  @override
+  String get localVideosCard => 'Local Videos';
+
+  @override
+  String get noLocalVideos => 'No videos found';
+
+  @override
+  String get searchLocalVideos => 'Search local videos';
+
+  @override
+  String get addVideos => 'Add Videos';
+
+  @override
+  String get subtitles => 'Subtitles';
+
+  @override
+  String get audioTracks => 'Audio Tracks';
+
+  @override
+  String get loadSubtitleFile => 'Load subtitle file...';
+
+  @override
+  String errorLoadingSubtitle(String error) {
+    return 'सबटाइटल लोड करने में त्रुटि: $error';
+  }
+
+  @override
+  String get off => 'Off';
 }

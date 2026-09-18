@@ -14,7 +14,16 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : AudioServiceActivity() {
     private val CHANNEL = "com.ppplayer.app/pip"
     private var isPipEnabled = false
+    private var currentAspectRatio: Double = 16.0 / 9.0
     private var methodChannel: MethodChannel? = null
+
+    private fun getSafeAspectRatio(ratio: Double): Rational {
+        // Clamp to valid Android PiP range (approx 1:2.39 to 2.39:1)
+        val minRatio = 100.0 / 239.0
+        val maxRatio = 239.0 / 100.0
+        val clampedRatio = ratio.coerceIn(minRatio, maxRatio)
+        return Rational((clampedRatio * 10000).toInt(), 10000)
+    }
 
     private fun logNative(event: String) {
         val pip = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) isInPictureInPictureMode else false
@@ -35,12 +44,16 @@ class MainActivity : AudioServiceActivity() {
             when (call.method) {
                 "setPipEnabled" -> {
                     isPipEnabled = call.argument<Boolean>("enabled") ?: false
+                    val ar = call.argument<Double>("aspectRatio")
+                    if (ar != null && !ar.isNaN() && ar > 0.0) {
+                        currentAspectRatio = ar
+                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         if (!isFinishing && !isDestroyed) {
                             try {
                                 if (isPipEnabled && packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
                                     val params = PictureInPictureParams.Builder()
-                                        .setAspectRatio(Rational(16, 9))
+                                        .setAspectRatio(getSafeAspectRatio(currentAspectRatio))
                                         .setAutoEnterEnabled(true)
                                         .build()
                                     setPictureInPictureParams(params)
@@ -58,10 +71,14 @@ class MainActivity : AudioServiceActivity() {
                     result.success(null)
                 }
                 "enterPip" -> {
+                    val ar = call.argument<Double>("aspectRatio")
+                    if (ar != null && !ar.isNaN() && ar > 0.0) {
+                        currentAspectRatio = ar
+                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         if (packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
                             val params = PictureInPictureParams.Builder()
-                                .setAspectRatio(Rational(16, 9))
+                                .setAspectRatio(getSafeAspectRatio(currentAspectRatio))
                                 .build()
                             try {
                                 val entered = enterPictureInPictureMode(params)
@@ -98,7 +115,7 @@ class MainActivity : AudioServiceActivity() {
             // Android 8–11: auto-enter is not supported; manually enter PiP here.
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 val params = PictureInPictureParams.Builder()
-                    .setAspectRatio(Rational(16, 9))
+                    .setAspectRatio(getSafeAspectRatio(currentAspectRatio))
                     .build()
                 try {
                     val entered = enterPictureInPictureMode(params)

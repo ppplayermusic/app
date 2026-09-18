@@ -17,6 +17,7 @@ import '../../features/library/remote_playlist_screen.dart';
 import '../../features/radio/radio_details_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/local_library/local_library_screen.dart';
+import '../../features/local_library/local_video_library_screen.dart';
 import '../../shared/widgets/scaffold_with_nav.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -65,6 +66,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/local-library',
             builder: (context, state) => const LocalLibraryScreen(),
+          ),
+          GoRoute(
+            path: '/local-videos',
+            builder: (context, state) => const LocalVideoLibraryScreen(),
           ),
           GoRoute(
             path: '/artist/:id',

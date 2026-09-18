@@ -36,6 +36,10 @@ abstract class Track with _$Track {
     @Default('available') String localAvailabilityStatus,
     String? localAlbumGroupKey,
     DateTime? localAddedAt,
+    /// True when [VideoProbeService] confirmed a video stream in this file.
+    /// False for all audio-only tracks, unclassified pre-v11 rows, and
+    /// online tracks.
+    @Default(false) bool isVideoFile,
   }) = _Track;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
@@ -70,6 +74,7 @@ abstract class Track with _$Track {
     int playCount = 0,
     String localAvailabilityStatus = 'available',
     DateTime? localAddedAt,
+    bool isVideoFile = false,
   }) {
     return Track(
       spotifyId: libraryId,
@@ -88,6 +93,7 @@ abstract class Track with _$Track {
       localAddedAt: localAddedAt,
       isFavorite: isFavorite,
       playCount: playCount,
+      isVideoFile: isVideoFile,
     );
   }
 

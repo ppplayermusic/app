@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:path/path.dart' as p;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

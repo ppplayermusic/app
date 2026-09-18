@@ -9,6 +9,7 @@ import '../../core/db/app_database.dart' as db;
 import '../../core/models/track.dart' as model;
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/track_tile.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
 import '../../shared/widgets/playlist_cover.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
@@ -110,8 +111,7 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
     // Persist to DB
     final database = ref.read(db.appDatabaseProvider);
     database.reorderTracks(
-      widget.playlistId,
-      updatedTracks.map((t) => t.spotifyId).toList(),
+      updatedTracks.map((t) => int.parse(t.queueItemId!)).toList(),
     );
   }
 
@@ -583,11 +583,29 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                     ),
                   const SizedBox(width: 8),
                   const SizedBox(width: 8),
-                  TactileIconButton(
-                    icon: Icons.more_vert_rounded,
-                    color: colorScheme.onSurfaceVariant,
-                    size: 28,
-                    onTap: () {},
+                  Builder(
+                    builder: (btnContext) => TactileIconButton(
+                      icon: Icons.more_vert_rounded,
+                      color: colorScheme.onSurfaceVariant,
+                      size: 28,
+                      onTap: () {
+                        final renderBox = btnContext.findRenderObject() as RenderBox?;
+                        final offset = renderBox?.localToGlobal(Offset.zero);
+                        if (offset == null) return;
+                        showContentContextMenu(
+                          context,
+                          ref,
+                          position: offset + Offset(0, renderBox!.size.height),
+                          target: PlaylistContextTarget(
+                            id: playlist.spotifyId ?? playlist.id.toString(),
+                            name: playlist.name,
+                            imageUrl: playlist.imageUrl,
+                            isLocal: playlist.spotifyId == null,
+                            localId: playlist.id,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                   const Spacer(),
                   TactileIconButton(
@@ -623,11 +641,13 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
         itemBuilder: (context, index) {
           final track = modelTracks[index];
           return ReorderableDelayedDragStartListener(
-            key: ValueKey(track.spotifyId),
+            key: ValueKey(track.queueItemId ?? track.spotifyId),
             index: index,
             child: TrackTile(
               index: index + 1,
               track: track,
+              playlistId: playlist.id,
+              playlistEntryId: track.queueItemId != null ? int.tryParse(track.queueItemId!) : null,
               onTap:
                   () => ref
                       .read(playerProvider.notifier)
