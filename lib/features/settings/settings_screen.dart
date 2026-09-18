@@ -648,7 +648,7 @@ class SettingsScreen extends ConsumerWidget {
       case 'de':
         return 'Deutsch';
       case 'pt':
-        return 'Português';
+        return 'Português (Brasil)';
       case 'it':
         return 'Italiano';
       case 'ja':
@@ -691,6 +691,18 @@ class SettingsScreen extends ConsumerWidget {
         return 'বাংলা';
       case 'pcm':
         return 'Naija';
+      case 'et':
+        return 'Eesti';
+      case 'fa':
+        return 'فارسی';
+      case 'gn':
+        return 'Avañe\'ẽ';
+      case 'hr':
+        return 'Hrvatski';
+      case 'ms':
+        return 'Bahasa Melayu';
+      case 'tr':
+        return 'Türkçe';
       default:
         return AppLocalizations.of(context)!.systemDefault;
     }
@@ -698,34 +710,14 @@ class SettingsScreen extends ConsumerWidget {
 
   void _showLanguagePicker(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    
+    // Build options dynamically from the app's generated supportedLocales
     final supportedLocales = [
       {'code': null, 'name': AppLocalizations.of(context)!.systemDefault},
-      {'code': 'en', 'name': 'English'},
-      {'code': 'es', 'name': 'Español'},
-      {'code': 'fr', 'name': 'Français'},
-      {'code': 'de', 'name': 'Deutsch'},
-      {'code': 'pt', 'name': 'Português'},
-      {'code': 'it', 'name': 'Italiano'},
-      {'code': 'ja', 'name': '日本語'},
-      {'code': 'ko', 'name': '한국어'},
-      {'code': 'zh', 'name': '中文'},
-      {'code': 'hi', 'name': 'हिन्दी'},
-      {'code': 'ru', 'name': 'Русский'},
-      {'code': 'ar', 'name': 'العربية'},
-      {'code': 'id', 'name': 'Bahasa Indonesia'},
-      {'code': 'my', 'name': 'မြန်မာ'},
-      {'code': 'pl', 'name': 'Polski'},
-      {'code': 'da', 'name': 'Dansk'},
-      {'code': 'kk', 'name': 'Қазақша'},
-      {'code': 'cs', 'name': 'Čeština'},
-      {'code': 'hu', 'name': 'Magyar'},
-      {'code': 'ka', 'name': 'ქართული'},
-      {'code': 'sv', 'name': 'Svenska'},
-      {'code': 'uz', 'name': 'O\'zbekcha'},
-      {'code': 'fil', 'name': 'Filipino'},
-      {'code': 'lv', 'name': 'Latviešu'},
-      {'code': 'bn', 'name': 'বাংলা'},
-      {'code': 'pcm', 'name': 'Naija'},
+      ...AppLocalizations.supportedLocales.map((locale) => {
+        'code': locale.languageCode,
+        'name': _getLanguageName(locale.languageCode, context)
+      }),
     ];
 
     showPremiumModal(
