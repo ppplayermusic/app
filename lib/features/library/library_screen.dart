@@ -472,6 +472,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                     .fadeIn(duration: 400.ms, delay: 100.ms)
                                     .slideY(begin: 0.1, end: 0),
                               ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: _LocalVideoCard(database: database)
+                                    .animate()
+                                    .fadeIn(duration: 400.ms, delay: 200.ms)
+                                    .slideY(begin: 0.1, end: 0),
+                              ),
                             ],
                           );
                         },
@@ -950,7 +957,7 @@ class _LocalVideoCard extends StatelessWidget {
         return TactileTap(
           onTap: () => context.push('/local-videos'),
           child: Container(
-            height: 160,
+            constraints: const BoxConstraints(minHeight: 140),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
               gradient: LinearGradient(

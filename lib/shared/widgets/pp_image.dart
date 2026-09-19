@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../core/cache/image_cache_manager.dart';
@@ -33,6 +34,16 @@ class PPImage extends StatelessWidget {
       final assetPath = imageUrl!.substring(6); // Remove 'asset:'
       image = Image.asset(
         assetPath,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder:
+            (context, error, stackTrace) => _buildErrorWidget(context),
+      );
+    } else if (imageUrl!.startsWith('/') || imageUrl!.startsWith('file://')) {
+      final path = imageUrl!.startsWith('file://') ? imageUrl!.replaceFirst('file://', '') : imageUrl!;
+      image = Image.file(
+        File(path),
         width: width,
         height: height,
         fit: fit,
@@ -93,6 +104,9 @@ class PPImage extends StatelessWidget {
 
     if (imageUrl.startsWith('asset:')) {
       return AssetImage(imageUrl.substring(6));
+    } else if (imageUrl.startsWith('/') || imageUrl.startsWith('file://')) {
+      final path = imageUrl.startsWith('file://') ? imageUrl.replaceFirst('file://', '') : imageUrl;
+      return FileImage(File(path));
     } else {
       return CachedNetworkImageProvider(
         imageUrl,

@@ -595,7 +595,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               if (!isPipMode && (!hasVideo || !isVideoView) && status != null && status.state != PlaybackState.preparing)
                 _VinylArtwork(
                   key: const ValueKey('artwork_view'),
-                  imageUrl: playerState.currentTrack?.albumImage ?? '',
+                  imageUrl: playerState.currentTrack?.albumImage ?? playerState.currentTrack?.localArtworkPath ?? '',
                   isPlaying: playerState.isPlaying,
                 ),
 

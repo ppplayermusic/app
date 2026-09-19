@@ -148,9 +148,11 @@ class _VideoControlsOverlayState extends ConsumerState<VideoControlsOverlay> {
                             AppLocalizations.of(context)!.subtitles,
                             player.state.tracks.subtitle,
                             player.state.track.subtitle,
-                            (t) {
+                            (t) async {
                               if (t.id == 'no' || t.id == 'none') {
-                                ref.read(playerProvider.notifier).setSubtitleTrack(null);
+                                await ref
+                                    .read(playerProvider.notifier)
+                                    .setSubtitleTrack(null);
                               } else {
                                 player.setSubtitleTrack(t);
                               }

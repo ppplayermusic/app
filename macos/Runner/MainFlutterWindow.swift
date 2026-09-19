@@ -16,6 +16,7 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     self.delegate = self
+    self.collectionBehavior.insert(.fullScreenPrimary)
     
     let channel = FlutterMethodChannel(name: "com.ppplayer.window", binaryMessenger: flutterViewController.engine.binaryMessenger)
     channel.setMethodCallHandler { [weak self] (call, result) in

@@ -237,10 +237,28 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
           },
           color: colorScheme.onSurface,
         ),
-        TactileIconButton(
-          icon: Icons.more_vert_rounded,
-          onTap: () {},
-          color: colorScheme.onSurface,
+        Builder(
+          builder: (btnContext) => TactileIconButton(
+            icon: Icons.more_vert_rounded,
+            color: colorScheme.onSurface,
+            onTap: () {
+              final renderBox = btnContext.findRenderObject() as RenderBox?;
+              final offset = renderBox?.localToGlobal(Offset.zero);
+              if (offset == null) return;
+              showContentContextMenu(
+                context,
+                ref,
+                position: offset + Offset(0, renderBox!.size.height),
+                target: PlaylistContextTarget(
+                  id: playlist.spotifyId ?? playlist.id.toString(),
+                  name: playlist.name,
+                  imageUrl: playlist.imageUrl,
+                  isLocal: playlist.spotifyId == null,
+                  localId: playlist.id,
+                ),
+              );
+            },
+          ),
         ),
         const SizedBox(width: 8),
       ],

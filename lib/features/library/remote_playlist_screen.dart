@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:ppplayer/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/db/app_database.dart' as db;
 import '../../shared/widgets/pp_image.dart';
+import '../../shared/widgets/context_menu/content_context_menu.dart';
 
 final remotePlaylistTracksProvider = StreamProvider.autoDispose
     .family<List<Track>, String>((ref, id) {
@@ -132,10 +134,26 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                     },
                     color: colorScheme.onSurface,
                   ),
-                  TactileIconButton(
-                    icon: Icons.more_vert_rounded,
-                    onTap: () {},
-                    color: colorScheme.onSurface,
+                  Builder(
+                    builder: (btnContext) => TactileIconButton(
+                      icon: Icons.more_vert_rounded,
+                      color: colorScheme.onSurface,
+                      onTap: () {
+                        final renderBox =
+                            btnContext.findRenderObject() as RenderBox?;
+                        final offset = renderBox?.localToGlobal(Offset.zero);
+                        if (offset == null) return;
+                        showContentContextMenu(
+                          context,
+                          ref,
+                          position: offset + Offset(0, renderBox!.size.height),
+                          target: PlaylistContextTarget(
+                            id: widget.playlistId,
+                            name: widget.playlistName ?? 'Playlist',
+                          ),
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -336,6 +354,7 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                   ),
                 ),
               ),
+              if (_isSearching) _buildSearchHeader(context),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
@@ -406,11 +425,34 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                                   },
                                 ),
                                 const SizedBox(width: 8),
-                                TactileIconButton(
-                                  icon: Icons.more_vert,
-                                  color: colorScheme.onSurfaceVariant,
-                                  padding: const EdgeInsets.all(10),
-                                  onTap: () {},
+                                Builder(
+                                  builder: (btnContext) => TactileIconButton(
+                                    icon: Icons.more_vert,
+                                    color: colorScheme.onSurfaceVariant,
+                                    padding: const EdgeInsets.all(10),
+                                    onTap: () {
+                                      final renderBox = btnContext
+                                          .findRenderObject() as RenderBox?;
+                                      final offset = renderBox
+                                          ?.localToGlobal(Offset.zero);
+                                      if (offset == null) return;
+                                      showContentContextMenu(
+                                        context,
+                                        ref,
+                                        position: offset +
+                                            Offset(
+                                                0, renderBox!.size.height),
+                                        target: PlaylistContextTarget(
+                                          id: widget.playlistId,
+                                          name:
+                                              widget.playlistName ?? 'Playlist',
+                                          imageUrl: tracks.isNotEmpty
+                                              ? tracks.first.albumImage
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
@@ -485,6 +527,35 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildSearchHeader(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: TextField(
+          controller: _searchController,
+          autofocus: true,
+          style: TextStyle(color: colorScheme.onSurface),
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.searchInPlaylist,
+            hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+            prefixIcon: Icon(
+              Icons.search_rounded,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            filled: true,
+            fillColor: colorScheme.onSurface.withValues(alpha: 0.1),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+        ),
+      ).animate().fadeIn().slideY(begin: -0.1),
     );
   }
 }
