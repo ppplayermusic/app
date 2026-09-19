@@ -138,9 +138,17 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                 ...tracks.map((track) {
                   final isSelected = track == currentTrack;
                   final dynamic t = track;
-                  final String displayTitle = (t.id == 'no' || t.id == 'none')
-                      ? AppLocalizations.of(context)!.off
-                      : (t.title ?? t.language ?? t.id);
+                  String? displayStr;
+                  if (t.id == 'no' || t.id == 'none') {
+                    displayStr = AppLocalizations.of(context)!.off;
+                  } else if (t.title != null && t.title.toString().trim().isNotEmpty) {
+                    displayStr = t.title;
+                  } else if (t.language != null && t.language.toString().trim().isNotEmpty) {
+                    displayStr = t.language;
+                  } else {
+                    displayStr = t.id;
+                  }
+                  final String displayTitle = displayStr ?? 'Unknown';
                   return ListTile(
                     title: Text(displayTitle),
                     trailing: isSelected ? const Icon(Icons.check) : null,
@@ -461,7 +469,7 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                       onTap: () {
                                         _onInteraction();
                                         playerNotifier.toggleFavorite(
-                                            track.copyWith(isFavorite: !isFav));
+                                            track.copyWith(isFavorite: isFav));
                                       },
                                     );
                                   },
@@ -545,6 +553,7 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                               // Left: Volume/Subtitle/Audio
                               Row(
                                 children: [
+                                  if (_mkPlayer != null) ...[
                                   IconButton(
                                     icon: const Icon(Icons.closed_caption,
                                         color: Colors.white),
@@ -561,9 +570,8 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                               ref
                                                   .read(playerProvider.notifier)
                                                   .setSubtitleTrack(null);
-                                            } else {
-                                              player.setSubtitleTrack(t);
                                             }
+                                            player.setSubtitleTrack(t);
                                           },
                                           onExternalLoad: () =>
                                               _pickExternalSubtitle(player),
@@ -587,6 +595,7 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                       }
                                     },
                                   ),
+                                  ],
                                 ],
                               ),
                               // Center: Playback controls
@@ -638,6 +647,16 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                     onTap: () {
                                       _onInteraction();
                                       playerNotifier.cycleRepeat();
+                                    },
+                                  ),
+                                  TactileIconButton(
+                                    icon: Icons.all_inclusive,
+                                    color: settings.autoplayEnabled
+                                        ? colorScheme.primary
+                                        : Colors.white.withValues(alpha: 0.6),
+                                    onTap: () {
+                                      _onInteraction();
+                                      ref.read(settingsProvider.notifier).toggleAutoplay(!settings.autoplayEnabled);
                                     },
                                   ),
                                 ],
