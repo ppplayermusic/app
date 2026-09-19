@@ -343,7 +343,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
           return;
         }
         _updateStatus(_currentStatus.copyWith(
-          state: buffering ? PlaybackState.buffering : PlaybackState.playing,
+          state: buffering ? PlaybackState.buffering : (_intendedState ?? PlaybackState.paused),
         ));
       }),
       a.videoParamsStream.listen((params) {
@@ -351,10 +351,15 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (_currentStatus.isIFrameMode) return;
         final w = params.w ?? 0;
         final h = params.h ?? 0;
-        final hasVideo = w > 0 && h > 0;
+        final hasDimensions = w > 0 && h > 0;
+        
+        // If the track is statically known to be a video, don't let a transient 0x0
+        // size param hide the view, which breaks native macOS texture binding.
+        final hasVideo = (_currentStatus.track?.isVideo == true) || hasDimensions;
+        
         _updateStatus(_currentStatus.copyWith(
           hasVideo: hasVideo,
-          videoAspectRatio: hasVideo ? w / h : null,
+          videoAspectRatio: hasDimensions ? w / h : null,
         ));
       }),
     ]);
@@ -416,9 +421,24 @@ class MediaKitPlaybackEngine implements PlaybackController {
       );
       // Assign _activeSession first so its callbacks are accepted and the
       // renderer getter immediately returns the new VideoController.
+      _activeSession = session;
+      _attemptActive = true;
+      _recoveryUsed = false;
+      _ready = false;
+      _latePauseGeneration = null;
+
       // Bind callbacks BEFORE opening so initialization events during open()
       // are accepted.
       _bindSession(session);
+
+      // Arm watchdog to prevent hanging on inaccessible files or broken streams
+      _watchdogTimer?.cancel();
+      _watchdogTimer = Timer(Duration(seconds: track.isLocal ? 5 : 20), () {
+        if (_disposed || _activeSession != session) return;
+        if (_currentStatus.state == PlaybackState.preparing || _currentStatus.state == PlaybackState.buffering) {
+          _failAttempt(myGen, track.isLocal ? 'error:file_inaccessible' : 'error:playback_timeout');
+        }
+      });
 
       // Publish the new renderer and status BEFORE opening media.
       _updateStatus(_currentStatus.copyWith(
