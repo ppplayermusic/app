@@ -707,19 +707,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       child: PopScope(
         key: const ValueKey('player_pop_scope'),
         // Intercept the system back gesture/button when the narrow-screen
-        // queue is visible. This matches the actual presentation condition
-        // (not !isDesktop) so a narrow desktop window is also covered.
-        canPop: !(isQueueView && !showDesktopQueuePanel),
+        // queue is visible OR when in fullscreen mode.
+        canPop: !(isQueueView && !showDesktopQueuePanel) && !isFullscreen,
         onPopInvokedWithResult: (didPop, _) {
           if (didPop) {
-            if (isFullscreen) {
-              // Ensure we exit fullscreen if the route is popped via swipe/back
-              _setFullscreen(false);
-            }
             return;
           }
           // didPop == false means canPop was false and the pop was intercepted.
-          if (!didPop && isQueueView && !showDesktopQueuePanel) {
+          if (isFullscreen) {
+            _setFullscreen(false);
+          } else if (isQueueView && !showDesktopQueuePanel) {
             _closeQueue();
           }
         },
@@ -799,7 +796,7 @@ class _ToggleTab extends StatelessWidget {
   }
 }
 
-class _QueueView extends StatelessWidget {
+class _QueueView extends ConsumerWidget {
   final PlayerState playerState;
   /// Called when the user taps the close button (narrow-screen only).
   /// Null when rendered in the desktop side panel (no close button shown).
@@ -814,7 +811,8 @@ class _QueueView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final autoplayEnabled = ref.watch(settingsProvider.select((s) => s.autoplayEnabled));
     return Column(
       children: [
         Padding(
@@ -829,6 +827,17 @@ class _QueueView extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  IconButton(
+                    key: const ValueKey('autoplay_toggle_button'),
+                    onPressed: () {
+                      ref.read(settingsProvider.notifier).toggleAutoplay(!autoplayEnabled);
+                    },
+                    icon: Icon(
+                      autoplayEnabled ? Icons.all_inclusive_rounded : Icons.all_inclusive_rounded,
+                      color: autoplayEnabled ? Theme.of(context).colorScheme.primary : null,
+                    ),
+                    tooltip: autoplayEnabled ? 'Autoplay: On' : 'Autoplay: Off',
+                  ),
                   IconButton(
                     key: const ValueKey('export_queue_button'),
                     onPressed: () async {
@@ -1085,16 +1094,18 @@ class _NarrowQueueOverlay extends StatelessWidget {
     final topPad = insets.top + 48;
     return Positioned.fill(
       top: topPad,
-      left: insets.left,
-      right: insets.right,
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         child: Material(
           color: colorScheme.surface,
-          child: _QueueView(
-            playerState: playerState,
-            onClose: onClose,
-            bottomPadding: insets.bottom,
+          child: SafeArea(
+            top: false,
+            bottom: false,
+            child: _QueueView(
+              playerState: playerState,
+              onClose: onClose,
+              bottomPadding: insets.bottom,
+            ),
           ),
         ),
       ),
