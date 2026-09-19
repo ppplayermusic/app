@@ -389,14 +389,17 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                 showShadow: showShadow,
                 renderRadius: renderRadius,
                 isWindows: isWindows,
+                transparentBackground: playbackStatus.track?.isLocal == true && !playbackStatus.hasVideo,
                 child: Stack(
                   children: [
-                    if (playbackStatus.track?.isLocal != true || playbackStatus.hasVideo)
-                      _StablePlaybackView(
+                    Offstage(
+                      offstage: playbackStatus.track?.isLocal == true && !playbackStatus.hasVideo,
+                      child: _StablePlaybackView(
                         controller: playbackEngine,
                         status: playbackStatus,
                         fit: videoFit,
                       ),
+                    ),
                     if (loadError != null)
                       Positioned.fill(
                         child: ClipRRect(
@@ -503,14 +506,17 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
                 showShadow: showShadow,
                 renderRadius: renderRadius,
                 isWindows: isWindows,
+                transparentBackground: playbackStatus.track?.isLocal == true && !playbackStatus.hasVideo,
                 child: Stack(
                   children: [
-                    if (playbackStatus.track?.isLocal != true || playbackStatus.hasVideo)
-                      _StablePlaybackView(
+                    Offstage(
+                      offstage: playbackStatus.track?.isLocal == true && !playbackStatus.hasVideo,
+                      child: _StablePlaybackView(
                         controller: playbackEngine,
                         status: playbackStatus,
                         fit: videoFit,
                       ),
+                    ),
                     if (loadError != null)
                       Positioned.fill(
                         child: ClipRRect(
@@ -612,6 +618,7 @@ class _PlaybackSurfaceLayer extends StatefulWidget {
     required this.showShadow,
     required this.renderRadius,
     required this.isWindows,
+    this.transparentBackground = false,
     required this.child,
   });
 
@@ -620,6 +627,7 @@ class _PlaybackSurfaceLayer extends StatefulWidget {
   final bool showShadow;
   final double renderRadius;
   final bool isWindows;
+  final bool transparentBackground;
   final Widget child;
 
   @override
@@ -659,7 +667,9 @@ class _PlaybackSurfaceLayerState extends State<_PlaybackSurfaceLayer> {
             : const Duration(milliseconds: 250),
         curve: Curves.easeOutQuart,
         decoration: BoxDecoration(
-          color: widget.pipPresentation ? Colors.black : Theme.of(context).colorScheme.surface,
+          color: widget.transparentBackground
+              ? Colors.transparent
+              : (widget.pipPresentation ? Colors.black : Theme.of(context).colorScheme.surface),
           borderRadius: BorderRadius.circular(widget.pipPresentation ? 0 : widget.renderRadius),
           boxShadow: [
             if (widget.showShadow && !widget.pipPresentation)

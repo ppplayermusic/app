@@ -298,6 +298,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (_currentStatus.isIFrameMode) return;
         // Don't overwrite preparing — wait for buffering/playing stream events.
         if (_currentStatus.state == PlaybackState.preparing) return;
+        if (playing) {
+          _watchdogTimer?.cancel();
+        }
         _updateStatus(_currentStatus.copyWith(
           state: playing ? PlaybackState.playing : PlaybackState.paused,
         ));
@@ -318,6 +321,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
             errStr.contains('not found')) {
           errorCode = 'error:file_inaccessible';
         }
+        _watchdogTimer?.cancel();
         _updateStatus(_currentStatus.copyWith(
           state: PlaybackState.error,
           error: errorCode,
@@ -327,6 +331,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (!completed) return;
         if (session != _activeSession || _disposed) return;
         if (_currentStatus.isIFrameMode) return;
+        _watchdogTimer?.cancel();
         _updateStatus(_currentStatus.copyWith(state: PlaybackState.ended));
       }),
       a.bufferingStream.listen((buffering) {
@@ -440,7 +445,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
       try {
         // Non-autoplay: open without starting playback.
-        await session.adapter.open(uri, play: false);
+        await session.adapter.open(uri, play: false).timeout(const Duration(seconds: 10));
         if (_disposed || _activeSession != session) return;
 
         // Apply settings AFTER open() to avoid hanging media_kit on Android.
@@ -467,7 +472,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
           errorCode = 'error:unsupported_format';
         } else if (errStr.contains('access') ||
             errStr.contains('not found') ||
-            errStr.contains('no such file')) {
+            errStr.contains('no such file') ||
+            errStr.contains('timeout')) {
           errorCode = 'error:file_inaccessible';
         }
         _updateStatus(_currentStatus.copyWith(
@@ -570,6 +576,15 @@ class MediaKitPlaybackEngine implements PlaybackController {
       // are accepted.
       _bindSession(session);
 
+      // Arm watchdog to prevent hanging on inaccessible files or broken streams
+      _watchdogTimer?.cancel();
+      _watchdogTimer = Timer(Duration(seconds: track.isLocal ? 5 : 20), () {
+        if (_disposed || _activeSession != session) return;
+        if (_currentStatus.state == PlaybackState.preparing || _currentStatus.state == PlaybackState.buffering) {
+          _failAttempt(myGen, track.isLocal ? 'error:file_inaccessible' : 'error:playback_timeout');
+        }
+      });
+
       // Publish the new renderer and status BEFORE opening media.
       _updateStatus(_currentStatus.copyWith(
         track: track,
@@ -588,7 +603,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
       try {
         // Non-autoplay open: explicitly start after verifying session ownership.
-        await session.adapter.open(uri, play: false);
+        await session.adapter.open(uri, play: false).timeout(const Duration(seconds: 10));
         if (_disposed || _activeSession != session) return;
 
         // Apply user settings AFTER open() to prevent Android deadlocks.
@@ -620,7 +635,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
             errorCode = 'error:unsupported_format';
           } else if (errStr.contains('access') ||
               errStr.contains('not found') ||
-              errStr.contains('no such file')) {
+              errStr.contains('no such file') ||
+              errStr.contains('timeout')) {
             errorCode = 'error:file_inaccessible';
           }
           _failAttempt(myGen, errorCode);
