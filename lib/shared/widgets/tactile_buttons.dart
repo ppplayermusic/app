@@ -168,6 +168,7 @@ class _TactileIconButtonState extends State<TactileIconButton> {
 /// 5. The circle transforms back into the PPPlayer logo, which smoothly decelerates to rest
 class TactilePlayerPlayPauseButton extends StatefulWidget {
   final bool isPlaying;
+  final bool isLoading;
   final VoidCallback? onTap;
   final double size;
   final Color? activeGlowColor;
@@ -176,6 +177,7 @@ class TactilePlayerPlayPauseButton extends StatefulWidget {
   const TactilePlayerPlayPauseButton({
     super.key,
     required this.isPlaying,
+    this.isLoading = false,
     this.onTap,
     this.size = 64,
     this.activeGlowColor,
@@ -393,7 +395,7 @@ class _TactilePlayerPlayPauseButtonState
                   pointScale: pointScale,
                   spiralProgress: spiralProgress,
                   spiralTrailFade: spiralTrailFade * transition,
-                  pauseOpacity: pauseOpacity * transition,
+                  pauseOpacity: widget.isLoading ? 0.0 : (pauseOpacity * transition),
                   pauseMorphProgress: pauseMorphProgress,
                   pulseRadius: pulseRadius,
                   pulseOpacity: pulseOpacity * transition,
@@ -405,8 +407,19 @@ class _TactilePlayerPlayPauseButtonState
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
+                    // Loading indicator
+                    if (widget.isLoading)
+                      SizedBox(
+                        width: iconSize,
+                        height: iconSize,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                    
                     // 1. Paused State: Solid play icon
-                    if (transition < 0.22 || isReversing)
+                    if ((transition < 0.22 || isReversing) && !widget.isLoading)
                       Opacity(
                         opacity: (isReversing
                                 ? (1.0 - transition)
@@ -473,25 +486,30 @@ class _TactilePlayerPlayPauseButtonState
       },
     );
 
-    return MouseRegion(
-      cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: Tooltip(
-        message: tooltipMessage,
-        waitDuration: const Duration(milliseconds: 600),
-        child: GestureDetector(
-          onTapDown: _handleTapDown,
-          onTapUp: (_) => setState(() => _scale = 1.0),
-          onTapCancel: () => setState(() => _scale = 1.0),
-          onTap: widget.onTap,
-          child: AnimatedScale(
-            scale: effectiveScale,
-            duration: const Duration(milliseconds: 120),
-            curve: Curves.easeOutCubic,
-            child: Opacity(
-              opacity: isEnabled ? 1.0 : 0.5,
-              child: buttonContent,
+    return Semantics(
+      button: true,
+      label: widget.isLoading ? 'Loading' : (widget.isPlaying ? 'Pause' : 'Play'),
+      hint: widget.isLoading ? 'Buffering media' : 'Toggle playback state',
+      child: MouseRegion(
+        cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: Tooltip(
+          message: tooltipMessage,
+          waitDuration: const Duration(milliseconds: 600),
+          child: GestureDetector(
+            onTapDown: _handleTapDown,
+            onTapUp: (_) => setState(() => _scale = 1.0),
+            onTapCancel: () => setState(() => _scale = 1.0),
+            onTap: widget.onTap,
+            child: AnimatedScale(
+              scale: effectiveScale,
+              duration: const Duration(milliseconds: 120),
+              curve: Curves.easeOutCubic,
+              child: Opacity(
+                opacity: isEnabled ? 1.0 : 0.5,
+                child: buttonContent,
+              ),
             ),
           ),
         ),

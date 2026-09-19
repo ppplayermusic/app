@@ -1,6 +1,6 @@
 /// Discriminates local vs online sources in the engine layer.
 /// Persisted in the queue JSON through Track.sourceType.
-enum PlaybackSourceType { online, local }
+enum PlaybackSourceType { online, local, networkStream }
 
 class PlaybackTrack {
   final String id;
@@ -13,7 +13,11 @@ class PlaybackTrack {
   /// For local tracks: the URI string to pass to media_kit Media().
   /// Built via Uri.file(path).toString() or passed as content:// URI opaquely.
   final String? localMediaUri;
+  final String? networkMediaUri;
   final bool isVideo;
+  /// Explicit flag set by the upstream coordinator (e.g. manifest parser)
+  /// to indicate this stream is known to be a live broadcast.
+  final bool isLiveStream;
 
   const PlaybackTrack({
     required this.id,
@@ -24,7 +28,9 @@ class PlaybackTrack {
     this.duration,
     this.sourceType = PlaybackSourceType.online,
     this.localMediaUri,
+    this.networkMediaUri,
     this.isVideo = false,
+    this.isLiveStream = false,
   });
 
   bool get isLocal => sourceType == PlaybackSourceType.local;

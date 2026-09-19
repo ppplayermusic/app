@@ -38,10 +38,11 @@ class PlaylistCover extends StatelessWidget {
 
   Widget _buildCoverContent(BuildContext context) {
     if (images.isEmpty) {
+      final double iconSize = size.isFinite ? size * 0.4 : 64.0;
       return Center(
         child: Icon(
           Icons.music_note,
-          size: size * 0.4,
+          size: iconSize,
           color: Theme.of(
             context,
           ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),

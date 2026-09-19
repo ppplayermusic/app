@@ -16,6 +16,7 @@ import '../../features/library/playlist_detail_screen.dart';
 import '../../features/library/remote_playlist_screen.dart';
 import '../../features/radio/radio_details_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/network_streams/stream_playlist_detail_screen.dart';
 import '../../features/local_library/local_library_screen.dart';
 import '../../features/local_library/local_video_library_screen.dart';
 import '../../shared/widgets/scaffold_with_nav.dart';
@@ -163,6 +164,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               final id = state.pathParameters['id']!;
               final name = state.uri.queryParameters['name'] ?? id;
               return GenreDetailsScreen(categoryId: id, categoryName: name);
+            },
+          ),
+          GoRoute(
+            path: '/stream_playlist/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return StreamPlaylistDetailScreen(playlistId: id);
             },
           ),
         ],

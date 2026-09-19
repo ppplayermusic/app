@@ -7,7 +7,7 @@ enum QueueItemOrigin { context, user, autoplay }
 
 /// Distinguishes how the track is played. Stored explicitly so that an
 /// unavailable local track is still recognised as local in the playback layer.
-enum TrackSourceType { online, local }
+enum TrackSourceType { online, local, networkStream }
 
 @freezed
 abstract class Track with _$Track {
@@ -40,14 +40,39 @@ abstract class Track with _$Track {
     /// False for all audio-only tracks, unclassified pre-v11 rows, and
     /// online tracks.
     @Default(false) bool isVideoFile,
+    // --- Network Stream fields ---
+    /// Stream URL for network streams.
+    String? networkStreamUrl,
+    /// Whether the network stream is explicitly flagged as a live broadcast.
+    @Default(false) bool isLiveStream,
   }) = _Track;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
 
   /// Build from Drift database row
   factory Track.fromDb(dynamic t) {
+    final String id = t.spotifyId;
+    
+    if (id.startsWith('stream:')) {
+      return Track(
+        spotifyId: id,
+        name: t.name,
+        artistId: t.artistId,
+        artistName: t.artistName,
+        albumId: t.albumId,
+        albumName: t.albumName,
+        albumImage: t.albumImage,
+        durationMs: t.durationMs,
+        youtubeVideoId: t.youtubeVideoId,
+        playCount: t.playCount,
+        isFavorite: t.isFavorite,
+        sourceType: TrackSourceType.networkStream,
+        networkStreamUrl: id.substring(7),
+      );
+    }
+
     return Track(
-      spotifyId: t.spotifyId,
+      spotifyId: id,
       name: t.name,
       artistId: t.artistId,
       artistName: t.artistName,
@@ -58,6 +83,7 @@ abstract class Track with _$Track {
       youtubeVideoId: t.youtubeVideoId,
       playCount: t.playCount,
       isFavorite: t.isFavorite,
+      sourceType: id.startsWith('local:') ? TrackSourceType.local : TrackSourceType.online,
     );
   }
 
@@ -97,6 +123,32 @@ abstract class Track with _$Track {
     );
   }
 
+  /// Build from a parsed network stream (e.g. M3U channel)
+  factory Track.fromNetworkStream({
+    required String streamUrl,
+    required String title,
+    String? logoUrl,
+    String? groupTitle,
+    bool isFavorite = false,
+    bool isLiveStream = false,
+  }) {
+    return Track(
+      // We prefix with 'stream:' to avoid Spotify ID collisions.
+      spotifyId: 'stream:$streamUrl',
+      name: title,
+      artistId: 'stream',
+      artistName: groupTitle ?? 'Network Stream',
+      albumId: null,
+      albumName: null,
+      albumImage: logoUrl,
+      sourceType: TrackSourceType.networkStream,
+      networkStreamUrl: streamUrl,
+      isFavorite: isFavorite,
+      isLiveStream: isLiveStream,
+      isVideoFile: true, // Most IPTV streams are video
+    );
+  }
+
   /// Build a track from Spotify API track object
   factory Track.fromSpotify(Map<String, dynamic> json) {
     final artists = (json['artists'] as List?) ?? [];
@@ -130,8 +182,9 @@ abstract class Track with _$Track {
   }
 }
 
-extension TrackLocalX on Track {
+extension TrackSourceX on Track {
   bool get isLocal => sourceType == TrackSourceType.local;
+  bool get isNetworkStream => sourceType == TrackSourceType.networkStream;
 
   /// True when the track is local AND the file was last seen as accessible.
   /// An unavailable local track has isLocal=true but isAvailable=false.

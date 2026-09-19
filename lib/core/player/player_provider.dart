@@ -436,7 +436,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
       final service = ref.read(playbackServiceProvider);
       Track resolvedTrack = track;
       
-      if (!track.isLocal) {
+      if (!track.isLocal && !track.isNetworkStream) {
         final candidates = await service.resolveCandidates(track, null);
         if (_disposed || myGen != _playbackGeneration) {
           _restoringState = false;
@@ -570,7 +570,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
     try {
       final service = ref.read(playbackServiceProvider);
       
-      if (targetTrack.isLocal) {
+      if (targetTrack.isLocal || targetTrack.isNetworkStream) {
         if (_disposed || myGen != _playbackGeneration) return;
         await _controller.stop();
         if (_disposed || myGen != _playbackGeneration) return;
@@ -948,6 +948,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     final currentTrack = queue.currentTrack;
     if (currentTrack == null) return;
+    
+    if (currentTrack.isLocal || currentTrack.isNetworkStream) {
+      return; // Autoplay feature requires online context
+    }
 
     _isFetchingAutoplay = true;
     try {

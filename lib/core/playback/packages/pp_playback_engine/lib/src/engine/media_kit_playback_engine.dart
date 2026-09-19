@@ -141,12 +141,22 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _subscriptions.addAll([
       _player!.stream.position.listen((pos) {
         if (!_currentStatus.isIFrameMode) {
-          _updateStatus(_currentStatus.copyWith(position: pos));
+          final isLive = _currentStatus.duration == Duration.zero && pos > Duration.zero;
+          _updateStatus(_currentStatus.copyWith(
+            position: pos,
+            isLive: isLive || _currentStatus.track?.isLiveStream == true,
+          ));
         }
       }),
       _player!.stream.duration.listen((dur) {
         if (!_currentStatus.isIFrameMode) {
-          _updateStatus(_currentStatus.copyWith(duration: dur));
+          final isSeekable = dur > Duration.zero;
+          final isLive = dur == Duration.zero && _currentStatus.position > Duration.zero;
+          _updateStatus(_currentStatus.copyWith(
+            duration: dur,
+            isSeekable: isSeekable && _currentStatus.track?.isLiveStream != true,
+            isLive: isLive || _currentStatus.track?.isLiveStream == true,
+          ));
         }
       }),
       _player!.stream.buffer.listen((buf) {
@@ -236,12 +246,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
   Future<void> prepare(PlaybackTrack track, {Duration? position}) async {
     if (_disposed) return;
     
-    if (track.isLocal) {
-      if (track.localMediaUri == null) {
+    if (track.isLocal || track.sourceType == PlaybackSourceType.networkStream) {
+      final uri = track.isLocal ? track.localMediaUri : track.networkMediaUri;
+      if (uri == null) {
         _updateStatus(_currentStatus.copyWith(
           track: track,
           state: PlaybackState.error,
-          error: 'Local media URI is missing for ${track.id}',
+          error: 'Media URI is missing for ${track.id}',
         ));
         return;
       }
@@ -256,6 +267,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
         isIFrameMode: false,
         activeVideoId: track.id,
         hasVideo: track.isVideo,
+        isLive: track.isLiveStream,
+        isSeekable: !track.isLiveStream,
       ));
       
       if (_currentStatus.isIFrameMode) {
@@ -265,7 +278,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
       }
       
       try {
-        await _player!.open(Media(track.localMediaUri!), play: false);
+        await _player!.open(Media(uri), play: false);
         if (_disposed || _playGeneration != myGen) return;
         
         if (position != null) {
@@ -392,9 +405,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _ready = false;
     _latePauseGeneration = null;
 
-    if (track.isLocal) {
-      if (track.localMediaUri == null) {
-        _failAttempt(myGen, 'Local media URI is missing for ${track.id}');
+    if (track.isLocal || track.sourceType == PlaybackSourceType.networkStream) {
+      final uri = track.isLocal ? track.localMediaUri : track.networkMediaUri;
+      if (uri == null) {
+        _failAttempt(myGen, 'Media URI is missing for ${track.id}');
         return;
       }
       
@@ -407,11 +421,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
           hasVideo: track.isVideo,
           isIFrameMode: false,
           generation: myGen,
+          isLive: track.isLiveStream,
+          isSeekable: !track.isLiveStream,
         ),
       );
       
       try {
-        await _player!.open(Media(track.localMediaUri!));
+        await _player!.open(Media(uri));
         if (_disposed || _playGeneration != myGen) return;
         
         if (startAt > Duration.zero) {

@@ -176,6 +176,30 @@ class ImportRoots extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class StreamPlaylists extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
+  // 'url' | 'local'
+  TextColumn get sourceKind => text()();
+  // e.g. "https://raw.github.../fj.m3u" or "/Users/..."
+  TextColumn get sourceUri => text()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get lastRefreshed => dateTime().nullable()();
+}
+
+class StreamChannels extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get playlistId => integer()();
+  // tvg-id from M3U to preserve identity across refreshes
+  TextColumn get tvgId => text().nullable()();
+  TextColumn get title => text()();
+  TextColumn get logo => text().nullable()();
+  TextColumn get groupTitle => text().nullable()();
+  TextColumn get streamUrl => text()();
+  BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
+  IntColumn get position => integer()();
+}
+
 // --- Database ---
 
 @DriftDatabase(
@@ -189,6 +213,8 @@ class ImportRoots extends Table {
     CatalogCacheEntries,
     LocalFiles,
     ImportRoots,
+    StreamPlaylists,
+    StreamChannels,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -197,7 +223,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -264,6 +290,10 @@ class AppDatabase extends _$AppDatabase {
         // Backfill: all existing roots were audio-only imports, so 'audio' is
         // the correct default value for backward compatibility.
         await m.addColumn(importRoots, importRoots.mediaScope);
+      }
+      if (from < 12) {
+        await m.createTable(streamPlaylists);
+        await m.createTable(streamChannels);
       }
     },
   );

@@ -947,6 +947,7 @@ class _MiniPlayerBar extends ConsumerWidget {
                         ),
                         TactilePlayerPlayPauseButton(
                           isPlaying: playerState.isPlaying,
+                          isLoading: playerState.isLoadingVideo,
                           size: 34,
                           onTap:
                               () =>
@@ -1690,6 +1691,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
                           const SizedBox(width: 16),
                           TactilePlayerPlayPauseButton(
                             isPlaying: playerState.isPlaying,
+                            isLoading: playerState.isLoadingVideo,
                             size: 46,
                             onTap:
                                 () =>

@@ -15,6 +15,8 @@ import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
 import '../../shared/widgets/pp_image.dart';
 import 'import_local_modal.dart';
+import '../network_streams/network_stream_dialog.dart';
+import '../network_streams/network_streams_grid.dart';
 
 enum LibraryFilter { all, playlists, artists, albums, stations }
 
@@ -392,6 +394,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         onTap: () => showImportLocalModal(context, ref),
                       ),
                       TactileIconButton(
+                        icon: Icons.public_rounded,
+                        onTap: () => showNetworkStreamDialog(context),
+                      ),
+                      TactileIconButton(
                         icon: Icons.search_rounded,
                         onTap: () {
                           setState(() {
@@ -524,6 +530,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
           if (_selectedFilter == LibraryFilter.all ||
               _selectedFilter == LibraryFilter.stations) ...[
+            StreamPlaylistsSliverGrid(
+              searchQuery: _searchQuery,
+              sortByRecent: _selectedSort == LibrarySort.recent,
+              showHeader:
+                  _selectedFilter == LibraryFilter.all && _searchQuery.isEmpty,
+            ),
             _RadiosSliverGrid(
               database: database,
               searchQuery: _searchQuery,

@@ -34,6 +34,8 @@ _Track _$TrackFromJson(Map<String, dynamic> json) => _Track(
       ? null
       : DateTime.parse(json['localAddedAt'] as String),
   isVideoFile: json['isVideoFile'] as bool? ?? false,
+  networkStreamUrl: json['networkStreamUrl'] as String?,
+  isLiveStream: json['isLiveStream'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
@@ -57,6 +59,8 @@ Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
   'localAlbumGroupKey': instance.localAlbumGroupKey,
   'localAddedAt': instance.localAddedAt?.toIso8601String(),
   'isVideoFile': instance.isVideoFile,
+  'networkStreamUrl': instance.networkStreamUrl,
+  'isLiveStream': instance.isLiveStream,
 };
 
 const _$QueueItemOriginEnumMap = {
@@ -68,4 +72,5 @@ const _$QueueItemOriginEnumMap = {
 const _$TrackSourceTypeEnumMap = {
   TrackSourceType.online: 'online',
   TrackSourceType.local: 'local',
+  TrackSourceType.networkStream: 'networkStream',
 };

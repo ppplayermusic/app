@@ -4950,6 +4950,965 @@ class ImportRootsCompanion extends UpdateCompanion<ImportRoot> {
   }
 }
 
+class $StreamPlaylistsTable extends StreamPlaylists
+    with TableInfo<$StreamPlaylistsTable, StreamPlaylist> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $StreamPlaylistsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceKindMeta = const VerificationMeta(
+    'sourceKind',
+  );
+  @override
+  late final GeneratedColumn<String> sourceKind = GeneratedColumn<String>(
+    'source_kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceUriMeta = const VerificationMeta(
+    'sourceUri',
+  );
+  @override
+  late final GeneratedColumn<String> sourceUri = GeneratedColumn<String>(
+    'source_uri',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _lastRefreshedMeta = const VerificationMeta(
+    'lastRefreshed',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastRefreshed =
+      GeneratedColumn<DateTime>(
+        'last_refreshed',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    sourceKind,
+    sourceUri,
+    createdAt,
+    lastRefreshed,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'stream_playlists';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<StreamPlaylist> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('source_kind')) {
+      context.handle(
+        _sourceKindMeta,
+        sourceKind.isAcceptableOrUnknown(data['source_kind']!, _sourceKindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceKindMeta);
+    }
+    if (data.containsKey('source_uri')) {
+      context.handle(
+        _sourceUriMeta,
+        sourceUri.isAcceptableOrUnknown(data['source_uri']!, _sourceUriMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceUriMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('last_refreshed')) {
+      context.handle(
+        _lastRefreshedMeta,
+        lastRefreshed.isAcceptableOrUnknown(
+          data['last_refreshed']!,
+          _lastRefreshedMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  StreamPlaylist map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return StreamPlaylist(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      sourceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_kind'],
+      )!,
+      sourceUri: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_uri'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      lastRefreshed: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_refreshed'],
+      ),
+    );
+  }
+
+  @override
+  $StreamPlaylistsTable createAlias(String alias) {
+    return $StreamPlaylistsTable(attachedDatabase, alias);
+  }
+}
+
+class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
+  final int id;
+  final String title;
+  final String sourceKind;
+  final String sourceUri;
+  final DateTime createdAt;
+  final DateTime? lastRefreshed;
+  const StreamPlaylist({
+    required this.id,
+    required this.title,
+    required this.sourceKind,
+    required this.sourceUri,
+    required this.createdAt,
+    this.lastRefreshed,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['title'] = Variable<String>(title);
+    map['source_kind'] = Variable<String>(sourceKind);
+    map['source_uri'] = Variable<String>(sourceUri);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || lastRefreshed != null) {
+      map['last_refreshed'] = Variable<DateTime>(lastRefreshed);
+    }
+    return map;
+  }
+
+  StreamPlaylistsCompanion toCompanion(bool nullToAbsent) {
+    return StreamPlaylistsCompanion(
+      id: Value(id),
+      title: Value(title),
+      sourceKind: Value(sourceKind),
+      sourceUri: Value(sourceUri),
+      createdAt: Value(createdAt),
+      lastRefreshed: lastRefreshed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastRefreshed),
+    );
+  }
+
+  factory StreamPlaylist.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return StreamPlaylist(
+      id: serializer.fromJson<int>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      sourceKind: serializer.fromJson<String>(json['sourceKind']),
+      sourceUri: serializer.fromJson<String>(json['sourceUri']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      lastRefreshed: serializer.fromJson<DateTime?>(json['lastRefreshed']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'title': serializer.toJson<String>(title),
+      'sourceKind': serializer.toJson<String>(sourceKind),
+      'sourceUri': serializer.toJson<String>(sourceUri),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'lastRefreshed': serializer.toJson<DateTime?>(lastRefreshed),
+    };
+  }
+
+  StreamPlaylist copyWith({
+    int? id,
+    String? title,
+    String? sourceKind,
+    String? sourceUri,
+    DateTime? createdAt,
+    Value<DateTime?> lastRefreshed = const Value.absent(),
+  }) => StreamPlaylist(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    sourceKind: sourceKind ?? this.sourceKind,
+    sourceUri: sourceUri ?? this.sourceUri,
+    createdAt: createdAt ?? this.createdAt,
+    lastRefreshed: lastRefreshed.present
+        ? lastRefreshed.value
+        : this.lastRefreshed,
+  );
+  StreamPlaylist copyWithCompanion(StreamPlaylistsCompanion data) {
+    return StreamPlaylist(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      sourceKind: data.sourceKind.present
+          ? data.sourceKind.value
+          : this.sourceKind,
+      sourceUri: data.sourceUri.present ? data.sourceUri.value : this.sourceUri,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      lastRefreshed: data.lastRefreshed.present
+          ? data.lastRefreshed.value
+          : this.lastRefreshed,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StreamPlaylist(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('sourceKind: $sourceKind, ')
+          ..write('sourceUri: $sourceUri, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('lastRefreshed: $lastRefreshed')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, title, sourceKind, sourceUri, createdAt, lastRefreshed);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is StreamPlaylist &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.sourceKind == this.sourceKind &&
+          other.sourceUri == this.sourceUri &&
+          other.createdAt == this.createdAt &&
+          other.lastRefreshed == this.lastRefreshed);
+}
+
+class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
+  final Value<int> id;
+  final Value<String> title;
+  final Value<String> sourceKind;
+  final Value<String> sourceUri;
+  final Value<DateTime> createdAt;
+  final Value<DateTime?> lastRefreshed;
+  const StreamPlaylistsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.sourceKind = const Value.absent(),
+    this.sourceUri = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.lastRefreshed = const Value.absent(),
+  });
+  StreamPlaylistsCompanion.insert({
+    this.id = const Value.absent(),
+    required String title,
+    required String sourceKind,
+    required String sourceUri,
+    this.createdAt = const Value.absent(),
+    this.lastRefreshed = const Value.absent(),
+  }) : title = Value(title),
+       sourceKind = Value(sourceKind),
+       sourceUri = Value(sourceUri);
+  static Insertable<StreamPlaylist> custom({
+    Expression<int>? id,
+    Expression<String>? title,
+    Expression<String>? sourceKind,
+    Expression<String>? sourceUri,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? lastRefreshed,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (sourceKind != null) 'source_kind': sourceKind,
+      if (sourceUri != null) 'source_uri': sourceUri,
+      if (createdAt != null) 'created_at': createdAt,
+      if (lastRefreshed != null) 'last_refreshed': lastRefreshed,
+    });
+  }
+
+  StreamPlaylistsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? title,
+    Value<String>? sourceKind,
+    Value<String>? sourceUri,
+    Value<DateTime>? createdAt,
+    Value<DateTime?>? lastRefreshed,
+  }) {
+    return StreamPlaylistsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      sourceKind: sourceKind ?? this.sourceKind,
+      sourceUri: sourceUri ?? this.sourceUri,
+      createdAt: createdAt ?? this.createdAt,
+      lastRefreshed: lastRefreshed ?? this.lastRefreshed,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (sourceKind.present) {
+      map['source_kind'] = Variable<String>(sourceKind.value);
+    }
+    if (sourceUri.present) {
+      map['source_uri'] = Variable<String>(sourceUri.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (lastRefreshed.present) {
+      map['last_refreshed'] = Variable<DateTime>(lastRefreshed.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StreamPlaylistsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('sourceKind: $sourceKind, ')
+          ..write('sourceUri: $sourceUri, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('lastRefreshed: $lastRefreshed')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $StreamChannelsTable extends StreamChannels
+    with TableInfo<$StreamChannelsTable, StreamChannel> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $StreamChannelsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _playlistIdMeta = const VerificationMeta(
+    'playlistId',
+  );
+  @override
+  late final GeneratedColumn<int> playlistId = GeneratedColumn<int>(
+    'playlist_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tvgIdMeta = const VerificationMeta('tvgId');
+  @override
+  late final GeneratedColumn<String> tvgId = GeneratedColumn<String>(
+    'tvg_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _logoMeta = const VerificationMeta('logo');
+  @override
+  late final GeneratedColumn<String> logo = GeneratedColumn<String>(
+    'logo',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _groupTitleMeta = const VerificationMeta(
+    'groupTitle',
+  );
+  @override
+  late final GeneratedColumn<String> groupTitle = GeneratedColumn<String>(
+    'group_title',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _streamUrlMeta = const VerificationMeta(
+    'streamUrl',
+  );
+  @override
+  late final GeneratedColumn<String> streamUrl = GeneratedColumn<String>(
+    'stream_url',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isFavoriteMeta = const VerificationMeta(
+    'isFavorite',
+  );
+  @override
+  late final GeneratedColumn<bool> isFavorite = GeneratedColumn<bool>(
+    'is_favorite',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_favorite" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _positionMeta = const VerificationMeta(
+    'position',
+  );
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+    'position',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    playlistId,
+    tvgId,
+    title,
+    logo,
+    groupTitle,
+    streamUrl,
+    isFavorite,
+    position,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'stream_channels';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<StreamChannel> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('playlist_id')) {
+      context.handle(
+        _playlistIdMeta,
+        playlistId.isAcceptableOrUnknown(data['playlist_id']!, _playlistIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_playlistIdMeta);
+    }
+    if (data.containsKey('tvg_id')) {
+      context.handle(
+        _tvgIdMeta,
+        tvgId.isAcceptableOrUnknown(data['tvg_id']!, _tvgIdMeta),
+      );
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('logo')) {
+      context.handle(
+        _logoMeta,
+        logo.isAcceptableOrUnknown(data['logo']!, _logoMeta),
+      );
+    }
+    if (data.containsKey('group_title')) {
+      context.handle(
+        _groupTitleMeta,
+        groupTitle.isAcceptableOrUnknown(data['group_title']!, _groupTitleMeta),
+      );
+    }
+    if (data.containsKey('stream_url')) {
+      context.handle(
+        _streamUrlMeta,
+        streamUrl.isAcceptableOrUnknown(data['stream_url']!, _streamUrlMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_streamUrlMeta);
+    }
+    if (data.containsKey('is_favorite')) {
+      context.handle(
+        _isFavoriteMeta,
+        isFavorite.isAcceptableOrUnknown(data['is_favorite']!, _isFavoriteMeta),
+      );
+    }
+    if (data.containsKey('position')) {
+      context.handle(
+        _positionMeta,
+        position.isAcceptableOrUnknown(data['position']!, _positionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_positionMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  StreamChannel map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return StreamChannel(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      playlistId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}playlist_id'],
+      )!,
+      tvgId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tvg_id'],
+      ),
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      logo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}logo'],
+      ),
+      groupTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group_title'],
+      ),
+      streamUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stream_url'],
+      )!,
+      isFavorite: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_favorite'],
+      )!,
+      position: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}position'],
+      )!,
+    );
+  }
+
+  @override
+  $StreamChannelsTable createAlias(String alias) {
+    return $StreamChannelsTable(attachedDatabase, alias);
+  }
+}
+
+class StreamChannel extends DataClass implements Insertable<StreamChannel> {
+  final int id;
+  final int playlistId;
+  final String? tvgId;
+  final String title;
+  final String? logo;
+  final String? groupTitle;
+  final String streamUrl;
+  final bool isFavorite;
+  final int position;
+  const StreamChannel({
+    required this.id,
+    required this.playlistId,
+    this.tvgId,
+    required this.title,
+    this.logo,
+    this.groupTitle,
+    required this.streamUrl,
+    required this.isFavorite,
+    required this.position,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['playlist_id'] = Variable<int>(playlistId);
+    if (!nullToAbsent || tvgId != null) {
+      map['tvg_id'] = Variable<String>(tvgId);
+    }
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || logo != null) {
+      map['logo'] = Variable<String>(logo);
+    }
+    if (!nullToAbsent || groupTitle != null) {
+      map['group_title'] = Variable<String>(groupTitle);
+    }
+    map['stream_url'] = Variable<String>(streamUrl);
+    map['is_favorite'] = Variable<bool>(isFavorite);
+    map['position'] = Variable<int>(position);
+    return map;
+  }
+
+  StreamChannelsCompanion toCompanion(bool nullToAbsent) {
+    return StreamChannelsCompanion(
+      id: Value(id),
+      playlistId: Value(playlistId),
+      tvgId: tvgId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tvgId),
+      title: Value(title),
+      logo: logo == null && nullToAbsent ? const Value.absent() : Value(logo),
+      groupTitle: groupTitle == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groupTitle),
+      streamUrl: Value(streamUrl),
+      isFavorite: Value(isFavorite),
+      position: Value(position),
+    );
+  }
+
+  factory StreamChannel.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return StreamChannel(
+      id: serializer.fromJson<int>(json['id']),
+      playlistId: serializer.fromJson<int>(json['playlistId']),
+      tvgId: serializer.fromJson<String?>(json['tvgId']),
+      title: serializer.fromJson<String>(json['title']),
+      logo: serializer.fromJson<String?>(json['logo']),
+      groupTitle: serializer.fromJson<String?>(json['groupTitle']),
+      streamUrl: serializer.fromJson<String>(json['streamUrl']),
+      isFavorite: serializer.fromJson<bool>(json['isFavorite']),
+      position: serializer.fromJson<int>(json['position']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'playlistId': serializer.toJson<int>(playlistId),
+      'tvgId': serializer.toJson<String?>(tvgId),
+      'title': serializer.toJson<String>(title),
+      'logo': serializer.toJson<String?>(logo),
+      'groupTitle': serializer.toJson<String?>(groupTitle),
+      'streamUrl': serializer.toJson<String>(streamUrl),
+      'isFavorite': serializer.toJson<bool>(isFavorite),
+      'position': serializer.toJson<int>(position),
+    };
+  }
+
+  StreamChannel copyWith({
+    int? id,
+    int? playlistId,
+    Value<String?> tvgId = const Value.absent(),
+    String? title,
+    Value<String?> logo = const Value.absent(),
+    Value<String?> groupTitle = const Value.absent(),
+    String? streamUrl,
+    bool? isFavorite,
+    int? position,
+  }) => StreamChannel(
+    id: id ?? this.id,
+    playlistId: playlistId ?? this.playlistId,
+    tvgId: tvgId.present ? tvgId.value : this.tvgId,
+    title: title ?? this.title,
+    logo: logo.present ? logo.value : this.logo,
+    groupTitle: groupTitle.present ? groupTitle.value : this.groupTitle,
+    streamUrl: streamUrl ?? this.streamUrl,
+    isFavorite: isFavorite ?? this.isFavorite,
+    position: position ?? this.position,
+  );
+  StreamChannel copyWithCompanion(StreamChannelsCompanion data) {
+    return StreamChannel(
+      id: data.id.present ? data.id.value : this.id,
+      playlistId: data.playlistId.present
+          ? data.playlistId.value
+          : this.playlistId,
+      tvgId: data.tvgId.present ? data.tvgId.value : this.tvgId,
+      title: data.title.present ? data.title.value : this.title,
+      logo: data.logo.present ? data.logo.value : this.logo,
+      groupTitle: data.groupTitle.present
+          ? data.groupTitle.value
+          : this.groupTitle,
+      streamUrl: data.streamUrl.present ? data.streamUrl.value : this.streamUrl,
+      isFavorite: data.isFavorite.present
+          ? data.isFavorite.value
+          : this.isFavorite,
+      position: data.position.present ? data.position.value : this.position,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StreamChannel(')
+          ..write('id: $id, ')
+          ..write('playlistId: $playlistId, ')
+          ..write('tvgId: $tvgId, ')
+          ..write('title: $title, ')
+          ..write('logo: $logo, ')
+          ..write('groupTitle: $groupTitle, ')
+          ..write('streamUrl: $streamUrl, ')
+          ..write('isFavorite: $isFavorite, ')
+          ..write('position: $position')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    playlistId,
+    tvgId,
+    title,
+    logo,
+    groupTitle,
+    streamUrl,
+    isFavorite,
+    position,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is StreamChannel &&
+          other.id == this.id &&
+          other.playlistId == this.playlistId &&
+          other.tvgId == this.tvgId &&
+          other.title == this.title &&
+          other.logo == this.logo &&
+          other.groupTitle == this.groupTitle &&
+          other.streamUrl == this.streamUrl &&
+          other.isFavorite == this.isFavorite &&
+          other.position == this.position);
+}
+
+class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
+  final Value<int> id;
+  final Value<int> playlistId;
+  final Value<String?> tvgId;
+  final Value<String> title;
+  final Value<String?> logo;
+  final Value<String?> groupTitle;
+  final Value<String> streamUrl;
+  final Value<bool> isFavorite;
+  final Value<int> position;
+  const StreamChannelsCompanion({
+    this.id = const Value.absent(),
+    this.playlistId = const Value.absent(),
+    this.tvgId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.logo = const Value.absent(),
+    this.groupTitle = const Value.absent(),
+    this.streamUrl = const Value.absent(),
+    this.isFavorite = const Value.absent(),
+    this.position = const Value.absent(),
+  });
+  StreamChannelsCompanion.insert({
+    this.id = const Value.absent(),
+    required int playlistId,
+    this.tvgId = const Value.absent(),
+    required String title,
+    this.logo = const Value.absent(),
+    this.groupTitle = const Value.absent(),
+    required String streamUrl,
+    this.isFavorite = const Value.absent(),
+    required int position,
+  }) : playlistId = Value(playlistId),
+       title = Value(title),
+       streamUrl = Value(streamUrl),
+       position = Value(position);
+  static Insertable<StreamChannel> custom({
+    Expression<int>? id,
+    Expression<int>? playlistId,
+    Expression<String>? tvgId,
+    Expression<String>? title,
+    Expression<String>? logo,
+    Expression<String>? groupTitle,
+    Expression<String>? streamUrl,
+    Expression<bool>? isFavorite,
+    Expression<int>? position,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (playlistId != null) 'playlist_id': playlistId,
+      if (tvgId != null) 'tvg_id': tvgId,
+      if (title != null) 'title': title,
+      if (logo != null) 'logo': logo,
+      if (groupTitle != null) 'group_title': groupTitle,
+      if (streamUrl != null) 'stream_url': streamUrl,
+      if (isFavorite != null) 'is_favorite': isFavorite,
+      if (position != null) 'position': position,
+    });
+  }
+
+  StreamChannelsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? playlistId,
+    Value<String?>? tvgId,
+    Value<String>? title,
+    Value<String?>? logo,
+    Value<String?>? groupTitle,
+    Value<String>? streamUrl,
+    Value<bool>? isFavorite,
+    Value<int>? position,
+  }) {
+    return StreamChannelsCompanion(
+      id: id ?? this.id,
+      playlistId: playlistId ?? this.playlistId,
+      tvgId: tvgId ?? this.tvgId,
+      title: title ?? this.title,
+      logo: logo ?? this.logo,
+      groupTitle: groupTitle ?? this.groupTitle,
+      streamUrl: streamUrl ?? this.streamUrl,
+      isFavorite: isFavorite ?? this.isFavorite,
+      position: position ?? this.position,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (playlistId.present) {
+      map['playlist_id'] = Variable<int>(playlistId.value);
+    }
+    if (tvgId.present) {
+      map['tvg_id'] = Variable<String>(tvgId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (logo.present) {
+      map['logo'] = Variable<String>(logo.value);
+    }
+    if (groupTitle.present) {
+      map['group_title'] = Variable<String>(groupTitle.value);
+    }
+    if (streamUrl.present) {
+      map['stream_url'] = Variable<String>(streamUrl.value);
+    }
+    if (isFavorite.present) {
+      map['is_favorite'] = Variable<bool>(isFavorite.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StreamChannelsCompanion(')
+          ..write('id: $id, ')
+          ..write('playlistId: $playlistId, ')
+          ..write('tvgId: $tvgId, ')
+          ..write('title: $title, ')
+          ..write('logo: $logo, ')
+          ..write('groupTitle: $groupTitle, ')
+          ..write('streamUrl: $streamUrl, ')
+          ..write('isFavorite: $isFavorite, ')
+          ..write('position: $position')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4963,6 +5922,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $CatalogCacheEntriesTable(this);
   late final $LocalFilesTable localFiles = $LocalFilesTable(this);
   late final $ImportRootsTable importRoots = $ImportRootsTable(this);
+  late final $StreamPlaylistsTable streamPlaylists = $StreamPlaylistsTable(
+    this,
+  );
+  late final $StreamChannelsTable streamChannels = $StreamChannelsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4977,6 +5940,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     catalogCacheEntries,
     localFiles,
     importRoots,
+    streamPlaylists,
+    streamChannels,
   ];
 }
 
@@ -7493,6 +8458,525 @@ typedef $$ImportRootsTableProcessedTableManager =
       ImportRoot,
       PrefetchHooks Function()
     >;
+typedef $$StreamPlaylistsTableCreateCompanionBuilder =
+    StreamPlaylistsCompanion Function({
+      Value<int> id,
+      required String title,
+      required String sourceKind,
+      required String sourceUri,
+      Value<DateTime> createdAt,
+      Value<DateTime?> lastRefreshed,
+    });
+typedef $$StreamPlaylistsTableUpdateCompanionBuilder =
+    StreamPlaylistsCompanion Function({
+      Value<int> id,
+      Value<String> title,
+      Value<String> sourceKind,
+      Value<String> sourceUri,
+      Value<DateTime> createdAt,
+      Value<DateTime?> lastRefreshed,
+    });
+
+class $$StreamPlaylistsTableFilterComposer
+    extends Composer<_$AppDatabase, $StreamPlaylistsTable> {
+  $$StreamPlaylistsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceKind => $composableBuilder(
+    column: $table.sourceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceUri => $composableBuilder(
+    column: $table.sourceUri,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastRefreshed => $composableBuilder(
+    column: $table.lastRefreshed,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$StreamPlaylistsTableOrderingComposer
+    extends Composer<_$AppDatabase, $StreamPlaylistsTable> {
+  $$StreamPlaylistsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceKind => $composableBuilder(
+    column: $table.sourceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceUri => $composableBuilder(
+    column: $table.sourceUri,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastRefreshed => $composableBuilder(
+    column: $table.lastRefreshed,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$StreamPlaylistsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $StreamPlaylistsTable> {
+  $$StreamPlaylistsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceKind => $composableBuilder(
+    column: $table.sourceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sourceUri =>
+      $composableBuilder(column: $table.sourceUri, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastRefreshed => $composableBuilder(
+    column: $table.lastRefreshed,
+    builder: (column) => column,
+  );
+}
+
+class $$StreamPlaylistsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $StreamPlaylistsTable,
+          StreamPlaylist,
+          $$StreamPlaylistsTableFilterComposer,
+          $$StreamPlaylistsTableOrderingComposer,
+          $$StreamPlaylistsTableAnnotationComposer,
+          $$StreamPlaylistsTableCreateCompanionBuilder,
+          $$StreamPlaylistsTableUpdateCompanionBuilder,
+          (
+            StreamPlaylist,
+            BaseReferences<
+              _$AppDatabase,
+              $StreamPlaylistsTable,
+              StreamPlaylist
+            >,
+          ),
+          StreamPlaylist,
+          PrefetchHooks Function()
+        > {
+  $$StreamPlaylistsTableTableManager(
+    _$AppDatabase db,
+    $StreamPlaylistsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$StreamPlaylistsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$StreamPlaylistsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$StreamPlaylistsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> sourceKind = const Value.absent(),
+                Value<String> sourceUri = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> lastRefreshed = const Value.absent(),
+              }) => StreamPlaylistsCompanion(
+                id: id,
+                title: title,
+                sourceKind: sourceKind,
+                sourceUri: sourceUri,
+                createdAt: createdAt,
+                lastRefreshed: lastRefreshed,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String title,
+                required String sourceKind,
+                required String sourceUri,
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> lastRefreshed = const Value.absent(),
+              }) => StreamPlaylistsCompanion.insert(
+                id: id,
+                title: title,
+                sourceKind: sourceKind,
+                sourceUri: sourceUri,
+                createdAt: createdAt,
+                lastRefreshed: lastRefreshed,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$StreamPlaylistsTable, StreamPlaylist>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $StreamPlaylistsTable,
+                    StreamPlaylist
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$StreamPlaylistsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $StreamPlaylistsTable,
+      StreamPlaylist,
+      $$StreamPlaylistsTableFilterComposer,
+      $$StreamPlaylistsTableOrderingComposer,
+      $$StreamPlaylistsTableAnnotationComposer,
+      $$StreamPlaylistsTableCreateCompanionBuilder,
+      $$StreamPlaylistsTableUpdateCompanionBuilder,
+      (
+        StreamPlaylist,
+        BaseReferences<_$AppDatabase, $StreamPlaylistsTable, StreamPlaylist>,
+      ),
+      StreamPlaylist,
+      PrefetchHooks Function()
+    >;
+typedef $$StreamChannelsTableCreateCompanionBuilder =
+    StreamChannelsCompanion Function({
+      Value<int> id,
+      required int playlistId,
+      Value<String?> tvgId,
+      required String title,
+      Value<String?> logo,
+      Value<String?> groupTitle,
+      required String streamUrl,
+      Value<bool> isFavorite,
+      required int position,
+    });
+typedef $$StreamChannelsTableUpdateCompanionBuilder =
+    StreamChannelsCompanion Function({
+      Value<int> id,
+      Value<int> playlistId,
+      Value<String?> tvgId,
+      Value<String> title,
+      Value<String?> logo,
+      Value<String?> groupTitle,
+      Value<String> streamUrl,
+      Value<bool> isFavorite,
+      Value<int> position,
+    });
+
+class $$StreamChannelsTableFilterComposer
+    extends Composer<_$AppDatabase, $StreamChannelsTable> {
+  $$StreamChannelsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get playlistId => $composableBuilder(
+    column: $table.playlistId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tvgId => $composableBuilder(
+    column: $table.tvgId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get logo => $composableBuilder(
+    column: $table.logo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get groupTitle => $composableBuilder(
+    column: $table.groupTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get streamUrl => $composableBuilder(
+    column: $table.streamUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$StreamChannelsTableOrderingComposer
+    extends Composer<_$AppDatabase, $StreamChannelsTable> {
+  $$StreamChannelsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get playlistId => $composableBuilder(
+    column: $table.playlistId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tvgId => $composableBuilder(
+    column: $table.tvgId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get logo => $composableBuilder(
+    column: $table.logo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get groupTitle => $composableBuilder(
+    column: $table.groupTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get streamUrl => $composableBuilder(
+    column: $table.streamUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$StreamChannelsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $StreamChannelsTable> {
+  $$StreamChannelsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get playlistId => $composableBuilder(
+    column: $table.playlistId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get tvgId =>
+      $composableBuilder(column: $table.tvgId, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get logo =>
+      $composableBuilder(column: $table.logo, builder: (column) => column);
+
+  GeneratedColumn<String> get groupTitle => $composableBuilder(
+    column: $table.groupTitle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get streamUrl =>
+      $composableBuilder(column: $table.streamUrl, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get position =>
+      $composableBuilder(column: $table.position, builder: (column) => column);
+}
+
+class $$StreamChannelsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $StreamChannelsTable,
+          StreamChannel,
+          $$StreamChannelsTableFilterComposer,
+          $$StreamChannelsTableOrderingComposer,
+          $$StreamChannelsTableAnnotationComposer,
+          $$StreamChannelsTableCreateCompanionBuilder,
+          $$StreamChannelsTableUpdateCompanionBuilder,
+          (
+            StreamChannel,
+            BaseReferences<_$AppDatabase, $StreamChannelsTable, StreamChannel>,
+          ),
+          StreamChannel,
+          PrefetchHooks Function()
+        > {
+  $$StreamChannelsTableTableManager(
+    _$AppDatabase db,
+    $StreamChannelsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$StreamChannelsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$StreamChannelsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$StreamChannelsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> playlistId = const Value.absent(),
+                Value<String?> tvgId = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> logo = const Value.absent(),
+                Value<String?> groupTitle = const Value.absent(),
+                Value<String> streamUrl = const Value.absent(),
+                Value<bool> isFavorite = const Value.absent(),
+                Value<int> position = const Value.absent(),
+              }) => StreamChannelsCompanion(
+                id: id,
+                playlistId: playlistId,
+                tvgId: tvgId,
+                title: title,
+                logo: logo,
+                groupTitle: groupTitle,
+                streamUrl: streamUrl,
+                isFavorite: isFavorite,
+                position: position,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int playlistId,
+                Value<String?> tvgId = const Value.absent(),
+                required String title,
+                Value<String?> logo = const Value.absent(),
+                Value<String?> groupTitle = const Value.absent(),
+                required String streamUrl,
+                Value<bool> isFavorite = const Value.absent(),
+                required int position,
+              }) => StreamChannelsCompanion.insert(
+                id: id,
+                playlistId: playlistId,
+                tvgId: tvgId,
+                title: title,
+                logo: logo,
+                groupTitle: groupTitle,
+                streamUrl: streamUrl,
+                isFavorite: isFavorite,
+                position: position,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$StreamChannelsTable, StreamChannel>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $StreamChannelsTable,
+                    StreamChannel
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$StreamChannelsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $StreamChannelsTable,
+      StreamChannel,
+      $$StreamChannelsTableFilterComposer,
+      $$StreamChannelsTableOrderingComposer,
+      $$StreamChannelsTableAnnotationComposer,
+      $$StreamChannelsTableCreateCompanionBuilder,
+      $$StreamChannelsTableUpdateCompanionBuilder,
+      (
+        StreamChannel,
+        BaseReferences<_$AppDatabase, $StreamChannelsTable, StreamChannel>,
+      ),
+      StreamChannel,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7515,4 +8999,8 @@ class $AppDatabaseManager {
       $$LocalFilesTableTableManager(_db, _db.localFiles);
   $$ImportRootsTableTableManager get importRoots =>
       $$ImportRootsTableTableManager(_db, _db.importRoots);
+  $$StreamPlaylistsTableTableManager get streamPlaylists =>
+      $$StreamPlaylistsTableTableManager(_db, _db.streamPlaylists);
+  $$StreamChannelsTableTableManager get streamChannels =>
+      $$StreamChannelsTableTableManager(_db, _db.streamChannels);
 }

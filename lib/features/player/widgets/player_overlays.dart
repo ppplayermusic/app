@@ -623,6 +623,7 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                   ),
                                   TactilePlayerPlayPauseButton(
                                     isPlaying: playerState.isPlaying,
+                                    isLoading: playerState.isLoadingVideo,
                                     size: 64,
                                     onTap: () {
                                       _onInteraction();

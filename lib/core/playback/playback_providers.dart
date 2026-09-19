@@ -19,18 +19,34 @@ extension TrackToPlayback on Track {
         throw StateError('Cannot create PlaybackTrack: Invalid online source ID "$youtubeVideoId"');
       }
     }
+    
+    PlaybackSourceType playbackSource;
+    switch (sourceType) {
+      case TrackSourceType.local:
+        playbackSource = PlaybackSourceType.local;
+        break;
+      case TrackSourceType.networkStream:
+        playbackSource = PlaybackSourceType.networkStream;
+        break;
+      case TrackSourceType.online:
+        playbackSource = PlaybackSourceType.online;
+        break;
+    }
+
     return PlaybackTrack(
-      id: isLocal ? spotifyId : youtubeVideoId!,
+      id: sourceType == TrackSourceType.online ? youtubeVideoId! : spotifyId,
       title: name,
       artist: artistName,
       album: albumName,
       artworkUrl: albumImage,
       duration: durationMs != null ? Duration(milliseconds: durationMs!) : null,
-      sourceType: isLocal ? PlaybackSourceType.local : PlaybackSourceType.online,
+      sourceType: playbackSource,
       // For local tracks, the localFilePath comes from the db (set by LocalFileResolver).
       // That path has already been processed (e.g. Uri.file() called) and is a valid URI string.
       localMediaUri: localFilePath,
+      networkMediaUri: networkStreamUrl,
       isVideo: isVideoFile,
+      isLiveStream: isLiveStream,
     );
   }
 }

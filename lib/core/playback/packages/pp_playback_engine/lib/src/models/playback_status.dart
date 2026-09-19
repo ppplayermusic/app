@@ -26,6 +26,8 @@ class PlaybackStatus {
   final bool supportsSpeed;
   final int? generation;
   final double? videoAspectRatio;
+  final bool isLive;
+  final bool isSeekable;
 
   const PlaybackStatus({
     this.track,
@@ -42,6 +44,8 @@ class PlaybackStatus {
     this.supportsSpeed = false,
     this.generation,
     this.videoAspectRatio,
+    this.isLive = false,
+    this.isSeekable = true,
   });
 
   bool get isPlaying => state == PlaybackState.playing;
@@ -67,6 +71,8 @@ class PlaybackStatus {
     bool? supportsSpeed,
     int? generation,
     double? videoAspectRatio,
+    bool? isLive,
+    bool? isSeekable,
   }) {
     return PlaybackStatus(
       track: track ?? this.track,
@@ -86,6 +92,8 @@ class PlaybackStatus {
       supportsSpeed: supportsSpeed ?? this.supportsSpeed,
       generation: generation ?? this.generation,
       videoAspectRatio: videoAspectRatio ?? this.videoAspectRatio,
+      isLive: isLive ?? this.isLive,
+      isSeekable: isSeekable ?? this.isSeekable,
     );
   }
 
