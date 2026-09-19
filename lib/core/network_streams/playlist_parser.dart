@@ -255,14 +255,19 @@ class PlaylistParser {
   }
 
   /// Fetches and parses a remote playlist or stream.
-  static Future<PlaylistParseResult> fetchAndParse(String rawUrl, {int maxBytes = 5 * 1024 * 1024, http.Client? client}) async {
+  static Future<PlaylistParseResult> fetchAndParse(
+    String rawUrl, {
+    int maxBytes = 5 * 1024 * 1024,
+    http.Client? client,
+    Duration timeout = const Duration(seconds: 15),
+  }) async {
     final url = normalizeUrl(rawUrl);
     final internalClient = client ?? http.Client();
     StreamSubscription? subscription;
     
     try {
       final request = http.Request('GET', Uri.parse(url));
-      final response = await internalClient.send(request);
+      final response = await internalClient.send(request).timeout(timeout);
 
       if (response.statusCode != 200) {
         throw Exception('Failed to load URL: ${response.statusCode}');
@@ -306,7 +311,7 @@ class PlaylistParser {
         cancelOnError: true,
       );
 
-      final finalBytes = await completer.future;
+      final finalBytes = await completer.future.timeout(timeout);
       final finalUrl = response.request?.url.toString() ?? url;
 
       final decodedString = _decodeBytes(finalBytes, contentType, finalUrl);

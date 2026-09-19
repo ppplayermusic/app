@@ -72,8 +72,8 @@ void main() {
         widget.key.toString().contains('player_video_slot'));
     expect(videoSlotFinder, findsOneWidget);
 
-    // Initial state: Queue panel is hidden, but the top bar toggle exists
-    expect(find.text('QUEUE'), findsOneWidget);
+    // Initial state: Queue panel is hidden, but the bottom bar toggle exists
+    expect(find.byKey(const ValueKey('queue_toggle_button')), findsOneWidget);
 
     // Open Queue
     final queueButton = find.byKey(const ValueKey('queue_toggle_button'));
@@ -83,7 +83,7 @@ void main() {
     }
 
     // Queue should be visible in side panel (width > 1000)
-    expect(find.text('QUEUE'), findsNWidgets(2));
+    expect(find.text('QUEUE'), findsOneWidget);
     expect(find.byType(BottomSheet), findsNothing);
     
     // Video slot MUST still be exactly the same widget (mounted)
@@ -97,7 +97,7 @@ void main() {
     expect(videoSlotFinder, findsOneWidget);
     
     // Queue should now be absolute positioned, not in side panel
-    expect(find.text('QUEUE'), findsNWidgets(2));
+    expect(find.text('QUEUE'), findsOneWidget);
     expect(videoSlotFinder, findsOneWidget);
 
     // Close Queue
@@ -106,7 +106,7 @@ void main() {
     for (var i = 0; i < 10; i++) {
       await tester.pump(const Duration(milliseconds: 50));
     }
-    expect(find.text('QUEUE'), findsOneWidget);
+    expect(find.text('QUEUE'), findsNothing);
     expect(videoSlotFinder, findsOneWidget);
 
     await tester.pump(const Duration(seconds: 4));

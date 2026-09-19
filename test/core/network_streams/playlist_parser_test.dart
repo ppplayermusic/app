@@ -160,5 +160,60 @@ Title7=Stream Seven
       final result = await PlaylistParser.fetchAndParse('http://example.com/original.m3u8', client: client);
       expect(result.channels.first.url, 'http://example.com/redirected/folder/stream.m3u8');
     });
+
+    test('Times out if server takes too long to send headers', () async {
+      final client = MockClient((request) async {
+        await Future.delayed(const Duration(milliseconds: 200));
+        return http.StreamedResponse(
+          const Stream.empty(),
+          200,
+        );
+      });
+
+      expect(
+        () => PlaylistParser.fetchAndParse('http://example.com', client: client, timeout: const Duration(milliseconds: 50)),
+        throwsA(isA<TimeoutException>())
+      );
+    });
+
+    test('Times out if server stream hangs during body transfer', () async {
+      final client = MockClient((request) async {
+        final stream = Stream<List<int>>.periodic(const Duration(milliseconds: 100), (i) => [i]).take(10);
+        return http.StreamedResponse(
+          stream,
+          200,
+          headers: {'content-type': 'application/x-mpegurl'},
+        );
+      });
+
+      expect(
+        () => PlaylistParser.fetchAndParse('http://example.com', client: client, timeout: const Duration(milliseconds: 150)),
+        throwsA(isA<TimeoutException>())
+      );
+    });
+
+    test('Stream errors (e.g. connection aborted) are correctly bubbled up', () async {
+      // Simulate an aborted connection mid-stream
+      final client = MockClient((request) async {
+        final controller = StreamController<List<int>>();
+        controller.add([1, 2, 3]);
+        // Emit an error after a short delay
+        Future.delayed(const Duration(milliseconds: 50), () {
+          controller.addError(http.ClientException('Connection aborted'));
+          controller.close();
+        });
+        
+        return http.StreamedResponse(
+          controller.stream,
+          200,
+          headers: {'content-type': 'application/x-mpegurl'},
+        );
+      });
+      
+      expect(
+        () => PlaylistParser.fetchAndParse('http://example.com', client: client),
+        throwsA(isA<http.ClientException>())
+      );
+    });
   });
 }

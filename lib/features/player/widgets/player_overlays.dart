@@ -663,21 +663,22 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                   ),
                                 ],
                               ),
-                              // Right: Queue, Fit/Fill, Mini-player, Fullscreen
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.queue_music,
-                                      color: Colors.white,
-                                    ),
-                                    tooltip: AppLocalizations.of(context)!.queue,
-                                    onPressed: () {
-                                      _onInteraction();
-                                      widget.onToggleQueue();
-                                    },
-                                  ),
-                                  if (supportsVideoFitMode)
+                                  // Right: Queue, Fit/Fill, Mini-player, Fullscreen
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        key: const ValueKey('queue_toggle_button'),
+                                        icon: const Icon(
+                                          Icons.queue_music,
+                                          color: Colors.white,
+                                        ),
+                                        tooltip: AppLocalizations.of(context)!.queue,
+                                        onPressed: () {
+                                          _onInteraction();
+                                          widget.onToggleQueue();
+                                        },
+                                      ),
+                                      if (supportsVideoFitMode)
                                     IconButton(
                                       icon: Icon(
                                         settings.videoFitMode == VideoFitMode.fill
