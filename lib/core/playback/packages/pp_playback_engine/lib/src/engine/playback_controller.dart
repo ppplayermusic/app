@@ -31,5 +31,5 @@ abstract class PlaybackController {
 
   Future<void> prepare(PlaybackTrack track, {Duration? position});
 
-  void dispose();
+  Future<void> dispose();
 }

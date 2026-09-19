@@ -1366,7 +1366,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
   // ---------------------------------------------------------------------------
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
     _attemptActive = false;
@@ -1375,7 +1375,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _iframePositionTimer?.cancel();
 
     // Detach and cancel the active session's subscriptions synchronously;
-    // adapter disposal is async (fire-and-forget from dispose).
+    // adapter disposal is awaited to ensure native resources are freed.
     // Subscriptions must be cancelled BEFORE the native object is freed to
     // prevent a callback firing into a freed object (SIGABRT in libmpv).
     final session = _activeSession;
@@ -1385,7 +1385,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
         sub.cancel();
       }
       session.subscriptions.clear();
-      session.adapter.dispose(); // fire-and-forget
+      try {
+        await session.adapter.dispose().timeout(const Duration(seconds: 2));
+      } catch (e) {
+        // Native cleanup failed or timed out, but Dart state is isolated.
+      }
     }
 
     for (final sub in _iframeSubscriptions) {

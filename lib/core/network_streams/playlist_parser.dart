@@ -267,7 +267,25 @@ class PlaylistParser {
     
     try {
       final request = http.Request('GET', Uri.parse(url));
-      final response = await internalClient.send(request).timeout(timeout);
+      
+      bool timedOut = false;
+      final responseFuture = internalClient.send(request);
+      
+      // Ensure that if the headers arrive AFTER a timeout threw, we still safely drain and abort the socket.
+      // Canceling the stream subscription is the supported package:http mechanism for aborting a transfer.
+      responseFuture.then((response) {
+        if (timedOut) {
+          response.stream.listen((_) {}).cancel();
+        }
+      }).catchError((_) {});
+
+      final response = await responseFuture.timeout(
+        timeout,
+        onTimeout: () {
+          timedOut = true;
+          throw TimeoutException('Connection timed out');
+        },
+      );
 
       if (response.statusCode != 200) {
         throw Exception('Failed to load URL: ${response.statusCode}');

@@ -535,15 +535,15 @@ class HybridPlaybackEngine implements PlaybackController {
   }
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     _disposed = true;
     PipHandler.removeActivityStoppedListener(_onActivityStopped);
     PipHandler.removeActivityStartedListener(_onActivityStarted);
     PipHandler.removePipModeListener(_onPipModeChanged);
     PipHandler.removePipEntryFailedListener(_onPipEntryFailed);
     _handoffTimeout?.cancel();
-    _foregroundEngine.dispose();
-    _backgroundEngine.dispose();
+    await _foregroundEngine.dispose();
+    await _backgroundEngine.dispose();
     _statusController.close();
     _eventController.close();
   }
