@@ -117,7 +117,7 @@ class _PlaybackViewState extends State<PlaybackView> {
     }
 
     return mk.Video(
-      key: ValueKey(renderer.hashCode),
+      key: ObjectKey(renderer),
       controller: renderer,
       controls: widget.showControls ? mk.MaterialVideoControls : mk.NoVideoControls,
       fit: widget.fit,
