@@ -58,7 +58,6 @@ dependencies:
   webview_win_floating: ^3.0.3
   windows_taskbar: ^1.1.2
   fullscreen_window: ^1.2.1
-
 dev_dependencies:
   integration_test:
     sdk: flutter

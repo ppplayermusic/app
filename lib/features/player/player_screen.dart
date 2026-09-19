@@ -1,4 +1,5 @@
 import '../../shared/widgets/pp_image.dart';
+import 'dart:io';
 import 'dart:ui' show lerpDouble;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -19,17 +20,12 @@ import '../../core/services/settings_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 
 import '../../shared/widgets/adaptive_blur.dart';
-import '../../shared/widgets/artists_links.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
-import '../../core/db/app_database.dart' as db;
-import 'widgets/video_controls_overlay.dart';
-import '../../core/models/track.dart';
+import 'widgets/player_overlays.dart';
 
-String _formatDuration(Duration d) {
-  final minutes = d.inMinutes;
-  final seconds = d.inSeconds % 60;
-  return '$minutes:${seconds.toString().padLeft(2, '0')}';
-}
+
+
+const _windowChannel = MethodChannel('com.ppplayer.window');
 
 class PlayerScreen extends ConsumerStatefulWidget {
   const PlayerScreen({super.key});
@@ -40,7 +36,6 @@ class PlayerScreen extends ConsumerStatefulWidget {
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   final GlobalKey _videoSlotKey = GlobalKey(debugLabel: 'player_video_slot');
-  double? _dragValue;
   Size? _lastWindowSize;
 
   // --- Video surface lifecycle state ---
@@ -64,6 +59,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   final FocusNode _focusNode = FocusNode(debugLabel: 'PlayerScreenFocus');
   double? _previousVolume;
   bool _ownedFullscreen = false;
+  // The view to restore when the queue is dismissed on narrow screen.
+  // Updated whenever the user navigates away from queue.
+  PlayerView _previousPlayerView = PlayerView.video;
 
   @override
   void initState() {
@@ -149,8 +147,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     }
 
     final isPipMode = ref.read(playerProvider).isPipMode;
-    final isVideoView =
-        ref.read(settingsProvider).playerView == PlayerView.video;
+    final playerView = ref.read(settingsProvider).playerView;
+    final actualMainView = playerView == PlayerView.queue ? _previousPlayerView : playerView;
+    final isVideoView = actualMainView == PlayerView.video;
     
     // In PiP mode, we MUST render the video surface regardless of the active tab.
     if (!isVideoView && !isPipMode) {
@@ -205,8 +204,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           // Re-check conditions inside the callback: view or hasVideo may
           // have changed since the retry was scheduled.
           final stillPipMode = ref.read(playerProvider).isPipMode;
-          final stillVideo =
-              ref.read(settingsProvider).playerView == PlayerView.video || stillPipMode;
+          final actualView = ref.read(settingsProvider).playerView == PlayerView.queue
+              ? _previousPlayerView
+              : ref.read(settingsProvider).playerView;
+          final stillVideo = actualView == PlayerView.video || stillPipMode;
           final stillHasVideo =
               ref.read(playbackStatusProvider).asData?.value.hasVideo ?? false;
           if (!stillVideo || !stillHasVideo) {
@@ -261,7 +262,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       return;
     }
 
-    _lastVideoBounds = newBounds;
+    setState(() {
+      _lastVideoBounds = newBounds;
+    });
     final generation = ++_videoLayoutGeneration;
 
     if (kDebugMode) {
@@ -298,7 +301,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           }
           return;
         }
-        if (ref.read(settingsProvider).playerView != PlayerView.video) {
+        final actualView2 = ref.read(settingsProvider).playerView == PlayerView.queue
+            ? _previousPlayerView
+            : ref.read(settingsProvider).playerView;
+        if (actualView2 != PlayerView.video) {
           if (kDebugMode) {
             debugPrint('[VideoInit #$generation] reveal skipped: playerView changed');
           }
@@ -336,17 +342,19 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
   void _setFullscreen(bool next) {
     ref.read(isFullscreenProvider.notifier).setFullscreen(next);
-    FullScreenWindow.setFullScreen(next);
+    if (!kIsWeb && Platform.isMacOS) {
+      _windowChannel.invokeMethod('setFullScreen', {'isFullscreen': next});
+    } else {
+      FullScreenWindow.setFullScreen(next);
+    }
     _ownedFullscreen = next;
   }
 
   @override
   Widget build(BuildContext context) {
     final playerState = ref.watch(playerProvider);
-    final playerNotifier = ref.read(playerProvider.notifier);
     final settings = ref.watch(settingsProvider);
     final isFullscreen = ref.watch(isFullscreenProvider);
-    final videoFit = ref.watch(videoFitProvider);
     final track = playerState.currentTrack;
 
     // Trigger surface init whenever we have track info and the screen is
@@ -372,6 +380,15 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) ensureVideoSurfaceReady('pip_exit_restored');
           });
+        }
+      },
+    );
+
+    ref.listen(
+      settingsProvider.select((s) => s.playerView),
+      (prev, next) {
+        if (next == PlayerView.queue && prev != null && prev != PlayerView.queue) {
+          _previousPlayerView = prev;
         }
       },
     );
@@ -416,19 +433,205 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     });
 
     final isQueueView = settings.playerView == PlayerView.queue;
-    final isVideoView = settings.playerView == PlayerView.video;
+    final actualMainViewInBuild = isQueueView ? _previousPlayerView : settings.playerView;
+    final isVideoView = actualMainViewInBuild == PlayerView.video;
     final colorScheme = Theme.of(context).colorScheme;
     final isPowerSaver = settings.performanceMode == PerformanceMode.powerSaver;
     final isPipMode = playerState.isPipMode;
+    final status = ref.watch(playbackStatusProvider).asData?.value;
+    final hasVideo = status?.hasVideo ?? false;
+    final isDesktop = MediaQuery.sizeOf(context).width >= 1000;
+    final showDesktopQueuePanel = isDesktop && isQueueView && !isPipMode;
 
-    if (isPipMode) {
-      return Scaffold(
-        backgroundColor: Colors.black,
-        body: SizedBox.expand(
-          child: _buildPipVideoSlot(),
+    Widget middleTopBar = AdaptiveBlur(
+      sigmaX: 12,
+      sigmaY: 12,
+      borderRadius: BorderRadius.circular(28),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: colorScheme.onSurface.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color: colorScheme.onSurface.withValues(alpha: 0.12),
+            width: 0.5,
+          ),
         ),
-      );
-    }
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _ToggleTab(
+              label: AppLocalizations.of(context)!.video,
+              isActive: isVideoView,
+              onTap: () {
+                if (kDebugMode && !isVideoView) {
+                  debugPrint('[VideoInit] ${settings.playerView.name} -> video');
+                }
+                ref.read(settingsProvider.notifier).setPlayerView(PlayerView.video);
+              },
+            ),
+            _ToggleTab(
+              label: AppLocalizations.of(context)!.artwork,
+              isActive: settings.playerView == PlayerView.artwork,
+              onTap: () {
+                if (kDebugMode && isVideoView) {
+                  debugPrint('[VideoInit] video -> artwork: hiding native surface');
+                }
+                ref.read(videoLayoutProvider.notifier).setVisible(false, label: 'sync_hide_for_artwork');
+                ref.read(settingsProvider.notifier).setPlayerView(PlayerView.artwork);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final videoSlotContainer = LayoutBuilder(
+      builder: (context, constraints) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => ensureVideoSurfaceReady('slot_reflow'),
+        );
+        return Container(
+          key: _videoSlotKey,
+          color: Colors.transparent,
+        );
+      },
+    );
+
+    Widget mainContent = Row(
+      children: [
+        Expanded(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (!isPipMode && (!hasVideo || !isVideoView)) ...[
+                Positioned.fill(
+                  child: RepaintBoundary(
+                    child: PPImage(
+                      imageUrl: track.albumImage ?? '',
+                      fit: BoxFit.cover,
+                    )
+                    .animate(
+                      onPlay: (controller) =>
+                          isPowerSaver ? null : controller.repeat(reverse: true),
+                    )
+                    .scale(
+                      begin: const Offset(1.1, 1.1),
+                      end: const Offset(1.5, 1.5),
+                      duration: 25.seconds,
+                      curve: Curves.easeInOutSine,
+                    )
+                    .move(
+                      begin: const Offset(-60, -30),
+                      end: const Offset(60, 30),
+                      duration: 22.seconds,
+                      curve: Curves.easeInOutSine,
+                    )
+                    .blur(
+                      begin: const Offset(80, 80),
+                      end: isPowerSaver ? const Offset(80, 80) : const Offset(120, 120),
+                      duration: 25.seconds,
+                      curve: Curves.easeInOutSine,
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          colorScheme.surface.withValues(alpha: 0.4),
+                          colorScheme.surface.withValues(alpha: 0.7),
+                          colorScheme.surface.withValues(alpha: 0.85),
+                          colorScheme.surface.withValues(alpha: 0.98),
+                        ],
+                        stops: const [0.0, 0.3, 0.7, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.center,
+                        radius: 1.5,
+                        colors: [
+                          colorScheme.primary.withValues(alpha: 0.08),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  )
+                  .animate(
+                    onPlay: (controller) =>
+                        isPowerSaver ? null : controller.repeat(reverse: true),
+                  )
+                  .fadeIn(duration: 4.seconds, curve: Curves.easeInOutSine)
+                  .scale(
+                    begin: const Offset(0.8, 0.8),
+                    end: const Offset(1.4, 1.4),
+                    duration: 10.seconds,
+                    curve: Curves.easeInOutSine,
+                  ),
+                ),
+                Positioned.fill(
+                  child: Opacity(
+                    opacity: 0.03,
+                    child: CachedNetworkImage(
+                      cacheManager: PPImageCacheManager.instance,
+                      imageUrl: 'https://www.transparenttextures.com/patterns/p6.png',
+                      repeat: ImageRepeat.repeat,
+                      color: colorScheme.onSurface.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ),
+              ],
+              
+              videoSlotContainer,
+
+              if (!isPipMode && (!hasVideo || !isVideoView) && status != null && status.state != PlaybackState.preparing)
+                _VinylArtwork(
+                  key: const ValueKey('artwork_view'),
+                  imageUrl: playerState.currentTrack?.albumImage ?? '',
+                  isPlaying: playerState.isPlaying,
+                ),
+
+              if (!isPipMode)
+                PlayerOverlays(
+                  isFullscreen: isFullscreen,
+                  alwaysShowControls: !hasVideo || (isQueueView && !isDesktop),
+                  onToggleFullscreen: () => _setFullscreen(!isFullscreen),
+                  onCollapse: () {
+                    if (isFullscreen) {
+                      _setFullscreen(false);
+                    }
+                    context.pop();
+                  },
+                  onToggleQueue: _toggleQueue,
+                  middleTopBar: middleTopBar,
+                ),
+
+              if (!isDesktop && isQueueView && !isPipMode)
+                _NarrowQueueOverlay(
+                  playerState: playerState,
+                  onClose: _closeQueue,
+                ),
+            ],
+          ),
+        ),
+        if (showDesktopQueuePanel)
+          SizedBox(
+            width: 320,
+            child: Material(
+              color: colorScheme.surfaceContainerLow,
+              child: _QueueView(playerState: playerState),
+            ),
+          ),
+      ],
+    );
 
     return Focus(
       focusNode: _focusNode,
@@ -458,7 +661,15 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           _setFullscreen(next);
           return KeyEventResult.handled;
         } else if (event.logicalKey == LogicalKeyboardKey.escape) {
-          // If fullscreen, exit. (Overlay dismiss is implicitly handled by Navigator if it's a route).
+          // Priority order:
+          // 1. Narrow-screen queue open → close queue (don't exit player).
+          // 2. Fullscreen → exit fullscreen.
+          // 3. Otherwise → let the Navigator handle it.
+          final queueNarrow = isQueueView && !showDesktopQueuePanel;
+          if (queueNarrow) {
+            _closeQueue();
+            return KeyEventResult.handled;
+          }
           if (ref.read(isFullscreenProvider)) {
             _setFullscreen(false);
             return KeyEventResult.handled;
@@ -493,1020 +704,49 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         }
         return KeyEventResult.ignored;
       },
-      child: Scaffold(
-        backgroundColor: colorScheme.surface,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: RepaintBoundary(
-              child: PPImage(
-                    imageUrl: track.albumImage ?? '',
-                    fit: BoxFit.cover,
-                  )
-                  .animate(
-                    onPlay:
-                        (controller) =>
-                            isPowerSaver
-                                ? null
-                                : controller.repeat(reverse: true),
-                  )
-                  .scale(
-                    begin: const Offset(1.1, 1.1),
-                    end: const Offset(1.5, 1.5),
-                    duration: 25.seconds,
-                    curve: Curves.easeInOutSine,
-                  )
-                  .move(
-                    begin: const Offset(-60, -30),
-                    end: const Offset(60, 30),
-                    duration: 22.seconds,
-                    curve: Curves.easeInOutSine,
-                  )
-                  .blur(
-                    begin: const Offset(80, 80),
-                    end:
-                        isPowerSaver
-                            ? const Offset(80, 80)
-                            : const Offset(120, 120),
-                    duration: 25.seconds,
-                    curve: Curves.easeInOutSine,
-                  ),
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    colorScheme.surface.withValues(alpha: 0.4),
-                    colorScheme.surface.withValues(alpha: 0.7),
-                    colorScheme.surface.withValues(alpha: 0.85),
-                    colorScheme.surface.withValues(alpha: 0.98),
-                  ],
-                  stops: const [0.0, 0.3, 0.7, 1.0],
-                ),
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-                  decoration: BoxDecoration(
-                    gradient: RadialGradient(
-                      center: Alignment.center,
-                      radius: 1.5,
-                      colors: [
-                        Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.08),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                )
-                .animate(
-                  onPlay:
-                      (controller) =>
-                          isPowerSaver
-                              ? null
-                              : controller.repeat(reverse: true),
-                )
-                .fadeIn(duration: 4.seconds, curve: Curves.easeInOutSine)
-                .scale(
-                  begin: const Offset(0.8, 0.8),
-                  end: const Offset(1.4, 1.4),
-                  duration: 10.seconds,
-                  curve: Curves.easeInOutSine,
-                ),
-          ),
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.03,
-              child: CachedNetworkImage(
-                cacheManager: PPImageCacheManager.instance,
-                imageUrl: 'https://www.transparenttextures.com/patterns/p6.png',
-                repeat: ImageRepeat.repeat,
-                color: colorScheme.onSurface.withValues(alpha: 0.1),
-              ),
-            ),
-          ),
-
-          SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 8.0,
-                  ),
-                  child: Row(
-                    children: [
-                      TactileIconButton(
-                        icon: Icons.keyboard_arrow_down,
-                        size: 32,
-                        padding: EdgeInsets.zero,
-                        onTap: () => context.pop(),
-                      ),
-                      const Spacer(),
-                      AdaptiveBlur(
-                            sigmaX: 12,
-                            sigmaY: 12,
-                            borderRadius: BorderRadius.circular(28),
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: colorScheme.onSurface.withValues(
-                                  alpha: 0.05,
-                                ),
-                                borderRadius: BorderRadius.circular(28),
-                                border: Border.all(
-                                  color: colorScheme.onSurface.withValues(
-                                    alpha: 0.12,
-                                  ),
-                                  width: 0.5,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  _ToggleTab(
-                                    label: AppLocalizations.of(context)!.video,
-                                    isActive: isVideoView,
-                                    onTap: () {
-                                      if (kDebugMode && !isVideoView) {
-                                        debugPrint('[VideoInit] ${settings.playerView.name} -> video');
-                                      }
-                                      ref
-                                          .read(settingsProvider.notifier)
-                                          .setPlayerView(PlayerView.video);
-                                    },
-                                  ),
-                                  _ToggleTab(
-                                    label: AppLocalizations.of(context)!.artwork,
-                                    isActive:
-                                        settings.playerView ==
-                                        PlayerView.artwork,
-                                    onTap: () {
-                                      if (kDebugMode && isVideoView) {
-                                        debugPrint('[VideoInit] video -> artwork: hiding native surface');
-                                      }
-                                      ref.read(videoLayoutProvider.notifier).setVisible(false, label: 'sync_hide_for_artwork');
-                                      ref
-                                          .read(settingsProvider.notifier)
-                                          .setPlayerView(PlayerView.artwork);
-                                    },
-                                  ),
-                                  _ToggleTab(
-                                    label: AppLocalizations.of(context)!.queue,
-                                    isActive: isQueueView,
-                                    onTap: () {
-                                      if (kDebugMode && isVideoView) {
-                                        debugPrint('[VideoInit] video -> queue: hiding native surface');
-                                      }
-                                      ref.read(videoLayoutProvider.notifier).setVisible(false, label: 'sync_hide_for_queue');
-                                      ref
-                                          .read(settingsProvider.notifier)
-                                          .setPlayerView(PlayerView.queue);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                          .animate()
-                          .fadeIn(duration: 600.ms, delay: 200.ms)
-                          .slideY(
-                            begin: -0.2,
-                            end: 0,
-                            curve: Curves.easeOutCubic,
-                          ),
-                      const Spacer(),
-                      if (playerState.supportsSpeed) ...[
-                        Builder(
-                          builder:
-                              (btnContext) => TactileIconButton(
-                                icon: Icons.speed,
-                                color: colorScheme.onSurface.withValues(
-                                  alpha: 0.8,
-                                ),
-                                hoverColor: colorScheme.primary,
-                                tooltip: 'Playback Speed',
-                                onTap:
-                                    () => _showSpeedMenu(
-                                      btnContext,
-                                      playerNotifier,
-                                      playerState.speed,
-                                    ),
-                              ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                      Builder(
-                        builder:
-                            (btnContext) => TactileIconButton(
-                              icon: Icons.more_vert,
-                              color: colorScheme.onSurface.withValues(
-                                alpha: 0.8,
-                              ),
-                              hoverColor: colorScheme.primary,
-                              tooltip: AppLocalizations.of(context)!.moreOptions,
-                              onTap: () {
-                                final renderBox =
-                                    btnContext.findRenderObject() as RenderBox?;
-                                final offset = renderBox?.localToGlobal(
-                                  Offset.zero,
-                                );
-                                showContentContextMenu(
-                                  context,
-                                  ref,
-                                  position:
-                                      offset != null
-                                          ? offset +
-                                              Offset(0, renderBox!.size.height)
-                                          : Offset.zero,
-                                  target: TrackContextTarget(track),
-                                );
-                              },
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 250),
-                          switchInCurve: Curves.easeOutCubic,
-                          switchOutCurve: Curves.easeInCubic,
-                          layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
-                            return Stack(
-                              alignment: Alignment.center,
-                              children: <Widget>[
-                                ...previousChildren,
-                                ?currentChild,
-                              ],
-                            );
-                          },
-                          child: isQueueView
-                              ? SizedBox(
-                                  key: const ValueKey('queue_view'),
-                                  width: double.infinity,
-                                  child: _QueueView(playerState: playerState),
-                                )
-                              : Padding(
-                                  key: const ValueKey('presentation_view'),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0,
-                                  ),
-                                  child: Center(
-                                    child: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxWidth: 800,
-                                      ),
-                                      child: AspectRatio(
-                                        aspectRatio: 16 / 9,
-                                        child: AnimatedSwitcher(
-                                          duration: const Duration(milliseconds: 250),
-                                          switchInCurve: Curves.easeOutCubic,
-                                          switchOutCurve: Curves.easeInCubic,
-                                          child: isVideoView
-                                              ? Consumer(
-                                                  key: const ValueKey('video_view'),
-                                                  builder: (
-                                                    context,
-                                                    ref,
-                                                    child,
-                                                  ) {
-                                                    final status =
-                                                        ref
-                                                            .watch(
-                                                              playbackStatusProvider,
-                                                            )
-                                                            .asData
-                                                            ?.value;
-                                                    final hasVideo =
-                                                        status?.hasVideo ??
-                                                        false;
-
-                                                    if (!hasVideo &&
-                                                        status != null &&
-                                                        status.state !=
-                                                            PlaybackState
-                                                                .preparing) {
-                                                      // Fallback to artwork if the resolved stream is audio-only
-                                                      return Stack(
-                                                        fit: StackFit.expand,
-                                                        children: [
-                                                          _VinylArtwork(
-                                                            imageUrl:
-                                                                playerState
-                                                                    .currentTrack
-                                                                    ?.albumImage ??
-                                                                '',
-                                                            isPlaying:
-                                                                playerState
-                                                                    .isPlaying,
-                                                          ),
-                                                          Positioned(
-                                                            bottom: 12,
-                                                            right: 12,
-                                                            child: Container(
-                                                              padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        8,
-                                                                    vertical: 4,
-                                                                  ),
-                                                              decoration: BoxDecoration(
-                                                                color: Theme.of(
-                                                                      context,
-                                                                    )
-                                                                    .colorScheme
-                                                                    .surface
-                                                                    .withValues(
-                                                                      alpha:
-                                                                          0.8,
-                                                                    ),
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      8,
-                                                                    ),
-                                                              ),
-                                                              child: Text(
-                                                                'AUDIO ONLY',
-                                                                style: TextStyle(
-                                                                  fontSize: 10,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w900,
-                                                                  color:
-                                                                      Theme.of(
-                                                                        context,
-                                                                      ).colorScheme.primary,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
-
-                                                    return LayoutBuilder(
-                                                      builder: (context, constraints) {
-                                                        WidgetsBinding.instance
-                                                            .addPostFrameCallback(
-                                                              (_) => ensureVideoSurfaceReady('slot_reflow'),
-                                                            );
-                                                        final isLocalVideo = track.sourceType == TrackSourceType.local && hasVideo;
-                                                        
-                                                        Widget child = Container(
-                                                          key: _videoSlotKey,
-                                                          decoration: BoxDecoration(
-                                                            color: Colors.transparent,
-                                                            borderRadius: BorderRadius.circular(24),
-                                                          ),
-                                                        );
-                                                        
-                                                        if (isLocalVideo) {
-                                                          child = Stack(
-                                                            fit: StackFit.expand,
-                                                            children: [
-                                                              child,
-                                                              VideoControlsOverlay(
-                                                                isFullscreen: isFullscreen,
-                                                                onToggleFullscreen: () {
-                                                                  final next = !isFullscreen;
-                                                                  _setFullscreen(next);
-                                                                },
-                                                                isFill: videoFit == BoxFit.cover,
-                                                                onToggleFit: () {
-                                                                  ref.read(videoFitProvider.notifier).toggle();
-                                                                },
-                                                              ),
-                                                            ],
-                                                          );
-                                                        }
-                                                        
-                                                        return child;
-                                                      },
-                                                    );
-                                                  },
-                                                )
-                                              : _VinylArtwork(
-                                                    key: const ValueKey('artwork_view'),
-                                                    imageUrl:
-                                                        playerState
-                                                            .currentTrack
-                                                            ?.albumImage ??
-                                                        '',
-                                                    isPlaying:
-                                                        playerState.isPlaying,
-                                                  ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                        ),
-                      ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  0,
-                                  16,
-                                  24,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(36),
-                                  child: RepaintBoundary(
-                                    child: AdaptiveBlur(
-                                      sigmaX: 20,
-                                      sigmaY: 20,
-                                      borderRadius: BorderRadius.circular(36),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 28,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: colorScheme.surfaceContainerLow
-                                              .withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(
-                                            36,
-                                          ),
-                                          border: Border.all(
-                                            color: colorScheme.onSurface
-                                                .withValues(alpha: 0.08),
-                                            width: 0.5,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              width: 40,
-                                              height: 4,
-                                              margin: const EdgeInsets.only(
-                                                bottom: 20,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: colorScheme.onSurface
-                                                    .withValues(alpha: 0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(2),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 24.0,
-                                                  ),
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                              playerState
-                                                                      .currentTrack
-                                                                      ?.name ??
-                                                                  'Not Playing',
-                                                              style: TextStyle(
-                                                                fontSize: 26,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w900,
-                                                                color:
-                                                                    colorScheme
-                                                                        .onSurface,
-                                                                letterSpacing:
-                                                                    -1.2,
-                                                                height: 1.1,
-                                                              ),
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            )
-                                                            .animate()
-                                                            .fadeIn(
-                                                              duration: 500.ms,
-                                                              delay: 200.ms,
-                                                            )
-                                                            .slideX(
-                                                              begin: 0.05,
-                                                              duration: 500.ms,
-                                                              curve:
-                                                                  Curves
-                                                                      .easeOutCubic,
-                                                            ),
-                                                        const SizedBox(
-                                                          height: 2,
-                                                        ),
-                                                        if (playerState
-                                                                .currentTrack !=
-                                                            null)
-                                                          ArtistsLinks(
-                                                                track:
-                                                                    playerState
-                                                                        .currentTrack!,
-                                                                toUpperCase:
-                                                                    true,
-                                                                style: TextStyle(
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w800,
-                                                                  color: Theme.of(
-                                                                        context,
-                                                                      )
-                                                                      .colorScheme
-                                                                      .primary
-                                                                      .withValues(
-                                                                        alpha:
-                                                                            0.9,
-                                                                      ),
-                                                                  letterSpacing:
-                                                                      2.0,
-                                                                ),
-                                                              )
-                                                              .animate()
-                                                              .fadeIn(
-                                                                duration:
-                                                                    500.ms,
-                                                                delay: 300.ms,
-                                                              )
-                                                              .slideX(
-                                                                begin: 0.05,
-                                                                duration:
-                                                                    500.ms,
-                                                                curve:
-                                                                    Curves
-                                                                        .easeOutCubic,
-                                                              ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  if (playerState
-                                                          .currentTrack !=
-                                                      null) ...[
-                                                    StreamBuilder<bool>(
-                                                      stream: ref
-                                                          .watch(
-                                                            db.appDatabaseProvider,
-                                                          )
-                                                          .watchTrackFavorite(
-                                                            playerState
-                                                                .currentTrack!
-                                                                .spotifyId,
-                                                          ),
-                                                      initialData:
-                                                          playerState
-                                                              .currentTrack!
-                                                              .isFavorite,
-                                                      builder: (
-                                                        context,
-                                                        snapshot,
-                                                      ) {
-                                                        final isFav =
-                                                            snapshot.data ??
-                                                            playerState
-                                                                .currentTrack!
-                                                                .isFavorite;
-                                                        return TactileIconButton(
-                                                              icon:
-                                                                  isFav
-                                                                      ? Icons
-                                                                          .favorite
-                                                                      : Icons
-                                                                          .favorite_border,
-                                                              color:
-                                                                  isFav
-                                                                      ? colorScheme
-                                                                          .primary
-                                                                      : colorScheme
-                                                                          .onSurface,
-                                                              onTap:
-                                                                  () => playerNotifier.toggleFavorite(
-                                                                    playerState
-                                                                        .currentTrack!
-                                                                        .copyWith(
-                                                                          isFavorite:
-                                                                              isFav,
-                                                                        ),
-                                                                  ),
-                                                            )
-                                                            .animate(
-                                                              target:
-                                                                  isFav ? 1 : 0,
-                                                            )
-                                                            .scale(
-                                                              begin:
-                                                                  const Offset(
-                                                                    1,
-                                                                    1,
-                                                                  ),
-                                                              end: const Offset(
-                                                                1.1,
-                                                                1.1,
-                                                              ),
-                                                              duration: 200.ms,
-                                                              curve:
-                                                                  Curves
-                                                                      .easeOutBack,
-                                                            )
-                                                            .then()
-                                                            .scale(
-                                                              begin:
-                                                                  const Offset(
-                                                                    1.1,
-                                                                    1.1,
-                                                                  ),
-                                                              end: const Offset(
-                                                                1,
-                                                                1,
-                                                              ),
-                                                              duration: 150.ms,
-                                                            );
-                                                      },
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Builder(
-                                                      builder:
-                                                          (
-                                                            btnContext,
-                                                          ) => TactileIconButton(
-                                                            icon:
-                                                                Icons
-                                                                    .more_horiz,
-                                                            color: colorScheme
-                                                                .onSurface
-                                                                .withValues(
-                                                                  alpha: 0.6,
-                                                                ),
-                                                            onTap: () {
-                                                              final renderBox =
-                                                                  btnContext
-                                                                          .findRenderObject()
-                                                                      as RenderBox?;
-                                                              final offset = renderBox
-                                                                  ?.localToGlobal(
-                                                                    Offset.zero,
-                                                                  );
-                                                              showContentContextMenu(
-                                                                context,
-                                                                ref,
-                                                                position:
-                                                                    offset !=
-                                                                            null
-                                                                        ? offset +
-                                                                            Offset(
-                                                                              0,
-                                                                              renderBox!.size.height,
-                                                                            )
-                                                                        : Offset
-                                                                            .zero,
-                                                                target: TrackContextTarget(
-                                                                  playerState
-                                                                      .currentTrack!,
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                    ),
-                                                  ],
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(height: 16),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 16.0,
-                                                  ),
-                                              child: Column(
-                                                children: [
-                                                  SliderTheme(
-                                                    data: SliderTheme.of(
-                                                      context,
-                                                    ).copyWith(
-                                                      trackHeight: 4,
-                                                      thumbShape:
-                                                          const RoundSliderThumbShape(
-                                                            enabledThumbRadius:
-                                                                7,
-                                                            elevation: 5,
-                                                          ),
-                                                      overlayShape:
-                                                          const RoundSliderOverlayShape(
-                                                            overlayRadius: 18,
-                                                          ),
-                                                      activeTrackColor:
-                                                          colorScheme.primary,
-                                                      inactiveTrackColor:
-                                                          colorScheme.onSurface
-                                                              .withValues(
-                                                                alpha: 0.05,
-                                                              ),
-                                                      thumbColor:
-                                                          colorScheme.onSurface,
-                                                      trackShape:
-                                                          const RoundedRectSliderTrackShape(),
-                                                    ),
-                                                    child: Builder(
-                                                      builder: (context) {
-                                                        final maxDuration =
-                                                            playerState
-                                                                        .duration
-                                                                        .inSeconds >
-                                                                    0
-                                                                ? playerState
-                                                                    .duration
-                                                                    .inSeconds
-                                                                    .toDouble()
-                                                                : 1.0;
-                                                        return Slider(
-                                                          value: (_dragValue ??
-                                                                  playerState
-                                                                      .position
-                                                                      .inSeconds
-                                                                      .toDouble())
-                                                              .clamp(
-                                                                0.0,
-                                                                maxDuration,
-                                                              ),
-                                                          max: maxDuration,
-                                                          onChangeStart: (v) {
-                                                            setState(() {
-                                                              _dragValue = v;
-                                                            });
-                                                          },
-                                                          onChanged: (v) {
-                                                            setState(() {
-                                                              _dragValue = v;
-                                                            });
-                                                          },
-                                                          onChangeEnd: (v) {
-                                                            playerNotifier.seekTo(
-                                                              Duration(
-                                                                seconds:
-                                                                    v.toInt(),
-                                                              ),
-                                                            );
-                                                            setState(() {
-                                                              _dragValue = null;
-                                                            });
-                                                          },
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 16.0,
-                                                        ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          _formatDuration(
-                                                            _dragValue != null
-                                                                ? Duration(
-                                                                  seconds:
-                                                                      _dragValue!
-                                                                          .toInt(),
-                                                                )
-                                                                : playerState
-                                                                    .position,
-                                                          ),
-                                                          style: TextStyle(
-                                                            color: colorScheme
-                                                                .onSurface
-                                                                .withValues(
-                                                                  alpha: 0.5,
-                                                                ),
-                                                            fontSize: 11,
-                                                            fontWeight:
-                                                                FontWeight.w800,
-                                                            letterSpacing: 0.5,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          _formatDuration(
-                                                            playerState
-                                                                .duration,
-                                                          ),
-                                                          style: TextStyle(
-                                                            color: colorScheme
-                                                                .onSurface
-                                                                .withValues(
-                                                                  alpha: 0.5,
-                                                                ),
-                                                            fontSize: 11,
-                                                            fontWeight:
-                                                                FontWeight.w800,
-                                                            letterSpacing: 0.5,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(height: 12),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 20.0,
-                                                  ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  TactileIconButton(
-                                                    icon: Icons.shuffle,
-                                                    color:
-                                                        playerState.isShuffled
-                                                            ? colorScheme
-                                                                .primary
-                                                            : colorScheme
-                                                                .onSurface
-                                                                .withValues(
-                                                                  alpha: 0.5,
-                                                                ),
-                                                    hoverColor:
-                                                        playerState.isShuffled
-                                                            ? colorScheme
-                                                                .primary
-                                                            : colorScheme
-                                                                .onSurface,
-                                                    tooltip: AppLocalizations.of(context)!.shuffle,
-                                                    onTap:
-                                                        playerNotifier
-                                                            .toggleShuffle,
-                                                  ),
-                                                  TactileIconButton(
-                                                    icon: Icons.skip_previous,
-                                                    size: 32,
-                                                    color:
-                                                        colorScheme.onSurface,
-                                                    hoverColor:
-                                                        colorScheme.primary,
-                                                    tooltip: AppLocalizations.of(context)!.previous,
-                                                    onTap:
-                                                        playerNotifier
-                                                            .skipPrevious,
-                                                  ),
-                                                  TactilePlayerPlayPauseButton(
-                                                    isPlaying:
-                                                        playerState.isPlaying,
-                                                    size: 76,
-                                                    onTap:
-                                                        playerNotifier
-                                                            .togglePlay,
-                                                  ),
-                                                  TactileIconButton(
-                                                    icon: Icons.skip_next,
-                                                    size: 32,
-                                                    color:
-                                                        colorScheme.onSurface,
-                                                    hoverColor:
-                                                        colorScheme.primary,
-                                                    tooltip: AppLocalizations.of(context)!.next,
-                                                    onTap:
-                                                        playerNotifier.skipNext,
-                                                  ),
-                                                  TactileIconButton(
-                                                    icon:
-                                                        playerState.repeatMode ==
-                                                                RepeatMode.none
-                                                            ? Icons.repeat
-                                                            : Icons.repeat_one,
-                                                    color:
-                                                        playerState.repeatMode !=
-                                                                RepeatMode.none
-                                                            ? colorScheme
-                                                                .primary
-                                                            : colorScheme
-                                                                .onSurface
-                                                                .withValues(
-                                                                  alpha: 0.5,
-                                                                ),
-                                                    hoverColor:
-                                                        playerState.repeatMode !=
-                                                                RepeatMode.none
-                                                            ? colorScheme
-                                                                .primary
-                                                            : colorScheme
-                                                                .onSurface,
-                                                    tooltip:
-                                                        playerState.repeatMode ==
-                                                                RepeatMode.none
-                                                            ? 'Repeat Off'
-                                                            : (playerState
-                                                                        .repeatMode ==
-                                                                    RepeatMode
-                                                                        .one
-                                                                ? 'Repeat One'
-                                                                : 'Repeat All'),
-                                                    onTap:
-                                                        playerNotifier
-                                                            .cycleRepeat,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                ).animate().fadeIn(duration: 600.ms, delay: 300.ms).slideY(begin: 0.05, duration: 600.ms, curve: Curves.easeOutCubic),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ));
-  }
-
-  Widget _buildPipVideoSlot() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => ensureVideoSurfaceReady('pip_layout_ready'),
-        );
-        // INVARIANT: The native WebView is rendered via a PlatformView which
-        // sits BEHIND the Flutter UI layer on Android. This container marks
-        // the dimensions of the video slot but MUST remain transparent. 
-        // Adding an opaque color (like Colors.black) here will permanently 
-        // block the video surface from being visible to the user.
-        return Container(
-          key: _videoSlotKey,
-          color: Colors.transparent,
-        );
-      },
-    );
-  }
-
-  void _showSpeedMenu(
-    BuildContext context,
-    PlayerNotifier playerNotifier,
-    double currentSpeed,
-  ) {
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
-    final RelativeRect position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(
-          button.size.bottomRight(Offset.zero),
-          ancestor: overlay,
+      child: PopScope(
+        key: const ValueKey('player_pop_scope'),
+        // Intercept the system back gesture/button when the narrow-screen
+        // queue is visible. This matches the actual presentation condition
+        // (not !isDesktop) so a narrow desktop window is also covered.
+        canPop: !(isQueueView && !showDesktopQueuePanel),
+        onPopInvokedWithResult: (didPop, _) {
+          if (didPop) {
+            if (isFullscreen) {
+              // Ensure we exit fullscreen if the route is popped via swipe/back
+              _setFullscreen(false);
+            }
+            return;
+          }
+          // didPop == false means canPop was false and the pop was intercepted.
+          if (!didPop && isQueueView && !showDesktopQueuePanel) {
+            _closeQueue();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: mainContent,
         ),
       ),
-      Offset.zero & overlay.size,
     );
+  }
 
-    final speeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
-    showMenu<double>(
-      context: context,
-      position: position,
-      items:
-          speeds.map((speed) {
-            return PopupMenuItem<double>(
-              value: speed,
-              child: Row(
-                children: [
-                  Text('${speed}x'),
-                  if (currentSpeed == speed) ...[
-                    const Spacer(),
-                    const Icon(Icons.check, size: 16),
-                  ],
-                ],
-              ),
-            );
-          }).toList(),
-    ).then((selected) {
-      if (selected != null) {
-        playerNotifier.setSpeed(selected);
-      }
-    });
+  /// Closes the queue and restores the previous view (video or artwork).
+  void _closeQueue() {
+    final notifier = ref.read(settingsProvider.notifier);
+    notifier.setPlayerView(_previousPlayerView);
+  }
+
+  /// Toggles the queue view
+  void _toggleQueue() {
+    final currentView = ref.read(settingsProvider).playerView;
+    final notifier = ref.read(settingsProvider.notifier);
+    if (currentView == PlayerView.queue) {
+      notifier.setPlayerView(_previousPlayerView);
+    } else {
+      _previousPlayerView = currentView;
+      notifier.setPlayerView(PlayerView.queue);
+    }
   }
 }
 
@@ -1561,7 +801,17 @@ class _ToggleTab extends StatelessWidget {
 
 class _QueueView extends StatelessWidget {
   final PlayerState playerState;
-  const _QueueView({required this.playerState});
+  /// Called when the user taps the close button (narrow-screen only).
+  /// Null when rendered in the desktop side panel (no close button shown).
+  final VoidCallback? onClose;
+  /// Extra bottom padding for the list, used to account for safe-area insets.
+  final double bottomPadding;
+
+  const _QueueView({
+    required this.playerState,
+    this.onClose,
+    this.bottomPadding = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1576,34 +826,46 @@ class _QueueView extends StatelessWidget {
                 AppLocalizations.of(context)!.queue,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
-              TextButton.icon(
-                key: const ValueKey('export_queue_button'),
-                onPressed: () async {
-                   try {
-                     final result = await ProviderScope.containerOf(context, listen: false)
-                         .read(localLibraryServiceProvider)
-                         .exportQueue(playerState.queue);
-                     if (context.mounted) {
-                        if (result == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Export cancelled.')),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Exported playlist. Skipped ${result.skippedCount} items.')),
-                          );
-                        }
-                     }
-                   } catch (e) {
-                     if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Export failed: $e')),
-                        );
-                     }
-                   }
-                },
-                icon: const Icon(Icons.download_rounded, size: 20),
-                label: Text(AppLocalizations.of(context)!.exportPlaylist),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    key: const ValueKey('export_queue_button'),
+                    onPressed: () async {
+                       try {
+                         final result = await ProviderScope.containerOf(context, listen: false)
+                             .read(localLibraryServiceProvider)
+                             .exportQueue(playerState.queue);
+                         if (context.mounted) {
+                            if (result == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Export cancelled.')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Exported playlist. Skipped ${result.skippedCount} items.')),
+                              );
+                            }
+                         }
+                       } catch (e) {
+                         if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Export failed: $e')),
+                            );
+                         }
+                       }
+                    },
+                    icon: const Icon(Icons.download_rounded),
+                    tooltip: AppLocalizations.of(context)!.exportPlaylist,
+                  ),
+                  if (onClose != null)
+                    IconButton(
+                      key: const ValueKey('queue_close_button'),
+                      icon: const Icon(Icons.close_rounded),
+                      tooltip: 'Close queue',
+                      onPressed: onClose,
+                    ),
+                ],
               ),
             ],
           ),
@@ -1611,7 +873,9 @@ class _QueueView extends StatelessWidget {
         Expanded(
           child: ReorderableListView.builder(
       buildDefaultDragHandles: false,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.only(
+        left: 16, right: 16, top: 8, bottom: 8 + bottomPadding,
+      ),
       itemCount: playerState.queue.length,
       proxyDecorator:
           (child, index, animation) => AnimatedBuilder(
@@ -1797,6 +1061,43 @@ class _QueueView extends StatelessWidget {
     ),
     ),
     ],
+    );
+  }
+}
+
+/// Narrow-screen (portrait or landscape mobile) queue overlay.
+/// Positioned over the video surface, respecting safe-area insets for
+/// notch, status bar, home indicator, and landscape side margins.
+class _NarrowQueueOverlay extends StatelessWidget {
+  final PlayerState playerState;
+  final VoidCallback onClose;
+
+  const _NarrowQueueOverlay({
+    required this.playerState,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final insets = MediaQuery.of(context).padding;
+    final colorScheme = Theme.of(context).colorScheme;
+    // Top padding: status bar + 48px for the player's top overlay bar.
+    final topPad = insets.top + 48;
+    return Positioned.fill(
+      top: topPad,
+      left: insets.left,
+      right: insets.right,
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: Material(
+          color: colorScheme.surface,
+          child: _QueueView(
+            playerState: playerState,
+            onClose: onClose,
+            bottomPadding: insets.bottom,
+          ),
+        ),
+      ),
     );
   }
 }

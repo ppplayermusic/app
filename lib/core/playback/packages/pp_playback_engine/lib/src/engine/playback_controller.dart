@@ -19,6 +19,11 @@ abstract class PlaybackController {
   Future<void> setSubtitleTrack(String? uri);
   bool get supportsSpeed;
 
+  /// Whether the current rendering path supports switching between Fit and Fill
+  /// video scaling modes. False when rendering via YouTube iframe, headless
+  /// audio, or any other path that does not expose a native video surface.
+  bool get supportsVideoFitMode;
+
   /// A platform-specific renderer (e.g. VideoController for media_kit)
   dynamic get renderer;
 

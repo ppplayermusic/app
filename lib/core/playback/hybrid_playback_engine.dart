@@ -516,6 +516,12 @@ class HybridPlaybackEngine implements PlaybackController {
   @override
   bool get supportsSpeed => _activeEngine.supportsSpeed;
 
+  /// Reports the capability of the foreground engine, which is the one
+  /// rendering the visible video surface. The background engine never serves
+  /// the UI, so its value is not relevant here.
+  @override
+  bool get supportsVideoFitMode => _foregroundEngine.supportsVideoFitMode;
+
   @override
   Future<void> setSpeed(double speed) async {
     await _foregroundEngine.setSpeed(speed);

@@ -269,6 +269,11 @@ class NativeServicePlaybackEngine implements PlaybackController {
   @override
   bool get supportsSpeed => true;
 
+  /// Always false: NativeServicePlaybackEngine is a headless audio service
+  /// that has no visible UI rendering surface and cannot apply fit/fill scaling.
+  @override
+  bool get supportsVideoFitMode => false;
+
   @override
   Future<void> setSpeed(double speed) async {
     if (_disposed) return;

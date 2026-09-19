@@ -84,6 +84,9 @@ class FakeYoutubeController extends Fake implements yt.YoutubePlayerController {
         'allowSeekAhead': allowSeekAhead,
       }, seekCompletion);
   @override
+  Future<void> setPlaybackRate(double playbackRate) =>
+      record('setPlaybackRate', {'playbackRate': playbackRate});
+  @override
   Future<double> get currentTime async => 12;
   @override
   Future<double> get duration async => 200;

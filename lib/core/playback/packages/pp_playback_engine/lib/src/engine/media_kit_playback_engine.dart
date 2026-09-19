@@ -969,6 +969,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
   @override
   bool get supportsSpeed => true;
 
+  /// True only when MediaKit is rendering the video surface (not YouTube iframe).
+  /// Derived from the live status so it updates when switching between local
+  /// and YouTube mid-session.
+  @override
+  bool get supportsVideoFitMode =>
+      _currentStatus.hasVideo && !_currentStatus.isIFrameMode;
+
   @override
   Future<void> setSpeed(double speed) async {
     if (_currentStatus.isIFrameMode) {

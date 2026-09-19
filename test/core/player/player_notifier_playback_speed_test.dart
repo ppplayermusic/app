@@ -58,6 +58,9 @@ class SpeedMockEngine implements PlaybackController {
   bool get supportsSpeed => _supportsSpeed;
 
   @override
+  bool get supportsVideoFitMode => false;
+
+  @override
   Stream<PlaybackStatus> get statusStream => _statusController.stream;
 
   @override

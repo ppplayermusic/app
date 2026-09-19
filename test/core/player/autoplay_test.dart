@@ -61,6 +61,8 @@ class FakePlaybackService implements PlaybackService {
 class FakePlaybackController implements PlaybackController {
   @override
   bool get supportsSpeed => true;
+  @override
+  bool get supportsVideoFitMode => false;
 
   final _statusController = StreamController<PlaybackStatus>.broadcast();
 

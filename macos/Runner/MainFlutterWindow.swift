@@ -16,6 +16,24 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     self.delegate = self
+    
+    let channel = FlutterMethodChannel(name: "com.ppplayer.window", binaryMessenger: flutterViewController.engine.binaryMessenger)
+    channel.setMethodCallHandler { [weak self] (call, result) in
+      guard let self = self else { return }
+      if call.method == "setFullScreen" {
+        if let args = call.arguments as? [String: Any], let isFullscreen = args["isFullscreen"] as? Bool {
+          let currentlyFullscreen = self.styleMask.contains(.fullScreen)
+          if isFullscreen != currentlyFullscreen {
+            self.toggleFullScreen(nil)
+          }
+          result(true)
+        } else {
+          result(FlutterError(code: "INVALID_ARGUMENT", message: "Missing isFullscreen boolean", details: nil))
+        }
+      } else {
+        result(FlutterMethodNotImplemented)
+      }
+    }
 
     super.awakeFromNib()
 

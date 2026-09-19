@@ -627,7 +627,7 @@ class LocalLibraryService {
       libraryId: libraryId,
       name: metadata.title,
       artistName: metadata.artistName,
-      albumName: metadata.albumName ?? '',
+      albumName: metadata.albumName,
       localFilePath: locator,
       localArtworkPath: metadata.artworkPath,
       durationMs: metadata.durationMs,

@@ -8,8 +8,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/playback/playback_providers.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/player/video_layout_provider.dart';
-import '../../features/player/player_providers.dart';
 import '../../core/services/settings_provider.dart';
+import '../../features/player/player_providers.dart';
 import '../../core/providers/search_provider.dart';
 import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
@@ -65,9 +65,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
 
     final settings = ref.watch(settingsProvider);
     final showVideo = settings.showVideo;
-    final playerView = settings.playerView;
-    final isVideoView = playerView == PlayerView.video;
-    final isPlayerScreen = widget.location == '/player';
+    final isPlayerScreen = Uri.parse(widget.location).path == '/player';
     final currentTrack = ref.watch(playerProvider.select((s) => s.currentTrack));
     final isLocalTrack = currentTrack?.sourceType == TrackSourceType.local;
     final hasVideoId = ref.watch(
@@ -76,7 +74,8 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     final loadError = ref.watch(playerProvider.select((s) => s.loadError));
     final isPipMode = ref.watch(playerProvider.select((s) => s.isPipMode));
     final isFullscreen = ref.watch(isFullscreenProvider);
-    final videoFit = ref.watch(videoFitProvider);
+    final videoFitMode = ref.watch(settingsProvider.select((s) => s.videoFitMode));
+    final videoFit = videoFitMode == VideoFitMode.fit ? BoxFit.contain : BoxFit.cover;
 
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
@@ -123,7 +122,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
         : (isDesktop ? 90.0 : (68.0 + safeBottom + 72.0)); // 68 (nav) + 72 (miniplayer)
 
     if (isPlayerScreen) {
-      if (isVideoView && videoLayout.isVisible && videoLayout.isReady) {
+      if (videoLayout.isVisible && videoLayout.isReady) {
         normalBounds = Rect.fromLTWH(
           videoLayout.position.dx,
           videoLayout.position.dy,
@@ -151,6 +150,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
     }
 
     Widget normalLayout = Scaffold(
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         bottom: false,
         child: Row(
@@ -161,9 +161,10 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
               child: Stack(
                 children: [
                   // Gradient Background & Animated Mesh
-                  Positioned(
-                    top: 0,
-                    right: 0,
+                  if (!isPlayerScreen)
+                    Positioned(
+                      top: 0,
+                      right: 0,
                     child: Container(
                       width: 800,
                       height: 600,
@@ -377,113 +378,226 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Offstage(
-              offstage: pipPresentation,
-              child: TickerMode(
-              enabled: !pipPresentation,
-              child: normalLayout,
-            ),
-          ),
-          _PlaybackSurfaceLayer(
-            pipPresentation: pipPresentation,
-            normalBounds: normalBounds,
-            showShadow: showShadow,
-            renderRadius: renderRadius,
-            isWindows: isWindows,
-            child: Stack(
-              children: [
-                if (playbackStatus.track?.isLocal != true || playbackStatus.hasVideo)
-                  _StablePlaybackView(
-                    controller: playbackEngine,
-                    status: playbackStatus,
-                    fit: videoFit,
-                  ),
-                if (loadError != null)
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(renderRadius),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.error_outline_rounded,
-                                  color: Theme.of(context).colorScheme.error,
-                                  size: 24,
-                                ),
-                                const SizedBox(height: 4),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Text(
-                                    loadError.startsWith('error:') 
-                                      ? (loadError == 'error:unsupported_format' 
-                                          ? AppLocalizations.of(context)!.playbackErrorUnsupportedFormat 
-                                          : (loadError == 'error:file_inaccessible' 
-                                              ? AppLocalizations.of(context)!.playbackErrorFileInaccessible 
-                                              : loadError))
-                                      : loadError,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
+            // When on PlayerScreen, the video MUST be under normalLayout so PlayerOverlays
+            // (which are inside PlayerScreen/normalLayout) can render on top of the native WebView.
+            // PlayerScreen has a transparent background, so the video shows through perfectly.
+            if (isPlayerScreen)
+              _PlaybackSurfaceLayer(
+                key: const ValueKey('video_surface'),
+                pipPresentation: pipPresentation,
+                normalBounds: normalBounds,
+                showShadow: showShadow,
+                renderRadius: renderRadius,
+                isWindows: isWindows,
+                child: Stack(
+                  children: [
+                    if (playbackStatus.track?.isLocal != true || playbackStatus.hasVideo)
+                      _StablePlaybackView(
+                        controller: playbackEngine,
+                        status: playbackStatus,
+                        fit: videoFit,
+                      ),
+                    if (loadError != null)
+                      Positioned.fill(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(renderRadius),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline_rounded,
                                       color: Theme.of(context).colorScheme.error,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
+                                      size: 24,
                                     ),
-                                  ),
+                                    const SizedBox(height: 4),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Text(
+                                        loadError.startsWith('error:') 
+                                          ? (loadError == 'error:unsupported_format' 
+                                              ? AppLocalizations.of(context)!.playbackErrorUnsupportedFormat 
+                                              : (loadError == 'error:file_inaccessible' 
+                                                  ? AppLocalizations.of(context)!.playbackErrorFileInaccessible 
+                                                  : loadError))
+                                          : loadError,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.error,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    TactileTap(
+                                      onTap: () => ref.read(playerProvider.notifier).retryLoad(),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          borderRadius: BorderRadius.circular(20),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.refresh_rounded,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            const Text(
+                                              'Retry',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 16),
-                                TactileTap(
-                                  onTap: () => ref.read(playerProvider.notifier).retryLoad(),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.primary,
-                                      borderRadius: BorderRadius.circular(20),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.refresh_rounded,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text(
-                                          'Retry',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
+
+            Offstage(
+              key: const ValueKey('normal_layout'),
+              offstage: pipPresentation,
+              child: TickerMode(
+                enabled: !pipPresentation,
+                child: normalLayout,
+              ),
             ),
-          ),
+            
+            // When NOT on PlayerScreen (e.g. Home screen), the video MUST be on top of normalLayout 
+            // so the mini-player floats over the solid background of the Home screen.
+            if (!isPlayerScreen)
+              _PlaybackSurfaceLayer(
+                key: const ValueKey('video_surface'),
+                pipPresentation: pipPresentation,
+                normalBounds: normalBounds,
+                showShadow: showShadow,
+                renderRadius: renderRadius,
+                isWindows: isWindows,
+                child: Stack(
+                  children: [
+                    if (playbackStatus.track?.isLocal != true || playbackStatus.hasVideo)
+                      _StablePlaybackView(
+                        controller: playbackEngine,
+                        status: playbackStatus,
+                        fit: videoFit,
+                      ),
+                    if (loadError != null)
+                      Positioned.fill(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(renderRadius),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline_rounded,
+                                      color: Theme.of(context).colorScheme.error,
+                                      size: 24,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Text(
+                                        loadError.startsWith('error:') 
+                                          ? (loadError == 'error:unsupported_format' 
+                                              ? AppLocalizations.of(context)!.playbackErrorUnsupportedFormat 
+                                              : (loadError == 'error:file_inaccessible' 
+                                                  ? AppLocalizations.of(context)!.playbackErrorFileInaccessible 
+                                                  : loadError))
+                                          : loadError,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.error,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    TactileTap(
+                                      onTap: () => ref.read(playerProvider.notifier).retryLoad(),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          borderRadius: BorderRadius.circular(20),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.refresh_rounded,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            const Text(
+                                              'Retry',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
         ],
       ),
     ));
@@ -492,6 +606,7 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
 
 class _PlaybackSurfaceLayer extends StatefulWidget {
   const _PlaybackSurfaceLayer({
+    super.key,
     required this.pipPresentation,
     required this.normalBounds,
     required this.showShadow,

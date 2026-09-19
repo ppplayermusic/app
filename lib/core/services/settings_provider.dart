@@ -12,6 +12,8 @@ enum YoutubeSearchMethod { scraping, api }
 
 enum YoutubeApiProviderType { ppplayer, custom }
 
+enum VideoFitMode { fit, fill }
+
 class SettingsState {
   final String selectedCountry;
   final bool showVideo;
@@ -31,6 +33,7 @@ class SettingsState {
   final bool autoplayEnabled;
   final bool continuePlaybackInPip;
   final String? languageCode;
+  final VideoFitMode videoFitMode;
 
   SettingsState({
     required this.selectedCountry,
@@ -49,6 +52,7 @@ class SettingsState {
     this.autoplayEnabled = true,
     this.continuePlaybackInPip = false,
     this.languageCode,
+    this.videoFitMode = VideoFitMode.fit,
   });
 
   SettingsState copyWith({
@@ -68,6 +72,7 @@ class SettingsState {
     bool? autoplayEnabled,
     bool? continuePlaybackInPip,
     String? languageCode,
+    VideoFitMode? videoFitMode,
   }) {
     return SettingsState(
       selectedCountry: selectedCountry ?? this.selectedCountry,
@@ -87,6 +92,7 @@ class SettingsState {
       continuePlaybackInPip:
           continuePlaybackInPip ?? this.continuePlaybackInPip,
       languageCode: languageCode ?? this.languageCode,
+      videoFitMode: videoFitMode ?? this.videoFitMode,
     );
   }
 }
@@ -121,6 +127,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
   static const _autoplayEnabledKey = 'autoplay_enabled';
   static const _continuePlaybackInPipKey = 'continue_playback_in_pip';
   static const _languageCodeKey = 'language_code';
+  static const _videoFitModeKey = 'video_fit_mode';
 
   Future<void> _loadSettings() async {
     final box = await Hive.openBox(_boxName);
@@ -166,6 +173,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final continuePlaybackInPip =
         box.get(_continuePlaybackInPipKey, defaultValue: false) as bool;
     final languageCode = box.get(_languageCodeKey) as String?;
+    final videoFitModeIndex =
+        box.get(_videoFitModeKey, defaultValue: VideoFitMode.fit.index) as int;
 
     state = state.copyWith(
       selectedCountry: country,
@@ -205,6 +214,11 @@ class SettingsNotifier extends Notifier<SettingsState> {
       autoplayEnabled: autoplayEnabled,
       continuePlaybackInPip: continuePlaybackInPip,
       languageCode: languageCode,
+      videoFitMode:
+          VideoFitMode.values[videoFitModeIndex.clamp(
+            0,
+            VideoFitMode.values.length - 1,
+          )],
       isLoaded: true,
     );
   }
@@ -321,6 +335,12 @@ class SettingsNotifier extends Notifier<SettingsState> {
       await box.put(_showVideoKey, false);
       state = state.copyWith(showVideo: false);
     }
+  }
+
+  Future<void> setVideoFitMode(VideoFitMode mode) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put(_videoFitModeKey, mode.index);
+    state = state.copyWith(videoFitMode: mode);
   }
 }
 

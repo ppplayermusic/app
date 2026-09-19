@@ -11,6 +11,8 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 class FakeEngine implements PlaybackController {
   @override
   bool get supportsSpeed => true;
+  @override
+  bool get supportsVideoFitMode => false;
 
   final String name;
   FakeEngine(this.name);
