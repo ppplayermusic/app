@@ -141,21 +141,19 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _subscriptions.addAll([
       _player!.stream.position.listen((pos) {
         if (!_currentStatus.isIFrameMode) {
-          final isLive = _currentStatus.duration == Duration.zero && pos > Duration.zero;
           _updateStatus(_currentStatus.copyWith(
             position: pos,
-            isLive: isLive || _currentStatus.track?.isLiveStream == true,
+            isLive: _currentStatus.track?.liveStatus == PlaybackLiveStatus.live,
           ));
         }
       }),
       _player!.stream.duration.listen((dur) {
         if (!_currentStatus.isIFrameMode) {
           final isSeekable = dur > Duration.zero;
-          final isLive = dur == Duration.zero && _currentStatus.position > Duration.zero;
           _updateStatus(_currentStatus.copyWith(
             duration: dur,
-            isSeekable: isSeekable && _currentStatus.track?.isLiveStream != true,
-            isLive: isLive || _currentStatus.track?.isLiveStream == true,
+            isSeekable: isSeekable,
+            isLive: _currentStatus.track?.liveStatus == PlaybackLiveStatus.live,
           ));
         }
       }),
@@ -267,8 +265,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
         isIFrameMode: false,
         activeVideoId: track.id,
         hasVideo: track.isVideo,
-        isLive: track.isLiveStream,
-        isSeekable: !track.isLiveStream,
+        isLive: track.liveStatus == PlaybackLiveStatus.live,
+        isSeekable: track.liveStatus != PlaybackLiveStatus.live,
       ));
       
       if (_currentStatus.isIFrameMode) {
@@ -421,8 +419,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
           hasVideo: track.isVideo,
           isIFrameMode: false,
           generation: myGen,
-          isLive: track.isLiveStream,
-          isSeekable: !track.isLiveStream,
+          isLive: track.liveStatus == PlaybackLiveStatus.live,
+          isSeekable: track.liveStatus != PlaybackLiveStatus.live,
+          position: Duration.zero,
+          duration: Duration.zero,
+          buffered: Duration.zero,
         ),
       );
       

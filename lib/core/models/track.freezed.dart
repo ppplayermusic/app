@@ -24,8 +24,8 @@ mixin _$Track {
 /// False for all audio-only tracks, unclassified pre-v11 rows, and
 /// online tracks.
  bool get isVideoFile;/// Stream URL for network streams.
- String? get networkStreamUrl;/// Whether the network stream is explicitly flagged as a live broadcast.
- bool get isLiveStream;
+ String? get networkStreamUrl;/// The stream live status (unknown, live, onDemand).
+@StreamLiveStatusConverter()@JsonKey(readValue: _readLiveStatus) StreamLiveStatus get liveStatus;
 /// Create a copy of Track
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -38,16 +38,16 @@ $TrackCopyWith<Track> get copyWith => _$TrackCopyWithImpl<Track>(this as Track, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Track&&(identical(other.spotifyId, spotifyId) || other.spotifyId == spotifyId)&&(identical(other.name, name) || other.name == name)&&(identical(other.artistId, artistId) || other.artistId == artistId)&&(identical(other.artistName, artistName) || other.artistName == artistName)&&(identical(other.albumId, albumId) || other.albumId == albumId)&&(identical(other.albumName, albumName) || other.albumName == albumName)&&(identical(other.albumImage, albumImage) || other.albumImage == albumImage)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.youtubeVideoId, youtubeVideoId) || other.youtubeVideoId == youtubeVideoId)&&(identical(other.playCount, playCount) || other.playCount == playCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.queueItemId, queueItemId) || other.queueItemId == queueItemId)&&(identical(other.queueOrigin, queueOrigin) || other.queueOrigin == queueOrigin)&&(identical(other.sourceType, sourceType) || other.sourceType == sourceType)&&(identical(other.localFilePath, localFilePath) || other.localFilePath == localFilePath)&&(identical(other.localArtworkPath, localArtworkPath) || other.localArtworkPath == localArtworkPath)&&(identical(other.localAvailabilityStatus, localAvailabilityStatus) || other.localAvailabilityStatus == localAvailabilityStatus)&&(identical(other.localAlbumGroupKey, localAlbumGroupKey) || other.localAlbumGroupKey == localAlbumGroupKey)&&(identical(other.localAddedAt, localAddedAt) || other.localAddedAt == localAddedAt)&&(identical(other.isVideoFile, isVideoFile) || other.isVideoFile == isVideoFile)&&(identical(other.networkStreamUrl, networkStreamUrl) || other.networkStreamUrl == networkStreamUrl)&&(identical(other.isLiveStream, isLiveStream) || other.isLiveStream == isLiveStream));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Track&&(identical(other.spotifyId, spotifyId) || other.spotifyId == spotifyId)&&(identical(other.name, name) || other.name == name)&&(identical(other.artistId, artistId) || other.artistId == artistId)&&(identical(other.artistName, artistName) || other.artistName == artistName)&&(identical(other.albumId, albumId) || other.albumId == albumId)&&(identical(other.albumName, albumName) || other.albumName == albumName)&&(identical(other.albumImage, albumImage) || other.albumImage == albumImage)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.youtubeVideoId, youtubeVideoId) || other.youtubeVideoId == youtubeVideoId)&&(identical(other.playCount, playCount) || other.playCount == playCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.queueItemId, queueItemId) || other.queueItemId == queueItemId)&&(identical(other.queueOrigin, queueOrigin) || other.queueOrigin == queueOrigin)&&(identical(other.sourceType, sourceType) || other.sourceType == sourceType)&&(identical(other.localFilePath, localFilePath) || other.localFilePath == localFilePath)&&(identical(other.localArtworkPath, localArtworkPath) || other.localArtworkPath == localArtworkPath)&&(identical(other.localAvailabilityStatus, localAvailabilityStatus) || other.localAvailabilityStatus == localAvailabilityStatus)&&(identical(other.localAlbumGroupKey, localAlbumGroupKey) || other.localAlbumGroupKey == localAlbumGroupKey)&&(identical(other.localAddedAt, localAddedAt) || other.localAddedAt == localAddedAt)&&(identical(other.isVideoFile, isVideoFile) || other.isVideoFile == isVideoFile)&&(identical(other.networkStreamUrl, networkStreamUrl) || other.networkStreamUrl == networkStreamUrl)&&(identical(other.liveStatus, liveStatus) || other.liveStatus == liveStatus));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,spotifyId,name,artistId,artistName,albumId,albumName,albumImage,durationMs,youtubeVideoId,playCount,isFavorite,queueItemId,queueOrigin,sourceType,localFilePath,localArtworkPath,localAvailabilityStatus,localAlbumGroupKey,localAddedAt,isVideoFile,networkStreamUrl,isLiveStream]);
+int get hashCode => Object.hashAll([runtimeType,spotifyId,name,artistId,artistName,albumId,albumName,albumImage,durationMs,youtubeVideoId,playCount,isFavorite,queueItemId,queueOrigin,sourceType,localFilePath,localArtworkPath,localAvailabilityStatus,localAlbumGroupKey,localAddedAt,isVideoFile,networkStreamUrl,liveStatus]);
 
 @override
 String toString() {
-  return 'Track(spotifyId: $spotifyId, name: $name, artistId: $artistId, artistName: $artistName, albumId: $albumId, albumName: $albumName, albumImage: $albumImage, durationMs: $durationMs, youtubeVideoId: $youtubeVideoId, playCount: $playCount, isFavorite: $isFavorite, queueItemId: $queueItemId, queueOrigin: $queueOrigin, sourceType: $sourceType, localFilePath: $localFilePath, localArtworkPath: $localArtworkPath, localAvailabilityStatus: $localAvailabilityStatus, localAlbumGroupKey: $localAlbumGroupKey, localAddedAt: $localAddedAt, isVideoFile: $isVideoFile, networkStreamUrl: $networkStreamUrl, isLiveStream: $isLiveStream)';
+  return 'Track(spotifyId: $spotifyId, name: $name, artistId: $artistId, artistName: $artistName, albumId: $albumId, albumName: $albumName, albumImage: $albumImage, durationMs: $durationMs, youtubeVideoId: $youtubeVideoId, playCount: $playCount, isFavorite: $isFavorite, queueItemId: $queueItemId, queueOrigin: $queueOrigin, sourceType: $sourceType, localFilePath: $localFilePath, localArtworkPath: $localArtworkPath, localAvailabilityStatus: $localAvailabilityStatus, localAlbumGroupKey: $localAlbumGroupKey, localAddedAt: $localAddedAt, isVideoFile: $isVideoFile, networkStreamUrl: $networkStreamUrl, liveStatus: $liveStatus)';
 }
 
 
@@ -58,7 +58,7 @@ abstract mixin class $TrackCopyWith<$Res>  {
   factory $TrackCopyWith(Track value, $Res Function(Track) _then) = _$TrackCopyWithImpl;
 @useResult
 $Res call({
- String spotifyId, String name, String artistId, String artistName, String? albumId, String? albumName, String? albumImage, int? durationMs, String? youtubeVideoId, int playCount, bool isFavorite, String? queueItemId, QueueItemOrigin queueOrigin, TrackSourceType sourceType, String? localFilePath, String? localArtworkPath, String localAvailabilityStatus, String? localAlbumGroupKey, DateTime? localAddedAt, bool isVideoFile, String? networkStreamUrl, bool isLiveStream
+ String spotifyId, String name, String artistId, String artistName, String? albumId, String? albumName, String? albumImage, int? durationMs, String? youtubeVideoId, int playCount, bool isFavorite, String? queueItemId, QueueItemOrigin queueOrigin, TrackSourceType sourceType, String? localFilePath, String? localArtworkPath, String localAvailabilityStatus, String? localAlbumGroupKey, DateTime? localAddedAt, bool isVideoFile, String? networkStreamUrl,@StreamLiveStatusConverter()@JsonKey(readValue: _readLiveStatus) StreamLiveStatus liveStatus
 });
 
 
@@ -75,7 +75,7 @@ class _$TrackCopyWithImpl<$Res>
 
 /// Create a copy of Track
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? spotifyId = null,Object? name = null,Object? artistId = null,Object? artistName = null,Object? albumId = freezed,Object? albumName = freezed,Object? albumImage = freezed,Object? durationMs = freezed,Object? youtubeVideoId = freezed,Object? playCount = null,Object? isFavorite = null,Object? queueItemId = freezed,Object? queueOrigin = null,Object? sourceType = null,Object? localFilePath = freezed,Object? localArtworkPath = freezed,Object? localAvailabilityStatus = null,Object? localAlbumGroupKey = freezed,Object? localAddedAt = freezed,Object? isVideoFile = null,Object? networkStreamUrl = freezed,Object? isLiveStream = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? spotifyId = null,Object? name = null,Object? artistId = null,Object? artistName = null,Object? albumId = freezed,Object? albumName = freezed,Object? albumImage = freezed,Object? durationMs = freezed,Object? youtubeVideoId = freezed,Object? playCount = null,Object? isFavorite = null,Object? queueItemId = freezed,Object? queueOrigin = null,Object? sourceType = null,Object? localFilePath = freezed,Object? localArtworkPath = freezed,Object? localAvailabilityStatus = null,Object? localAlbumGroupKey = freezed,Object? localAddedAt = freezed,Object? isVideoFile = null,Object? networkStreamUrl = freezed,Object? liveStatus = null,}) {
   return _then(Track(
 spotifyId: null == spotifyId ? _self.spotifyId : spotifyId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -98,8 +98,8 @@ as String,localAlbumGroupKey: freezed == localAlbumGroupKey ? _self.localAlbumGr
 as String?,localAddedAt: freezed == localAddedAt ? _self.localAddedAt : localAddedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,isVideoFile: null == isVideoFile ? _self.isVideoFile : isVideoFile // ignore: cast_nullable_to_non_nullable
 as bool,networkStreamUrl: freezed == networkStreamUrl ? _self.networkStreamUrl : networkStreamUrl // ignore: cast_nullable_to_non_nullable
-as String?,isLiveStream: null == isLiveStream ? _self.isLiveStream : isLiveStream // ignore: cast_nullable_to_non_nullable
-as bool,
+as String?,liveStatus: null == liveStatus ? _self.liveStatus : liveStatus // ignore: cast_nullable_to_non_nullable
+as StreamLiveStatus,
   ));
 }
 
@@ -184,10 +184,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String spotifyId,  String name,  String artistId,  String artistName,  String? albumId,  String? albumName,  String? albumImage,  int? durationMs,  String? youtubeVideoId,  int playCount,  bool isFavorite,  String? queueItemId,  QueueItemOrigin queueOrigin,  TrackSourceType sourceType,  String? localFilePath,  String? localArtworkPath,  String localAvailabilityStatus,  String? localAlbumGroupKey,  DateTime? localAddedAt,  bool isVideoFile,  String? networkStreamUrl,  bool isLiveStream)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String spotifyId,  String name,  String artistId,  String artistName,  String? albumId,  String? albumName,  String? albumImage,  int? durationMs,  String? youtubeVideoId,  int playCount,  bool isFavorite,  String? queueItemId,  QueueItemOrigin queueOrigin,  TrackSourceType sourceType,  String? localFilePath,  String? localArtworkPath,  String localAvailabilityStatus,  String? localAlbumGroupKey,  DateTime? localAddedAt,  bool isVideoFile,  String? networkStreamUrl, @StreamLiveStatusConverter()@JsonKey(readValue: _readLiveStatus)  StreamLiveStatus liveStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Track() when $default != null:
-return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that.albumId,_that.albumName,_that.albumImage,_that.durationMs,_that.youtubeVideoId,_that.playCount,_that.isFavorite,_that.queueItemId,_that.queueOrigin,_that.sourceType,_that.localFilePath,_that.localArtworkPath,_that.localAvailabilityStatus,_that.localAlbumGroupKey,_that.localAddedAt,_that.isVideoFile,_that.networkStreamUrl,_that.isLiveStream);case _:
+return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that.albumId,_that.albumName,_that.albumImage,_that.durationMs,_that.youtubeVideoId,_that.playCount,_that.isFavorite,_that.queueItemId,_that.queueOrigin,_that.sourceType,_that.localFilePath,_that.localArtworkPath,_that.localAvailabilityStatus,_that.localAlbumGroupKey,_that.localAddedAt,_that.isVideoFile,_that.networkStreamUrl,_that.liveStatus);case _:
   return orElse();
 
 }
@@ -205,10 +205,10 @@ return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String spotifyId,  String name,  String artistId,  String artistName,  String? albumId,  String? albumName,  String? albumImage,  int? durationMs,  String? youtubeVideoId,  int playCount,  bool isFavorite,  String? queueItemId,  QueueItemOrigin queueOrigin,  TrackSourceType sourceType,  String? localFilePath,  String? localArtworkPath,  String localAvailabilityStatus,  String? localAlbumGroupKey,  DateTime? localAddedAt,  bool isVideoFile,  String? networkStreamUrl,  bool isLiveStream)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String spotifyId,  String name,  String artistId,  String artistName,  String? albumId,  String? albumName,  String? albumImage,  int? durationMs,  String? youtubeVideoId,  int playCount,  bool isFavorite,  String? queueItemId,  QueueItemOrigin queueOrigin,  TrackSourceType sourceType,  String? localFilePath,  String? localArtworkPath,  String localAvailabilityStatus,  String? localAlbumGroupKey,  DateTime? localAddedAt,  bool isVideoFile,  String? networkStreamUrl, @StreamLiveStatusConverter()@JsonKey(readValue: _readLiveStatus)  StreamLiveStatus liveStatus)  $default,) {final _that = this;
 switch (_that) {
 case _Track():
-return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that.albumId,_that.albumName,_that.albumImage,_that.durationMs,_that.youtubeVideoId,_that.playCount,_that.isFavorite,_that.queueItemId,_that.queueOrigin,_that.sourceType,_that.localFilePath,_that.localArtworkPath,_that.localAvailabilityStatus,_that.localAlbumGroupKey,_that.localAddedAt,_that.isVideoFile,_that.networkStreamUrl,_that.isLiveStream);case _:
+return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that.albumId,_that.albumName,_that.albumImage,_that.durationMs,_that.youtubeVideoId,_that.playCount,_that.isFavorite,_that.queueItemId,_that.queueOrigin,_that.sourceType,_that.localFilePath,_that.localArtworkPath,_that.localAvailabilityStatus,_that.localAlbumGroupKey,_that.localAddedAt,_that.isVideoFile,_that.networkStreamUrl,_that.liveStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -225,10 +225,10 @@ return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String spotifyId,  String name,  String artistId,  String artistName,  String? albumId,  String? albumName,  String? albumImage,  int? durationMs,  String? youtubeVideoId,  int playCount,  bool isFavorite,  String? queueItemId,  QueueItemOrigin queueOrigin,  TrackSourceType sourceType,  String? localFilePath,  String? localArtworkPath,  String localAvailabilityStatus,  String? localAlbumGroupKey,  DateTime? localAddedAt,  bool isVideoFile,  String? networkStreamUrl,  bool isLiveStream)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String spotifyId,  String name,  String artistId,  String artistName,  String? albumId,  String? albumName,  String? albumImage,  int? durationMs,  String? youtubeVideoId,  int playCount,  bool isFavorite,  String? queueItemId,  QueueItemOrigin queueOrigin,  TrackSourceType sourceType,  String? localFilePath,  String? localArtworkPath,  String localAvailabilityStatus,  String? localAlbumGroupKey,  DateTime? localAddedAt,  bool isVideoFile,  String? networkStreamUrl, @StreamLiveStatusConverter()@JsonKey(readValue: _readLiveStatus)  StreamLiveStatus liveStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _Track() when $default != null:
-return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that.albumId,_that.albumName,_that.albumImage,_that.durationMs,_that.youtubeVideoId,_that.playCount,_that.isFavorite,_that.queueItemId,_that.queueOrigin,_that.sourceType,_that.localFilePath,_that.localArtworkPath,_that.localAvailabilityStatus,_that.localAlbumGroupKey,_that.localAddedAt,_that.isVideoFile,_that.networkStreamUrl,_that.isLiveStream);case _:
+return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that.albumId,_that.albumName,_that.albumImage,_that.durationMs,_that.youtubeVideoId,_that.playCount,_that.isFavorite,_that.queueItemId,_that.queueOrigin,_that.sourceType,_that.localFilePath,_that.localArtworkPath,_that.localAvailabilityStatus,_that.localAlbumGroupKey,_that.localAddedAt,_that.isVideoFile,_that.networkStreamUrl,_that.liveStatus);case _:
   return null;
 
 }
@@ -240,7 +240,7 @@ return $default(_that.spotifyId,_that.name,_that.artistId,_that.artistName,_that
 @JsonSerializable()
 
 class _Track implements Track {
-  const _Track({required this.spotifyId, required this.name, required this.artistId, required this.artistName, this.albumId, this.albumName, this.albumImage, this.durationMs, this.youtubeVideoId, this.playCount = 0, this.isFavorite = false, this.queueItemId, this.queueOrigin = QueueItemOrigin.context, this.sourceType = TrackSourceType.online, this.localFilePath, this.localArtworkPath, this.localAvailabilityStatus = 'available', this.localAlbumGroupKey, this.localAddedAt, this.isVideoFile = false, this.networkStreamUrl, this.isLiveStream = false});
+  const _Track({required this.spotifyId, required this.name, required this.artistId, required this.artistName, this.albumId, this.albumName, this.albumImage, this.durationMs, this.youtubeVideoId, this.playCount = 0, this.isFavorite = false, this.queueItemId, this.queueOrigin = QueueItemOrigin.context, this.sourceType = TrackSourceType.online, this.localFilePath, this.localArtworkPath, this.localAvailabilityStatus = 'available', this.localAlbumGroupKey, this.localAddedAt, this.isVideoFile = false, this.networkStreamUrl, @StreamLiveStatusConverter()@JsonKey(readValue: _readLiveStatus) this.liveStatus = StreamLiveStatus.unknown});
   factory _Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
 
 @override final  String spotifyId;
@@ -272,8 +272,8 @@ class _Track implements Track {
 @override@JsonKey() final  bool isVideoFile;
 /// Stream URL for network streams.
 @override final  String? networkStreamUrl;
-/// Whether the network stream is explicitly flagged as a live broadcast.
-@override@JsonKey() final  bool isLiveStream;
+/// The stream live status (unknown, live, onDemand).
+@override@StreamLiveStatusConverter()@JsonKey(readValue: _readLiveStatus) final  StreamLiveStatus liveStatus;
 
 /// Create a copy of Track
 /// with the given fields replaced by the non-null parameter values.
@@ -288,16 +288,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Track&&(identical(other.spotifyId, spotifyId) || other.spotifyId == spotifyId)&&(identical(other.name, name) || other.name == name)&&(identical(other.artistId, artistId) || other.artistId == artistId)&&(identical(other.artistName, artistName) || other.artistName == artistName)&&(identical(other.albumId, albumId) || other.albumId == albumId)&&(identical(other.albumName, albumName) || other.albumName == albumName)&&(identical(other.albumImage, albumImage) || other.albumImage == albumImage)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.youtubeVideoId, youtubeVideoId) || other.youtubeVideoId == youtubeVideoId)&&(identical(other.playCount, playCount) || other.playCount == playCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.queueItemId, queueItemId) || other.queueItemId == queueItemId)&&(identical(other.queueOrigin, queueOrigin) || other.queueOrigin == queueOrigin)&&(identical(other.sourceType, sourceType) || other.sourceType == sourceType)&&(identical(other.localFilePath, localFilePath) || other.localFilePath == localFilePath)&&(identical(other.localArtworkPath, localArtworkPath) || other.localArtworkPath == localArtworkPath)&&(identical(other.localAvailabilityStatus, localAvailabilityStatus) || other.localAvailabilityStatus == localAvailabilityStatus)&&(identical(other.localAlbumGroupKey, localAlbumGroupKey) || other.localAlbumGroupKey == localAlbumGroupKey)&&(identical(other.localAddedAt, localAddedAt) || other.localAddedAt == localAddedAt)&&(identical(other.isVideoFile, isVideoFile) || other.isVideoFile == isVideoFile)&&(identical(other.networkStreamUrl, networkStreamUrl) || other.networkStreamUrl == networkStreamUrl)&&(identical(other.isLiveStream, isLiveStream) || other.isLiveStream == isLiveStream));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Track&&(identical(other.spotifyId, spotifyId) || other.spotifyId == spotifyId)&&(identical(other.name, name) || other.name == name)&&(identical(other.artistId, artistId) || other.artistId == artistId)&&(identical(other.artistName, artistName) || other.artistName == artistName)&&(identical(other.albumId, albumId) || other.albumId == albumId)&&(identical(other.albumName, albumName) || other.albumName == albumName)&&(identical(other.albumImage, albumImage) || other.albumImage == albumImage)&&(identical(other.durationMs, durationMs) || other.durationMs == durationMs)&&(identical(other.youtubeVideoId, youtubeVideoId) || other.youtubeVideoId == youtubeVideoId)&&(identical(other.playCount, playCount) || other.playCount == playCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.queueItemId, queueItemId) || other.queueItemId == queueItemId)&&(identical(other.queueOrigin, queueOrigin) || other.queueOrigin == queueOrigin)&&(identical(other.sourceType, sourceType) || other.sourceType == sourceType)&&(identical(other.localFilePath, localFilePath) || other.localFilePath == localFilePath)&&(identical(other.localArtworkPath, localArtworkPath) || other.localArtworkPath == localArtworkPath)&&(identical(other.localAvailabilityStatus, localAvailabilityStatus) || other.localAvailabilityStatus == localAvailabilityStatus)&&(identical(other.localAlbumGroupKey, localAlbumGroupKey) || other.localAlbumGroupKey == localAlbumGroupKey)&&(identical(other.localAddedAt, localAddedAt) || other.localAddedAt == localAddedAt)&&(identical(other.isVideoFile, isVideoFile) || other.isVideoFile == isVideoFile)&&(identical(other.networkStreamUrl, networkStreamUrl) || other.networkStreamUrl == networkStreamUrl)&&(identical(other.liveStatus, liveStatus) || other.liveStatus == liveStatus));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,spotifyId,name,artistId,artistName,albumId,albumName,albumImage,durationMs,youtubeVideoId,playCount,isFavorite,queueItemId,queueOrigin,sourceType,localFilePath,localArtworkPath,localAvailabilityStatus,localAlbumGroupKey,localAddedAt,isVideoFile,networkStreamUrl,isLiveStream]);
+int get hashCode => Object.hashAll([runtimeType,spotifyId,name,artistId,artistName,albumId,albumName,albumImage,durationMs,youtubeVideoId,playCount,isFavorite,queueItemId,queueOrigin,sourceType,localFilePath,localArtworkPath,localAvailabilityStatus,localAlbumGroupKey,localAddedAt,isVideoFile,networkStreamUrl,liveStatus]);
 
 @override
 String toString() {
-  return 'Track(spotifyId: $spotifyId, name: $name, artistId: $artistId, artistName: $artistName, albumId: $albumId, albumName: $albumName, albumImage: $albumImage, durationMs: $durationMs, youtubeVideoId: $youtubeVideoId, playCount: $playCount, isFavorite: $isFavorite, queueItemId: $queueItemId, queueOrigin: $queueOrigin, sourceType: $sourceType, localFilePath: $localFilePath, localArtworkPath: $localArtworkPath, localAvailabilityStatus: $localAvailabilityStatus, localAlbumGroupKey: $localAlbumGroupKey, localAddedAt: $localAddedAt, isVideoFile: $isVideoFile, networkStreamUrl: $networkStreamUrl, isLiveStream: $isLiveStream)';
+  return 'Track(spotifyId: $spotifyId, name: $name, artistId: $artistId, artistName: $artistName, albumId: $albumId, albumName: $albumName, albumImage: $albumImage, durationMs: $durationMs, youtubeVideoId: $youtubeVideoId, playCount: $playCount, isFavorite: $isFavorite, queueItemId: $queueItemId, queueOrigin: $queueOrigin, sourceType: $sourceType, localFilePath: $localFilePath, localArtworkPath: $localArtworkPath, localAvailabilityStatus: $localAvailabilityStatus, localAlbumGroupKey: $localAlbumGroupKey, localAddedAt: $localAddedAt, isVideoFile: $isVideoFile, networkStreamUrl: $networkStreamUrl, liveStatus: $liveStatus)';
 }
 
 
@@ -308,7 +308,7 @@ abstract mixin class _$TrackCopyWith<$Res> implements $TrackCopyWith<$Res> {
   factory _$TrackCopyWith(_Track value, $Res Function(_Track) _then) = __$TrackCopyWithImpl;
 @override @useResult
 $Res call({
- String spotifyId, String name, String artistId, String artistName, String? albumId, String? albumName, String? albumImage, int? durationMs, String? youtubeVideoId, int playCount, bool isFavorite, String? queueItemId, QueueItemOrigin queueOrigin, TrackSourceType sourceType, String? localFilePath, String? localArtworkPath, String localAvailabilityStatus, String? localAlbumGroupKey, DateTime? localAddedAt, bool isVideoFile, String? networkStreamUrl, bool isLiveStream
+ String spotifyId, String name, String artistId, String artistName, String? albumId, String? albumName, String? albumImage, int? durationMs, String? youtubeVideoId, int playCount, bool isFavorite, String? queueItemId, QueueItemOrigin queueOrigin, TrackSourceType sourceType, String? localFilePath, String? localArtworkPath, String localAvailabilityStatus, String? localAlbumGroupKey, DateTime? localAddedAt, bool isVideoFile, String? networkStreamUrl,@StreamLiveStatusConverter()@JsonKey(readValue: _readLiveStatus) StreamLiveStatus liveStatus
 });
 
 
@@ -325,7 +325,7 @@ class __$TrackCopyWithImpl<$Res>
 
 /// Create a copy of Track
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? spotifyId = null,Object? name = null,Object? artistId = null,Object? artistName = null,Object? albumId = freezed,Object? albumName = freezed,Object? albumImage = freezed,Object? durationMs = freezed,Object? youtubeVideoId = freezed,Object? playCount = null,Object? isFavorite = null,Object? queueItemId = freezed,Object? queueOrigin = null,Object? sourceType = null,Object? localFilePath = freezed,Object? localArtworkPath = freezed,Object? localAvailabilityStatus = null,Object? localAlbumGroupKey = freezed,Object? localAddedAt = freezed,Object? isVideoFile = null,Object? networkStreamUrl = freezed,Object? isLiveStream = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? spotifyId = null,Object? name = null,Object? artistId = null,Object? artistName = null,Object? albumId = freezed,Object? albumName = freezed,Object? albumImage = freezed,Object? durationMs = freezed,Object? youtubeVideoId = freezed,Object? playCount = null,Object? isFavorite = null,Object? queueItemId = freezed,Object? queueOrigin = null,Object? sourceType = null,Object? localFilePath = freezed,Object? localArtworkPath = freezed,Object? localAvailabilityStatus = null,Object? localAlbumGroupKey = freezed,Object? localAddedAt = freezed,Object? isVideoFile = null,Object? networkStreamUrl = freezed,Object? liveStatus = null,}) {
   return _then(_Track(
 spotifyId: null == spotifyId ? _self.spotifyId : spotifyId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -348,8 +348,8 @@ as String,localAlbumGroupKey: freezed == localAlbumGroupKey ? _self.localAlbumGr
 as String?,localAddedAt: freezed == localAddedAt ? _self.localAddedAt : localAddedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,isVideoFile: null == isVideoFile ? _self.isVideoFile : isVideoFile // ignore: cast_nullable_to_non_nullable
 as bool,networkStreamUrl: freezed == networkStreamUrl ? _self.networkStreamUrl : networkStreamUrl // ignore: cast_nullable_to_non_nullable
-as String?,isLiveStream: null == isLiveStream ? _self.isLiveStream : isLiveStream // ignore: cast_nullable_to_non_nullable
-as bool,
+as String?,liveStatus: null == liveStatus ? _self.liveStatus : liveStatus // ignore: cast_nullable_to_non_nullable
+as StreamLiveStatus,
   ));
 }
 

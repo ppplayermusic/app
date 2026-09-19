@@ -2,6 +2,8 @@
 /// Persisted in the queue JSON through Track.sourceType.
 enum PlaybackSourceType { online, local, networkStream }
 
+enum PlaybackLiveStatus { unknown, live, onDemand }
+
 class PlaybackTrack {
   final String id;
   final String title;
@@ -17,7 +19,7 @@ class PlaybackTrack {
   final bool isVideo;
   /// Explicit flag set by the upstream coordinator (e.g. manifest parser)
   /// to indicate this stream is known to be a live broadcast.
-  final bool isLiveStream;
+  final PlaybackLiveStatus liveStatus;
 
   const PlaybackTrack({
     required this.id,
@@ -30,7 +32,7 @@ class PlaybackTrack {
     this.localMediaUri,
     this.networkMediaUri,
     this.isVideo = false,
-    this.isLiveStream = false,
+    this.liveStatus = PlaybackLiveStatus.unknown,
   });
 
   bool get isLocal => sourceType == PlaybackSourceType.local;

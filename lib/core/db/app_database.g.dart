@@ -5462,6 +5462,18 @@ class $StreamChannelsTable extends StreamChannels
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _liveStatusMeta = const VerificationMeta(
+    'liveStatus',
+  );
+  @override
+  late final GeneratedColumn<int> liveStatus = GeneratedColumn<int>(
+    'live_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -5473,6 +5485,7 @@ class $StreamChannelsTable extends StreamChannels
     streamUrl,
     isFavorite,
     position,
+    liveStatus,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -5545,6 +5558,12 @@ class $StreamChannelsTable extends StreamChannels
     } else if (isInserting) {
       context.missing(_positionMeta);
     }
+    if (data.containsKey('live_status')) {
+      context.handle(
+        _liveStatusMeta,
+        liveStatus.isAcceptableOrUnknown(data['live_status']!, _liveStatusMeta),
+      );
+    }
     return context;
   }
 
@@ -5590,6 +5609,10 @@ class $StreamChannelsTable extends StreamChannels
         DriftSqlType.int,
         data['${effectivePrefix}position'],
       )!,
+      liveStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}live_status'],
+      )!,
     );
   }
 
@@ -5609,6 +5632,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
   final String streamUrl;
   final bool isFavorite;
   final int position;
+  final int liveStatus;
   const StreamChannel({
     required this.id,
     required this.playlistId,
@@ -5619,6 +5643,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
     required this.streamUrl,
     required this.isFavorite,
     required this.position,
+    required this.liveStatus,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -5638,6 +5663,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
     map['stream_url'] = Variable<String>(streamUrl);
     map['is_favorite'] = Variable<bool>(isFavorite);
     map['position'] = Variable<int>(position);
+    map['live_status'] = Variable<int>(liveStatus);
     return map;
   }
 
@@ -5656,6 +5682,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
       streamUrl: Value(streamUrl),
       isFavorite: Value(isFavorite),
       position: Value(position),
+      liveStatus: Value(liveStatus),
     );
   }
 
@@ -5674,6 +5701,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
       streamUrl: serializer.fromJson<String>(json['streamUrl']),
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       position: serializer.fromJson<int>(json['position']),
+      liveStatus: serializer.fromJson<int>(json['liveStatus']),
     );
   }
   @override
@@ -5689,6 +5717,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
       'streamUrl': serializer.toJson<String>(streamUrl),
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'position': serializer.toJson<int>(position),
+      'liveStatus': serializer.toJson<int>(liveStatus),
     };
   }
 
@@ -5702,6 +5731,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
     String? streamUrl,
     bool? isFavorite,
     int? position,
+    int? liveStatus,
   }) => StreamChannel(
     id: id ?? this.id,
     playlistId: playlistId ?? this.playlistId,
@@ -5712,6 +5742,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
     streamUrl: streamUrl ?? this.streamUrl,
     isFavorite: isFavorite ?? this.isFavorite,
     position: position ?? this.position,
+    liveStatus: liveStatus ?? this.liveStatus,
   );
   StreamChannel copyWithCompanion(StreamChannelsCompanion data) {
     return StreamChannel(
@@ -5730,6 +5761,9 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
           ? data.isFavorite.value
           : this.isFavorite,
       position: data.position.present ? data.position.value : this.position,
+      liveStatus: data.liveStatus.present
+          ? data.liveStatus.value
+          : this.liveStatus,
     );
   }
 
@@ -5744,7 +5778,8 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
           ..write('groupTitle: $groupTitle, ')
           ..write('streamUrl: $streamUrl, ')
           ..write('isFavorite: $isFavorite, ')
-          ..write('position: $position')
+          ..write('position: $position, ')
+          ..write('liveStatus: $liveStatus')
           ..write(')'))
         .toString();
   }
@@ -5760,6 +5795,7 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
     streamUrl,
     isFavorite,
     position,
+    liveStatus,
   );
   @override
   bool operator ==(Object other) =>
@@ -5773,7 +5809,8 @@ class StreamChannel extends DataClass implements Insertable<StreamChannel> {
           other.groupTitle == this.groupTitle &&
           other.streamUrl == this.streamUrl &&
           other.isFavorite == this.isFavorite &&
-          other.position == this.position);
+          other.position == this.position &&
+          other.liveStatus == this.liveStatus);
 }
 
 class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
@@ -5786,6 +5823,7 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
   final Value<String> streamUrl;
   final Value<bool> isFavorite;
   final Value<int> position;
+  final Value<int> liveStatus;
   const StreamChannelsCompanion({
     this.id = const Value.absent(),
     this.playlistId = const Value.absent(),
@@ -5796,6 +5834,7 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
     this.streamUrl = const Value.absent(),
     this.isFavorite = const Value.absent(),
     this.position = const Value.absent(),
+    this.liveStatus = const Value.absent(),
   });
   StreamChannelsCompanion.insert({
     this.id = const Value.absent(),
@@ -5807,6 +5846,7 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
     required String streamUrl,
     this.isFavorite = const Value.absent(),
     required int position,
+    this.liveStatus = const Value.absent(),
   }) : playlistId = Value(playlistId),
        title = Value(title),
        streamUrl = Value(streamUrl),
@@ -5821,6 +5861,7 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
     Expression<String>? streamUrl,
     Expression<bool>? isFavorite,
     Expression<int>? position,
+    Expression<int>? liveStatus,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -5832,6 +5873,7 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
       if (streamUrl != null) 'stream_url': streamUrl,
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (position != null) 'position': position,
+      if (liveStatus != null) 'live_status': liveStatus,
     });
   }
 
@@ -5845,6 +5887,7 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
     Value<String>? streamUrl,
     Value<bool>? isFavorite,
     Value<int>? position,
+    Value<int>? liveStatus,
   }) {
     return StreamChannelsCompanion(
       id: id ?? this.id,
@@ -5856,6 +5899,7 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
       streamUrl: streamUrl ?? this.streamUrl,
       isFavorite: isFavorite ?? this.isFavorite,
       position: position ?? this.position,
+      liveStatus: liveStatus ?? this.liveStatus,
     );
   }
 
@@ -5889,6 +5933,9 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
     if (position.present) {
       map['position'] = Variable<int>(position.value);
     }
+    if (liveStatus.present) {
+      map['live_status'] = Variable<int>(liveStatus.value);
+    }
     return map;
   }
 
@@ -5903,7 +5950,8 @@ class StreamChannelsCompanion extends UpdateCompanion<StreamChannel> {
           ..write('groupTitle: $groupTitle, ')
           ..write('streamUrl: $streamUrl, ')
           ..write('isFavorite: $isFavorite, ')
-          ..write('position: $position')
+          ..write('position: $position, ')
+          ..write('liveStatus: $liveStatus')
           ..write(')'))
         .toString();
   }
@@ -8701,6 +8749,7 @@ typedef $$StreamChannelsTableCreateCompanionBuilder =
       required String streamUrl,
       Value<bool> isFavorite,
       required int position,
+      Value<int> liveStatus,
     });
 typedef $$StreamChannelsTableUpdateCompanionBuilder =
     StreamChannelsCompanion Function({
@@ -8713,6 +8762,7 @@ typedef $$StreamChannelsTableUpdateCompanionBuilder =
       Value<String> streamUrl,
       Value<bool> isFavorite,
       Value<int> position,
+      Value<int> liveStatus,
     });
 
 class $$StreamChannelsTableFilterComposer
@@ -8766,6 +8816,11 @@ class $$StreamChannelsTableFilterComposer
 
   ColumnFilters<int> get position => $composableBuilder(
     column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get liveStatus => $composableBuilder(
+    column: $table.liveStatus,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -8823,6 +8878,11 @@ class $$StreamChannelsTableOrderingComposer
     column: $table.position,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get liveStatus => $composableBuilder(
+    column: $table.liveStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$StreamChannelsTableAnnotationComposer
@@ -8866,6 +8926,11 @@ class $$StreamChannelsTableAnnotationComposer
 
   GeneratedColumn<int> get position =>
       $composableBuilder(column: $table.position, builder: (column) => column);
+
+  GeneratedColumn<int> get liveStatus => $composableBuilder(
+    column: $table.liveStatus,
+    builder: (column) => column,
+  );
 }
 
 class $$StreamChannelsTableTableManager
@@ -8910,6 +8975,7 @@ class $$StreamChannelsTableTableManager
                 Value<String> streamUrl = const Value.absent(),
                 Value<bool> isFavorite = const Value.absent(),
                 Value<int> position = const Value.absent(),
+                Value<int> liveStatus = const Value.absent(),
               }) => StreamChannelsCompanion(
                 id: id,
                 playlistId: playlistId,
@@ -8920,6 +8986,7 @@ class $$StreamChannelsTableTableManager
                 streamUrl: streamUrl,
                 isFavorite: isFavorite,
                 position: position,
+                liveStatus: liveStatus,
               ),
           createCompanionCallback:
               ({
@@ -8932,6 +8999,7 @@ class $$StreamChannelsTableTableManager
                 required String streamUrl,
                 Value<bool> isFavorite = const Value.absent(),
                 required int position,
+                Value<int> liveStatus = const Value.absent(),
               }) => StreamChannelsCompanion.insert(
                 id: id,
                 playlistId: playlistId,
@@ -8942,6 +9010,7 @@ class $$StreamChannelsTableTableManager
                 streamUrl: streamUrl,
                 isFavorite: isFavorite,
                 position: position,
+                liveStatus: liveStatus,
               ),
           withReferenceMapper: (p0) => p0
               .map(

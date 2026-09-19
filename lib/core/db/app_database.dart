@@ -198,6 +198,8 @@ class StreamChannels extends Table {
   TextColumn get streamUrl => text()();
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   IntColumn get position => integer()();
+  // 0: unknown, 1: live, 2: onDemand
+  IntColumn get liveStatus => integer().withDefault(const Constant(0))();
 }
 
 // --- Database ---
@@ -223,7 +225,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -294,6 +296,9 @@ class AppDatabase extends _$AppDatabase {
       if (from < 12) {
         await m.createTable(streamPlaylists);
         await m.createTable(streamChannels);
+      }
+      if (from < 13) {
+        await m.addColumn(streamChannels, streamChannels.liveStatus);
       }
     },
   );

@@ -20,6 +20,17 @@ extension TrackToPlayback on Track {
       }
     }
     
+    PlaybackLiveStatus _mapLiveStatus(StreamLiveStatus status) {
+      switch (status) {
+        case StreamLiveStatus.live:
+          return PlaybackLiveStatus.live;
+        case StreamLiveStatus.onDemand:
+          return PlaybackLiveStatus.onDemand;
+        case StreamLiveStatus.unknown:
+          return PlaybackLiveStatus.unknown;
+      }
+    }
+    
     PlaybackSourceType playbackSource;
     switch (sourceType) {
       case TrackSourceType.local:
@@ -46,7 +57,7 @@ extension TrackToPlayback on Track {
       localMediaUri: localFilePath,
       networkMediaUri: networkStreamUrl,
       isVideo: isVideoFile,
-      isLiveStream: isLiveStream,
+      liveStatus: _mapLiveStatus(this.liveStatus),
     );
   }
 }

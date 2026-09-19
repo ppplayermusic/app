@@ -35,7 +35,11 @@ _Track _$TrackFromJson(Map<String, dynamic> json) => _Track(
       : DateTime.parse(json['localAddedAt'] as String),
   isVideoFile: json['isVideoFile'] as bool? ?? false,
   networkStreamUrl: json['networkStreamUrl'] as String?,
-  isLiveStream: json['isLiveStream'] as bool? ?? false,
+  liveStatus: _readLiveStatus(json, 'liveStatus') == null
+      ? StreamLiveStatus.unknown
+      : const StreamLiveStatusConverter().fromJson(
+          _readLiveStatus(json, 'liveStatus'),
+        ),
 );
 
 Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
@@ -60,7 +64,7 @@ Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
   'localAddedAt': instance.localAddedAt?.toIso8601String(),
   'isVideoFile': instance.isVideoFile,
   'networkStreamUrl': instance.networkStreamUrl,
-  'isLiveStream': instance.isLiveStream,
+  'liveStatus': const StreamLiveStatusConverter().toJson(instance.liveStatus),
 };
 
 const _$QueueItemOriginEnumMap = {

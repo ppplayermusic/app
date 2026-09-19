@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
 import '../db/app_database.dart';
-import 'm3u_parser.dart';
+import 'playlist_parser.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -19,21 +19,21 @@ class NetworkStreamService {
   /// Analyzes a URL to see if it's a playlist or a direct stream.
   /// If it's a playlist, parses it and returns the list of channels.
   /// If it's a direct stream or HLS manifest, returns a single channel item representing the stream itself.
-  Future<List<M3uChannel>> analyzeAndParseUrl(String url, {http.Client? client}) async {
-    final normalizedUrl = M3uParser.normalizeUrl(url);
+  Future<List<PlaylistItem>> analyzeAndParseUrl(String url, {http.Client? client}) async {
+    final normalizedUrl = PlaylistParser.normalizeUrl(url);
 
     try {
-      final result = await M3uParser.fetchAndParse(normalizedUrl, client: client);
+      final result = await PlaylistParser.fetchAndParse(normalizedUrl, client: client);
       
       switch (result.type) {
-        case M3uType.channelList:
+        case PlaylistType.channelList:
           return result.channels;
-        case M3uType.hlsManifest:
-        case M3uType.unknown:
+        case PlaylistType.hlsManifest:
+        case PlaylistType.unknown:
           // Treat as a direct stream
           return [
-            M3uChannel(
-              title: 'Network Stream',
+            PlaylistItem(
+              title: 'Stream 1',
               url: normalizedUrl,
             )
           ];
@@ -42,8 +42,8 @@ class NetworkStreamService {
       // If parsing fails (e.g., because it's a raw video file and bounded bytes didn't fail it), 
       // treat as a direct stream.
       return [
-        M3uChannel(
-          title: 'Network Stream',
+        PlaylistItem(
+          title: 'Stream 1',
           url: normalizedUrl,
         )
       ];
@@ -51,7 +51,7 @@ class NetworkStreamService {
   }
 
   /// Saves a parsed playlist into the database, clearing old channels for the same playlist.
-  Future<int> savePlaylist(String title, String sourceUrl, List<M3uChannel> channels) async {
+  Future<int> savePlaylist(String title, String sourceUrl, List<PlaylistItem> channels) async {
     return await _db.transaction(() async {
       // Check if playlist already exists by URI
       final existingPlaylists = await (_db.select(_db.streamPlaylists)

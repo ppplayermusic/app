@@ -9,6 +9,49 @@ enum QueueItemOrigin { context, user, autoplay }
 /// unavailable local track is still recognised as local in the playback layer.
 enum TrackSourceType { online, local, networkStream }
 
+enum StreamLiveStatus {
+  unknown(0),
+  live(1),
+  onDemand(2);
+
+  final int value;
+  const StreamLiveStatus(this.value);
+
+  static StreamLiveStatus fromValue(int value) {
+    return StreamLiveStatus.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => StreamLiveStatus.unknown,
+    );
+  }
+}
+
+Object? _readLiveStatus(Map json, String key) {
+  if (json.containsKey('liveStatus')) return json['liveStatus'];
+  if (json['isLiveStream'] == true) return 1;
+  return 0;
+}
+
+class StreamLiveStatusConverter implements JsonConverter<StreamLiveStatus, dynamic> {
+  const StreamLiveStatusConverter();
+
+  @override
+  StreamLiveStatus fromJson(dynamic json) {
+    if (json is int) {
+      if (json == 1) return StreamLiveStatus.live;
+      if (json == 2) return StreamLiveStatus.onDemand;
+      return StreamLiveStatus.unknown;
+    } else if (json is String) {
+      if (json == 'live') return StreamLiveStatus.live;
+      if (json == 'onDemand') return StreamLiveStatus.onDemand;
+      return StreamLiveStatus.unknown;
+    }
+    return StreamLiveStatus.unknown;
+  }
+
+  @override
+  dynamic toJson(StreamLiveStatus object) => object.index;
+}
+
 @freezed
 abstract class Track with _$Track {
   const factory Track({
@@ -43,8 +86,10 @@ abstract class Track with _$Track {
     // --- Network Stream fields ---
     /// Stream URL for network streams.
     String? networkStreamUrl,
-    /// Whether the network stream is explicitly flagged as a live broadcast.
-    @Default(false) bool isLiveStream,
+    /// The stream live status (unknown, live, onDemand).
+    @StreamLiveStatusConverter()
+    @JsonKey(readValue: _readLiveStatus)
+    @Default(StreamLiveStatus.unknown) StreamLiveStatus liveStatus,
   }) = _Track;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
@@ -130,7 +175,7 @@ abstract class Track with _$Track {
     String? logoUrl,
     String? groupTitle,
     bool isFavorite = false,
-    bool isLiveStream = false,
+    StreamLiveStatus liveStatus = StreamLiveStatus.unknown,
   }) {
     return Track(
       // We prefix with 'stream:' to avoid Spotify ID collisions.
@@ -144,7 +189,7 @@ abstract class Track with _$Track {
       sourceType: TrackSourceType.networkStream,
       networkStreamUrl: streamUrl,
       isFavorite: isFavorite,
-      isLiveStream: isLiveStream,
+      liveStatus: liveStatus,
       isVideoFile: true, // Most IPTV streams are video
     );
   }

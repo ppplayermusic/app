@@ -50,7 +50,7 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
                   final track = Track.fromNetworkStream(
                     streamUrl: channel.streamUrl,
                     title: channel.title,
-                    isLiveStream: true, // Assuming M3U channels are usually live
+                    liveStatus: StreamLiveStatus.fromValue(channel.liveStatus), // Don't assume live
                     groupTitle: channel.groupTitle ?? 'IPTV',
                     logoUrl: channel.logo,
                   );
