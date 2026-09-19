@@ -58,10 +58,16 @@ class TrackTile extends ConsumerStatefulWidget {
     int? playlistEntryId,
   ]) {
     if (track.isLocal) {
-      showLocalTrackContextMenu(context, ref, track, playlistId: playlistId, playlistEntryId: playlistEntryId);
+      showLocalTrackContextMenu(
+        context,
+        ref,
+        track,
+        playlistId: playlistId,
+        playlistEntryId: playlistEntryId,
+      );
       return;
     }
-    
+
     final screenSize = MediaQuery.of(context).size;
     final pos =
         position ??
@@ -70,7 +76,11 @@ class TrackTile extends ConsumerStatefulWidget {
       context,
       ref,
       position: pos,
-      target: TrackContextTarget(track, playlistId: playlistId, playlistEntryId: playlistEntryId),
+      target: TrackContextTarget(
+        track,
+        playlistId: playlistId,
+        playlistEntryId: playlistEntryId,
+      ),
     );
   }
 
@@ -86,180 +96,162 @@ class TrackTile extends ConsumerStatefulWidget {
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
-        builder:
-            (context) => Container(
-              height: MediaQuery.of(context).size.height * 0.7,
-              decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.surface.withValues(alpha: 0.8),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(32),
-                ),
-                border: Border.all(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.outlineVariant.withValues(alpha: 0.1),
-                ),
-              ),
-              child: AdaptiveBlur(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(32),
-                ),
-                sigmaX: 20,
-                sigmaY: 20,
-                child: Consumer(
-                  builder:
-                      (context, ref, child) => FutureBuilder<List<db.Playlist>>(
-                        future: database.getPlaylists(),
-                        builder: (context, snap) {
-                          final playlists = snap.data ?? [];
-                          return SafeArea(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.all(8),
-                                  width: 40,
-                                  height: 4,
-                                  decoration: BoxDecoration(
+        builder: (context) => Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            border: Border.all(
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withValues(alpha: 0.1),
+            ),
+          ),
+          child: AdaptiveBlur(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            sigmaX: 20,
+            sigmaY: 20,
+            child: Consumer(
+              builder: (context, ref, child) =>
+                  FutureBuilder<List<db.Playlist>>(
+                    future: database.getPlaylists(),
+                    builder: (context, snap) {
+                      final playlists = snap.data ?? [];
+                      return SafeArea(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(8),
+                              width: 40,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant
+                                    .withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: Text(
+                                'Add to Playlist',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                            ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+                                child: Icon(
+                                  Icons.add,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
+                              ),
+                              title: Text(
+                                'Create New Playlist',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                _showCreatePlaylistDialog(
+                                  context,
+                                  database,
+                                  track,
+                                );
+                              },
+                            ),
+                            Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outlineVariant
+                                  .withValues(alpha: 0.1),
+                            ),
+                            if (playlists.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(32),
+                                child: Text(
+                                  'No playlists yet.',
+                                  style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurfaceVariant
-                                        .withValues(alpha: 0.3),
-                                    borderRadius: BorderRadius.circular(2),
+                                        .withValues(alpha: 0.5),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  child: Text(
-                                    'Add to Playlist',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
-                                    ),
-                                  ),
-                                ),
-                                ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.surfaceContainerHighest,
-                                    child: Icon(
-                                      Icons.add,
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
-                                    ),
+                              ),
+                            Flexible(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: playlists.length,
+                                itemBuilder: (context, i) => ListTile(
+                                  leading: Icon(
+                                    Icons.playlist_play,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                   title: Text(
-                                    'Create New Playlist',
+                                    playlists[i].name,
                                     style: TextStyle(
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                                   ),
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                    _showCreatePlaylistDialog(
-                                      context,
-                                      database,
-                                      track,
+                                  onTap: () async {
+                                    await database.addToPlaylist(
+                                      playlists[i].id,
+                                      track.spotifyId,
                                     );
-                                  },
-                                ),
-                                Divider(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .outlineVariant
-                                      .withValues(alpha: 0.1),
-                                ),
-                                if (playlists.isEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.all(32),
-                                    child: Text(
-                                      'No playlists yet.',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant
-                                            .withValues(alpha: 0.5),
-                                      ),
-                                    ),
-                                  ),
-                                Flexible(
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: playlists.length,
-                                    itemBuilder:
-                                        (context, i) => ListTile(
-                                          leading: Icon(
-                                            Icons.playlist_play,
-                                            color:
-                                                Theme.of(
-                                                  context,
-                                                ).colorScheme.onSurfaceVariant,
-                                          ),
-                                          title: Text(
-                                            playlists[i].name,
+                                    if (context.mounted) {
+                                      Navigator.of(context).pop();
+                                    }
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: Theme.of(
+                                            context,
+                                          ).colorScheme.surfaceContainerHighest,
+                                          content: Text(
+                                            'Added to ${playlists[i].name}',
                                             style: TextStyle(
-                                              color:
-                                                  Theme.of(
-                                                    context,
-                                                  ).colorScheme.onSurface,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface,
                                             ),
                                           ),
-                                          onTap: () async {
-                                            await database.addToPlaylist(
-                                              playlists[i].id,
-                                              track.spotifyId,
-                                            );
-                                            if (context.mounted) {
-                                              Navigator.of(context).pop();
-                                            }
-                                            if (context.mounted) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .surfaceContainerHighest,
-                                                  content: Text(
-                                                    'Added to ${playlists[i].name}',
-                                                    style: TextStyle(
-                                                      color:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .onSurface,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          },
                                         ),
-                                  ),
+                                      );
+                                    }
+                                  },
                                 ),
-                              ],
+                              ),
                             ),
-                          );
-                        },
-                      ),
-                ),
-              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
             ),
+          ),
+        ),
       );
     }
   }
@@ -274,111 +266,107 @@ class TrackTile extends ConsumerStatefulWidget {
       context: context,
       title: AppLocalizations.of(context)!.newPlaylist,
       child: Builder(
-        builder:
-            (dialogContext) => Column(
-              mainAxisSize: MainAxisSize.min,
+        builder: (dialogContext) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              autofocus: true,
+              style: TextStyle(
+                color: Theme.of(dialogContext).colorScheme.onSurface,
+                fontSize: 18,
+              ),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.myAwesomePlaylist,
+                hintStyle: TextStyle(
+                  color: Theme.of(
+                    dialogContext,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                ),
+                filled: true,
+                fillColor: Theme.of(
+                  dialogContext,
+                ).colorScheme.onSurface.withValues(alpha: 0.05),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Row(
               children: [
-                TextField(
-                  controller: controller,
-                  autofocus: true,
-                  style: TextStyle(
-                    color: Theme.of(dialogContext).colorScheme.onSurface,
-                    fontSize: 18,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)!.myAwesomePlaylist,
-                    hintStyle: TextStyle(
-                      color: Theme.of(
-                        dialogContext,
-                      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(
-                      dialogContext,
-                    ).colorScheme.onSurface.withValues(alpha: 0.05),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 20,
+                Expanded(
+                  child: TactileTap(
+                    onTap: () => Navigator.pop(dialogContext),
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Theme.of(
+                            dialogContext,
+                          ).colorScheme.outlineVariant,
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        style: TextStyle(
+                          color: Theme.of(
+                            dialogContext,
+                          ).colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TactileTap(
-                        onTap: () => Navigator.pop(dialogContext),
-                        child: Container(
-                          height: 54,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color:
-                                  Theme.of(
-                                    dialogContext,
-                                  ).colorScheme.outlineVariant,
-                            ),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.cancel,
-                            style: TextStyle(
-                              color:
-                                  Theme.of(
-                                    dialogContext,
-                                  ).colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TactileTap(
+                    onTap: () async {
+                      final name = controller.text.trim();
+                      if (name.isNotEmpty) {
+                        final id = await database.createPlaylist(name);
+                        await database.addToPlaylist(id, track.spotifyId);
+                        if (dialogContext.mounted) {
+                          Navigator.pop(dialogContext);
+                        }
+                      }
+                    },
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(dialogContext).colorScheme.primary,
+                            Theme.of(
+                              dialogContext,
+                            ).colorScheme.primary.withValues(alpha: 0.7),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.create,
+                        style: TextStyle(
+                          color: Theme.of(dialogContext).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TactileTap(
-                        onTap: () async {
-                          final name = controller.text.trim();
-                          if (name.isNotEmpty) {
-                            final id = await database.createPlaylist(name);
-                            await database.addToPlaylist(id, track.spotifyId);
-                            if (dialogContext.mounted) {
-                              Navigator.pop(dialogContext);
-                            }
-                          }
-                        },
-                        child: Container(
-                          height: 54,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Theme.of(dialogContext).colorScheme.primary,
-                                Theme.of(
-                                  dialogContext,
-                                ).colorScheme.primary.withValues(alpha: 0.7),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.create,
-                            style: TextStyle(
-                              color:
-                                  Theme.of(dialogContext).colorScheme.onPrimary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
+          ],
+        ),
       ),
     );
   }
@@ -423,19 +411,17 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                 const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color:
-                  effectiveIsActive
-                      ? colorScheme.primary.withValues(alpha: 0.10)
-                      : (_isHovered
-                          ? colorScheme.onSurface.withValues(alpha: 0.04)
-                          : Colors.transparent),
+              color: effectiveIsActive
+                  ? colorScheme.primary.withValues(alpha: 0.10)
+                  : (_isHovered
+                        ? colorScheme.onSurface.withValues(alpha: 0.04)
+                        : Colors.transparent),
               border: Border.all(
-                color:
-                    effectiveIsActive
-                        ? colorScheme.primary.withValues(alpha: 0.35)
-                        : (_isHovered
-                            ? colorScheme.onSurface.withValues(alpha: 0.06)
-                            : Colors.transparent),
+                color: effectiveIsActive
+                    ? colorScheme.primary.withValues(alpha: 0.35)
+                    : (_isHovered
+                          ? colorScheme.onSurface.withValues(alpha: 0.06)
+                          : Colors.transparent),
                 width: 1,
               ),
             ),
@@ -444,26 +430,25 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                 if (widget.index != null) ...[
                   SizedBox(
                     width: 32,
-                    child:
-                        effectiveIsActive
-                            ? Center(
-                              child: AnimatedEqualizer(
-                                color: colorScheme.primary,
-                              ),
-                            )
-                            : Text(
-                              widget.index.toString().padLeft(2, '0'),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: colorScheme.onSurface.withValues(
-                                  alpha: 0.22,
-                                ),
-                                fontSize: 13,
-                                fontFamily: 'monospace',
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -0.5,
-                              ),
+                    child: effectiveIsActive
+                        ? Center(
+                            child: AnimatedEqualizer(
+                              color: colorScheme.primary,
                             ),
+                          )
+                        : Text(
+                            widget.index.toString().padLeft(2, '0'),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.22,
+                              ),
+                              fontSize: 13,
+                              fontFamily: 'monospace',
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -473,23 +458,22 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child:
-                            widget.track.albumImage != null
-                                ? PPImage(
-                                  imageUrl: widget.track.albumImage!,
-                                  width: 46,
-                                  height: 46,
-                                  fit: BoxFit.cover,
-                                )
-                                : Container(
-                                  width: 46,
-                                  height: 46,
-                                  color: colorScheme.surfaceContainerHighest,
-                                  child: Icon(
-                                    Icons.music_note,
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
+                        child: widget.track.albumImage != null
+                            ? PPImage(
+                                imageUrl: widget.track.albumImage!,
+                                width: 46,
+                                height: 46,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                width: 46,
+                                height: 46,
+                                color: colorScheme.surfaceContainerHighest,
+                                child: Icon(
+                                  Icons.music_note,
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
+                              ),
                       ),
                       if (widget.index == null && effectiveIsActive)
                         Positioned.fill(
@@ -519,15 +503,13 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color:
-                              effectiveIsActive
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurface,
+                          color: effectiveIsActive
+                              ? colorScheme.primary
+                              : colorScheme.onSurface,
                           fontSize: 15,
-                          fontWeight:
-                              effectiveIsActive
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
+                          fontWeight: effectiveIsActive
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                           letterSpacing: -0.2,
                         ),
                       ),
@@ -563,16 +545,14 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                                 .value ??
                             widget.track.isFavorite;
                         return TactileIconButton(
-                              icon:
-                                  isFav
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                              color:
-                                  isFav
-                                      ? colorScheme.primary
-                                      : colorScheme.onSurfaceVariant.withValues(
-                                        alpha: 0.4,
-                                      ),
+                              icon: isFav
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: isFav
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurfaceVariant.withValues(
+                                      alpha: 0.4,
+                                    ),
                               size: 20,
                               onTap: () {
                                 ref
@@ -598,32 +578,31 @@ class _TrackTileState extends ConsumerState<TrackTile> {
                     if (widget.showMore)
                       widget.trailing ??
                           Builder(
-                            builder:
-                                (btnContext) => TactileIconButton(
-                                  icon: Icons.more_vert,
-                                  color: colorScheme.onSurfaceVariant
-                                      .withValues(alpha: 0.4),
-                                  size: 20,
-                                  onTap: () {
-                                    final renderBox =
-                                        btnContext.findRenderObject()
-                                            as RenderBox?;
-                                    final offset = renderBox?.localToGlobal(
-                                      Offset.zero,
-                                    );
-                                    TrackTile.showMoreMenu(
-                                      context,
-                                      ref,
-                                      widget.track,
-                                      offset != null
-                                          ? offset +
-                                              Offset(0, renderBox!.size.height)
-                                          : null,
-                                      widget.playlistId,
-                                      widget.playlistEntryId,
-                                    );
-                                  },
-                                ),
+                            builder: (btnContext) => TactileIconButton(
+                              icon: Icons.more_vert,
+                              color: colorScheme.onSurfaceVariant.withValues(
+                                alpha: 0.4,
+                              ),
+                              size: 20,
+                              onTap: () {
+                                final renderBox =
+                                    btnContext.findRenderObject() as RenderBox?;
+                                final offset = renderBox?.localToGlobal(
+                                  Offset.zero,
+                                );
+                                TrackTile.showMoreMenu(
+                                  context,
+                                  ref,
+                                  widget.track,
+                                  offset != null
+                                      ? offset +
+                                            Offset(0, renderBox!.size.height)
+                                      : null,
+                                  widget.playlistId,
+                                  widget.playlistEntryId,
+                                );
+                              },
+                            ),
                           ),
                   ],
                 ),

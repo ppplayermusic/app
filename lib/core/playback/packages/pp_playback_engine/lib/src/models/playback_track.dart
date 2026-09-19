@@ -12,11 +12,13 @@ class PlaybackTrack {
   final String? artworkUrl;
   final Duration? duration;
   final PlaybackSourceType sourceType;
+
   /// For local tracks: the URI string to pass to media_kit Media().
   /// Built via Uri.file(path).toString() or passed as content:// URI opaquely.
   final String? localMediaUri;
   final String? networkMediaUri;
   final bool isVideo;
+
   /// Explicit flag set by the upstream coordinator (e.g. manifest parser)
   /// to indicate this stream is known to be a live broadcast.
   final PlaybackLiveStatus liveStatus;
@@ -38,5 +40,6 @@ class PlaybackTrack {
   bool get isLocal => sourceType == PlaybackSourceType.local;
 
   @override
-  String toString() => 'PlaybackTrack(id: $id, title: $title, source: ${sourceType.name})';
+  String toString() =>
+      'PlaybackTrack(id: $id, title: $title, source: ${sourceType.name})';
 }

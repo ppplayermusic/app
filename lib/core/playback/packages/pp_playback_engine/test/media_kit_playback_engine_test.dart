@@ -22,7 +22,12 @@ class _CapturingStream<T> extends Stream<T> {
     bool? cancelOnError,
   }) {
     if (onData != null) capturedOnData = onData;
-    return _source.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    return _source.listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
   }
 }
 
@@ -48,8 +53,11 @@ class FakeNativeAdapter implements INativePlayerAdapter {
 
   FakeNativeAdapter({this.openCompleter});
 
-  late final _capturingPlayingStream = _CapturingStream<bool>(_playingCtrl.stream);
-  void Function(bool)? get capturedPlayingCallback => _capturingPlayingStream.capturedOnData;
+  late final _capturingPlayingStream = _CapturingStream<bool>(
+    _playingCtrl.stream,
+  );
+  void Function(bool)? get capturedPlayingCallback =>
+      _capturingPlayingStream.capturedOnData;
 
   @override
   VideoController? get videoController => null;
@@ -566,8 +574,11 @@ void main() {
       await engine.pause();
 
       // resume() on native (non-IFrame) calls adapter.play().
-      expect(createdAdapter?.plays ?? 0, 0,
-          reason: 'resume without an active track does nothing');
+      expect(
+        createdAdapter?.plays ?? 0,
+        0,
+        reason: 'resume without an active track does nothing',
+      );
       expect(controller.count('play'), 0);
     },
   );
@@ -607,48 +618,64 @@ void main() {
       sourceType: PlaybackSourceType.local,
     );
 
-    test('delayed event from disposed session is ignored after new session opens', () async {
-      // Play track A; get a reference to its adapter.
-      final playAFuture = engine.play(localTrack);
-      await playAFuture;
-      final adapterA = adapters.first;
-      expect(adapterA.opens, 1);
+    test(
+      'delayed event from disposed session is ignored after new session opens',
+      () async {
+        // Play track A; get a reference to its adapter.
+        final playAFuture = engine.play(localTrack);
+        await playAFuture;
+        final adapterA = adapters.first;
+        expect(adapterA.opens, 1);
 
-      // Switch to track B — A's session is invalidated and torn down.
-      await engine.play(localTrackB);
-      expect(adapters.length, 2);
+        // Switch to track B — A's session is invalidated and torn down.
+        await engine.play(localTrackB);
+        expect(adapters.length, 2);
 
-      // Verify A was disposed
-      expect(adapterA.disposes, 1,
-          reason: 'adapter A must be disposed when session is invalidated');
+        // Verify A was disposed
+        expect(
+          adapterA.disposes,
+          1,
+          reason: 'adapter A must be disposed when session is invalidated',
+        );
 
-      // Drain any pending microtask emissions from B's initialization before
-      // capturing the baseline — e.g., play() signals queued but not yet delivered.
-      await Future.delayed(Duration.zero);
+        // Drain any pending microtask emissions from B's initialization before
+        // capturing the baseline — e.g., play() signals queued but not yet delivered.
+        await Future.delayed(Duration.zero);
 
-      final statesBefore = statuses.length;
+        final statesBefore = statuses.length;
 
-      // Simulate a delayed event from A's backend arriving now.
-      // Since the stream's subscription was cancelled during teardown, we must
-      // invoke the captured callback directly to prove the closure guard evaluates it
-      // and rejects the event.
-      expect(adapterA.capturedPlayingCallback, isNotNull,
-          reason: 'Engine must have subscribed to playingStream');
-      adapterA.capturedPlayingCallback!(true);
-      
-      await Future.delayed(Duration.zero);
+        // Simulate a delayed event from A's backend arriving now.
+        // Since the stream's subscription was cancelled during teardown, we must
+        // invoke the captured callback directly to prove the closure guard evaluates it
+        // and rejects the event.
+        expect(
+          adapterA.capturedPlayingCallback,
+          isNotNull,
+          reason: 'Engine must have subscribed to playingStream',
+        );
+        adapterA.capturedPlayingCallback!(true);
 
-      expect(statuses.length, statesBefore,
-          reason: 'stale event from old session must not update status due to ownership guard');
-    });
+        await Future.delayed(Duration.zero);
+
+        expect(
+          statuses.length,
+          statesBefore,
+          reason:
+              'stale event from old session must not update status due to ownership guard',
+        );
+      },
+    );
 
     test('same URI reopening creates a distinct session', () async {
       await engine.play(localTrack);
       final adapterA = adapters.first;
 
       await engine.play(localTrack); // same URI
-      expect(adapters.length, 2,
-          reason: 'each play() must create a new adapter/session');
+      expect(
+        adapters.length,
+        2,
+        reason: 'each play() must create a new adapter/session',
+      );
       expect(adapters[0], isNot(same(adapters[1])));
       expect(adapterA.disposes, 1, reason: 'first adapter must be disposed');
     });
@@ -735,8 +762,11 @@ void main() {
 
       // No event from A's session should have updated the current status to A.
       final lastStatus = statuses.last;
-      expect(lastStatus.track?.id, localTrackB.id,
-          reason: 'active track must be B after superseded open');
+      expect(
+        lastStatus.track?.id,
+        localTrackB.id,
+        reason: 'active track must be B after superseded open',
+      );
     });
 
     test('stop during open prevents subsequent updates', () async {
@@ -764,8 +794,11 @@ void main() {
       await playFuture;
 
       // After stop, state must be idle (not playing/buffering from open).
-      expect(engine.currentStatus.state, PlaybackState.idle,
-          reason: 'stop during open must leave engine in idle state');
+      expect(
+        engine.currentStatus.state,
+        PlaybackState.idle,
+        reason: 'stop during open must leave engine in idle state',
+      );
     });
 
     test('source switching stops old audio and releases subscriptions', () async {
@@ -773,19 +806,32 @@ void main() {
       final adapterA = adapters.first;
       // After opening the first track, play() was legitimately called on A.
       final playsBeforeSwitch = adapterA.plays;
-      expect(playsBeforeSwitch, greaterThanOrEqualTo(1),
-          reason: 'adapter A must have received play() for the first track');
+      expect(
+        playsBeforeSwitch,
+        greaterThanOrEqualTo(1),
+        reason: 'adapter A must have received play() for the first track',
+      );
 
       await engine.play(localTrackB);
 
       // A must have been stopped before disposal.
-      expect(adapterA.stops, greaterThanOrEqualTo(1),
-          reason: 'old session adapter must be stopped before teardown');
-      expect(adapterA.disposes, 1,
-          reason: 'old session adapter must be disposed after switching');
+      expect(
+        adapterA.stops,
+        greaterThanOrEqualTo(1),
+        reason: 'old session adapter must be stopped before teardown',
+      );
+      expect(
+        adapterA.disposes,
+        1,
+        reason: 'old session adapter must be disposed after switching',
+      );
       // After switching, A must not have received any additional play() calls.
-      expect(adapterA.plays, playsBeforeSwitch,
-          reason: 'old adapter must not receive additional play() calls after switching');
+      expect(
+        adapterA.plays,
+        playsBeforeSwitch,
+        reason:
+            'old adapter must not receive additional play() calls after switching',
+      );
     });
 
     test('dispose during open prevents subsequent updates', () async {
@@ -813,13 +859,19 @@ void main() {
       await playFuture;
 
       // No playing/buffering status should have been emitted after dispose.
-      final postDisposeStates = statuses
-          .where((s) =>
-              s.state == PlaybackState.playing ||
-              s.state == PlaybackState.buffering)
-          .toList();
-      expect(postDisposeStates, isEmpty,
-          reason: 'no playing/buffering updates after dispose');
+      final postDisposeStates =
+          statuses
+              .where(
+                (s) =>
+                    s.state == PlaybackState.playing ||
+                    s.state == PlaybackState.buffering,
+              )
+              .toList();
+      expect(
+        postDisposeStates,
+        isEmpty,
+        reason: 'no playing/buffering updates after dispose',
+      );
     });
   });
 }

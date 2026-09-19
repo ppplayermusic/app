@@ -7,9 +7,13 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../core/player/player_provider.dart';
 
-final localAlbumTracksProvider = FutureProvider.family<List<model.Track>, String>((ref, albumGroupKey) async {
-  return ref.watch(appDatabaseProvider).getAlbumAppTracks(albumGroupKey);
-});
+final localAlbumTracksProvider =
+    FutureProvider.family<List<model.Track>, String>((
+      ref,
+      albumGroupKey,
+    ) async {
+      return ref.watch(appDatabaseProvider).getAlbumAppTracks(albumGroupKey);
+    });
 
 class LocalAlbumDetailScreen extends ConsumerWidget {
   final String albumGroupKey;
@@ -67,10 +71,9 @@ class LocalAlbumDetailScreen extends ConsumerWidget {
                         index: index + 1,
                         track: track,
                         onTap: () {
-                          ref.read(playerProvider.notifier).playTracks(
-                            tracks,
-                            initialIndex: index,
-                          );
+                          ref
+                              .read(playerProvider.notifier)
+                              .playTracks(tracks, initialIndex: index);
                         },
                       );
                     },

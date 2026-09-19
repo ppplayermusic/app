@@ -19,8 +19,11 @@ class LocalVideoSortOptionNotifier extends Notifier<LocalVideoSortOption> {
 
   Future<void> _load() async {
     final box = await Hive.openBox(_boxName);
-    final idx = box.get(_key, defaultValue: LocalVideoSortOption.dateAdded.index) as int;
-    state = LocalVideoSortOption.values[idx.clamp(0, LocalVideoSortOption.values.length - 1)];
+    final idx =
+        box.get(_key, defaultValue: LocalVideoSortOption.dateAdded.index)
+            as int;
+    state = LocalVideoSortOption
+        .values[idx.clamp(0, LocalVideoSortOption.values.length - 1)];
   }
 
   Future<void> update(LocalVideoSortOption value) async {
@@ -32,7 +35,8 @@ class LocalVideoSortOptionNotifier extends Notifier<LocalVideoSortOption> {
 
 final localVideoSortOptionProvider =
     NotifierProvider<LocalVideoSortOptionNotifier, LocalVideoSortOption>(
-        LocalVideoSortOptionNotifier.new);
+      LocalVideoSortOptionNotifier.new,
+    );
 
 class LocalVideoSortAscendingNotifier extends Notifier<bool> {
   static const _boxName = 'settings';
@@ -59,7 +63,8 @@ class LocalVideoSortAscendingNotifier extends Notifier<bool> {
 
 final localVideoSortAscendingProvider =
     NotifierProvider<LocalVideoSortAscendingNotifier, bool>(
-        LocalVideoSortAscendingNotifier.new);
+      LocalVideoSortAscendingNotifier.new,
+    );
 
 class LocalVideoSearchQueryNotifier extends Notifier<String> {
   @override
@@ -69,13 +74,18 @@ class LocalVideoSearchQueryNotifier extends Notifier<String> {
 
 final localVideoSearchQueryProvider =
     NotifierProvider<LocalVideoSearchQueryNotifier, String>(
-        LocalVideoSearchQueryNotifier.new);
+      LocalVideoSearchQueryNotifier.new,
+    );
 
-final _localVideoTracksStreamProvider = StreamProvider<List<model.Track>>((ref) {
+final _localVideoTracksStreamProvider = StreamProvider<List<model.Track>>((
+  ref,
+) {
   return ref.watch(appDatabaseProvider).watchLocalVideoTracks();
 });
 
-final sortedLocalVideosProvider = Provider<AsyncValue<List<model.Track>>>((ref) {
+final sortedLocalVideosProvider = Provider<AsyncValue<List<model.Track>>>((
+  ref,
+) {
   final tracksAsync = ref.watch(_localVideoTracksStreamProvider);
   final sortOption = ref.watch(localVideoSortOptionProvider);
   final isAscending = ref.watch(localVideoSortAscendingProvider);
@@ -101,7 +111,9 @@ final sortedLocalVideosProvider = Provider<AsyncValue<List<model.Track>>>((ref) 
           break;
         case LocalVideoSortOption.dateAdded:
           result = (a.localAddedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
-              .compareTo(b.localAddedAt ?? DateTime.fromMillisecondsSinceEpoch(0));
+              .compareTo(
+                b.localAddedAt ?? DateTime.fromMillisecondsSinceEpoch(0),
+              );
           break;
       }
       return isAscending ? result : -result;

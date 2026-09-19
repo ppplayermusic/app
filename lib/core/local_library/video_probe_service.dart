@@ -134,11 +134,11 @@ class VideoProbeService {
       final result = await completer.future
           .timeout(probeTimeout, onTimeout: () => VideoProbeResult.probeFailed)
           .then((r) {
-        if (cancellationToken?.isCancelled == true) {
-          return VideoProbeResult.cancelled;
-        }
-        return r;
-      });
+            if (cancellationToken?.isCancelled == true) {
+              return VideoProbeResult.cancelled;
+            }
+            return r;
+          });
 
       sub.cancel();
       errSub.cancel();

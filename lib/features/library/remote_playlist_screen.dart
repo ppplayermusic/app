@@ -79,28 +79,25 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: tracksAsync.when(
-        loading:
-            () => Center(
-              child: CircularProgressIndicator(color: colorScheme.primary),
-            ),
-        error:
-            (e, _) => Center(
-              child: Text(
-                'Error: $e',
-                style: TextStyle(color: colorScheme.onSurfaceVariant),
-              ),
-            ),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: colorScheme.primary),
+        ),
+        error: (e, _) => Center(
+          child: Text(
+            'Error: $e',
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+          ),
+        ),
         data: (tracks) {
           var filteredTracks = tracks;
           if (_searchQuery.isNotEmpty) {
-            filteredTracks =
-                tracks
-                    .where(
-                      (t) =>
-                          t.name.toLowerCase().contains(_searchQuery) ||
-                          t.artistName.toLowerCase().contains(_searchQuery),
-                    )
-                    .toList();
+            filteredTracks = tracks
+                .where(
+                  (t) =>
+                      t.name.toLowerCase().contains(_searchQuery) ||
+                      t.artistName.toLowerCase().contains(_searchQuery),
+                )
+                .toList();
           }
 
           return CustomScrollView(
@@ -120,10 +117,9 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                 ),
                 actions: [
                   TactileIconButton(
-                    icon:
-                        _isSearching
-                            ? Icons.close_rounded
-                            : Icons.search_rounded,
+                    icon: _isSearching
+                        ? Icons.close_rounded
+                        : Icons.search_rounded,
                     onTap: () {
                       setState(() {
                         _isSearching = !_isSearching;
@@ -216,31 +212,34 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                       Positioned.fill(
                         child: Opacity(
                           opacity: 0.6,
-                          child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: RadialGradient(
-                                    center: const Alignment(-0.8, -0.6),
-                                    radius: 1.5,
-                                    colors: [
-                                      colorScheme.primary,
-                                      Colors.transparent,
-                                    ],
+                          child:
+                              Container(
+                                    decoration: BoxDecoration(
+                                      gradient: RadialGradient(
+                                        center: const Alignment(-0.8, -0.6),
+                                        radius: 1.5,
+                                        colors: [
+                                          colorScheme.primary,
+                                          Colors.transparent,
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .animate(
+                                    onPlay: (c) => c.repeat(reverse: true),
+                                  )
+                                  .scale(
+                                    begin: const Offset(1, 1),
+                                    end: const Offset(1.3, 1.3),
+                                    duration: 10.seconds,
+                                    curve: Curves.easeInOut,
+                                  )
+                                  .move(
+                                    begin: const Offset(-20, -20),
+                                    end: const Offset(20, 20),
+                                    duration: 12.seconds,
+                                    curve: Curves.easeInOut,
                                   ),
-                                ),
-                              )
-                              .animate(onPlay: (c) => c.repeat(reverse: true))
-                              .scale(
-                                begin: const Offset(1, 1),
-                                end: const Offset(1.3, 1.3),
-                                duration: 10.seconds,
-                                curve: Curves.easeInOut,
-                              )
-                              .move(
-                                begin: const Offset(-20, -20),
-                                end: const Offset(20, 20),
-                                duration: 12.seconds,
-                                curve: Curves.easeInOut,
-                              ),
                         ),
                       ),
 
@@ -297,25 +296,23 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                                       borderRadius: BorderRadius.circular(12),
                                       child:
                                           tracks.isNotEmpty &&
-                                                  tracks.first.albumImage !=
-                                                      null
-                                              ? PPImage(
-                                                imageUrl:
-                                                    tracks.first.albumImage!,
-                                                fit: BoxFit.cover,
-                                              )
-                                              : Container(
-                                                color:
-                                                    colorScheme
-                                                        .surfaceContainer,
-                                                child: Icon(
-                                                  Icons.playlist_play,
-                                                  size: 80,
-                                                  color: colorScheme
-                                                      .onSurfaceVariant
-                                                      .withValues(alpha: 0.2),
-                                                ),
+                                              tracks.first.albumImage != null
+                                          ? PPImage(
+                                              imageUrl:
+                                                  tracks.first.albumImage!,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Container(
+                                              color:
+                                                  colorScheme.surfaceContainer,
+                                              child: Icon(
+                                                Icons.playlist_play,
+                                                size: 80,
+                                                color: colorScheme
+                                                    .onSurfaceVariant
+                                                    .withValues(alpha: 0.2),
                                               ),
+                                            ),
                                     ),
                                   ),
                                 )
@@ -392,17 +389,14 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                                           vertical: 8,
                                         ),
                                         decoration: BoxDecoration(
-                                          color:
-                                              isLiked
-                                                  ? colorScheme.primary
-                                                  : Colors.transparent,
+                                          color: isLiked
+                                              ? colorScheme.primary
+                                              : Colors.transparent,
                                           border: Border.all(
-                                            color:
-                                                isLiked
-                                                    ? colorScheme.primary
-                                                    : colorScheme
-                                                        .onSurfaceVariant
-                                                        .withValues(alpha: 0.3),
+                                            color: isLiked
+                                                ? colorScheme.primary
+                                                : colorScheme.onSurfaceVariant
+                                                      .withValues(alpha: 0.3),
                                             width: 0.8,
                                           ),
                                           borderRadius: BorderRadius.circular(
@@ -412,10 +406,9 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                                         child: Text(
                                           isLiked ? 'Following' : 'Follow',
                                           style: TextStyle(
-                                            color:
-                                                isLiked
-                                                    ? colorScheme.onPrimary
-                                                    : colorScheme.onSurface,
+                                            color: isLiked
+                                                ? colorScheme.onPrimary
+                                                : colorScheme.onSurface,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13,
                                           ),
@@ -431,17 +424,19 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                                     color: colorScheme.onSurfaceVariant,
                                     padding: const EdgeInsets.all(10),
                                     onTap: () {
-                                      final renderBox = btnContext
-                                          .findRenderObject() as RenderBox?;
-                                      final offset = renderBox
-                                          ?.localToGlobal(Offset.zero);
+                                      final renderBox =
+                                          btnContext.findRenderObject()
+                                              as RenderBox?;
+                                      final offset = renderBox?.localToGlobal(
+                                        Offset.zero,
+                                      );
                                       if (offset == null) return;
                                       showContentContextMenu(
                                         context,
                                         ref,
-                                        position: offset +
-                                            Offset(
-                                                0, renderBox!.size.height),
+                                        position:
+                                            offset +
+                                            Offset(0, renderBox!.size.height),
                                         target: PlaylistContextTarget(
                                           id: widget.playlistId,
                                           name:
@@ -511,10 +506,9 @@ class _RemotePlaylistScreenState extends ConsumerState<RemotePlaylistScreen> {
                     return TrackTile(
                           index: index + 1,
                           track: track,
-                          onTap:
-                              () => ref
-                                  .read(playerProvider.notifier)
-                                  .playTrack(track, queue: filteredTracks),
+                          onTap: () => ref
+                              .read(playerProvider.notifier)
+                              .playTrack(track, queue: filteredTracks),
                         )
                         .animate(delay: (index * 30).ms)
                         .fadeIn(duration: 400.ms)

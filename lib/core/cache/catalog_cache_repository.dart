@@ -87,9 +87,9 @@ class CatalogCacheRepository {
     } else {
       _metrics.l1Misses++;
       // 2. Check L2 Persistent Cache (Drift)
-      final driftEntry =
-          await (_db.select(_db.catalogCacheEntries)
-            ..where((tbl) => tbl.key.equals(key))).getSingleOrNull();
+      final driftEntry = await (_db.select(
+        _db.catalogCacheEntries,
+      )..where((tbl) => tbl.key.equals(key))).getSingleOrNull();
 
       if (driftEntry != null) {
         if (driftEntry.payloadVersion == CacheConfig.catalogPayloadVersion) {
@@ -101,8 +101,9 @@ class CatalogCacheRepository {
 
               // Throttle lastAccessedAt updates (only if > 1 hour old)
               if (now.difference(driftEntry.lastAccessedAt).inHours >= 1) {
-                (_db.update(_db.catalogCacheEntries)
-                  ..where((tbl) => tbl.key.equals(key))).write(
+                (_db.update(
+                  _db.catalogCacheEntries,
+                )..where((tbl) => tbl.key.equals(key))).write(
                   CatalogCacheEntriesCompanion(lastAccessedAt: Value(now)),
                 );
               }
@@ -127,20 +128,23 @@ class CatalogCacheRepository {
             } catch (e) {
               _metrics.decodeFailures++;
               // Self-healing: Decode failed, delete corrupt entry and proceed to network
-              await (_db.delete(_db.catalogCacheEntries)
-                ..where((tbl) => tbl.key.equals(key))).go();
+              await (_db.delete(
+                _db.catalogCacheEntries,
+              )..where((tbl) => tbl.key.equals(key))).go();
             }
           } else {
             _metrics.l2Misses++;
             // Expired in DB, we can delete it (or let background cleanup handle it)
-            await (_db.delete(_db.catalogCacheEntries)
-              ..where((tbl) => tbl.key.equals(key))).go();
+            await (_db.delete(
+              _db.catalogCacheEntries,
+            )..where((tbl) => tbl.key.equals(key))).go();
           }
         } else {
           _metrics.l2Misses++;
           // Schema payload mismatch, delete entry
-          await (_db.delete(_db.catalogCacheEntries)
-            ..where((tbl) => tbl.key.equals(key))).go();
+          await (_db.delete(
+            _db.catalogCacheEntries,
+          )..where((tbl) => tbl.key.equals(key))).go();
         }
       } else {
         _metrics.l2Misses++;
@@ -234,10 +238,11 @@ class CatalogCacheRepository {
       final threshold = now.subtract(policy.usableFor);
 
       await (_db.delete(_db.catalogCacheEntries)..where(
-        (tbl) =>
-            tbl.resourceType.equals(resourceType.name) &
-            tbl.fetchedAt.isSmallerThanValue(threshold),
-      )).go();
+            (tbl) =>
+                tbl.resourceType.equals(resourceType.name) &
+                tbl.fetchedAt.isSmallerThanValue(threshold),
+          ))
+          .go();
     }
   }
 

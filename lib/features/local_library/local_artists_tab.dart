@@ -31,11 +31,17 @@ class LocalArtistsTab extends ConsumerWidget {
             return ListTile(
               leading: CircleAvatar(
                 backgroundColor: colorScheme.surfaceContainerHighest,
-                child: Icon(Icons.person_outline_rounded, color: colorScheme.onSurface),
+                child: Icon(
+                  Icons.person_outline_rounded,
+                  color: colorScheme.onSurface,
+                ),
               ),
               title: Text(
                 artist.name,
-                style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               subtitle: Text(
                 '${artist.trackCount} tracks',
@@ -45,7 +51,8 @@ class LocalArtistsTab extends ConsumerWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => LocalArtistDetailScreen(artistName: artist.name),
+                    builder: (_) =>
+                        LocalArtistDetailScreen(artistName: artist.name),
                   ),
                 );
               },

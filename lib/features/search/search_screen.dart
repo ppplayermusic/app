@@ -21,35 +21,33 @@ import 'package:ppplayer/core/providers/search_provider.dart';
 import 'package:ppplayer/core/api/spotify_repository.dart';
 import 'package:ppplayer/l10n/app_localizations.dart';
 
-final searchResultsProvider = StreamProvider.autoDispose.family<
-  Map<String, dynamic>,
-  String
->((ref, query) async* {
-  if (query.isEmpty) {
-    yield {};
-    return;
-  }
+final searchResultsProvider = StreamProvider.autoDispose
+    .family<Map<String, dynamic>, String>((ref, query) async* {
+      if (query.isEmpty) {
+        yield {};
+        return;
+      }
 
-  bool didDispose = false;
-  ref.onDispose(() => didDispose = true);
+      bool didDispose = false;
+      ref.onDispose(() => didDispose = true);
 
-  // Debounce for 800ms to avoid spamming the API and to only save actual searches
-  await Future.delayed(const Duration(milliseconds: 800));
+      // Debounce for 800ms to avoid spamming the API and to only save actual searches
+      await Future.delayed(const Duration(milliseconds: 800));
 
-  if (didDispose) {
-    return;
-  }
+      if (didDispose) {
+        return;
+      }
 
-  // Automatically save to recent searches since the user paused typing
-  if (query.trim().isNotEmpty) {
-    ref.read(recentSearchesProvider.notifier).addSearch(query);
-  }
+      // Automatically save to recent searches since the user paused typing
+      if (query.trim().isNotEmpty) {
+        ref.read(recentSearchesProvider.notifier).addSearch(query);
+      }
 
-  yield* ref
-      .read(spotifyRepositoryProvider)
-      .watchSearch(query)
-      .map((res) => res.data);
-});
+      yield* ref
+          .read(spotifyRepositoryProvider)
+          .watchSearch(query)
+          .map((res) => res.data);
+    });
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -124,133 +122,124 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     );
 
     return Scaffold(
-      appBar:
-          isDesktop
-              ? null
-              : AppBar(
-                elevation: 0,
-                backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
-                flexibleSpace: AdaptiveBlur(
-                  sigmaX: 25,
-                  sigmaY: 25,
-                  child: Container(
-                    color: colorScheme.surface.withValues(alpha: 0.2),
-                  ),
+      appBar: isDesktop
+          ? null
+          : AppBar(
+              elevation: 0,
+              backgroundColor: colorScheme.surface.withValues(alpha: 0.1),
+              flexibleSpace: AdaptiveBlur(
+                sigmaX: 25,
+                sigmaY: 25,
+                child: Container(
+                  color: colorScheme.surface.withValues(alpha: 0.2),
                 ),
-                title: Container(
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onSurface.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
+              ),
+              title: Container(
+                height: 48,
+                decoration: BoxDecoration(
+                  color: colorScheme.onSurface.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.scrim.withValues(alpha: 0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                    BoxShadow(
                       color: colorScheme.primary.withValues(alpha: 0.15),
-                      width: 1,
+                      blurRadius: 20,
+                      spreadRadius: -5,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorScheme.scrim.withValues(alpha: 0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 8),
+                  ],
+                ),
+                child: TextField(
+                  controller: _ctrl,
+                  autofocus: false,
+                  style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
+                  cursorColor: colorScheme.primary,
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(
+                      context,
+                    )!.whatDoYouWantToListenTo,
+                    hintStyle: TextStyle(
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.4,
                       ),
-                      BoxShadow(
-                        color: colorScheme.primary.withValues(alpha: 0.15),
-                        blurRadius: 20,
-                        spreadRadius: -5,
+                      fontSize: 15,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.6,
                       ),
-                    ],
+                      size: 22,
+                    ),
+                    suffixIcon: _ctrl.text.isNotEmpty
+                        ? TactileIconButton(
+                            icon: Icons.close_rounded,
+                            onTap: () {
+                              _ctrl.clear();
+                              ref
+                                  .read(searchQueryProvider.notifier)
+                                  .updateQuery('');
+                              setState(() {});
+                            },
+                            size: 20,
+                            color: colorScheme.onSurfaceVariant,
+                          )
+                        : null,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 13),
                   ),
-                  child: TextField(
-                    controller: _ctrl,
-                    autofocus: false,
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontSize: 16,
+                  onChanged: (val) {
+                    ref.read(searchQueryProvider.notifier).updateQuery(val);
+                  },
+                  onSubmitted: (val) {
+                    if (val.trim().isNotEmpty) {
+                      ref.read(recentSearchesProvider.notifier).addSearch(val);
+                    }
+                  },
+                ),
+              ),
+              bottom: query.isEmpty
+                  ? null
+                  : PreferredSize(
+                      preferredSize: const Size.fromHeight(48),
+                      child: searchTabs,
                     ),
-                    cursorColor: colorScheme.primary,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.whatDoYouWantToListenTo,
-                      hintStyle: TextStyle(
-                        color: colorScheme.onSurfaceVariant.withValues(
-                          alpha: 0.4,
-                        ),
-                        fontSize: 15,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: colorScheme.onSurfaceVariant.withValues(
-                          alpha: 0.6,
-                        ),
-                        size: 22,
-                      ),
-                      suffixIcon:
-                          _ctrl.text.isNotEmpty
-                              ? TactileIconButton(
-                                icon: Icons.close_rounded,
-                                onTap: () {
-                                  _ctrl.clear();
-                                  ref
-                                      .read(searchQueryProvider.notifier)
-                                      .updateQuery('');
-                                  setState(() {});
-                                },
-                                size: 20,
-                                color: colorScheme.onSurfaceVariant,
-                              )
-                              : null,
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 13),
+            ),
+      body: query.isEmpty
+          ? _EmptySearch()
+          : Column(
+              children: [
+                if (isDesktop) SizedBox(height: 48, child: searchTabs),
+                Expanded(
+                  child: results.when(
+                    loading: () => const CustomScrollView(
+                      slivers: [SliverSectionShimmer(count: 12, isGrid: false)],
                     ),
-                    onChanged: (val) {
-                      ref.read(searchQueryProvider.notifier).updateQuery(val);
-                    },
-                    onSubmitted: (val) {
-                      if (val.trim().isNotEmpty) {
-                        ref
-                            .read(recentSearchesProvider.notifier)
-                            .addSearch(val);
-                      }
-                    },
+                    error: (e, _) => Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.error(e.toString()),
+                      ),
+                    ),
+                    data: (data) => TabBarView(
+                      controller: _tabCtrl,
+                      children: [
+                        _TrackResults(data['tracks']?['items'] ?? []),
+                        _ArtistResults(data['artists']?['items'] ?? []),
+                        _AlbumResults(data['albums']?['items'] ?? []),
+                        _PlaylistResults(data['playlists']?['items'] ?? []),
+                      ],
+                    ),
                   ),
                 ),
-                bottom:
-                    query.isEmpty
-                        ? null
-                        : PreferredSize(
-                          preferredSize: const Size.fromHeight(48),
-                          child: searchTabs,
-                        ),
-              ),
-      body:
-          query.isEmpty
-              ? _EmptySearch()
-              : Column(
-                children: [
-                  if (isDesktop) SizedBox(height: 48, child: searchTabs),
-                  Expanded(
-                    child: results.when(
-                      loading:
-                          () => const CustomScrollView(
-                            slivers: [
-                              SliverSectionShimmer(count: 12, isGrid: false),
-                            ],
-                          ),
-                      error: (e, _) => Center(child: Text(AppLocalizations.of(context)!.error(e.toString()))),
-                      data:
-                          (data) => TabBarView(
-                            controller: _tabCtrl,
-                            children: [
-                              _TrackResults(data['tracks']?['items'] ?? []),
-                              _ArtistResults(data['artists']?['items'] ?? []),
-                              _AlbumResults(data['albums']?['items'] ?? []),
-                              _PlaylistResults(
-                                data['playlists']?['items'] ?? [],
-                              ),
-                            ],
-                          ),
-                    ),
-                  ),
-                ],
-              ),
+              ],
+            ),
     );
   }
 }
@@ -268,18 +257,19 @@ class _EmptySearch extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-              child: Text(
-                    AppLocalizations.of(context)!.recentSearches,
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -0.8,
-                    ),
-                  )
-                  .animate()
-                  .fadeIn(duration: 600.ms)
-                  .slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
+              child:
+                  Text(
+                        AppLocalizations.of(context)!.recentSearches,
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.8,
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 600.ms)
+                      .slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
             ),
           ),
           SliverToBoxAdapter(
@@ -328,72 +318,69 @@ class _EmptySearch extends ConsumerWidget {
               16,
               16,
             ),
-            child: Text(
-                  AppLocalizations.of(context)!.browseAll,
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.8,
-                  ),
-                )
-                .animate()
-                .fadeIn(duration: 600.ms)
-                .slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
+            child:
+                Text(
+                      AppLocalizations.of(context)!.browseAll,
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.8,
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 600.ms)
+                    .slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
           ),
         ),
         categoriesAsync.when(
-          data:
-              (categories) => SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 1.6,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final cat = categories[index];
-                    final name = cat['name'] as String;
-                    final id = cat['id'] as String;
-                    final imageUrl =
-                        ((cat['icons'] as List?)?.firstOrNull?['url']
-                            as String?) ??
-                        '';
-                    final color = ref.watch(categoryColorProvider(name));
-
-                    return _CategoryCard(
-                          id: id,
-                          name: name,
-                          color: color,
-                          imageUrl: imageUrl,
-                        )
-                        .animate(delay: (index * 30).ms)
-                        .fadeIn(duration: 400.ms)
-                        .scale(
-                          begin: const Offset(0.95, 0.95),
-                          end: const Offset(1, 1),
-                        );
-                  }, childCount: categories.length),
-                ),
-              ),
-          loading:
-              () => const SliverSectionShimmer(
-                count: 10,
-                isGrid: true,
-                crossAxisCount: 2,
+          data: (categories) => SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
                 childAspectRatio: 1.6,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
-          error:
-              (e, _) => SliverToBoxAdapter(
-                child: Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.errorLoadingMarkets(e.toString()),
-                    style: TextStyle(color: colorScheme.error),
-                  ),
-                ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final cat = categories[index];
+                final name = cat['name'] as String;
+                final id = cat['id'] as String;
+                final imageUrl =
+                    ((cat['icons'] as List?)?.firstOrNull?['url'] as String?) ??
+                    '';
+                final color = ref.watch(categoryColorProvider(name));
+
+                return _CategoryCard(
+                      id: id,
+                      name: name,
+                      color: color,
+                      imageUrl: imageUrl,
+                    )
+                    .animate(delay: (index * 30).ms)
+                    .fadeIn(duration: 400.ms)
+                    .scale(
+                      begin: const Offset(0.95, 0.95),
+                      end: const Offset(1, 1),
+                    );
+              }, childCount: categories.length),
+            ),
+          ),
+          loading: () => const SliverSectionShimmer(
+            count: 10,
+            isGrid: true,
+            crossAxisCount: 2,
+            childAspectRatio: 1.6,
+          ),
+          error: (e, _) => SliverToBoxAdapter(
+            child: Center(
+              child: Text(
+                AppLocalizations.of(context)!.errorLoadingMarkets(e.toString()),
+                style: TextStyle(color: colorScheme.error),
               ),
+            ),
+          ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
@@ -418,10 +405,9 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return TactileTap(
-      onTap:
-          () => context.push(
-            Uri(path: '/genre/$id', queryParameters: {'name': name}).toString(),
-          ),
+      onTap: () => context.push(
+        Uri(path: '/genre/$id', queryParameters: {'name': name}).toString(),
+      ),
       scaleDown: 0.94,
       child: Container(
         decoration: BoxDecoration(
@@ -481,9 +467,8 @@ class _CategoryCard extends StatelessWidget {
                 child: Text(
                   name,
                   style: TextStyle(
-                    color:
-                        colorScheme
-                            .onPrimary, // Standard for vibrant cards, semantic value below
+                    color: colorScheme
+                        .onPrimary, // Standard for vibrant cards, semantic value below
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
@@ -515,9 +500,11 @@ class _TrackResults extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (items.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noTracksFound));
-    final tracks =
-        items.map((j) => Track.fromSpotify(j as Map<String, dynamic>)).toList();
+    if (items.isEmpty)
+      return Center(child: Text(AppLocalizations.of(context)!.noTracksFound));
+    final tracks = items
+        .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
+        .toList();
     return ListView.builder(
       itemCount: tracks.length + (tracks.length / 8).ceil(),
       itemBuilder: (_, i) {
@@ -540,10 +527,9 @@ class _TrackResults extends ConsumerWidget {
 
         return TrackTile(
               track: tracks[trackIndex],
-              onTap:
-                  () => ref
-                      .read(playerProvider.notifier)
-                      .playTrack(tracks[trackIndex], queue: tracks),
+              onTap: () => ref
+                  .read(playerProvider.notifier)
+                  .playTrack(tracks[trackIndex], queue: tracks),
             )
             .animate(delay: (100 + i % 10 * 40).ms)
             .fadeIn(duration: 500.ms)
@@ -560,7 +546,8 @@ class _ArtistResults extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noArtistsFound));
+    if (items.isEmpty)
+      return Center(child: Text(AppLocalizations.of(context)!.noArtistsFound));
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 16),
       itemCount: items.length + (items.length / 8).ceil(),
@@ -616,19 +603,15 @@ class _ArtistResults extends ConsumerWidget {
                           ],
                         ),
                         child: ClipOval(
-                          child:
-                              imageUrl.isNotEmpty
-                                  ? PPImage(
-                                    imageUrl: imageUrl,
-                                    fit: BoxFit.cover,
-                                  )
-                                  : Container(
-                                    color: colorScheme.surfaceContainerHighest,
-                                    child: Icon(
-                                      Icons.person,
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
+                          child: imageUrl.isNotEmpty
+                              ? PPImage(imageUrl: imageUrl, fit: BoxFit.cover)
+                              : Container(
+                                  color: colorScheme.surfaceContainerHighest,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: colorScheme.onSurfaceVariant,
                                   ),
+                                ),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -647,7 +630,9 @@ class _ArtistResults extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              AppLocalizations.of(context)!.artist.toUpperCase(),
+                              AppLocalizations.of(
+                                context,
+                              )!.artist.toUpperCase(),
                               style: TextStyle(
                                 color: colorScheme.primary.withValues(
                                   alpha: 0.8,
@@ -685,7 +670,8 @@ class _AlbumResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noAlbumsFound));
+    if (items.isEmpty)
+      return Center(child: Text(AppLocalizations.of(context)!.noAlbumsFound));
     return CustomScrollView(
       slivers: [
         const SliverToBoxAdapter(
@@ -706,8 +692,9 @@ class _AlbumResults extends StatelessWidget {
             delegate: SliverChildBuilderDelegate((_, i) {
               final album = items[i] as Map<String, dynamic>;
               final images = (album['images'] as List?) ?? [];
-              final imageUrl =
-                  images.isNotEmpty ? images[0]['url'] as String : '';
+              final imageUrl = images.isNotEmpty
+                  ? images[0]['url'] as String
+                  : '';
 
               final artistName =
                   (album['artists'] as List?)?.firstOrNull?['name'] ?? '';
@@ -741,17 +728,15 @@ class _AlbumResults extends StatelessWidget {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(16),
-                                child:
-                                    imageUrl.isNotEmpty
-                                        ? PPImage(
-                                          imageUrl: imageUrl,
-                                          fit: BoxFit.cover,
-                                        )
-                                        : Container(
-                                          color:
-                                              colorScheme
-                                                  .surfaceContainerHighest,
-                                        ),
+                                child: imageUrl.isNotEmpty
+                                    ? PPImage(
+                                        imageUrl: imageUrl,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        color:
+                                            colorScheme.surfaceContainerHighest,
+                                      ),
                               ),
                             ),
                           ),
@@ -806,7 +791,10 @@ class _PlaylistResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty) return Center(child: Text(AppLocalizations.of(context)!.noPlaylistsFound));
+    if (items.isEmpty)
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noPlaylistsFound),
+      );
     return CustomScrollView(
       slivers: [
         const SliverToBoxAdapter(
@@ -827,12 +815,12 @@ class _PlaylistResults extends StatelessWidget {
             delegate: SliverChildBuilderDelegate((_, i) {
               final playlist = items[i] as Map<String, dynamic>;
               final images = (playlist['images'] as List?) ?? [];
-              final imageUrl =
-                  images.isNotEmpty ? images[0]['url'] as String : '';
-              final ownerName =
-                  playlist['owner'] != null
-                      ? playlist['owner']['display_name']
-                      : '';
+              final imageUrl = images.isNotEmpty
+                  ? images[0]['url'] as String
+                  : '';
+              final ownerName = playlist['owner'] != null
+                  ? playlist['owner']['display_name']
+                  : '';
 
               return ContentContextMenuRegion(
                     target: PlaylistContextTarget(
@@ -871,17 +859,15 @@ class _PlaylistResults extends StatelessWidget {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(16),
-                                child:
-                                    imageUrl.isNotEmpty
-                                        ? PPImage(
-                                          imageUrl: imageUrl,
-                                          fit: BoxFit.cover,
-                                        )
-                                        : Container(
-                                          color:
-                                              colorScheme
-                                                  .surfaceContainerHighest,
-                                        ),
+                                child: imageUrl.isNotEmpty
+                                    ? PPImage(
+                                        imageUrl: imageUrl,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        color:
+                                            colorScheme.surfaceContainerHighest,
+                                      ),
                               ),
                             ),
                           ),

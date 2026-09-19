@@ -6,9 +6,15 @@ import '../../core/db/app_database.dart' as db;
 import 'local_artist_detail_screen.dart';
 import 'local_album_detail_screen.dart';
 
-void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track track, {int? playlistId, int? playlistEntryId}) {
+void showLocalTrackContextMenu(
+  BuildContext context,
+  WidgetRef ref,
+  model.Track track, {
+  int? playlistId,
+  int? playlistEntryId,
+}) {
   final colorScheme = Theme.of(context).colorScheme;
-  
+
   showModalBottomSheet(
     context: context,
     backgroundColor: colorScheme.surfaceContainerHighest,
@@ -34,7 +40,11 @@ void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track 
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
                 children: [
-                  Icon(Icons.audio_file_outlined, size: 48, color: colorScheme.primary),
+                  Icon(
+                    Icons.audio_file_outlined,
+                    size: 48,
+                    color: colorScheme.primary,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -89,23 +99,30 @@ void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track 
                 title: const Text('Remove from playlist'),
                 onTap: () async {
                   Navigator.pop(context);
-                  await ref.read(db.appDatabaseProvider).removeFromPlaylist(playlistEntryId);
+                  await ref
+                      .read(db.appDatabaseProvider)
+                      .removeFromPlaylist(playlistEntryId);
                 },
               ),
             if (track.artistName.isNotEmpty)
-              ...track.artistName.split(', ').map((artist) => ListTile(
-                leading: const Icon(Icons.person_outline_rounded),
-                title: Text('Go to $artist'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => LocalArtistDetailScreen(artistName: artist),
+              ...track.artistName
+                  .split(', ')
+                  .map(
+                    (artist) => ListTile(
+                      leading: const Icon(Icons.person_outline_rounded),
+                      title: Text('Go to $artist'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                LocalArtistDetailScreen(artistName: artist),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              )),
+                  ),
             if (track.albumName?.isNotEmpty == true)
               ListTile(
                 leading: const Icon(Icons.album_outlined),
@@ -116,7 +133,8 @@ void showLocalTrackContextMenu(BuildContext context, WidgetRef ref, model.Track 
                     context,
                     MaterialPageRoute(
                       builder: (_) => LocalAlbumDetailScreen(
-                        albumGroupKey: track.localAlbumGroupKey ?? track.albumName!,
+                        albumGroupKey:
+                            track.localAlbumGroupKey ?? track.albumName!,
                         albumTitle: track.albumName!,
                       ),
                     ),

@@ -74,32 +74,29 @@ class GenreDetailsScreen extends ConsumerWidget {
                   centerTitle: true,
                   expandedTitleScale: 1.0,
                   titlePadding: EdgeInsets.zero,
-                  title:
-                      isCollapsed
-                          ? ClipRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                              child: Container(
-                                width: double.infinity,
-                                height: kToolbarHeight + topPadding,
-                                padding: EdgeInsets.only(top: topPadding),
-                                color: colorScheme.surface.withValues(
-                                  alpha: 0.7,
+                  title: isCollapsed
+                      ? ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              width: double.infinity,
+                              height: kToolbarHeight + topPadding,
+                              padding: EdgeInsets.only(top: topPadding),
+                              color: colorScheme.surface.withValues(alpha: 0.7),
+                              alignment: Alignment.center,
+                              child: Text(
+                                categoryName.toUpperCase(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 16,
+                                  letterSpacing: -0.5,
+                                  color: colorScheme.onSurface,
                                 ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  categoryName.toUpperCase(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 16,
-                                    letterSpacing: -0.5,
-                                    color: colorScheme.onSurface,
-                                  ),
-                                ).animate().fadeIn(duration: 200.ms),
-                              ),
+                              ).animate().fadeIn(duration: 200.ms),
                             ),
-                          )
-                          : null,
+                          ),
+                        )
+                      : null,
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -123,31 +120,34 @@ class GenreDetailsScreen extends ConsumerWidget {
                       Positioned.fill(
                         child: Opacity(
                           opacity: 0.6,
-                          child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: RadialGradient(
-                                    center: const Alignment(-0.8, -0.6),
-                                    radius: 1.5,
-                                    colors: [
-                                      themeColor.withValues(alpha: 0.8),
-                                      Colors.transparent,
-                                    ],
+                          child:
+                              Container(
+                                    decoration: BoxDecoration(
+                                      gradient: RadialGradient(
+                                        center: const Alignment(-0.8, -0.6),
+                                        radius: 1.5,
+                                        colors: [
+                                          themeColor.withValues(alpha: 0.8),
+                                          Colors.transparent,
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .animate(
+                                    onPlay: (c) => c.repeat(reverse: true),
+                                  )
+                                  .scale(
+                                    begin: const Offset(1, 1),
+                                    end: const Offset(1.3, 1.3),
+                                    duration: 10.seconds,
+                                    curve: Curves.easeInOut,
+                                  )
+                                  .move(
+                                    begin: const Offset(-20, -20),
+                                    end: const Offset(20, 20),
+                                    duration: 12.seconds,
+                                    curve: Curves.easeInOut,
                                   ),
-                                ),
-                              )
-                              .animate(onPlay: (c) => c.repeat(reverse: true))
-                              .scale(
-                                begin: const Offset(1, 1),
-                                end: const Offset(1.3, 1.3),
-                                duration: 10.seconds,
-                                curve: Curves.easeInOut,
-                              )
-                              .move(
-                                begin: const Offset(-20, -20),
-                                end: const Offset(20, 20),
-                                duration: 12.seconds,
-                                curve: Curves.easeInOut,
-                              ),
                         ),
                       ),
 
@@ -216,38 +216,43 @@ class GenreDetailsScreen extends ConsumerWidget {
                                         width: 0.5,
                                       ),
                                     ),
-                                    child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              'GENRE',
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface
-                                                    .withValues(alpha: 0.5),
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w900,
-                                                letterSpacing: 4.0,
-                                              ),
+                                    child:
+                                        Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'GENRE',
+                                                  style: TextStyle(
+                                                    color: colorScheme.onSurface
+                                                        .withValues(alpha: 0.5),
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w900,
+                                                    letterSpacing: 4.0,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  categoryName,
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    color:
+                                                        colorScheme.onSurface,
+                                                    fontSize: 48,
+                                                    fontWeight: FontWeight.w900,
+                                                    letterSpacing: -2.5,
+                                                    height: 1.0,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                            .animate()
+                                            .fadeIn(duration: 600.ms)
+                                            .scale(
+                                              begin: const Offset(0.95, 0.95),
                                             ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              categoryName,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                color: colorScheme.onSurface,
-                                                fontSize: 48,
-                                                fontWeight: FontWeight.w900,
-                                                letterSpacing: -2.5,
-                                                height: 1.0,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                        .animate()
-                                        .fadeIn(duration: 600.ms)
-                                        .scale(begin: const Offset(0.95, 0.95)),
                                   ),
                                 ),
                               ),
@@ -293,22 +298,20 @@ class GenreDetailsScreen extends ConsumerWidget {
                       final playlists = playlistsAsync.asData?.value;
                       final iconUrl =
                           (playlists != null &&
-                                  playlists.isNotEmpty &&
-                                  (playlists.first['images'] as List?)
-                                          ?.isNotEmpty ==
-                                      true)
-                              ? playlists.first['images'][0]['url'] as String?
-                              : null;
+                              playlists.isNotEmpty &&
+                              (playlists.first['images'] as List?)
+                                      ?.isNotEmpty ==
+                                  true)
+                          ? playlists.first['images'][0]['url'] as String?
+                          : null;
 
                       return TactileIconButton(
-                        icon:
-                            isFavorite
-                                ? Icons.favorite_rounded
-                                : Icons.favorite_border_rounded,
-                        color:
-                            isFavorite
-                                ? colorScheme.primary
-                                : colorScheme.onSurface,
+                        icon: isFavorite
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
+                        color: isFavorite
+                            ? colorScheme.primary
+                            : colorScheme.onSurface,
                         size: 28,
                         onTap: () {
                           ref
@@ -338,10 +341,9 @@ class GenreDetailsScreen extends ConsumerWidget {
             child: SectionWrapper<Map<String, dynamic>>(
               title: AppLocalizations.of(context)!.featuredPlaylists,
               asyncValue: playlistsAsync,
-              builder:
-                  (playlists) => _PlaylistList(
-                    playlists: playlists,
-                  ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
+              builder: (playlists) => _PlaylistList(
+                playlists: playlists,
+              ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
               loadingWidget: const SectionShimmer(height: 220),
             ),
           ),
@@ -350,34 +352,29 @@ class GenreDetailsScreen extends ConsumerWidget {
             child: SectionWrapper<Track>(
               title: AppLocalizations.of(context)!.popularSongs,
               asyncValue: tracksAsync,
-              builder:
-                  (tracks) => Padding(
-                    padding: const EdgeInsets.only(bottom: 120),
-                    child: Column(
-                      children: [
-                        for (int index = 0; index < tracks.length; index++) ...[
-                          TrackTile(
-                                index: index + 1,
-                                track: tracks[index],
-                                onTap:
-                                    () => ref
-                                        .read(playerProvider.notifier)
-                                        .playTrack(
-                                          tracks[index],
-                                          queue: tracks,
-                                        ),
-                              )
-                              .animate()
-                              .fadeIn(delay: (200 + index * 40).ms)
-                              .slideX(
-                                begin: 0.05,
-                                end: 0,
-                                curve: Curves.easeOutCubic,
-                              ),
-                        ],
-                      ],
-                    ),
-                  ),
+              builder: (tracks) => Padding(
+                padding: const EdgeInsets.only(bottom: 120),
+                child: Column(
+                  children: [
+                    for (int index = 0; index < tracks.length; index++) ...[
+                      TrackTile(
+                            index: index + 1,
+                            track: tracks[index],
+                            onTap: () => ref
+                                .read(playerProvider.notifier)
+                                .playTrack(tracks[index], queue: tracks),
+                          )
+                          .animate()
+                          .fadeIn(delay: (200 + index * 40).ms)
+                          .slideX(
+                            begin: 0.05,
+                            end: 0,
+                            curve: Curves.easeOutCubic,
+                          ),
+                    ],
+                  ],
+                ),
+              ),
               loadingWidget: const SectionShimmer(
                 isHorizontal: false,
                 height: 72,
@@ -427,11 +424,10 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
 
   void _onPlay() async {
     try {
-      final cacheResult =
-          await ref
-              .read(spotifyRepositoryProvider)
-              .watchPlaylistTracks(widget.playlist['id'])
-              .first;
+      final cacheResult = await ref
+          .read(spotifyRepositoryProvider)
+          .watchPlaylistTracks(widget.playlist['id'])
+          .first;
       final tracks = cacheResult.data;
       if (tracks.isNotEmpty) {
         ref
@@ -471,10 +467,9 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
         onExit: (_) => setState(() => _isHovered = false),
         cursor: SystemMouseCursors.click,
         child: TactileTap(
-          onTap:
-              () => context.push(
-                '/playlist/remote/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}',
-              ),
+          onTap: () => context.push(
+            '/playlist/remote/${playlist['id']}?name=${Uri.encodeComponent(playlist['name'] ?? '')}',
+          ),
           scaleDown: 0.96,
           child: AnimatedScale(
             scale: _isHovered ? 1.04 : 1.0,
@@ -495,12 +490,9 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                _isHovered
-                                    ? colorScheme.primary.withValues(
-                                      alpha: 0.35,
-                                    )
-                                    : colorScheme.scrim.withValues(alpha: 0.4),
+                            color: _isHovered
+                                ? colorScheme.primary.withValues(alpha: 0.35)
+                                : colorScheme.scrim.withValues(alpha: 0.4),
                             blurRadius: _isHovered ? 26 : 15,
                             spreadRadius: _isHovered ? 2 : 0,
                             offset: Offset(0, _isHovered ? 12 : 8),
@@ -524,10 +516,9 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 14,
-                      color:
-                          _isHovered
-                              ? colorScheme.primary
-                              : colorScheme.onSurface,
+                      color: _isHovered
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
                       letterSpacing: -0.3,
                     ),
                     child: Text(

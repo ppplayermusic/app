@@ -50,21 +50,19 @@ class SectionWrapper<T> extends StatelessWidget {
           ),
         ).animate().fadeIn(duration: 400.ms);
       },
-      loading:
-          () =>
-              loadingWidget ??
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: ShimmerPlaceholder(height: 120),
-              ),
-      error:
-          (e, _) =>
-              errorWidget ??
-              _SectionErrorWidget(
-                title: title,
-                topPadding: topPadding,
-                onRetry: onRetry,
-              ),
+      loading: () =>
+          loadingWidget ??
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: ShimmerPlaceholder(height: 120),
+          ),
+      error: (e, _) =>
+          errorWidget ??
+          _SectionErrorWidget(
+            title: title,
+            topPadding: topPadding,
+            onRetry: onRetry,
+          ),
     );
   }
 }
@@ -137,7 +135,10 @@ class _SectionErrorWidget extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   foregroundColor: colorScheme.primary,
                 ),
-                child: Text(AppLocalizations.of(context)!.retry, style: TextStyle(fontSize: 13)),
+                child: Text(
+                  AppLocalizations.of(context)!.retry,
+                  style: TextStyle(fontSize: 13),
+                ),
               ),
             ],
           ],

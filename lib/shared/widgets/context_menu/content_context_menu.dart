@@ -364,10 +364,9 @@ class _ContentContextMenuOverlayState
               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
-                child:
-                    _activeSubmenu == 'playlist'
-                        ? _buildPlaylistSubmenuContent(context)
-                        : _buildShareSubmenuContent(context),
+                child: _activeSubmenu == 'playlist'
+                    ? _buildPlaylistSubmenuContent(context)
+                    : _buildShareSubmenuContent(context),
               ),
             ),
           ),
@@ -619,10 +618,9 @@ class _ContentContextMenuOverlayState
       ),
       const _ContextMenuDivider(),
       _ContextMenuItem(
-        icon:
-            isLiked
-                ? Icons.bookmark_added_rounded
-                : Icons.bookmark_add_outlined,
+        icon: isLiked
+            ? Icons.bookmark_added_rounded
+            : Icons.bookmark_add_outlined,
         iconColor: isLiked ? colorScheme.primary : null,
         label: isLiked ? 'Remove from Your Library' : 'Add to Your Library',
         onTap: () {
@@ -694,18 +692,14 @@ class _ContentContextMenuOverlayState
     PlaylistContextTarget target,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isLiked =
-        target.isLocal
-            ? true
-            : (ref
-                    .watch(
-                      favoritesStatusProvider((
-                        FavoriteType.playlist,
-                        target.id,
-                      )),
-                    )
-                    .value ??
-                false);
+    final isLiked = target.isLocal
+        ? true
+        : (ref
+                  .watch(
+                    favoritesStatusProvider((FavoriteType.playlist, target.id)),
+                  )
+                  .value ??
+              false);
 
     return [
       _ContextMenuItem(
@@ -775,22 +769,17 @@ class _ContentContextMenuOverlayState
       ),
       const _ContextMenuDivider(),
       _ContextMenuItem(
-        icon:
-            target.isLocal
-                ? Icons.delete_outline_rounded
-                : (isLiked
-                    ? Icons.bookmark_added_rounded
-                    : Icons.bookmark_add_outlined),
-        iconColor:
-            target.isLocal
-                ? colorScheme.error
-                : (isLiked ? colorScheme.primary : null),
-        label:
-            target.isLocal
-                ? 'Delete playlist'
-                : (isLiked
-                    ? 'Remove from Your Library'
-                    : 'Add to Your Library'),
+        icon: target.isLocal
+            ? Icons.delete_outline_rounded
+            : (isLiked
+                  ? Icons.bookmark_added_rounded
+                  : Icons.bookmark_add_outlined),
+        iconColor: target.isLocal
+            ? colorScheme.error
+            : (isLiked ? colorScheme.primary : null),
+        label: target.isLocal
+            ? 'Delete playlist'
+            : (isLiked ? 'Remove from Your Library' : 'Add to Your Library'),
         onTap: () async {
           Navigator.of(context).pop();
           if (target.isLocal && target.localId != null) {
@@ -838,9 +827,11 @@ class _ContentContextMenuOverlayState
           onTap: () async {
             Navigator.of(context).pop();
             try {
-              final result = await _container.read(localLibraryServiceProvider).exportPlaylist(target.localId!);
+              final result = await _container
+                  .read(localLibraryServiceProvider)
+                  .exportPlaylist(target.localId!);
               if (result != null) {
-                final msg = result.skippedCount > 0 
+                final msg = result.skippedCount > 0
                     ? 'Exported playlist (${result.skippedCount} items skipped)'
                     : 'Playlist exported';
                 _showToast(msg);
@@ -900,10 +891,9 @@ class _ContentContextMenuOverlayState
                         .watchArtistTopTracks(target.id)
                         .first)
                     .data;
-            final tracks =
-                rawTracks
-                    .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
-                    .toList();
+            final tracks = rawTracks
+                .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
+                .toList();
             if (tracks.isNotEmpty) {
               _container
                   .read(playerProvider.notifier)
@@ -920,10 +910,9 @@ class _ContentContextMenuOverlayState
         },
       ),
       _ContextMenuItem(
-        icon:
-            isFollowed
-                ? Icons.person_remove_outlined
-                : Icons.person_add_outlined,
+        icon: isFollowed
+            ? Icons.person_remove_outlined
+            : Icons.person_add_outlined,
         iconColor: isFollowed ? colorScheme.primary : null,
         label: isFollowed ? 'Unfollow' : 'Follow',
         onTap: () {
@@ -1011,17 +1000,17 @@ class _ContentContextMenuOverlayState
               '[ContentContextMenu] Fetching radio station tracks for ${target.seedType}:${target.seedId}',
             );
             final repo = _container.read(spotifyRepositoryProvider);
-            final cacheResult =
-                await repo
-                    .watchRecommendations(
-                      seedArtistId:
-                          target.seedType == 'artist' ? target.seedId : null,
-                      seedTrackId:
-                          target.seedType == 'track' ? target.seedId : null,
-                      seedGenres:
-                          target.seedType == 'genre' ? target.seedId : null,
-                    )
-                    .first;
+            final cacheResult = await repo
+                .watchRecommendations(
+                  seedArtistId: target.seedType == 'artist'
+                      ? target.seedId
+                      : null,
+                  seedTrackId: target.seedType == 'track'
+                      ? target.seedId
+                      : null,
+                  seedGenres: target.seedType == 'genre' ? target.seedId : null,
+                )
+                .first;
             final tracks = cacheResult.data;
             if (tracks.isNotEmpty) {
               _container.read(playerProvider.notifier).playTracks(tracks);
@@ -1049,10 +1038,9 @@ class _ContentContextMenuOverlayState
         },
       ),
       _ContextMenuItem(
-        icon:
-            isFollowed
-                ? Icons.bookmark_added_rounded
-                : Icons.bookmark_add_outlined,
+        icon: isFollowed
+            ? Icons.bookmark_added_rounded
+            : Icons.bookmark_add_outlined,
         iconColor: isFollowed ? colorScheme.primary : null,
         label: isFollowed ? 'Unfollow Station' : 'Follow Station',
         onTap: () {
@@ -1222,12 +1210,10 @@ class _ContentContextMenuOverlayState
                 children: [
                   Expanded(
                     child: TactileTap(
-                      onTap:
-                          () =>
-                              Navigator.of(
-                                dialogContext,
-                                rootNavigator: true,
-                              ).pop(),
+                      onTap: () => Navigator.of(
+                        dialogContext,
+                        rootNavigator: true,
+                      ).pop(),
                       child: Container(
                         height: 48,
                         alignment: Alignment.center,
@@ -1263,9 +1249,9 @@ class _ContentContextMenuOverlayState
                               rootNavigator: true,
                             ).pop();
                           }
-                          final playlist =
-                              await (database.select(database.playlists)
-                                ..where((p) => p.id.equals(newId))).getSingle();
+                          final playlist = await (database.select(
+                            database.playlists,
+                          )..where((p) => p.id.equals(newId))).getSingle();
                           await _addItemToPlaylist(playlist);
                         }
                       },
@@ -1433,19 +1419,18 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
     final colorScheme = theme.colorScheme;
 
     final isCustomColor = widget.iconColor != null;
-    final defaultIconColor =
-        _isHovered ? colorScheme.onSurface : colorScheme.onSurfaceVariant;
+    final defaultIconColor = _isHovered
+        ? colorScheme.onSurface
+        : colorScheme.onSurfaceVariant;
     final iconColor = widget.iconColor ?? defaultIconColor;
 
-    final Color hoverBg =
-        isCustomColor
-            ? widget.iconColor!.withValues(alpha: 0.12)
-            : colorScheme.onSurface.withValues(alpha: 0.08);
+    final Color hoverBg = isCustomColor
+        ? widget.iconColor!.withValues(alpha: 0.12)
+        : colorScheme.onSurface.withValues(alpha: 0.08);
 
-    final Color hoverBorder =
-        isCustomColor
-            ? widget.iconColor!.withValues(alpha: 0.22)
-            : colorScheme.outlineVariant.withValues(alpha: 0.20);
+    final Color hoverBorder = isCustomColor
+        ? widget.iconColor!.withValues(alpha: 0.22)
+        : colorScheme.outlineVariant.withValues(alpha: 0.20);
 
     return MouseRegion(
       onEnter: (event) {
@@ -1490,13 +1475,12 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
                   duration: const Duration(milliseconds: 140),
                   curve: Curves.easeOutCubic,
                   style: TextStyle(
-                    color:
-                        _isHovered
-                            ? (isCustomColor &&
-                                    widget.iconColor == colorScheme.error
-                                ? colorScheme.error
-                                : colorScheme.onSurface)
-                            : colorScheme.onSurface.withValues(alpha: 0.9),
+                    color: _isHovered
+                        ? (isCustomColor &&
+                                  widget.iconColor == colorScheme.error
+                              ? colorScheme.error
+                              : colorScheme.onSurface)
+                        : colorScheme.onSurface.withValues(alpha: 0.9),
                     fontSize: 13.5,
                     fontWeight: _isHovered ? FontWeight.w600 : FontWeight.w500,
                     letterSpacing: -0.2,
@@ -1516,10 +1500,9 @@ class _ContextMenuItemState extends State<_ContextMenuItem> {
                   child: Icon(
                     Icons.chevron_right_rounded,
                     size: 18,
-                    color:
-                        _isHovered
-                            ? colorScheme.onSurface
-                            : colorScheme.onSurfaceVariant,
+                    color: _isHovered
+                        ? colorScheme.onSurface
+                        : colorScheme.onSurfaceVariant,
                   ),
                 ),
             ],

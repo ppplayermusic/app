@@ -152,7 +152,10 @@ class PipHandler {
   // ---------------------------------------------------------------------------
   // setPipEnabled — Android 12+ auto-enter param; Android 8-11 manual entry.
   // ---------------------------------------------------------------------------
-  static Future<void> setPipEnabled(bool enabled, {double aspectRatio = 16 / 9}) async {
+  static Future<void> setPipEnabled(
+    bool enabled, {
+    double aspectRatio = 16 / 9,
+  }) async {
     if (!kIsWeb && Platform.isAndroid) {
       try {
         await _channel.invokeMethod('setPipEnabled', {
@@ -215,9 +218,11 @@ class PipHandler {
     }
 
     try {
-      final entered = await _channel.invokeMethod<bool>('enterPip', {
-        'aspectRatio': aspectRatio,
-      }) ?? false;
+      final entered =
+          await _channel.invokeMethod<bool>('enterPip', {
+            'aspectRatio': aspectRatio,
+          }) ??
+          false;
       if (!entered) {
         // Android rejected the request synchronously; the onPipModeChanged
         // callback will NOT arrive, so we must clear here.

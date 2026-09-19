@@ -657,6 +657,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get filterStations => 'Postaje';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Lokalna glazba';
 
   @override

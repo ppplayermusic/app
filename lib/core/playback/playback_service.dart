@@ -43,8 +43,9 @@ class PlaybackService {
   /// Gets recommendations for high-level radio.
   Future<List<Track>> getRadioTracks(String artistId) async {
     try {
-      final cacheResult =
-          await _spotifyRepo.watchRecommendations(seedArtistId: artistId).first;
+      final cacheResult = await _spotifyRepo
+          .watchRecommendations(seedArtistId: artistId)
+          .first;
       return cacheResult.data;
     } catch (_) {
       return [];

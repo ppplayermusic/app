@@ -158,10 +158,9 @@ class HybridPlaybackEngine implements PlaybackController {
         _log(
           'Containment: Inactive engine $source emitted playing, pausing it.',
         );
-        final engine =
-            source == EngineOwner.foreground
-                ? _foregroundEngine
-                : _backgroundEngine;
+        final engine = source == EngineOwner.foreground
+            ? _foregroundEngine
+            : _backgroundEngine;
         engine.pause(caller: 'containment');
       }
       return;
@@ -203,10 +202,9 @@ class HybridPlaybackEngine implements PlaybackController {
       );
       return;
     }
-    final expectedGen =
-        source == EngineOwner.foreground
-            ? _activeForegroundGeneration
-            : _activeBackgroundGeneration;
+    final expectedGen = source == EngineOwner.foreground
+        ? _activeForegroundGeneration
+        : _activeBackgroundGeneration;
     if (generation != null &&
         expectedGen != null &&
         generation != expectedGen) {
@@ -288,14 +286,12 @@ class HybridPlaybackEngine implements PlaybackController {
       // If source cannot confirm silence, we cannot safely start the destination.
       try {
         await sourceEngine.pause(caller: 'handoff', failOnTimeout: true);
-
       } on TimeoutException catch (e) {
         _log('Handoff ABORTED: source pause unconfirmed — $e');
         // Roll back owner; destination was never started, so no audio overlap.
-        _owner =
-            targetOwner == EngineOwner.foreground
-                ? EngineOwner.background
-                : EngineOwner.foreground;
+        _owner = targetOwner == EngineOwner.foreground
+            ? EngineOwner.background
+            : EngineOwner.foreground;
         _isTransferring = false;
         return;
       }

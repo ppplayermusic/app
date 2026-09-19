@@ -88,11 +88,14 @@ void main() {
             }
           }
           final expectedId = entry == 'queue' ? 'videoBBBBBB' : 'videoAAAAAA';
-          
+
           if (entry == 'restore') {
             expect(renderer.count('cue'), 1);
             expect(
-              renderer.commands.where((c) => c.name == 'cue').last.parameters['startSeconds'],
+              renderer.commands
+                  .where((c) => c.name == 'cue')
+                  .last
+                  .parameters['startSeconds'],
               5.0,
             );
             renderer.emitState(expectedId, yt.PlayerState.cued);
@@ -114,7 +117,10 @@ void main() {
           } else {
             // Background plays were blocked, so foreground resume triggers a full load.
             expect(
-              renderer.commands.where((c) => c.name == 'load').last.parameters['videoId'],
+              renderer.commands
+                  .where((c) => c.name == 'load')
+                  .last
+                  .parameters['videoId'],
               expectedId,
             );
             expect(renderer.count('play'), 0);

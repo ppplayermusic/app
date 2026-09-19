@@ -38,13 +38,12 @@ final popularTracksProvider = StreamProvider((ref) {
 final marketPopularAlbumsProvider = StreamProvider((ref) async* {
   final repo = ref.watch(spotifyRepositoryProvider);
   final tracks = await ref.watch(popularTracksProvider.future);
-  final albumIds =
-      tracks
-          .map((t) => t.albumId)
-          .where((id) => id != null && id.isNotEmpty)
-          .cast<String>()
-          .toSet()
-          .toList();
+  final albumIds = tracks
+      .map((t) => t.albumId)
+      .where((id) => id != null && id.isNotEmpty)
+      .cast<String>()
+      .toSet()
+      .toList();
   if (albumIds.isEmpty) {
     yield <Map<String, dynamic>>[];
     return;
@@ -55,12 +54,11 @@ final marketPopularAlbumsProvider = StreamProvider((ref) async* {
 final popularArtistsProvider = StreamProvider((ref) async* {
   final repo = ref.watch(spotifyRepositoryProvider);
   final tracks = await ref.watch(popularTracksProvider.future);
-  final artistIds =
-      tracks
-          .map((t) => t.artistId)
-          .where((id) => id.isNotEmpty)
-          .toSet()
-          .toList();
+  final artistIds = tracks
+      .map((t) => t.artistId)
+      .where((id) => id.isNotEmpty)
+      .toSet()
+      .toList();
   if (artistIds.isEmpty) {
     yield <Map<String, dynamic>>[];
     return;
@@ -272,10 +270,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else {
       greeting = l10n.goodEvening;
     }
-    final firstName =
-        settings.userName.isNotEmpty ? settings.userName.split(' ').first : '';
-    final greetingText =
-        firstName.isNotEmpty ? l10n.greetingWithName(greeting, firstName) : greeting;
+    final firstName = settings.userName.isNotEmpty
+        ? settings.userName.split(' ').first
+        : '';
+    final greetingText = firstName.isNotEmpty
+        ? l10n.greetingWithName(greeting, firstName)
+        : greeting;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -348,285 +348,270 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     provider: recentlyPlayedProvider,
                     delay: 0.seconds,
                     topPadding: 24,
-                    builder:
-                        (context, ref, tracks) => SizedBox(
-                          height: 240,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: tracks.length.clamp(0, 10),
-                            itemBuilder: (context, index) {
-                              final track = tracks[index];
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 16.0),
-                                child: _HistoryCard(
-                                  track: track,
-                                  onTap:
-                                      () => ref
-                                          .read(playerProvider.notifier)
-                                          .playTrack(track, queue: tracks),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                    builder: (context, ref, tracks) => SizedBox(
+                      height: 240,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: tracks.length.clamp(0, 10),
+                        itemBuilder: (context, index) {
+                          final track = tracks[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: _HistoryCard(
+                              track: track,
+                              onTap: () => ref
+                                  .read(playerProvider.notifier)
+                                  .playTrack(track, queue: tracks),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
                     title: AppLocalizations.of(context)!.popularArtists,
                     provider: popularArtistsProvider,
                     delay: 500.ms,
-                    builder:
-                        (context, ref, artists) => SizedBox(
-                          height: 170,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: artists.length,
-                            itemBuilder: (context, index) {
-                              final artist = artists[index];
-                              final imageUrl =
-                                  (artist['images'] as List?)
-                                      ?.firstOrNull?['url'] ??
-                                  '';
-                              return _ArtistCircle(
-                                    id: artist['id'],
-                                    name: artist['name'],
-                                    imageUrl: imageUrl,
-                                    onTap:
-                                        () => context.push(
-                                          '/artist/${artist['id']}',
-                                        ),
-                                  )
-                                  .animate()
-                                  .fadeIn(delay: (100 + (index * 100)).ms)
-                                  .scale(begin: const Offset(0.8, 0.8));
-                            },
-                          ),
-                        ),
+                    builder: (context, ref, artists) => SizedBox(
+                      height: 170,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: artists.length,
+                        itemBuilder: (context, index) {
+                          final artist = artists[index];
+                          final imageUrl =
+                              (artist['images'] as List?)
+                                  ?.firstOrNull?['url'] ??
+                              '';
+                          return _ArtistCircle(
+                                id: artist['id'],
+                                name: artist['name'],
+                                imageUrl: imageUrl,
+                                onTap: () =>
+                                    context.push('/artist/${artist['id']}'),
+                              )
+                              .animate()
+                              .fadeIn(delay: (100 + (index * 100)).ms)
+                              .scale(begin: const Offset(0.8, 0.8));
+                        },
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
                     title: AppLocalizations.of(context)!.madeForYou,
                     provider: madeForYouMixesProvider,
                     delay: 1.seconds,
-                    builder:
-                        (context, ref, mixes) => SizedBox(
-                          height: 138,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: mixes.length,
-                            itemBuilder: (context, index) {
-                              final mix = mixes[index];
-                              String mixTitle = mix['title'];
-                              if (mixTitle == 'Daily Mix 1') {
-                                mixTitle = l10n.dailyMix('1');
-                              } else if (mixTitle == 'Daily Mix 2') {
-                                mixTitle = l10n.dailyMix('2');
-                              } else if (mixTitle == 'Discover Weekly') {
-                                mixTitle = l10n.discoverWeekly;
-                              } else if (mixTitle == 'Release Radar') {
-                                mixTitle = l10n.releaseRadar;
-                              } else if (mixTitle == 'Chill Mix') {
-                                mixTitle = l10n.chillMix;
-                              } else if (mixTitle == 'Focus Mix') {
-                                mixTitle = l10n.focusMix;
-                              }
+                    builder: (context, ref, mixes) => SizedBox(
+                      height: 138,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: mixes.length,
+                        itemBuilder: (context, index) {
+                          final mix = mixes[index];
+                          String mixTitle = mix['title'];
+                          if (mixTitle == 'Daily Mix 1') {
+                            mixTitle = l10n.dailyMix('1');
+                          } else if (mixTitle == 'Daily Mix 2') {
+                            mixTitle = l10n.dailyMix('2');
+                          } else if (mixTitle == 'Discover Weekly') {
+                            mixTitle = l10n.discoverWeekly;
+                          } else if (mixTitle == 'Release Radar') {
+                            mixTitle = l10n.releaseRadar;
+                          } else if (mixTitle == 'Chill Mix') {
+                            mixTitle = l10n.chillMix;
+                          } else if (mixTitle == 'Focus Mix') {
+                            mixTitle = l10n.focusMix;
+                          }
 
-                              String mixSubtitle = mix['subtitle'];
-                              if (mixSubtitle == 'Your favorites\nand new discoveries') {
-                                mixSubtitle = l10n.yourFavoritesAndNewDiscoveries;
-                              } else if (mixSubtitle == 'Made for you') {
-                                mixSubtitle = l10n.madeForYou;
-                              } else if (mixSubtitle == 'New music\njust for you') {
-                                mixSubtitle = l10n.newMusicJustForYou;
-                              } else if (mixSubtitle == 'Relax and unwind') {
-                                mixSubtitle = l10n.relaxAndUnwind;
-                              } else if (mixSubtitle == 'Deep focus\nand productivity') {
-                                mixSubtitle = l10n.deepFocusAndProductivity;
-                              }
+                          String mixSubtitle = mix['subtitle'];
+                          if (mixSubtitle ==
+                              'Your favorites\nand new discoveries') {
+                            mixSubtitle = l10n.yourFavoritesAndNewDiscoveries;
+                          } else if (mixSubtitle == 'Made for you') {
+                            mixSubtitle = l10n.madeForYou;
+                          } else if (mixSubtitle == 'New music\njust for you') {
+                            mixSubtitle = l10n.newMusicJustForYou;
+                          } else if (mixSubtitle == 'Relax and unwind') {
+                            mixSubtitle = l10n.relaxAndUnwind;
+                          } else if (mixSubtitle ==
+                              'Deep focus\nand productivity') {
+                            mixSubtitle = l10n.deepFocusAndProductivity;
+                          }
 
-                              return _MixCard(
-                                    title: mixTitle,
-                                    subtitle: mixSubtitle,
-                                    imageAsset: mix['imageAsset'] as String,
-                                    color1: mix['color1'] as Color,
-                                    color2: mix['color2'] as Color,
-                                    contextTarget: RadioContextTarget(
-                                      seedId: mix['id'],
-                                      seedType: mix['type'] ?? 'genre',
-                                      title: mixTitle,
-                                      imageUrl:
-                                          mix['imageUrl'] ?? mix['imageAsset'],
-                                    ),
-                                    onTap:
-                                        () => context.push(
-                                          Uri(
-                                            path:
-                                                '/radio/${mix['type']}/${mix['id']}',
-                                            queryParameters: {
-                                              'title': mix['title'],
-                                              'imageUrl':
-                                                  mix['imageUrl'] ??
-                                                  mix['imageAsset'] ??
-                                                  '',
-                                              'subtitle': mix['subtitle'] ?? '',
-                                            },
-                                          ).toString(),
-                                          extra: <String, dynamic>{
-                                            'color1': mix['color1'],
-                                            'color2': mix['color2'],
-                                          },
-                                        ),
-                                  )
-                                  .animate(delay: (index * 100).ms)
-                                  .fadeIn()
-                                  .scale(begin: const Offset(0.8, 0.8));
-                            },
-                          ),
-                        ),
+                          return _MixCard(
+                                title: mixTitle,
+                                subtitle: mixSubtitle,
+                                imageAsset: mix['imageAsset'] as String,
+                                color1: mix['color1'] as Color,
+                                color2: mix['color2'] as Color,
+                                contextTarget: RadioContextTarget(
+                                  seedId: mix['id'],
+                                  seedType: mix['type'] ?? 'genre',
+                                  title: mixTitle,
+                                  imageUrl:
+                                      mix['imageUrl'] ?? mix['imageAsset'],
+                                ),
+                                onTap: () => context.push(
+                                  Uri(
+                                    path: '/radio/${mix['type']}/${mix['id']}',
+                                    queryParameters: {
+                                      'title': mix['title'],
+                                      'imageUrl':
+                                          mix['imageUrl'] ??
+                                          mix['imageAsset'] ??
+                                          '',
+                                      'subtitle': mix['subtitle'] ?? '',
+                                    },
+                                  ).toString(),
+                                  extra: <String, dynamic>{
+                                    'color1': mix['color1'],
+                                    'color2': mix['color2'],
+                                  },
+                                ),
+                              )
+                              .animate(delay: (index * 100).ms)
+                              .fadeIn()
+                              .scale(begin: const Offset(0.8, 0.8));
+                        },
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
                     title: AppLocalizations.of(context)!.suggestedStations,
                     provider: suggestedStationsProvider,
                     delay: 1.5.seconds,
-                    builder:
-                        (context, ref, radios) => SizedBox(
-                          height: 230,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: radios.length,
-                            itemBuilder: (context, index) {
-                              final radio = radios[index];
-                              return _RadioCard(
-                                    title: radio['title'],
-                                    imageUrl: radio['imageUrl'],
-                                    contextTarget: RadioContextTarget(
-                                      seedId: radio['id'],
-                                      seedType: radio['type'] ?? 'genre',
-                                      title: radio['title'],
-                                      imageUrl: radio['imageUrl'],
-                                    ),
-                                    onTap:
-                                        () => context.push(
-                                          Uri(
-                                            path:
-                                                '/radio/${radio['type']}/${radio['id']}',
-                                            queryParameters: {
-                                              'title': radio['title'],
-                                              'imageUrl': radio['imageUrl'],
-                                            },
-                                          ).toString(),
-                                        ),
-                                  )
-                                  .animate()
-                                  .fadeIn(delay: (index * 100).ms)
-                                  .scale(begin: const Offset(0.9, 0.9));
-                            },
-                          ),
-                        ),
+                    builder: (context, ref, radios) => SizedBox(
+                      height: 230,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: radios.length,
+                        itemBuilder: (context, index) {
+                          final radio = radios[index];
+                          return _RadioCard(
+                                title: radio['title'],
+                                imageUrl: radio['imageUrl'],
+                                contextTarget: RadioContextTarget(
+                                  seedId: radio['id'],
+                                  seedType: radio['type'] ?? 'genre',
+                                  title: radio['title'],
+                                  imageUrl: radio['imageUrl'],
+                                ),
+                                onTap: () => context.push(
+                                  Uri(
+                                    path:
+                                        '/radio/${radio['type']}/${radio['id']}',
+                                    queryParameters: {
+                                      'title': radio['title'],
+                                      'imageUrl': radio['imageUrl'],
+                                    },
+                                  ).toString(),
+                                ),
+                              )
+                              .animate()
+                              .fadeIn(delay: (index * 100).ms)
+                              .scale(begin: const Offset(0.9, 0.9));
+                        },
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
                     title: AppLocalizations.of(context)!.popularAlbums,
                     provider: marketPopularAlbumsProvider,
                     delay: 2.seconds,
-                    builder:
-                        (context, ref, albums) => _HorizontalList(
-                          items: albums,
-                          onTap: (item) => context.push("/album/${item['id']}"),
-                        ).animate().fadeIn().slideY(begin: 0.1),
+                    builder: (context, ref, albums) => _HorizontalList(
+                      items: albums,
+                      onTap: (item) => context.push("/album/${item['id']}"),
+                    ).animate().fadeIn().slideY(begin: 0.1),
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
                     title: AppLocalizations.of(context)!.popularGenres,
                     provider: browseCategoriesProvider,
                     delay: 2.5.seconds,
-                    builder:
-                        (context, ref, items) => LayoutBuilder(
-                          builder: (context, constraints) {
-                            if (constraints.maxWidth >= 600) {
-                              final crossAxisCount = (constraints.maxWidth /
-                                      160)
-                                  .floor()
-                                  .clamp(2, 6);
-                              return GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: 12,
-                                      mainAxisSpacing: 12,
-                                      childAspectRatio: 2.5,
-                                    ),
-                                itemCount: items.length.clamp(0, 12),
-                                itemBuilder: (context, index) {
-                                  final category = items[index];
-                                  final id = category['id'] as String;
-                                  final name = category['name'] as String;
-                                  final imageUrl =
-                                      (category['icons'] as List?)
-                                          ?.firstOrNull?['url'] ??
-                                      '';
-                                  return _GenreCard(
-                                        name: name,
-                                        imageUrl: imageUrl,
-                                        onTap:
-                                            () => context.push(
-                                              Uri(
-                                                path: '/genre/$id',
-                                                queryParameters: {'name': name},
-                                              ).toString(),
-                                            ),
-                                      )
-                                      .animate()
-                                      .fadeIn(delay: (index * 50).ms)
-                                      .scale(begin: const Offset(0.9, 0.9));
-                                },
-                              );
-                            } else {
-                              return SizedBox(
-                                height: 140,
-                                child: GridView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        crossAxisSpacing: 12,
-                                        mainAxisSpacing: 12,
-                                        childAspectRatio: 0.45,
-                                      ),
-                                  itemCount: items.length,
-                                  itemBuilder: (context, index) {
-                                    final category = items[index];
-                                    final id = category['id'] as String;
-                                    final name = category['name'] as String;
-                                    final imageUrl =
-                                        (category['icons'] as List?)
-                                            ?.firstOrNull?['url'] ??
-                                        '';
-                                    return _GenreCard(
-                                          name: name,
-                                          imageUrl: imageUrl,
-                                          onTap:
-                                              () => context.push(
-                                                Uri(
-                                                  path: '/genre/$id',
-                                                  queryParameters: {
-                                                    'name': name,
-                                                  },
-                                                ).toString(),
-                                              ),
-                                        )
-                                        .animate()
-                                        .fadeIn(delay: (index * 50).ms)
-                                        .scale(begin: const Offset(0.9, 0.9));
-                                  },
+                    builder: (context, ref, items) => LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth >= 600) {
+                          final crossAxisCount = (constraints.maxWidth / 160)
+                              .floor()
+                              .clamp(2, 6);
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 12,
+                                  childAspectRatio: 2.5,
                                 ),
-                              );
-                            }
-                          },
-                        ),
+                            itemCount: items.length.clamp(0, 12),
+                            itemBuilder: (context, index) {
+                              final category = items[index];
+                              final id = category['id'] as String;
+                              final name = category['name'] as String;
+                              final imageUrl =
+                                  (category['icons'] as List?)
+                                      ?.firstOrNull?['url'] ??
+                                  '';
+                              return _GenreCard(
+                                    name: name,
+                                    imageUrl: imageUrl,
+                                    onTap: () => context.push(
+                                      Uri(
+                                        path: '/genre/$id',
+                                        queryParameters: {'name': name},
+                                      ).toString(),
+                                    ),
+                                  )
+                                  .animate()
+                                  .fadeIn(delay: (index * 50).ms)
+                                  .scale(begin: const Offset(0.9, 0.9));
+                            },
+                          );
+                        } else {
+                          return SizedBox(
+                            height: 140,
+                            child: GridView.builder(
+                              scrollDirection: Axis.horizontal,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 12,
+                                    mainAxisSpacing: 12,
+                                    childAspectRatio: 0.45,
+                                  ),
+                              itemCount: items.length,
+                              itemBuilder: (context, index) {
+                                final category = items[index];
+                                final id = category['id'] as String;
+                                final name = category['name'] as String;
+                                final imageUrl =
+                                    (category['icons'] as List?)
+                                        ?.firstOrNull?['url'] ??
+                                    '';
+                                return _GenreCard(
+                                      name: name,
+                                      imageUrl: imageUrl,
+                                      onTap: () => context.push(
+                                        Uri(
+                                          path: '/genre/$id',
+                                          queryParameters: {'name': name},
+                                        ).toString(),
+                                      ),
+                                    )
+                                    .animate()
+                                    .fadeIn(delay: (index * 50).ms)
+                                    .scale(begin: const Offset(0.9, 0.9));
+                              },
+                            ),
+                          );
+                        }
+                      },
+                    ),
                     loadingWidget: const SectionShimmer(
                       height: 140,
                       childAspectRatio: 0.45,
@@ -641,82 +626,76 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     title: AppLocalizations.of(context)!.newReleases,
                     provider: newReleasesProvider,
                     delay: 3.seconds,
-                    builder:
-                        (context, ref, items) => _HorizontalList(
-                          items: items,
-                          onTap: (item) => context.push("/album/${item['id']}"),
-                        ).animate().fadeIn().slideY(begin: 0.1),
+                    builder: (context, ref, items) => _HorizontalList(
+                      items: items,
+                      onTap: (item) => context.push("/album/${item['id']}"),
+                    ).animate().fadeIn().slideY(begin: 0.1),
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Map<String, dynamic>>(
                     title: AppLocalizations.of(context)!.featuredPlaylists,
                     provider: featuredPlaylistsProvider,
                     delay: 3.5.seconds,
-                    builder:
-                        (context, ref, items) => _HorizontalList(
-                          items: items,
-                          isPlaylist: true,
-                          onTap:
-                              (item) => context.push(
-                                Uri(
-                                  path: '/playlist/remote/${item['id']}',
-                                  queryParameters: {'name': item['name']},
-                                ).toString(),
-                              ),
-                        ),
+                    builder: (context, ref, items) => _HorizontalList(
+                      items: items,
+                      isPlaylist: true,
+                      onTap: (item) => context.push(
+                        Uri(
+                          path: '/playlist/remote/${item['id']}',
+                          queryParameters: {'name': item['name']},
+                        ).toString(),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   StaggeredHomeSection<Track>(
                     title: AppLocalizations.of(context)!.popularTracks,
                     provider: popularTracksProvider,
                     delay: 4.seconds,
-                    builder:
-                        (context, ref, tracks) => SizedBox(
-                          height: 230,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: tracks.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == 4) {
-                                final promo =
-                                    ref
-                                        .read(adServiceProvider)
-                                        .getPromoData()[0];
-                                return PromotionTile(
-                                      title: promo['title']!,
-                                      subtitle: promo['subtitle']!,
-                                      imageUrl: promo['image'],
-                                      ctaText: promo['cta']!,
-                                      type: PromotionType.horizontal,
-                                    )
-                                    .animate()
-                                    .fadeIn(delay: (index * 100).ms)
-                                    .scale(begin: const Offset(0.9, 0.9));
-                              }
+                    builder: (context, ref, tracks) => SizedBox(
+                      height: 230,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: tracks.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == 4) {
+                            final promo = ref
+                                .read(adServiceProvider)
+                                .getPromoData()[0];
+                            return PromotionTile(
+                                  title: promo['title']!,
+                                  subtitle: promo['subtitle']!,
+                                  imageUrl: promo['image'],
+                                  ctaText: promo['cta']!,
+                                  type: PromotionType.horizontal,
+                                )
+                                .animate()
+                                .fadeIn(delay: (index * 100).ms)
+                                .scale(begin: const Offset(0.9, 0.9));
+                          }
 
-                              final trackIndex = index > 4 ? index - 1 : index;
-                              if (trackIndex >= tracks.length) {
-                                return const SizedBox.shrink();
-                              }
+                          final trackIndex = index > 4 ? index - 1 : index;
+                          if (trackIndex >= tracks.length) {
+                            return const SizedBox.shrink();
+                          }
 
-                              final track = tracks[trackIndex];
-                              return _AlbumCard(
-                                    title: track.name,
-                                    subtitle: track.artistName,
-                                    imageUrl: track.albumImage ?? '',
-                                    contextTarget: TrackContextTarget(track),
-                                    onTap:
-                                        () => ref
-                                            .read(playerProvider.notifier)
-                                            .playTrack(track, queue: tracks),
-                                    artistId: track.artistId,
-                                  )
-                                  .animate()
-                                  .fadeIn(delay: (index * 100).ms)
-                                  .slideY(begin: 0.1);
-                            },
-                          ),
-                        ),
+                          final track = tracks[trackIndex];
+                          return _AlbumCard(
+                                title: track.name,
+                                subtitle: track.artistName,
+                                imageUrl: track.albumImage ?? '',
+                                contextTarget: TrackContextTarget(track),
+                                onTap: () => ref
+                                    .read(playerProvider.notifier)
+                                    .playTrack(track, queue: tracks),
+                                artistId: track.artistId,
+                              )
+                              .animate()
+                              .fadeIn(delay: (index * 100).ms)
+                              .slideY(begin: 0.1);
+                        },
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
                 ],
@@ -764,26 +743,24 @@ class _HorizontalList extends ConsumerWidget {
               final images = rawImages.map((i) => i['url'] as String).toList();
               final imageUrl = images.firstOrNull ?? '';
               final artists = (item['artists'] as List?) ?? [];
-              final artistName =
-                  artists.isNotEmpty
-                      ? artists[0]['name']
-                      : (item['publisher'] ?? '');
+              final artistName = artists.isNotEmpty
+                  ? artists[0]['name']
+                  : (item['publisher'] ?? '');
               final artistId = artists.isNotEmpty ? artists[0]['id'] : null;
 
-              final target =
-                  isPlaylist
-                      ? PlaylistContextTarget(
-                        id: item['id'] as String,
-                        name: item['name'] as String,
-                        imageUrl: imageUrl,
-                      )
-                      : AlbumContextTarget(
-                        id: item['id'] as String,
-                        name: item['name'] as String,
-                        artistId: artistId ?? '',
-                        artistName: artistName,
-                        imageUrl: imageUrl,
-                      );
+              final target = isPlaylist
+                  ? PlaylistContextTarget(
+                      id: item['id'] as String,
+                      name: item['name'] as String,
+                      imageUrl: imageUrl,
+                    )
+                  : AlbumContextTarget(
+                      id: item['id'] as String,
+                      name: item['name'] as String,
+                      artistId: artistId ?? '',
+                      artistName: artistName,
+                      imageUrl: imageUrl,
+                    );
 
               return _AlbumCard(
                 title: item['name'],
@@ -820,30 +797,29 @@ class _HorizontalList extends ConsumerWidget {
 
                 final item = items[itemIndex];
                 final rawImages = (item['images'] as List?) ?? [];
-                final images =
-                    rawImages.map((i) => i['url'] as String).toList();
+                final images = rawImages
+                    .map((i) => i['url'] as String)
+                    .toList();
                 final imageUrl = images.firstOrNull ?? '';
                 final artists = (item['artists'] as List?) ?? [];
-                final artistName =
-                    artists.isNotEmpty
-                        ? artists[0]['name']
-                        : (item['publisher'] ?? '');
+                final artistName = artists.isNotEmpty
+                    ? artists[0]['name']
+                    : (item['publisher'] ?? '');
                 final artistId = artists.isNotEmpty ? artists[0]['id'] : null;
 
-                final target =
-                    isPlaylist
-                        ? PlaylistContextTarget(
-                          id: item['id'] as String,
-                          name: item['name'] as String,
-                          imageUrl: imageUrl,
-                        )
-                        : AlbumContextTarget(
-                          id: item['id'] as String,
-                          name: item['name'] as String,
-                          artistId: artistId ?? '',
-                          artistName: artistName,
-                          imageUrl: imageUrl,
-                        );
+                final target = isPlaylist
+                    ? PlaylistContextTarget(
+                        id: item['id'] as String,
+                        name: item['name'] as String,
+                        imageUrl: imageUrl,
+                      )
+                    : AlbumContextTarget(
+                        id: item['id'] as String,
+                        name: item['name'] as String,
+                        artistId: artistId ?? '',
+                        artistName: artistName,
+                        imageUrl: imageUrl,
+                      );
 
                 return _AlbumCard(
                   title: item['name'],
@@ -1140,10 +1116,9 @@ class _AlbumCardState extends State<_AlbumCard> {
           curve: Curves.easeOutCubic,
           child: Container(
             width: widget.isGridItem ? null : 156,
-            margin:
-                widget.isGridItem
-                    ? EdgeInsets.zero
-                    : const EdgeInsets.only(right: 16),
+            margin: widget.isGridItem
+                ? EdgeInsets.zero
+                : const EdgeInsets.only(right: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1156,10 +1131,9 @@ class _AlbumCardState extends State<_AlbumCard> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              _isHovered
-                                  ? colorScheme.primary.withValues(alpha: 0.35)
-                                  : colorScheme.scrim.withValues(alpha: 0.4),
+                          color: _isHovered
+                              ? colorScheme.primary.withValues(alpha: 0.35)
+                              : colorScheme.scrim.withValues(alpha: 0.4),
                           blurRadius: _isHovered ? 28 : 25,
                           spreadRadius: _isHovered ? 2 : 0,
                           offset: Offset(0, _isHovered ? 14 : 12),
@@ -1210,10 +1184,9 @@ class _AlbumCardState extends State<_AlbumCard> {
                     fontSize: 15,
                     letterSpacing: -0.4,
                     height: 1.2,
-                    color:
-                        _isHovered
-                            ? colorScheme.primary
-                            : colorScheme.onSurface,
+                    color: _isHovered
+                        ? colorScheme.primary
+                        : colorScheme.onSurface,
                   ),
                   child: Text(
                     widget.title,
@@ -1569,10 +1542,9 @@ class _MixCardState extends State<_MixCard> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color:
-                        _isHovered
-                            ? widget.color1.withValues(alpha: 0.45)
-                            : Colors.black.withValues(alpha: 0.25),
+                    color: _isHovered
+                        ? widget.color1.withValues(alpha: 0.45)
+                        : Colors.black.withValues(alpha: 0.25),
                     blurRadius: _isHovered ? 18 : 8,
                     offset: Offset(0, _isHovered ? 4 : 2),
                   ),

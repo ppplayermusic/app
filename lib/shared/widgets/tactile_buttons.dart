@@ -63,37 +63,35 @@ class _TactileIconButtonState extends State<TactileIconButton> {
     final colorScheme = Theme.of(context).colorScheme;
     final isEnabled = widget.onTap != null;
 
-    final effectiveScale =
-        _scale < 1.0 ? _scale : (_isHovered && isEnabled ? 1.06 : 1.0);
+    final effectiveScale = _scale < 1.0
+        ? _scale
+        : (_isHovered && isEnabled ? 1.06 : 1.0);
 
-    final defaultHoverColor =
-        widget.color != null
-            ? Color.alphaBlend(
-              colorScheme.onSurface.withValues(alpha: 0.25),
-              widget.color!,
-            )
-            : colorScheme.onSurface;
+    final defaultHoverColor = widget.color != null
+        ? Color.alphaBlend(
+            colorScheme.onSurface.withValues(alpha: 0.25),
+            widget.color!,
+          )
+        : colorScheme.onSurface;
 
-    final effectiveColor =
-        !isEnabled
-            ? (widget.color ?? colorScheme.onSurface).withValues(alpha: 0.3)
-            : (_isHovered
-                ? (widget.hoverColor ?? defaultHoverColor)
-                : (widget.color ?? colorScheme.onSurface));
+    final effectiveColor = !isEnabled
+        ? (widget.color ?? colorScheme.onSurface).withValues(alpha: 0.3)
+        : (_isHovered
+              ? (widget.hoverColor ?? defaultHoverColor)
+              : (widget.color ?? colorScheme.onSurface));
 
-    final effectiveBgColor =
-        widget.backgroundColor != null
-            ? (_isHovered && isEnabled
-                ? (widget.hoverBackgroundColor ??
+    final effectiveBgColor = widget.backgroundColor != null
+        ? (_isHovered && isEnabled
+              ? (widget.hoverBackgroundColor ??
                     Color.alphaBlend(
                       colorScheme.onSurface.withValues(alpha: 0.08),
                       widget.backgroundColor!,
                     ))
-                : widget.backgroundColor)
-            : (_isHovered && isEnabled && widget.showHoverHighlight
-                ? (widget.hoverBackgroundColor ??
+              : widget.backgroundColor)
+        : (_isHovered && isEnabled && widget.showHoverHighlight
+              ? (widget.hoverBackgroundColor ??
                     colorScheme.onSurface.withValues(alpha: 0.08))
-                : Colors.transparent);
+              : Colors.transparent);
 
     final effectiveRadius =
         widget.borderRadius ?? BorderRadius.circular(widget.size + 12);
@@ -121,17 +119,16 @@ class _TactileIconButtonState extends State<TactileIconButton> {
                 color: effectiveBgColor,
                 borderRadius: effectiveRadius,
                 border: widget.border,
-                boxShadow:
-                    (_isHovered && isEnabled && widget.size >= 40)
-                        ? [
-                          BoxShadow(
-                            color: (widget.color ?? colorScheme.primary)
-                                .withValues(alpha: 0.30),
-                            blurRadius: 16,
-                            spreadRadius: 1,
-                          ),
-                        ]
-                        : null,
+                boxShadow: (_isHovered && isEnabled && widget.size >= 40)
+                    ? [
+                        BoxShadow(
+                          color: (widget.color ?? colorScheme.primary)
+                              .withValues(alpha: 0.30),
+                          blurRadius: 16,
+                          spreadRadius: 1,
+                        ),
+                      ]
+                    : null,
               ),
               child: Padding(
                 padding: widget.padding,
@@ -250,13 +247,15 @@ class _TactilePlayerPlayPauseButtonState
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isEnabled = widget.onTap != null;
-    final effectiveScale =
-        _scale < 1.0 ? _scale : (_isHovered && isEnabled ? 1.06 : 1.0);
+    final effectiveScale = _scale < 1.0
+        ? _scale
+        : (_isHovered && isEnabled ? 1.06 : 1.0);
 
     final primaryThemeColor = widget.activeGlowColor ?? colorScheme.primary;
 
     final String tooltipMessage =
-        widget.tooltip ?? (widget.isPlaying ? 'Pause' : AppLocalizations.of(context)!.play);
+        widget.tooltip ??
+        (widget.isPlaying ? 'Pause' : AppLocalizations.of(context)!.play);
 
     Widget buttonContent = AnimatedBuilder(
       animation: Listenable.merge([_transitionController, _loopController]),
@@ -367,8 +366,11 @@ class _TactilePlayerPlayPauseButtonState
         // Base container background:
         // Paused: Solid primaryThemeColor circle
         // Playing: Fully transparent (clean floating logo without disc or shadow)
-        final bgColor =
-            Color.lerp(primaryThemeColor, Colors.transparent, transition)!;
+        final bgColor = Color.lerp(
+          primaryThemeColor,
+          Colors.transparent,
+          transition,
+        )!;
 
         final iconSize = widget.size * 0.52;
         final logoSize = widget.size * 0.60;
@@ -395,7 +397,9 @@ class _TactilePlayerPlayPauseButtonState
                   pointScale: pointScale,
                   spiralProgress: spiralProgress,
                   spiralTrailFade: spiralTrailFade * transition,
-                  pauseOpacity: widget.isLoading ? 0.0 : (pauseOpacity * transition),
+                  pauseOpacity: widget.isLoading
+                      ? 0.0
+                      : (pauseOpacity * transition),
                   pauseMorphProgress: pauseMorphProgress,
                   pulseRadius: pulseRadius,
                   pulseOpacity: pulseOpacity * transition,
@@ -417,16 +421,17 @@ class _TactilePlayerPlayPauseButtonState
                           color: colorScheme.onPrimary,
                         ),
                       ),
-                    
+
                     // 1. Paused State: Solid play icon
                     if ((transition < 0.22 || isReversing) && !widget.isLoading)
                       Opacity(
-                        opacity: (isReversing
-                                ? (1.0 - transition)
-                                : (transition < 0.20
-                                    ? (1.0 - transition / 0.20)
-                                    : 0.0))
-                            .clamp(0.0, 1.0),
+                        opacity:
+                            (isReversing
+                                    ? (1.0 - transition)
+                                    : (transition < 0.20
+                                          ? (1.0 - transition / 0.20)
+                                          : 0.0))
+                                .clamp(0.0, 1.0),
                         child: Transform.scale(
                           scale: 1.0 - (0.15 * transition),
                           child: Padding(
@@ -488,7 +493,9 @@ class _TactilePlayerPlayPauseButtonState
 
     return Semantics(
       button: true,
-      label: widget.isLoading ? 'Loading' : (widget.isPlaying ? 'Pause' : 'Play'),
+      label: widget.isLoading
+          ? 'Loading'
+          : (widget.isPlaying ? 'Pause' : 'Play'),
       hint: widget.isLoading ? 'Buffering media' : 'Toggle playback state',
       child: MouseRegion(
         cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
@@ -604,32 +611,29 @@ class _MaterialSpinLinePainter extends CustomPainter {
 
     // 1. Draw base disc container only while paused or transitioning
     if (backgroundColor.a > 0.005) {
-      final basePaint =
-          Paint()
-            ..color = backgroundColor
-            ..style = PaintingStyle.fill;
+      final basePaint = Paint()
+        ..color = backgroundColor
+        ..style = PaintingStyle.fill;
       canvas.drawCircle(center, discRadius, basePaint);
     }
 
     // 2. Draw Kinetic Energy Shockwave Ripple (soft acoustic atmospheric glow)
     if (pulseOpacity > 0.01 && pulseRadius > 0.0) {
-      final pulsePaint =
-          Paint()
-            ..color = color.withValues(
-              alpha: (pulseOpacity * transition).clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 2.2
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
+      final pulsePaint = Paint()
+        ..color = color.withValues(
+          alpha: (pulseOpacity * transition).clamp(0.0, 1.0),
+        )
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.2
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
       canvas.drawCircle(center, pulseRadius, pulsePaint);
 
-      final pulseCorePaint =
-          Paint()
-            ..color = color.withValues(
-              alpha: (pulseOpacity * transition * 0.6).clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.0;
+      final pulseCorePaint = Paint()
+        ..color = color.withValues(
+          alpha: (pulseOpacity * transition * 0.6).clamp(0.0, 1.0),
+        )
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0;
       canvas.drawCircle(center, pulseRadius, pulseCorePaint);
     }
 
@@ -644,12 +648,11 @@ class _MaterialSpinLinePainter extends CustomPainter {
       final currentHeight =
           barHeight * (0.35 + 0.65 * pauseMorphProgress.clamp(0.0, 1.0));
 
-      final barPaint =
-          Paint()
-            ..color = color.withValues(
-              alpha: (pauseOpacity * transition).clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.fill;
+      final barPaint = Paint()
+        ..color = color.withValues(
+          alpha: (pauseOpacity * transition).clamp(0.0, 1.0),
+        )
+        ..style = PaintingStyle.fill;
 
       // Left bar
       final leftRect = Rect.fromCenter(
@@ -702,8 +705,9 @@ class _MaterialSpinLinePainter extends CustomPainter {
       const startAngle = -math.pi / 2;
 
       final linePath = Path();
-      final lineSamples =
-          (90 * (lineSweepAngle / (2 * math.pi))).clamp(10, 140).toInt();
+      final lineSamples = (90 * (lineSweepAngle / (2 * math.pi)))
+          .clamp(10, 140)
+          .toInt();
       for (int i = 0; i <= lineSamples; i++) {
         final fraction = i / lineSamples;
         final theta = startAngle + lineSweepAngle * fraction;
@@ -718,24 +722,20 @@ class _MaterialSpinLinePainter extends CustomPainter {
       }
 
       // Luminous ambient filament glow
-      final glowPaint =
-          Paint()
-            ..color = color.withValues(
-              alpha: (0.35 * lineOpacity).clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.stroke
-            ..strokeCap = StrokeCap.round
-            ..strokeWidth = 4.8
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.5);
+      final glowPaint = Paint()
+        ..color = color.withValues(alpha: (0.35 * lineOpacity).clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 4.8
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.5);
       canvas.drawPath(linePath, glowPaint);
 
       // Sharp central filament line
-      final strokePaint =
-          Paint()
-            ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
-            ..style = PaintingStyle.stroke
-            ..strokeCap = StrokeCap.round
-            ..strokeWidth = 2.8;
+      final strokePaint = Paint()
+        ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 2.8;
       canvas.drawPath(linePath, strokePaint);
 
       // Radiant traveling bead aura along the contour
@@ -750,19 +750,15 @@ class _MaterialSpinLinePainter extends CustomPainter {
       final tipX = center.dx + headR * math.cos(headAngle);
       final tipY = center.dy + headR * math.sin(headAngle);
 
-      final tipGlow =
-          Paint()
-            ..color = color.withValues(
-              alpha: (0.65 * lineOpacity).clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.fill
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
+      final tipGlow = Paint()
+        ..color = color.withValues(alpha: (0.65 * lineOpacity).clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.0);
       canvas.drawCircle(Offset(tipX, tipY), 5.2, tipGlow);
 
-      final tipPaint =
-          Paint()
-            ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
-            ..style = PaintingStyle.fill;
+      final tipPaint = Paint()
+        ..color = color.withValues(alpha: lineOpacity.clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill;
       canvas.drawCircle(Offset(tipX, tipY), 3.0, tipPaint);
     }
 
@@ -788,26 +784,24 @@ class _MaterialSpinLinePainter extends CustomPainter {
       }
 
       // Soft vapor glow
-      final trailGlow =
-          Paint()
-            ..color = color.withValues(
-              alpha: (0.30 * effectiveSpiralFade).clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.stroke
-            ..strokeCap = StrokeCap.round
-            ..strokeWidth = 4.0
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
+      final trailGlow = Paint()
+        ..color = color.withValues(
+          alpha: (0.30 * effectiveSpiralFade).clamp(0.0, 1.0),
+        )
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 4.0
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
       canvas.drawPath(spiralPath, trailGlow);
 
       // Core vapor filament
-      final trailPaint =
-          Paint()
-            ..color = color.withValues(
-              alpha: (0.65 * effectiveSpiralFade).clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.stroke
-            ..strokeCap = StrokeCap.round
-            ..strokeWidth = 2.4;
+      final trailPaint = Paint()
+        ..color = color.withValues(
+          alpha: (0.65 * effectiveSpiralFade).clamp(0.0, 1.0),
+        )
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 2.4;
       canvas.drawPath(spiralPath, trailPaint);
     }
 
@@ -831,22 +825,18 @@ class _MaterialSpinLinePainter extends CustomPainter {
       final pointRadius = 3.4 * pointScale;
 
       // Radiant glowing aura
-      final pointGlow =
-          Paint()
-            ..color = color.withValues(
-              alpha: (0.70 * effectivePointOpacity).clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.fill
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.5);
+      final pointGlow = Paint()
+        ..color = color.withValues(
+          alpha: (0.70 * effectivePointOpacity).clamp(0.0, 1.0),
+        )
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.5);
       canvas.drawCircle(pointCenter, pointRadius * 2.4, pointGlow);
 
       // Solid central core
-      final pointPaint =
-          Paint()
-            ..color = color.withValues(
-              alpha: effectivePointOpacity.clamp(0.0, 1.0),
-            )
-            ..style = PaintingStyle.fill;
+      final pointPaint = Paint()
+        ..color = color.withValues(alpha: effectivePointOpacity.clamp(0.0, 1.0))
+        ..style = PaintingStyle.fill;
       canvas.drawCircle(pointCenter, pointRadius, pointPaint);
     }
   }
@@ -898,8 +888,9 @@ class _TactileActionPlayButtonState extends State<TactileActionPlayButton> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isEnabled = widget.onTap != null;
-    final effectiveScale =
-        _scale < 1.0 ? _scale : (_isHovered && isEnabled ? 1.05 : 1.0);
+    final effectiveScale = _scale < 1.0
+        ? _scale
+        : (_isHovered && isEnabled ? 1.05 : 1.0);
 
     return MouseRegion(
       cursor: isEnabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
@@ -1133,12 +1124,12 @@ class _HoverTextState extends State<HoverText> {
           maxLines: widget.maxLines,
           overflow: TextOverflow.ellipsis,
           style: widget.style.copyWith(
-            decoration:
-                _isHovered ? TextDecoration.underline : TextDecoration.none,
-            color:
-                _isHovered
-                    ? Theme.of(context).colorScheme.primary
-                    : widget.style.color,
+            decoration: _isHovered
+                ? TextDecoration.underline
+                : TextDecoration.none,
+            color: _isHovered
+                ? Theme.of(context).colorScheme.primary
+                : widget.style.color,
           ),
         ),
       ),

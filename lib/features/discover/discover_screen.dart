@@ -72,32 +72,59 @@ class DiscoverScreen extends ConsumerWidget {
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final section = content.sections[index];
 
-                    String getLocalizedTitle(BuildContext context, String title) {
+                    String getLocalizedTitle(
+                      BuildContext context,
+                      String title,
+                    ) {
                       switch (title) {
-                        case 'Made For You': return AppLocalizations.of(context)!.madeForYou;
-                        case 'Because you listened to': return AppLocalizations.of(context)!.becauseYouListenedTo;
-                        case 'From your favorites': return AppLocalizations.of(context)!.fromYourFavorites;
-                        case 'Artists you follow': return AppLocalizations.of(context)!.artistsYouFollow;
-                        case 'Recommended for You': return AppLocalizations.of(context)!.recommendedForYou;
-                        case 'Trending': return AppLocalizations.of(context)!.trending;
-                        default: 
+                        case 'Made For You':
+                          return AppLocalizations.of(context)!.madeForYou;
+                        case 'Because you listened to':
+                          return AppLocalizations.of(
+                            context,
+                          )!.becauseYouListenedTo;
+                        case 'From your favorites':
+                          return AppLocalizations.of(
+                            context,
+                          )!.fromYourFavorites;
+                        case 'Artists you follow':
+                          return AppLocalizations.of(context)!.artistsYouFollow;
+                        case 'Recommended for You':
+                          return AppLocalizations.of(
+                            context,
+                          )!.recommendedForYou;
+                        case 'Trending':
+                          return AppLocalizations.of(context)!.trending;
+                        default:
                           if (title.startsWith('Explore ')) {
-                             return AppLocalizations.of(context)!.explore(title.substring(8));
+                            return AppLocalizations.of(
+                              context,
+                            )!.explore(title.substring(8));
                           }
                           return title;
                       }
                     }
 
-                    String? getLocalizedSubtitle(BuildContext context, String? subtitle) {
+                    String? getLocalizedSubtitle(
+                      BuildContext context,
+                      String? subtitle,
+                    ) {
                       if (subtitle == null) return null;
                       switch (subtitle) {
-                        case 'Popular hits right now': return AppLocalizations.of(context)!.popularHitsRightNow;
-                        default: 
+                        case 'Popular hits right now':
+                          return AppLocalizations.of(
+                            context,
+                          )!.popularHitsRightNow;
+                        default:
                           if (subtitle.startsWith('More like ')) {
-                             return AppLocalizations.of(context)!.moreLikeName(subtitle.substring(10));
+                            return AppLocalizations.of(
+                              context,
+                            )!.moreLikeName(subtitle.substring(10));
                           }
                           if (subtitle.startsWith('Inspired by ')) {
-                             return AppLocalizations.of(context)!.inspiredByName(subtitle.substring(12));
+                            return AppLocalizations.of(
+                              context,
+                            )!.inspiredByName(subtitle.substring(12));
                           }
                           return subtitle;
                       }
@@ -119,7 +146,10 @@ class DiscoverScreen extends ConsumerWidget {
                               children: [
                                 if (section.subtitle != null) ...[
                                   Text(
-                                    getLocalizedSubtitle(context, section.subtitle)!.toUpperCase(),
+                                    getLocalizedSubtitle(
+                                      context,
+                                      section.subtitle,
+                                    )!.toUpperCase(),
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
@@ -153,13 +183,12 @@ class DiscoverScreen extends ConsumerWidget {
                                   final track = section.tracks[i];
                                   return _DiscoverTrackCard(
                                         track: track,
-                                        onTap:
-                                            () => ref
-                                                .read(playerProvider.notifier)
-                                                .playTrack(
-                                                  track,
-                                                  queue: section.tracks,
-                                                ),
+                                        onTap: () => ref
+                                            .read(playerProvider.notifier)
+                                            .playTrack(
+                                              track,
+                                              queue: section.tracks,
+                                            ),
                                       )
                                       .animate()
                                       .fadeIn(delay: (i * 50).ms)
@@ -173,55 +202,53 @@ class DiscoverScreen extends ConsumerWidget {
                   }, childCount: content.sections.length),
                 );
               },
-              loading:
-                  () => const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          SectionShimmer(
-                            height: 230,
-                            childAspectRatio: 1,
-                            isGrid: false,
-                            count: 4,
-                          ),
-                          SizedBox(height: 32),
-                          SectionShimmer(
-                            height: 230,
-                            childAspectRatio: 1,
-                            isGrid: false,
-                            count: 4,
-                          ),
-                        ],
+              loading: () => const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      SectionShimmer(
+                        height: 230,
+                        childAspectRatio: 1,
+                        isGrid: false,
+                        count: 4,
                       ),
-                    ),
-                  ),
-              error:
-                  (err, stack) => SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            size: 48,
-                            color: colorScheme.error,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Failed to load recommendations',
-                            style: TextStyle(color: colorScheme.onSurface),
-                          ),
-                          const SizedBox(height: 16),
-                          TextButton(
-                            onPressed:
-                                () => ref.invalidate(discoverContentProvider),
-                            child: Text(AppLocalizations.of(context)!.tryAgain),
-                          ),
-                        ],
+                      SizedBox(height: 32),
+                      SectionShimmer(
+                        height: 230,
+                        childAspectRatio: 1,
+                        isGrid: false,
+                        count: 4,
                       ),
-                    ),
+                    ],
                   ),
+                ),
+              ),
+              error: (err, stack) => SliverFillRemaining(
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: colorScheme.error,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Failed to load recommendations',
+                        style: TextStyle(color: colorScheme.onSurface),
+                      ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () =>
+                            ref.invalidate(discoverContentProvider),
+                        child: Text(AppLocalizations.of(context)!.tryAgain),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -265,21 +292,20 @@ class _DiscoverTrackCard extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child:
-                        track.albumImage != null
-                            ? PPImage(
-                              imageUrl: track.albumImage!,
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.cover,
-                            )
-                            : Container(
-                              color: colorScheme.surfaceContainerHighest,
-                              child: Icon(
-                                Icons.music_note,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
+                    child: track.albumImage != null
+                        ? PPImage(
+                            imageUrl: track.albumImage!,
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            color: colorScheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.music_note,
+                              color: colorScheme.onSurfaceVariant,
                             ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 12),

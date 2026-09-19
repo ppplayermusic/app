@@ -655,6 +655,9 @@ class AppLocalizationsBn extends AppLocalizations {
   String get filterStations => 'স্টেশন';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'স্থানীয় সঙ্গীত';
 
   @override

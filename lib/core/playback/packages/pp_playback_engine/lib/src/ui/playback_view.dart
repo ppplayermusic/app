@@ -42,7 +42,7 @@ class _PlaybackViewState extends State<PlaybackView> {
     // Detect window resizing to force the native Windows floating webview to perfectly track its layout
     // position (e.g. following the bottom right of the screen).
     final currentSize = MediaQuery.sizeOf(context);
-    
+
     final isWindows = !kIsWeb && Platform.isWindows;
 
     if (isWindows && _lastSize != null && _lastSize != currentSize) {
@@ -63,7 +63,7 @@ class _PlaybackViewState extends State<PlaybackView> {
       });
     }
     _lastSize = currentSize;
-    
+
     // Toggle a tiny sub-pixel difference to FORCE a Flutter layout pass on every build.
     // Transform.translate only affects painting, which causes the Win32 window to get stuck.
     // Changing the layout constraints forces the platform view to update its global position!
@@ -71,7 +71,8 @@ class _PlaybackViewState extends State<PlaybackView> {
       _toggle = !_toggle;
     }
 
-    if (widget.status.isIFrameMode && widget.controller.youtubeController != null) {
+    if (widget.status.isIFrameMode &&
+        widget.controller.youtubeController != null) {
       debugPrint(
         'PlaybackView: Building YouTube player for ${widget.status.activeVideoId}',
       );
@@ -82,7 +83,8 @@ class _PlaybackViewState extends State<PlaybackView> {
             // Alternate the width by 0.01px to FORCE a layout pass every build.
             // This causes the Win32 platform view to update its global position,
             // which keeps the video tracking the window correctly during resize/maximize.
-            final targetWidth = constraints.maxWidth - (isWindows && !_toggle ? 0.01 : 0.0);
+            final targetWidth =
+                constraints.maxWidth - (isWindows && !_toggle ? 0.01 : 0.0);
             return SizedBox(
               width: targetWidth < 0 ? 0.0 : targetWidth,
               height: constraints.maxHeight,
@@ -119,7 +121,8 @@ class _PlaybackViewState extends State<PlaybackView> {
     return mk.Video(
       key: ObjectKey(renderer),
       controller: renderer,
-      controls: widget.showControls ? mk.MaterialVideoControls : mk.NoVideoControls,
+      controls:
+          widget.showControls ? mk.MaterialVideoControls : mk.NoVideoControls,
       fit: widget.fit,
       fill: Colors.transparent,
     );

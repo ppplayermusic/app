@@ -48,13 +48,12 @@ class _PPLicensePageState extends State<PPLicensePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: entry.paragraphs.map((p) {
           final isCentered = p.indent == LicenseParagraph.centeredIndent;
-          final leftPadding = isCentered ? 0.0 : (p.indent > 0 ? p.indent * 16.0 : 0.0);
+          final leftPadding = isCentered
+              ? 0.0
+              : (p.indent > 0 ? p.indent * 16.0 : 0.0);
 
           return Padding(
-            padding: EdgeInsets.only(
-              left: leftPadding,
-              bottom: 8.0,
-            ),
+            padding: EdgeInsets.only(left: leftPadding, bottom: 8.0),
             child: Text(
               p.text,
               textAlign: isCentered ? TextAlign.center : TextAlign.left,
@@ -91,7 +90,10 @@ class _PPLicensePageState extends State<PPLicensePage> {
           : Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 24.0,
+                    horizontal: 16.0,
+                  ),
                   child: Column(
                     children: [
                       Text(
@@ -136,12 +138,18 @@ class _PPLicensePageState extends State<PPLicensePage> {
                         children: [
                           Container(
                             width: double.infinity,
-                            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                            color: theme.colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 16,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: licenses
-                                  .map((entry) => _buildLicenseText(entry, theme))
+                                  .map(
+                                    (entry) => _buildLicenseText(entry, theme),
+                                  )
                                   .toList(),
                             ),
                           ),

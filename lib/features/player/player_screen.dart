@@ -23,8 +23,6 @@ import '../../shared/widgets/adaptive_blur.dart';
 import '../../shared/widgets/context_menu/content_context_menu.dart';
 import 'widgets/player_overlays.dart';
 
-
-
 const _windowChannel = MethodChannel('com.ppplayer.window');
 
 class PlayerScreen extends ConsumerStatefulWidget {
@@ -73,7 +71,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     //   → no ref.listen ever fires, but this runs unconditionally.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        if (kDebugMode) debugPrint('[VideoInit] Player Screen mounted — checking initial state');
+        if (kDebugMode)
+          debugPrint(
+            '[VideoInit] Player Screen mounted — checking initial state',
+          );
         _logCurrentState();
         ensureVideoSurfaceReady('initial_mount');
       }
@@ -148,9 +149,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
     final isPipMode = ref.read(playerProvider).isPipMode;
     final playerView = ref.read(settingsProvider).playerView;
-    final actualMainView = playerView == PlayerView.queue ? _previousPlayerView : playerView;
+    final actualMainView = playerView == PlayerView.queue
+        ? _previousPlayerView
+        : playerView;
     final isVideoView = actualMainView == PlayerView.video;
-    
+
     // In PiP mode, we MUST render the video surface regardless of the active tab.
     if (!isVideoView && !isPipMode) {
       // Not on video view and not in PiP — nothing to do. Do not retry.
@@ -165,7 +168,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         ref.read(playbackStatusProvider).asData?.value.hasVideo ?? false;
     if (!hasVideo) {
       if (kDebugMode) {
-        debugPrint('[VideoInit] skipped: hasVideo=false ($label) — waiting for media');
+        debugPrint(
+          '[VideoInit] skipped: hasVideo=false ($label) — waiting for media',
+        );
       }
       return;
     }
@@ -204,7 +209,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           // Re-check conditions inside the callback: view or hasVideo may
           // have changed since the retry was scheduled.
           final stillPipMode = ref.read(playerProvider).isPipMode;
-          final actualView = ref.read(settingsProvider).playerView == PlayerView.queue
+          final actualView =
+              ref.read(settingsProvider).playerView == PlayerView.queue
               ? _previousPlayerView
               : ref.read(settingsProvider).playerView;
           final stillVideo = actualView == PlayerView.video || stillPipMode;
@@ -225,7 +231,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         });
       } else {
         if (kDebugMode) {
-          debugPrint('[VideoInit] slot unavailable ($label) — retry already pending');
+          debugPrint(
+            '[VideoInit] slot unavailable ($label) — retry already pending',
+          );
         }
       }
       return;
@@ -233,7 +241,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
     if (box.size.width <= 0 || box.size.height <= 0) {
       if (kDebugMode) {
-        debugPrint('[VideoInit] skipped: invalid slot size (${box.size}) ($label)');
+        debugPrint(
+          '[VideoInit] skipped: invalid slot size (${box.size}) ($label)',
+        );
       }
       return;
     }
@@ -243,15 +253,20 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
     final position = box.localToGlobal(Offset.zero);
     final size = box.size;
-    var newBounds =
-        Rect.fromLTWH(position.dx, position.dy, size.width, size.height);
+    var newBounds = Rect.fromLTWH(
+      position.dx,
+      position.dy,
+      size.width,
+      size.height,
+    );
 
     final currentVisible = ref.read(videoLayoutProvider).isVisible;
 
     // ── Bounds deduplication ────────────────────────────────────────────────
     // Skip if bounds haven't changed materially AND already visible.
     // This prevents redundant native-window commits on each Flutter rebuild.
-    final boundsChanged = _lastVideoBounds == null ||
+    final boundsChanged =
+        _lastVideoBounds == null ||
         (_lastVideoBounds!.left - newBounds.left).abs() > 1.0 ||
         (_lastVideoBounds!.top - newBounds.top).abs() > 1.0 ||
         (_lastVideoBounds!.width - newBounds.width).abs() > 1.0 ||
@@ -269,19 +284,27 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
     if (kDebugMode) {
       final time = DateTime.now().toIso8601String().substring(11, 23);
-      debugPrint('$time [PipDebug][VIDEO_SURFACE] event=ensureVideoSurfaceReady reason=$label hasVideo=$hasVideo videoView=$isVideoView visible=$currentVisible slotExists=true slotSize=${size.width}x${size.height} rect=$newBounds providerBounds=$_lastVideoBounds generation=$generation');
+      debugPrint(
+        '$time [PipDebug][VIDEO_SURFACE] event=ensureVideoSurfaceReady reason=$label hasVideo=$hasVideo videoView=$isVideoView visible=$currentVisible slotExists=true slotSize=${size.width}x${size.height} rect=$newBounds providerBounds=$_lastVideoBounds generation=$generation',
+      );
     }
 
     if (!currentVisible) {
       // ── Position first, reveal second ─────────────────────────────────────
       if (kDebugMode) {
-        debugPrint('[VideoInit #$generation] hidden=true, applying native bounds');
+        debugPrint(
+          '[VideoInit #$generation] hidden=true, applying native bounds',
+        );
       }
 
       ref
           .read(videoLayoutProvider.notifier)
-          .updateLayout(size, position, isVisible: false,
-              label: 'position_first ($label)');
+          .updateLayout(
+            size,
+            position,
+            isVisible: false,
+            label: 'position_first ($label)',
+          );
 
       if (kDebugMode) {
         debugPrint('[VideoInit #$generation] scheduling reveal (next frame)');
@@ -289,7 +312,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) {
-          if (kDebugMode) debugPrint('[VideoInit #$generation] reveal skipped: unmounted');
+          if (kDebugMode)
+            debugPrint('[VideoInit #$generation] reveal skipped: unmounted');
           return;
         }
         if (generation != _videoLayoutGeneration) {
@@ -301,29 +325,40 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
           }
           return;
         }
-        final actualView2 = ref.read(settingsProvider).playerView == PlayerView.queue
+        final actualView2 =
+            ref.read(settingsProvider).playerView == PlayerView.queue
             ? _previousPlayerView
             : ref.read(settingsProvider).playerView;
         if (actualView2 != PlayerView.video) {
           if (kDebugMode) {
-            debugPrint('[VideoInit #$generation] reveal skipped: playerView changed');
+            debugPrint(
+              '[VideoInit #$generation] reveal skipped: playerView changed',
+            );
           }
           return;
         }
 
         if (kDebugMode) {
-          debugPrint('[VideoInit #$generation] frame committed → native visible=true');
+          debugPrint(
+            '[VideoInit #$generation] frame committed → native visible=true',
+          );
         }
         ref
             .read(videoLayoutProvider.notifier)
-            .updateLayout(size, position, isVisible: true,
-                label: 'reveal ($label)');
+            .updateLayout(
+              size,
+              position,
+              isVisible: true,
+              label: 'reveal ($label)',
+            );
       });
     } else {
       // Already visible but bounds changed (e.g., resize).
       // Update bounds in place without hiding/showing.
       if (kDebugMode) {
-        debugPrint('[VideoInit #$generation] bounds update only (already visible)');
+        debugPrint(
+          '[VideoInit #$generation] bounds update only (already visible)',
+        );
       }
       ref
           .read(videoLayoutProvider.notifier)
@@ -361,7 +396,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     // already showing the video slot. This covers the case where the Player
     // Screen was opened *after* the first track started playing and the
     // initial probe schedule (from initState) ran before any slot existed.
-    ref.listen(playerProvider.select((s) => s.currentTrack?.spotifyId), (prev, next) {
+    ref.listen(playerProvider.select((s) => s.currentTrack?.spotifyId), (
+      prev,
+      next,
+    ) {
       if (next != null) {
         if (kDebugMode) {
           debugPrint('[VideoInit] activeTrack changed ($prev -> $next)');
@@ -373,25 +411,21 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       }
     });
 
-    ref.listen(
-      playerProvider.select((s) => s.isPipMode),
-      (prev, next) {
-        if (next == false && prev == true) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) ensureVideoSurfaceReady('pip_exit_restored');
-          });
-        }
-      },
-    );
+    ref.listen(playerProvider.select((s) => s.isPipMode), (prev, next) {
+      if (next == false && prev == true) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) ensureVideoSurfaceReady('pip_exit_restored');
+        });
+      }
+    });
 
-    ref.listen(
-      settingsProvider.select((s) => s.playerView),
-      (prev, next) {
-        if (next == PlayerView.queue && prev != null && prev != PlayerView.queue) {
-          _previousPlayerView = prev;
-        }
-      },
-    );
+    ref.listen(settingsProvider.select((s) => s.playerView), (prev, next) {
+      if (next == PlayerView.queue &&
+          prev != null &&
+          prev != PlayerView.queue) {
+        _previousPlayerView = prev;
+      }
+    });
 
     // CRITICAL FIX: Listen for hasVideo becoming true.
     // This is the primary trigger for the cold-start case:
@@ -433,7 +467,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     });
 
     final isQueueView = settings.playerView == PlayerView.queue;
-    final actualMainViewInBuild = isQueueView ? _previousPlayerView : settings.playerView;
+    final actualMainViewInBuild = isQueueView
+        ? _previousPlayerView
+        : settings.playerView;
     final isVideoView = actualMainViewInBuild == PlayerView.video;
     final colorScheme = Theme.of(context).colorScheme;
     final isPowerSaver = settings.performanceMode == PerformanceMode.powerSaver;
@@ -465,9 +501,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               isActive: isVideoView,
               onTap: () {
                 if (kDebugMode && !isVideoView) {
-                  debugPrint('[VideoInit] ${settings.playerView.name} -> video');
+                  debugPrint(
+                    '[VideoInit] ${settings.playerView.name} -> video',
+                  );
                 }
-                ref.read(settingsProvider.notifier).setPlayerView(PlayerView.video);
+                ref
+                    .read(settingsProvider.notifier)
+                    .setPlayerView(PlayerView.video);
               },
             ),
             _ToggleTab(
@@ -475,10 +515,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               isActive: settings.playerView == PlayerView.artwork,
               onTap: () {
                 if (kDebugMode && isVideoView) {
-                  debugPrint('[VideoInit] video -> artwork: hiding native surface');
+                  debugPrint(
+                    '[VideoInit] video -> artwork: hiding native surface',
+                  );
                 }
-                ref.read(videoLayoutProvider.notifier).setVisible(false, label: 'sync_hide_for_artwork');
-                ref.read(settingsProvider.notifier).setPlayerView(PlayerView.artwork);
+                ref
+                    .read(videoLayoutProvider.notifier)
+                    .setVisible(false, label: 'sync_hide_for_artwork');
+                ref
+                    .read(settingsProvider.notifier)
+                    .setPlayerView(PlayerView.artwork);
               },
             ),
           ],
@@ -491,10 +537,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) => ensureVideoSurfaceReady('slot_reflow'),
         );
-        return Container(
-          key: _videoSlotKey,
-          color: Colors.transparent,
-        );
+        return Container(key: _videoSlotKey, color: Colors.transparent);
       },
     );
 
@@ -507,32 +550,36 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               if (!isPipMode && (!hasVideo || !isVideoView)) ...[
                 Positioned.fill(
                   child: RepaintBoundary(
-                    child: PPImage(
-                      imageUrl: track.albumImage ?? '',
-                      fit: BoxFit.cover,
-                    )
-                    .animate(
-                      onPlay: (controller) =>
-                          isPowerSaver ? null : controller.repeat(reverse: true),
-                    )
-                    .scale(
-                      begin: const Offset(1.1, 1.1),
-                      end: const Offset(1.5, 1.5),
-                      duration: 25.seconds,
-                      curve: Curves.easeInOutSine,
-                    )
-                    .move(
-                      begin: const Offset(-60, -30),
-                      end: const Offset(60, 30),
-                      duration: 22.seconds,
-                      curve: Curves.easeInOutSine,
-                    )
-                    .blur(
-                      begin: const Offset(80, 80),
-                      end: isPowerSaver ? const Offset(80, 80) : const Offset(120, 120),
-                      duration: 25.seconds,
-                      curve: Curves.easeInOutSine,
-                    ),
+                    child:
+                        PPImage(
+                              imageUrl: track.albumImage ?? '',
+                              fit: BoxFit.cover,
+                            )
+                            .animate(
+                              onPlay: (controller) => isPowerSaver
+                                  ? null
+                                  : controller.repeat(reverse: true),
+                            )
+                            .scale(
+                              begin: const Offset(1.1, 1.1),
+                              end: const Offset(1.5, 1.5),
+                              duration: 25.seconds,
+                              curve: Curves.easeInOutSine,
+                            )
+                            .move(
+                              begin: const Offset(-60, -30),
+                              end: const Offset(60, 30),
+                              duration: 22.seconds,
+                              curve: Curves.easeInOutSine,
+                            )
+                            .blur(
+                              begin: const Offset(80, 80),
+                              end: isPowerSaver
+                                  ? const Offset(80, 80)
+                                  : const Offset(120, 120),
+                              duration: 25.seconds,
+                              curve: Curves.easeInOutSine,
+                            ),
                   ),
                 ),
                 Positioned.fill(
@@ -553,49 +600,61 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                   ),
                 ),
                 Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: Alignment.center,
-                        radius: 1.5,
-                        colors: [
-                          colorScheme.primary.withValues(alpha: 0.08),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  )
-                  .animate(
-                    onPlay: (controller) =>
-                        isPowerSaver ? null : controller.repeat(reverse: true),
-                  )
-                  .fadeIn(duration: 4.seconds, curve: Curves.easeInOutSine)
-                  .scale(
-                    begin: const Offset(0.8, 0.8),
-                    end: const Offset(1.4, 1.4),
-                    duration: 10.seconds,
-                    curve: Curves.easeInOutSine,
-                  ),
+                  child:
+                      Container(
+                            decoration: BoxDecoration(
+                              gradient: RadialGradient(
+                                center: Alignment.center,
+                                radius: 1.5,
+                                colors: [
+                                  colorScheme.primary.withValues(alpha: 0.08),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          )
+                          .animate(
+                            onPlay: (controller) => isPowerSaver
+                                ? null
+                                : controller.repeat(reverse: true),
+                          )
+                          .fadeIn(
+                            duration: 4.seconds,
+                            curve: Curves.easeInOutSine,
+                          )
+                          .scale(
+                            begin: const Offset(0.8, 0.8),
+                            end: const Offset(1.4, 1.4),
+                            duration: 10.seconds,
+                            curve: Curves.easeInOutSine,
+                          ),
                 ),
                 Positioned.fill(
                   child: Opacity(
                     opacity: 0.03,
                     child: CachedNetworkImage(
                       cacheManager: PPImageCacheManager.instance,
-                      imageUrl: 'https://www.transparenttextures.com/patterns/p6.png',
+                      imageUrl:
+                          'https://www.transparenttextures.com/patterns/p6.png',
                       repeat: ImageRepeat.repeat,
                       color: colorScheme.onSurface.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
               ],
-              
+
               videoSlotContainer,
 
-              if (!isPipMode && (!hasVideo || !isVideoView) && status != null && status.state != PlaybackState.preparing)
+              if (!isPipMode &&
+                  (!hasVideo || !isVideoView) &&
+                  status != null &&
+                  status.state != PlaybackState.preparing)
                 _VinylArtwork(
                   key: const ValueKey('artwork_view'),
-                  imageUrl: playerState.currentTrack?.albumImage ?? playerState.currentTrack?.localArtworkPath ?? '',
+                  imageUrl:
+                      playerState.currentTrack?.albumImage ??
+                      playerState.currentTrack?.localArtworkPath ??
+                      '',
                   isPlaying: playerState.isPlaying,
                 ),
 
@@ -645,8 +704,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         // Do not intercept modified shortcuts (Ctrl, Alt, Meta)
         if (event.logicalKey != LogicalKeyboardKey.escape &&
             (HardwareKeyboard.instance.isControlPressed ||
-             HardwareKeyboard.instance.isAltPressed ||
-             HardwareKeyboard.instance.isMetaPressed)) {
+                HardwareKeyboard.instance.isAltPressed ||
+                HardwareKeyboard.instance.isMetaPressed)) {
           return KeyEventResult.ignored;
         }
 
@@ -720,10 +779,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
             _closeQueue();
           }
         },
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: mainContent,
-        ),
+        child: Scaffold(backgroundColor: Colors.transparent, body: mainContent),
       ),
     );
   }
@@ -769,12 +825,9 @@ class _ToggleTab extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color:
-              isActive
-                  ? Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.1)
-                  : Colors.transparent,
+          color: isActive
+              ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -783,12 +836,11 @@ class _ToggleTab extends StatelessWidget {
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
-            color:
-                isActive
-                    ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+            color: isActive
+                ? Theme.of(context).colorScheme.onSurface
+                : Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -798,9 +850,11 @@ class _ToggleTab extends StatelessWidget {
 
 class _QueueView extends ConsumerWidget {
   final PlayerState playerState;
+
   /// Called when the user taps the close button (narrow-screen only).
   /// Null when rendered in the desktop side panel (no close button shown).
   final VoidCallback? onClose;
+
   /// Extra bottom padding for the list, used to account for safe-area insets.
   final double bottomPadding;
 
@@ -812,7 +866,9 @@ class _QueueView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final autoplayEnabled = ref.watch(settingsProvider.select((s) => s.autoplayEnabled));
+    final autoplayEnabled = ref.watch(
+      settingsProvider.select((s) => s.autoplayEnabled),
+    );
     return Column(
       children: [
         Padding(
@@ -822,7 +878,9 @@ class _QueueView extends ConsumerWidget {
             children: [
               Text(
                 AppLocalizations.of(context)!.queue,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -830,39 +888,55 @@ class _QueueView extends ConsumerWidget {
                   IconButton(
                     key: const ValueKey('autoplay_toggle_button'),
                     onPressed: () {
-                      ref.read(settingsProvider.notifier).toggleAutoplay(!autoplayEnabled);
+                      ref
+                          .read(settingsProvider.notifier)
+                          .toggleAutoplay(!autoplayEnabled);
                     },
                     icon: Icon(
-                      autoplayEnabled ? Icons.all_inclusive_rounded : Icons.all_inclusive_rounded,
-                      color: autoplayEnabled ? Theme.of(context).colorScheme.primary : null,
+                      autoplayEnabled
+                          ? Icons.all_inclusive_rounded
+                          : Icons.all_inclusive_rounded,
+                      color: autoplayEnabled
+                          ? Theme.of(context).colorScheme.primary
+                          : null,
                     ),
                     tooltip: autoplayEnabled ? 'Autoplay: On' : 'Autoplay: Off',
                   ),
                   IconButton(
                     key: const ValueKey('export_queue_button'),
                     onPressed: () async {
-                       try {
-                         final result = await ProviderScope.containerOf(context, listen: false)
-                             .read(localLibraryServiceProvider)
-                             .exportQueue(playerState.queue);
-                         if (context.mounted) {
-                            if (result == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Export cancelled.')),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Exported playlist. Skipped ${result.skippedCount} items.')),
-                              );
-                            }
-                         }
-                       } catch (e) {
-                         if (context.mounted) {
+                      try {
+                        final result =
+                            await ProviderScope.containerOf(
+                                  context,
+                                  listen: false,
+                                )
+                                .read(localLibraryServiceProvider)
+                                .exportQueue(playerState.queue);
+                        if (context.mounted) {
+                          if (result == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Export failed: $e')),
+                              const SnackBar(
+                                content: Text('Export cancelled.'),
+                              ),
                             );
-                         }
-                       }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Exported playlist. Skipped ${result.skippedCount} items.',
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Export failed: $e')),
+                          );
+                        }
+                      }
                     },
                     icon: const Icon(Icons.download_rounded),
                     tooltip: AppLocalizations.of(context)!.exportPlaylist,
@@ -881,195 +955,208 @@ class _QueueView extends ConsumerWidget {
         ),
         Expanded(
           child: ReorderableListView.builder(
-      buildDefaultDragHandles: false,
-      padding: EdgeInsets.only(
-        left: 16, right: 16, top: 8, bottom: 8 + bottomPadding,
-      ),
-      itemCount: playerState.queue.length,
-      proxyDecorator:
-          (child, index, animation) => AnimatedBuilder(
-            animation: animation,
-            builder: (context, child) {
-              final animValue = Curves.easeInOut.transform(animation.value);
-              final elevation = lerpDouble(0, 8, animValue)!;
-              return Material(
-                elevation: elevation,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.1),
-                child: child,
-              );
+            buildDefaultDragHandles: false,
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 8,
+              bottom: 8 + bottomPadding,
+            ),
+            itemCount: playerState.queue.length,
+            proxyDecorator: (child, index, animation) => AnimatedBuilder(
+              animation: animation,
+              builder: (context, child) {
+                final animValue = Curves.easeInOut.transform(animation.value);
+                final elevation = lerpDouble(0, 8, animValue)!;
+                return Material(
+                  elevation: elevation,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.1),
+                  child: child,
+                );
+              },
+              child: child,
+            ),
+            onReorderItem: (oldIndex, newIndex) {
+              ProviderScope.containerOf(
+                context,
+              ).read(playerProvider.notifier).reorderQueue(oldIndex, newIndex);
             },
-            child: child,
-          ),
-      onReorderItem: (oldIndex, newIndex) {
-        ProviderScope.containerOf(
-          context,
-        ).read(playerProvider.notifier).reorderQueue(oldIndex, newIndex);
-      },
-      itemBuilder: (context, i) {
-        final t = playerState.queue[i];
-        final isCurrent = playerState.currentIndex == i;
-        final colorScheme = Theme.of(context).colorScheme;
-        return KeyedSubtree(
-          key: ValueKey(t.queueItemId ?? t.spotifyId),
-          child: Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: ContentContextMenuRegion(
-                  target: TrackContextTarget(t, isInQueue: true, queueIndex: i),
-                  child: TactileTap(
-                    onTap:
-                        () => ProviderScope.containerOf(
-                          context,
-                        ).read(playerProvider.notifier).skipTo(i),
-                    scaleDown: 0.98,
-                    child: AdaptiveBlur(
-                      sigmaX: 15,
-                      sigmaY: 15,
-                      borderRadius: BorderRadius.circular(24),
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color:
-                              isCurrent
-                                  ? colorScheme.primary.withValues(alpha: 0.12)
-                                  : colorScheme.onSurface.withValues(
-                                    alpha: 0.03,
-                                  ),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color:
-                                isCurrent
-                                    ? colorScheme.primary.withValues(alpha: 0.5)
-                                    : colorScheme.onSurface.withValues(
-                                      alpha: 0.12,
+            itemBuilder: (context, i) {
+              final t = playerState.queue[i];
+              final isCurrent = playerState.currentIndex == i;
+              final colorScheme = Theme.of(context).colorScheme;
+              return KeyedSubtree(
+                key: ValueKey(t.queueItemId ?? t.spotifyId),
+                child:
+                    Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: ContentContextMenuRegion(
+                            target: TrackContextTarget(
+                              t,
+                              isInQueue: true,
+                              queueIndex: i,
+                            ),
+                            child: TactileTap(
+                              onTap: () => ProviderScope.containerOf(
+                                context,
+                              ).read(playerProvider.notifier).skipTo(i),
+                              scaleDown: 0.98,
+                              child: AdaptiveBlur(
+                                sigmaX: 15,
+                                sigmaY: 15,
+                                borderRadius: BorderRadius.circular(24),
+                                child: Container(
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: isCurrent
+                                        ? colorScheme.primary.withValues(
+                                            alpha: 0.12,
+                                          )
+                                        : colorScheme.onSurface.withValues(
+                                            alpha: 0.03,
+                                          ),
+                                    borderRadius: BorderRadius.circular(24),
+                                    border: Border.all(
+                                      color: isCurrent
+                                          ? colorScheme.primary.withValues(
+                                              alpha: 0.5,
+                                            )
+                                          : colorScheme.onSurface.withValues(
+                                              alpha: 0.12,
+                                            ),
+                                      width: 0.5,
                                     ),
-                            width: 0.5,
-                          ),
-                          boxShadow: [
-                            if (isCurrent)
-                              BoxShadow(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withValues(alpha: 0.15),
-                                blurRadius: 20,
-                                offset: const Offset(0, 4),
-                              ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Stack(
-                                children: [
-                                  PPImage(
-                                    imageUrl: t.albumImage ?? '',
-                                    width: 52,
-                                    height: 52,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  if (isCurrent)
-                                    Positioned.fill(
-                                      child: Container(
-                                        color: colorScheme.shadow.withValues(
-                                          alpha: 0.3,
+                                    boxShadow: [
+                                      if (isCurrent)
+                                        BoxShadow(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withValues(alpha: 0.15),
+                                          blurRadius: 20,
+                                          offset: const Offset(0, 4),
                                         ),
-                                        child: Center(
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Stack(
+                                          children: [
+                                            PPImage(
+                                              imageUrl: t.albumImage ?? '',
+                                              width: 52,
+                                              height: 52,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            if (isCurrent)
+                                              Positioned.fill(
+                                                child: Container(
+                                                  color: colorScheme.shadow
+                                                      .withValues(alpha: 0.3),
+                                                  child: Center(
+                                                    child: Icon(
+                                                      Icons.equalizer,
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.primary,
+                                                      size: 24,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              t.name,
+                                              style: TextStyle(
+                                                color: isCurrent
+                                                    ? colorScheme.onSurface
+                                                    : colorScheme.onSurface
+                                                          .withValues(
+                                                            alpha: 0.9,
+                                                          ),
+                                                fontWeight: isCurrent
+                                                    ? FontWeight.w900
+                                                    : FontWeight.w800,
+                                                fontSize: 17,
+                                                letterSpacing: -0.7,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              t.artistName.toUpperCase(),
+                                              style: TextStyle(
+                                                color: isCurrent
+                                                    ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
+                                                          .withValues(
+                                                            alpha: 0.8,
+                                                          )
+                                                    : colorScheme.onSurface
+                                                          .withValues(
+                                                            alpha: 0.4,
+                                                          ),
+                                                fontWeight: FontWeight.w900,
+                                                fontSize: 11,
+                                                letterSpacing: 1.0,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      ReorderableDragStartListener(
+                                        index: i,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0,
+                                          ),
                                           child: Icon(
-                                            Icons.equalizer,
-                                            color:
-                                                Theme.of(
-                                                  context,
-                                                ).colorScheme.primary,
-                                            size: 24,
+                                            Icons.drag_handle,
+                                            color: isCurrent
+                                                ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                      .withValues(alpha: 0.6)
+                                                : colorScheme.onSurface
+                                                      .withValues(alpha: 0.2),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    t.name,
-                                    style: TextStyle(
-                                      color:
-                                          isCurrent
-                                              ? colorScheme.onSurface
-                                              : colorScheme.onSurface
-                                                  .withValues(alpha: 0.9),
-                                      fontWeight:
-                                          isCurrent
-                                              ? FontWeight.w900
-                                              : FontWeight.w800,
-                                      fontSize: 17,
-                                      letterSpacing: -0.7,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                    ],
                                   ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    t.artistName.toUpperCase(),
-                                    style: TextStyle(
-                                      color:
-                                          isCurrent
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                                  .withValues(alpha: 0.8)
-                                              : colorScheme.onSurface
-                                                  .withValues(alpha: 0.4),
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 11,
-                                      letterSpacing: 1.0,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ReorderableDragStartListener(
-                              index: i,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
-                                ),
-                                child: Icon(
-                                  Icons.drag_handle,
-                                  color:
-                                      isCurrent
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withValues(alpha: 0.6)
-                                          : colorScheme.onSurface.withValues(
-                                            alpha: 0.2,
-                                          ),
                                 ),
                               ),
                             ),
-                          ],
+                          ),
+                        )
+                        .animate()
+                        .fadeIn(duration: 400.ms)
+                        .slideX(
+                          begin: 0.1,
+                          duration: 400.ms,
+                          curve: Curves.easeOutCubic,
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-              )
-              .animate()
-              .fadeIn(duration: 400.ms)
-              .slideX(begin: 0.1, duration: 400.ms, curve: Curves.easeOutCubic),
-        );
-      },
-    ),
-    ),
-    ],
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -1081,10 +1168,7 @@ class _NarrowQueueOverlay extends StatelessWidget {
   final PlayerState playerState;
   final VoidCallback onClose;
 
-  const _NarrowQueueOverlay({
-    required this.playerState,
-    required this.onClose,
-  });
+  const _NarrowQueueOverlay({required this.playerState, required this.onClose});
 
   @override
   Widget build(BuildContext context) {
@@ -1117,7 +1201,11 @@ class _VinylArtwork extends StatefulWidget {
   final String imageUrl;
   final bool isPlaying;
 
-  const _VinylArtwork({super.key, required this.imageUrl, required this.isPlaying});
+  const _VinylArtwork({
+    super.key,
+    required this.imageUrl,
+    required this.isPlaying,
+  });
 
   @override
   State<_VinylArtwork> createState() => _VinylArtworkState();
@@ -1172,36 +1260,36 @@ class _VinylArtworkState extends State<_VinylArtwork>
               left: -recordSize * 0.15,
               right: -recordSize * 0.15,
               bottom: -recordSize * 0.15,
-              child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          Theme.of(
-                            context,
-                          ).colorScheme.primary.withValues(alpha: 0.35),
-                          Theme.of(
-                            context,
-                          ).colorScheme.primary.withValues(alpha: 0.08),
-                          Colors.transparent,
-                        ],
-                        stops: const [0.0, 0.4, 1.0],
-                      ),
-                    ),
-                  )
-                  .animate(target: widget.isPlaying ? 1 : 0)
-                  .scale(
-                    begin: const Offset(0.8, 0.8),
-                    end: const Offset(1.2, 1.2),
-                    duration: 2.seconds,
-                    curve: Curves.easeInOutSine,
-                  )
-                  .custom(
-                    duration: 2.seconds,
-                    builder:
-                        (context, value, child) =>
+              child:
+                  Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.35),
+                              Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.08),
+                              Colors.transparent,
+                            ],
+                            stops: const [0.0, 0.4, 1.0],
+                          ),
+                        ),
+                      )
+                      .animate(target: widget.isPlaying ? 1 : 0)
+                      .scale(
+                        begin: const Offset(0.8, 0.8),
+                        end: const Offset(1.2, 1.2),
+                        duration: 2.seconds,
+                        curve: Curves.easeInOutSine,
+                      )
+                      .custom(
+                        duration: 2.seconds,
+                        builder: (context, value, child) =>
                             Opacity(opacity: 0.5 + (0.5 * value), child: child),
-                  ),
+                      ),
             ),
 
             // The Vinyl Record (High Fidelity Grooves)

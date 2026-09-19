@@ -654,6 +654,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get filterStations => 'स्टेशन';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'स्थानीय संगीत';
 
   @override

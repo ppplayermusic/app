@@ -644,6 +644,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get filterStations => '电台';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => '本地音乐';
 
   @override

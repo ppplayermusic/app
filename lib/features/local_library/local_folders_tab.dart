@@ -28,10 +28,17 @@ class LocalFoldersTab extends ConsumerWidget {
           itemBuilder: (context, index) {
             final folder = folders[index];
             return ListTile(
-              leading: Icon(Icons.folder_rounded, color: colorScheme.primary, size: 40),
+              leading: Icon(
+                Icons.folder_rounded,
+                color: colorScheme.primary,
+                size: 40,
+              ),
               title: Text(
                 folder.name,
-                style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               subtitle: Text(
                 folder.path,

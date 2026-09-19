@@ -658,6 +658,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get filterStations => 'Станции';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Локальная музыка';
 
   @override

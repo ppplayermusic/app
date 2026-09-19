@@ -40,16 +40,21 @@ class LocalGenresTab extends ConsumerWidget {
                 ),
                 child: Icon(Icons.style_rounded, color: colorScheme.primary),
               ),
-              title: Text(genre.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+              title: Text(
+                genre.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               subtitle: Text('$count ${count == 1 ? 'track' : 'tracks'}'),
-              trailing: Icon(Icons.chevron_right_rounded, color: colorScheme.onSurfaceVariant),
+              trailing: Icon(
+                Icons.chevron_right_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => LocalGenreDetailScreen(
-                      genre: genre.name,
-                    ),
+                    builder: (_) => LocalGenreDetailScreen(genre: genre.name),
                   ),
                 );
               },

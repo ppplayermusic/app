@@ -658,6 +658,9 @@ class AppLocalizationsMy extends AppLocalizations {
   String get filterStations => 'စခန်းများ';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'ပြည်တွင်းတေးဂီတ';
 
   @override

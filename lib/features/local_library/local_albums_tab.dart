@@ -57,19 +57,29 @@ class LocalAlbumsTab extends ConsumerWidget {
                         color: colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(Icons.album_rounded, size: 64, color: colorScheme.onSurfaceVariant),
+                      child: Icon(
+                        Icons.album_rounded,
+                        size: 64,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     album.title,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     '${album.trackCount} tracks',
-                    style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),

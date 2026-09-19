@@ -96,17 +96,17 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
       backgroundColor: colorScheme.surface,
       body: artistAsync.when(
         loading: () => const ArtistDetailsShimmer(),
-        error:
-            (e, _) => Center(
-              child: Text(
-                'Error: $e',
-                style: TextStyle(color: colorScheme.onSurfaceVariant),
-              ),
-            ),
+        error: (e, _) => Center(
+          child: Text(
+            'Error: $e',
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+          ),
+        ),
         data: (artist) {
           final images = (artist['images'] as List?) ?? [];
-          final headerImage =
-              images.isNotEmpty ? images[0]['url'] as String : null;
+          final headerImage = images.isNotEmpty
+              ? images[0]['url'] as String
+              : null;
           final artistName = artist['name'] as String;
 
           return CustomScrollView(
@@ -130,10 +130,9 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TactileIconButton(
-                      icon:
-                          _isSearching
-                              ? Icons.close_rounded
-                              : Icons.search_rounded,
+                      icon: _isSearching
+                          ? Icons.close_rounded
+                          : Icons.search_rounded,
                       size: 24,
                       onTap: () {
                         setState(() {
@@ -164,31 +163,30 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                       centerTitle: true,
                       expandedTitleScale: 1.0,
                       titlePadding: EdgeInsets.zero,
-                      title:
-                          isCollapsed && !_isSearching
-                              ? AdaptiveBlur(
-                                sigmaX: 20,
-                                sigmaY: 20,
-                                child: Container(
-                                  width: double.infinity,
-                                  height: kToolbarHeight + topPadding,
-                                  padding: EdgeInsets.only(top: topPadding),
-                                  color: colorScheme.surface.withValues(
-                                    alpha: 0.6,
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    artistName,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 17,
-                                      letterSpacing: -0.5,
-                                      color: colorScheme.onSurface,
-                                    ),
-                                  ).animate().fadeIn(duration: 200.ms),
+                      title: isCollapsed && !_isSearching
+                          ? AdaptiveBlur(
+                              sigmaX: 20,
+                              sigmaY: 20,
+                              child: Container(
+                                width: double.infinity,
+                                height: kToolbarHeight + topPadding,
+                                padding: EdgeInsets.only(top: topPadding),
+                                color: colorScheme.surface.withValues(
+                                  alpha: 0.6,
                                 ),
-                              )
-                              : null,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  artistName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 17,
+                                    letterSpacing: -0.5,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ).animate().fadeIn(duration: 200.ms),
+                              ),
+                            )
+                          : null,
                       background: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -353,8 +351,8 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                                   [];
                                               final artistImageUrl =
                                                   imgs.isNotEmpty
-                                                      ? imgs[0]['url'] as String
-                                                      : '';
+                                                  ? imgs[0]['url'] as String
+                                                  : '';
                                               ref
                                                   .read(
                                                     favoritesControllerProvider
@@ -377,28 +375,25 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                                     vertical: 12,
                                                   ),
                                               decoration: BoxDecoration(
-                                                color:
-                                                    isFollowed
-                                                        ? colorScheme.primary
-                                                            .withValues(
-                                                              alpha: 0.2,
-                                                            )
-                                                        : colorScheme.onSurface
-                                                            .withValues(
-                                                              alpha: 0.05,
-                                                            ),
+                                                color: isFollowed
+                                                    ? colorScheme.primary
+                                                          .withValues(
+                                                            alpha: 0.2,
+                                                          )
+                                                    : colorScheme.onSurface
+                                                          .withValues(
+                                                            alpha: 0.05,
+                                                          ),
                                                 border: Border.all(
-                                                  color:
-                                                      isFollowed
-                                                          ? colorScheme.primary
-                                                              .withValues(
-                                                                alpha: 0.4,
-                                                              )
-                                                          : colorScheme
-                                                              .onSurface
-                                                              .withValues(
-                                                                alpha: 0.1,
-                                                              ),
+                                                  color: isFollowed
+                                                      ? colorScheme.primary
+                                                            .withValues(
+                                                              alpha: 0.4,
+                                                            )
+                                                      : colorScheme.onSurface
+                                                            .withValues(
+                                                              alpha: 0.1,
+                                                            ),
                                                   width: 1.0,
                                                 ),
                                                 borderRadius:
@@ -409,11 +404,9 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                                     ? 'FOLLOWING'
                                                     : 'FOLLOW',
                                                 style: TextStyle(
-                                                  color:
-                                                      isFollowed
-                                                          ? colorScheme.primary
-                                                          : colorScheme
-                                                              .onSurface,
+                                                  color: isFollowed
+                                                      ? colorScheme.primary
+                                                      : colorScheme.onSurface,
                                                   fontWeight: FontWeight.w900,
                                                   fontSize: 11,
                                                   letterSpacing: 1.5,
@@ -437,8 +430,8 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                                 [];
                                             final artistImageUrl =
                                                 imgs.isNotEmpty
-                                                    ? imgs[0]['url'] as String
-                                                    : '';
+                                                ? imgs[0]['url'] as String
+                                                : '';
 
                                             context.push(
                                               '/radio/artist/${widget.artistId}?title=$artistName Radio&imageUrl=$artistImageUrl',
@@ -475,20 +468,18 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                             children: [
                                               Icon(
                                                 Icons.radio_rounded,
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).colorScheme.primary,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
                                                 size: 18,
                                               ),
                                               const SizedBox(width: 10),
                                               Text(
                                                 'RADIO',
                                                 style: TextStyle(
-                                                  color:
-                                                      Theme.of(
-                                                        context,
-                                                      ).colorScheme.primary,
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
                                                   fontWeight: FontWeight.w900,
                                                   fontSize: 11,
                                                   letterSpacing: 1.5,
@@ -506,14 +497,13 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   onTap: () {
                                     final tracks = tracksAsync.asData?.value;
                                     if (tracks != null && tracks.isNotEmpty) {
-                                      final modelTracks =
-                                          tracks
-                                              .map(
-                                                (j) => Track.fromSpotify(
-                                                  j as Map<String, dynamic>,
-                                                ),
-                                              )
-                                              .toList();
+                                      final modelTracks = tracks
+                                          .map(
+                                            (j) => Track.fromSpotify(
+                                              j as Map<String, dynamic>,
+                                            ),
+                                          )
+                                          .toList();
                                       ref
                                           .read(playerProvider.notifier)
                                           .playTrack(
@@ -543,23 +533,19 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                   title: AppLocalizations.of(context)!.popular,
                   asyncValue: tracksAsync,
                   builder: (items) {
-                    var tracks =
-                        items
-                            .map(
-                              (j) =>
-                                  Track.fromSpotify(j as Map<String, dynamic>),
-                            )
-                            .toList();
-                    final filteredTracks =
-                        _searchQuery.isEmpty
-                            ? tracks
-                            : tracks
-                                .where(
-                                  (t) => t.name.toLowerCase().contains(
-                                    _searchQuery,
-                                  ),
-                                )
-                                .toList();
+                    var tracks = items
+                        .map(
+                          (j) => Track.fromSpotify(j as Map<String, dynamic>),
+                        )
+                        .toList();
+                    final filteredTracks = _searchQuery.isEmpty
+                        ? tracks
+                        : tracks
+                              .where(
+                                (t) =>
+                                    t.name.toLowerCase().contains(_searchQuery),
+                              )
+                              .toList();
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -571,61 +557,65 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                               left: 16,
                               right: 16,
                             ),
-                            child: AdaptiveBlur(
-                                  sigmaX: 10,
-                                  sigmaY: 10,
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    height: 42,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.onSurface.withValues(
-                                        alpha: 0.05,
-                                      ),
+                            child:
+                                AdaptiveBlur(
+                                      sigmaX: 10,
+                                      sigmaY: 10,
                                       borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: colorScheme.onSurface.withValues(
-                                          alpha: 0.1,
-                                        ),
-                                        width: 0.5,
-                                      ),
-                                    ),
-                                    child: TextField(
-                                      controller: _searchController,
-                                      autofocus: true,
-                                      decoration: InputDecoration(
-                                        hintText: AppLocalizations.of(context)!.searchPopularSongs,
-                                        prefixIcon: Icon(
-                                          Icons.search_rounded,
+                                      child: Container(
+                                        height: 42,
+                                        decoration: BoxDecoration(
                                           color: colorScheme.onSurface
-                                              .withValues(alpha: 0.3),
-                                          size: 20,
+                                              .withValues(alpha: 0.05),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: colorScheme.onSurface
+                                                .withValues(alpha: 0.1),
+                                            width: 0.5,
+                                          ),
                                         ),
-                                        border: InputBorder.none,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                              vertical: 10,
+                                        child: TextField(
+                                          controller: _searchController,
+                                          autofocus: true,
+                                          decoration: InputDecoration(
+                                            hintText: AppLocalizations.of(
+                                              context,
+                                            )!.searchPopularSongs,
+                                            prefixIcon: Icon(
+                                              Icons.search_rounded,
+                                              color: colorScheme.onSurface
+                                                  .withValues(alpha: 0.3),
+                                              size: 20,
                                             ),
-                                        hintStyle: TextStyle(
-                                          color: colorScheme.onSurface
-                                              .withValues(alpha: 0.3),
-                                          fontSize: 14,
+                                            border: InputBorder.none,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  vertical: 10,
+                                                ),
+                                            hintStyle: TextStyle(
+                                              color: colorScheme.onSurface
+                                                  .withValues(alpha: 0.3),
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          style: TextStyle(
+                                            color: colorScheme.onSurface,
+                                            fontSize: 14,
+                                          ),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _searchQuery = value
+                                                  .toLowerCase();
+                                            });
+                                          },
                                         ),
                                       ),
-                                      style: TextStyle(
-                                        color: colorScheme.onSurface,
-                                        fontSize: 14,
-                                      ),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _searchQuery = value.toLowerCase();
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                )
-                                .animate()
-                                .fadeIn(duration: 300.ms)
-                                .scale(begin: const Offset(0.95, 0.95)),
+                                    )
+                                    .animate()
+                                    .fadeIn(duration: 300.ms)
+                                    .scale(begin: const Offset(0.95, 0.95)),
                           ),
                         if (filteredTracks.isEmpty && _searchQuery.isNotEmpty)
                           Padding(
@@ -668,15 +658,13 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                                   TrackTile(
                                         index: i + 1,
                                         track: filteredTracks[i],
-                                        onTap:
-                                            () => ref
-                                                .read(playerProvider.notifier)
-                                                .playTrack(
-                                                  filteredTracks[i],
-                                                  queue: filteredTracks,
-                                                  contextArtistId:
-                                                      widget.artistId,
-                                                ),
+                                        onTap: () => ref
+                                            .read(playerProvider.notifier)
+                                            .playTrack(
+                                              filteredTracks[i],
+                                              queue: filteredTracks,
+                                              contextArtistId: widget.artistId,
+                                            ),
                                       )
                                       .animate(delay: (i * 40).ms)
                                       .fadeIn(duration: 500.ms)
@@ -695,26 +683,25 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                 child: SectionWrapper<dynamic>(
                   title: AppLocalizations.of(context)!.albums,
                   asyncValue: albumsAsync,
-                  builder:
-                      (items) => SizedBox(
-                        height: 256,
-                        child: ListView.builder(
-                          clipBehavior: Clip.none,
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: items.length,
-                          itemBuilder: (context, i) {
-                            return _ArtistAlbumCard(
-                                  album: items[i] as Map<String, dynamic>,
-                                  artistId: widget.artistId,
-                                )
-                                .animate(delay: (i * 70).ms)
-                                .fadeIn(duration: 500.ms)
-                                .scale(begin: const Offset(0.95, 0.95));
-                          },
-                        ),
-                      ),
+                  builder: (items) => SizedBox(
+                    height: 256,
+                    child: ListView.builder(
+                      clipBehavior: Clip.none,
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: items.length,
+                      itemBuilder: (context, i) {
+                        return _ArtistAlbumCard(
+                              album: items[i] as Map<String, dynamic>,
+                              artistId: widget.artistId,
+                            )
+                            .animate(delay: (i * 70).ms)
+                            .fadeIn(duration: 500.ms)
+                            .scale(begin: const Offset(0.95, 0.95));
+                      },
+                    ),
+                  ),
                   loadingWidget: const SectionShimmer(height: 250),
                 ),
               ),
@@ -722,57 +709,57 @@ class _ArtistScreenState extends ConsumerState<ArtistScreen> {
                 child: SectionWrapper<Map<String, dynamic>>(
                   title: AppLocalizations.of(context)!.fansAlsoLike,
                   asyncValue: relatedAsync,
-                  builder:
-                      (artists) => SizedBox(
-                        height: 200,
-                        child: ListView.builder(
-                          clipBehavior: Clip.none,
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: artists.length,
-                          itemBuilder: (context, i) {
-                            return _RelatedArtistCard(artist: artists[i])
-                                .animate(delay: (i * 60).ms)
-                                .fadeIn(duration: 500.ms)
-                                .slideY(
-                                  begin: 0.1,
-                                  end: 0,
-                                  curve: Curves.easeOutBack,
-                                );
-                          },
-                        ),
-                      ),
+                  builder: (artists) => SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      clipBehavior: Clip.none,
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: artists.length,
+                      itemBuilder: (context, i) {
+                        return _RelatedArtistCard(artist: artists[i])
+                            .animate(delay: (i * 60).ms)
+                            .fadeIn(duration: 500.ms)
+                            .slideY(
+                              begin: 0.1,
+                              end: 0,
+                              curve: Curves.easeOutBack,
+                            );
+                      },
+                    ),
+                  ),
                   loadingWidget: const SectionShimmer(height: 190),
                 ),
               ),
               SliverToBoxAdapter(
                 child: SectionWrapper<Map<String, dynamic>>(
-                  title: AppLocalizations.of(context)!.featuringArtist(artistName.toUpperCase()),
+                  title: AppLocalizations.of(
+                    context,
+                  )!.featuringArtist(artistName.toUpperCase()),
                   asyncValue: playlistsAsync,
-                  builder:
-                      (playlists) => SizedBox(
-                        height: 265,
-                        child: ListView.builder(
-                          clipBehavior: Clip.none,
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: playlists.length,
-                          itemBuilder: (context, i) {
-                            return _ArtistPlaylistCard(
-                                  playlist: playlists[i],
-                                  artistId: widget.artistId,
-                                )
-                                .animate(delay: (i * 80).ms)
-                                .fadeIn(duration: 600.ms)
-                                .scale(
-                                  begin: const Offset(0.95, 0.95),
-                                  curve: Curves.easeOutCubic,
-                                );
-                          },
-                        ),
-                      ),
+                  builder: (playlists) => SizedBox(
+                    height: 265,
+                    child: ListView.builder(
+                      clipBehavior: Clip.none,
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: playlists.length,
+                      itemBuilder: (context, i) {
+                        return _ArtistPlaylistCard(
+                              playlist: playlists[i],
+                              artistId: widget.artistId,
+                            )
+                            .animate(delay: (i * 80).ms)
+                            .fadeIn(duration: 600.ms)
+                            .scale(
+                              begin: const Offset(0.95, 0.95),
+                              curve: Curves.easeOutCubic,
+                            );
+                      },
+                    ),
+                  ),
                   loadingWidget: const SectionShimmer(height: 250),
                 ),
               ),
@@ -817,17 +804,15 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
         return;
       }
       try {
-        final cacheResult =
-            await ref
-                .read(spotifyRepositoryProvider)
-                .watchAlbum(album['id'])
-                .first;
+        final cacheResult = await ref
+            .read(spotifyRepositoryProvider)
+            .watchAlbum(album['id'])
+            .first;
         final albumData = cacheResult.data;
         final tracksRaw = albumData['tracks']?['items'] as List? ?? [];
-        final tracks =
-            tracksRaw
-                .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
-                .toList();
+        final tracks = tracksRaw
+            .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
+            .toList();
         if (tracks.isNotEmpty) {
           ref
               .read(playerProvider.notifier)
@@ -870,20 +855,18 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color:
-                            isCurrentAlbum
-                                ? colorScheme.primary.withValues(alpha: 0.8)
-                                : (_isHovered
-                                    ? colorScheme.primary.withValues(alpha: 0.3)
-                                    : Colors.transparent),
+                        color: isCurrentAlbum
+                            ? colorScheme.primary.withValues(alpha: 0.8)
+                            : (_isHovered
+                                  ? colorScheme.primary.withValues(alpha: 0.3)
+                                  : Colors.transparent),
                         width: isCurrentAlbum ? 2 : 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              (isCurrentAlbum || _isHovered)
-                                  ? colorScheme.primary.withValues(alpha: 0.35)
-                                  : colorScheme.shadow.withValues(alpha: 0.3),
+                          color: (isCurrentAlbum || _isHovered)
+                              ? colorScheme.primary.withValues(alpha: 0.35)
+                              : colorScheme.shadow.withValues(alpha: 0.3),
                           blurRadius: (isCurrentAlbum || _isHovered) ? 26 : 20,
                           spreadRadius: (isCurrentAlbum || _isHovered) ? 2 : 0,
                           offset: Offset(
@@ -914,10 +897,9 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
                     duration: const Duration(milliseconds: 150),
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
-                      color:
-                          (isCurrentAlbum || _isHovered)
-                              ? colorScheme.primary
-                              : colorScheme.onSurface,
+                      color: (isCurrentAlbum || _isHovered)
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
                       fontSize: 14,
                       letterSpacing: -0.2,
                     ),
@@ -1010,18 +992,16 @@ class _RelatedArtistCardState extends State<_RelatedArtistCard> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color:
-                            _isHovered
-                                ? colorScheme.primary.withValues(alpha: 0.8)
-                                : Colors.transparent,
+                        color: _isHovered
+                            ? colorScheme.primary.withValues(alpha: 0.8)
+                            : Colors.transparent,
                         width: 2.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              _isHovered
-                                  ? colorScheme.primary.withValues(alpha: 0.35)
-                                  : colorScheme.shadow.withValues(alpha: 0.5),
+                          color: _isHovered
+                              ? colorScheme.primary.withValues(alpha: 0.35)
+                              : colorScheme.shadow.withValues(alpha: 0.5),
                           blurRadius: _isHovered ? 36 : 30,
                           spreadRadius: _isHovered ? 2 : -10,
                           offset: Offset(0, _isHovered ? 18 : 15),
@@ -1036,10 +1016,9 @@ class _RelatedArtistCardState extends State<_RelatedArtistCard> {
                   AnimatedDefaultTextStyle(
                     duration: const Duration(milliseconds: 150),
                     style: TextStyle(
-                      color:
-                          _isHovered
-                              ? colorScheme.primary
-                              : colorScheme.onSurface,
+                      color: _isHovered
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
                       fontWeight: FontWeight.w900,
                       fontSize: 13,
                       letterSpacing: -0.2,
@@ -1077,11 +1056,10 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
 
   void _onPlay() async {
     try {
-      final cacheResult =
-          await ref
-              .read(spotifyRepositoryProvider)
-              .watchPlaylistTracks(widget.playlist['id'])
-              .first;
+      final cacheResult = await ref
+          .read(spotifyRepositoryProvider)
+          .watchPlaylistTracks(widget.playlist['id'])
+          .first;
       final tracks = cacheResult.data;
       if (tracks.isNotEmpty) {
         ref
@@ -1129,10 +1107,9 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
         onExit: (_) => setState(() => _isHovered = false),
         cursor: SystemMouseCursors.click,
         child: TactileTap(
-          onTap:
-              () => context.push(
-                '/playlist/remote/$id?name=${Uri.encodeComponent(name)}',
-              ),
+          onTap: () => context.push(
+            '/playlist/remote/$id?name=${Uri.encodeComponent(name)}',
+          ),
           scaleDown: 0.96,
           child: AnimatedScale(
             scale: _isHovered ? 1.03 : 1.0,
@@ -1151,10 +1128,9 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              _isHovered
-                                  ? colorScheme.primary.withValues(alpha: 0.3)
-                                  : colorScheme.shadow.withValues(alpha: 0.4),
+                          color: _isHovered
+                              ? colorScheme.primary.withValues(alpha: 0.3)
+                              : colorScheme.shadow.withValues(alpha: 0.4),
                           blurRadius: _isHovered ? 32 : 25,
                           spreadRadius: _isHovered ? 2 : -5,
                           offset: Offset(0, _isHovered ? 18 : 15),
@@ -1201,10 +1177,9 @@ class _ArtistPlaylistCardState extends ConsumerState<_ArtistPlaylistCard> {
                   AnimatedDefaultTextStyle(
                     duration: const Duration(milliseconds: 150),
                     style: TextStyle(
-                      color:
-                          _isHovered
-                              ? colorScheme.primary
-                              : colorScheme.onSurface,
+                      color: _isHovered
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
                       fontWeight: FontWeight.w900,
                       fontSize: 14,
                       letterSpacing: -0.2,

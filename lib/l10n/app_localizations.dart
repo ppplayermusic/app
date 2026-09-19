@@ -1346,6 +1346,12 @@ abstract class AppLocalizations {
   /// **'Stations'**
   String get filterStations;
 
+  /// No description provided for @filterStreams.
+  ///
+  /// In en, this message translates to:
+  /// **'Streams'**
+  String get filterStreams;
+
   /// No description provided for @localMusicCard.
   ///
   /// In en, this message translates to:

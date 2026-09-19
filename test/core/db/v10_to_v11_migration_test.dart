@@ -7,7 +7,7 @@ import 'package:sqlite3/sqlite3.dart' as sqlite;
 void main() {
   test('V10 to V11 migration correctly adds is_video to local_files', () async {
     final sqliteDb = sqlite.sqlite3.openInMemory();
-    
+
     // Set v10 schema explicitly
     sqliteDb.execute('PRAGMA user_version = 10;');
 
@@ -62,7 +62,7 @@ void main() {
         created_at INTEGER NOT NULL
       );
     ''');
-    
+
     sqliteDb.execute('''
       CREATE TABLE IF NOT EXISTS playlist_tracks (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -91,27 +91,33 @@ void main() {
     ''');
 
     // Migrate to v11
-    final db = AppDatabase.forTesting(DatabaseConnection(NativeDatabase.opened(sqliteDb)));
-    
+    final db = AppDatabase.forTesting(
+      DatabaseConnection(NativeDatabase.opened(sqliteDb)),
+    );
+
     // Force migration by performing a query
     final localFiles = await db.select(db.localFiles).get();
     expect(localFiles.length, 1);
-    
+
     // Check that isVideo is false by default
     expect(localFiles.first.isVideo, false);
 
     // Verify mediaScope persists
     final importRoots = await db.select(db.importRoots).get();
     expect(importRoots.isEmpty, true);
-    
-    await db.into(db.importRoots).insert(ImportRootsCompanion.insert(
-      id: 'root_1',
-      mechanism: 'absolutePath',
-      rootLocator: '/tmp/video',
-      displayPath: 'video',
-      addedAt: DateTime.now(),
-      mediaScope: const Value('video'),
-    ));
+
+    await db
+        .into(db.importRoots)
+        .insert(
+          ImportRootsCompanion.insert(
+            id: 'root_1',
+            mechanism: 'absolutePath',
+            rootLocator: '/tmp/video',
+            displayPath: 'video',
+            addedAt: DateTime.now(),
+            mediaScope: const Value('video'),
+          ),
+        );
 
     final insertedRoots = await db.select(db.importRoots).get();
     expect(insertedRoots.length, 1);

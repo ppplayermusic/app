@@ -654,6 +654,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get filterStations => 'Stansiyalar';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Mahalliy musiqa';
 
   @override

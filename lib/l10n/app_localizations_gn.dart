@@ -653,6 +653,9 @@ class AppLocalizationsGn extends AppLocalizations {
   String get filterStations => 'Ñe\'ẽasãiha';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Mba\'epu ñande mba\'e';
 
   @override

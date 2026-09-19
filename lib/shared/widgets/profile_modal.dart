@@ -44,26 +44,26 @@ void showEditProfileModal(
                       shape: BoxShape.circle,
                       image:
                           selectedAvatarBase64 != null &&
-                                  selectedAvatarBase64!.isNotEmpty
-                              ? DecorationImage(
-                                image: MemoryImage(
-                                  base64Decode(selectedAvatarBase64!),
-                                ),
-                                fit: BoxFit.cover,
-                              )
-                              : null,
+                              selectedAvatarBase64!.isNotEmpty
+                          ? DecorationImage(
+                              image: MemoryImage(
+                                base64Decode(selectedAvatarBase64!),
+                              ),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                     ),
                     child:
                         selectedAvatarBase64 == null ||
-                                selectedAvatarBase64!.isEmpty
-                            ? const Center(
-                              child: Icon(
-                                Icons.person,
-                                size: 40,
-                                color: Colors.white,
-                              ),
-                            )
-                            : null,
+                            selectedAvatarBase64!.isEmpty
+                        ? const Center(
+                            child: Icon(
+                              Icons.person,
+                              size: 40,
+                              color: Colors.white,
+                            ),
+                          )
+                        : null,
                   ),
                   Positioned(
                     bottom: 0,
@@ -159,30 +159,27 @@ void showEditProfileModal(
                         color: color,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color:
-                              isSelected
-                                  ? colorScheme.onSurface
-                                  : Colors.transparent,
+                          color: isSelected
+                              ? colorScheme.onSurface
+                              : Colors.transparent,
                           width: 3,
                         ),
-                        boxShadow:
-                            isSelected
-                                ? [
-                                  BoxShadow(
-                                    color: color.withValues(alpha: 0.5),
-                                    blurRadius: 10,
-                                    spreadRadius: 1,
-                                  ),
-                                ]
-                                : [],
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: color.withValues(alpha: 0.5),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : [],
                       ),
-                      child:
-                          isSelected
-                              ? Icon(
-                                Icons.check_rounded,
-                                color: colorScheme.surface,
-                              )
-                              : null,
+                      child: isSelected
+                          ? Icon(
+                              Icons.check_rounded,
+                              color: colorScheme.surface,
+                            )
+                          : null,
                     ),
                   );
                 },

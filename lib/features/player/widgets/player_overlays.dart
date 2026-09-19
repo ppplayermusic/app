@@ -90,7 +90,10 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
     _hideTimer = Timer(const Duration(seconds: 3), () {
       if (mounted) {
         final isPlaying = ref.read(playerProvider).isPlaying;
-        if (isPlaying && !_isHoveringControls && _dragValue == null && !widget.alwaysShowControls) {
+        if (isPlaying &&
+            !_isHoveringControls &&
+            _dragValue == null &&
+            !widget.alwaysShowControls) {
           setState(() {
             _controlsVisible = false;
           });
@@ -141,9 +144,11 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                   String? displayStr;
                   if (t.id == 'no' || t.id == 'none') {
                     displayStr = AppLocalizations.of(context)!.off;
-                  } else if (t.title != null && t.title.toString().trim().isNotEmpty) {
+                  } else if (t.title != null &&
+                      t.title.toString().trim().isNotEmpty) {
                     displayStr = t.title;
-                  } else if (t.language != null && t.language.toString().trim().isNotEmpty) {
+                  } else if (t.language != null &&
+                      t.language.toString().trim().isNotEmpty) {
                     displayStr = t.language;
                   } else {
                     displayStr = t.id;
@@ -193,9 +198,13 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .errorLoadingSubtitle(e.toString()))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.errorLoadingSubtitle(e.toString()),
+            ),
+          ),
+        );
       }
     }
   }
@@ -314,446 +323,555 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                 child: IgnorePointer(
                   ignoring: !showControls,
                   child: Stack(
-              children: [
-              // TOP OVERLAY
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: MouseRegion(
-                  onEnter: (_) => _isHoveringControls = true,
-                  onExit: (_) => _isHoveringControls = false,
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 16, bottom: 24),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.8),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                    child: SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        // Left padding reserves space for the permanent back button
-                        // (44px icon + 12px inset) so the middle bar stays centred.
-                        padding: const EdgeInsets.only(left: 56, right: 16),
-                        child: Row(
-                          children: [
-                            const Spacer(),
-                            widget.middleTopBar,
-                            const Spacer(),
-                              // Queue button moved to bottom bar
-                            const SizedBox(width: 8),
-                            if (playerState.supportsSpeed) ...[
-                              Builder(
-                                builder: (btnContext) => TactileIconButton(
-                                  icon: Icons.speed,
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  hoverColor: colorScheme.primary,
-                                  tooltip: 'Playback Speed',
-                                  onTap: () {
-                                    _onInteraction();
-                                    _showSpeedMenu(btnContext, playerNotifier,
-                                        playerState.speed);
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                            ],
-                            Builder(
-                              builder: (btnContext) => TactileIconButton(
-                                icon: Icons.more_vert,
-                                color: Colors.white.withValues(alpha: 0.8),
-                                hoverColor: colorScheme.primary,
-                                tooltip: AppLocalizations.of(context)!.moreOptions,
-                                onTap: () {
-                                  _onInteraction();
-                                  _isHoveringControls = true;
-                                  final renderBox = btnContext.findRenderObject()
-                                      as RenderBox?;
-                                  final offset =
-                                      renderBox?.localToGlobal(Offset.zero);
-                                  if (track != null) {
-                                    showContentContextMenu(
-                                      context,
-                                      ref,
-                                      position: offset != null
-                                          ? offset +
-                                              Offset(0, renderBox!.size.height)
-                                          : Offset.zero,
-                                      target: TrackContextTarget(track),
-                                    );
-                                  }
-                                },
+                    children: [
+                      // TOP OVERLAY
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: MouseRegion(
+                          onEnter: (_) => _isHoveringControls = true,
+                          onExit: (_) => _isHoveringControls = false,
+                          child: Container(
+                            padding: const EdgeInsets.only(top: 16, bottom: 24),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black.withValues(alpha: 0.8),
+                                  Colors.transparent,
+                                ],
                               ),
                             ),
-                          ],
+                            child: SafeArea(
+                              bottom: false,
+                              child: Padding(
+                                // Left padding reserves space for the permanent back button
+                                // (44px icon + 12px inset) so the middle bar stays centred.
+                                padding: const EdgeInsets.only(
+                                  left: 56,
+                                  right: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Spacer(),
+                                    widget.middleTopBar,
+                                    const Spacer(),
+                                    // Queue button moved to bottom bar
+                                    const SizedBox(width: 8),
+                                    if (playerState.supportsSpeed) ...[
+                                      Builder(
+                                        builder: (btnContext) =>
+                                            TactileIconButton(
+                                              icon: Icons.speed,
+                                              color: Colors.white.withValues(
+                                                alpha: 0.8,
+                                              ),
+                                              hoverColor: colorScheme.primary,
+                                              tooltip: 'Playback Speed',
+                                              onTap: () {
+                                                _onInteraction();
+                                                _showSpeedMenu(
+                                                  btnContext,
+                                                  playerNotifier,
+                                                  playerState.speed,
+                                                );
+                                              },
+                                            ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                    ],
+                                    Builder(
+                                      builder: (btnContext) =>
+                                          TactileIconButton(
+                                            icon: Icons.more_vert,
+                                            color: Colors.white.withValues(
+                                              alpha: 0.8,
+                                            ),
+                                            hoverColor: colorScheme.primary,
+                                            tooltip: AppLocalizations.of(
+                                              context,
+                                            )!.moreOptions,
+                                            onTap: () {
+                                              _onInteraction();
+                                              _isHoveringControls = true;
+                                              final renderBox =
+                                                  btnContext.findRenderObject()
+                                                      as RenderBox?;
+                                              final offset = renderBox
+                                                  ?.localToGlobal(Offset.zero);
+                                              if (track != null) {
+                                                showContentContextMenu(
+                                                  context,
+                                                  ref,
+                                                  position: offset != null
+                                                      ? offset +
+                                                            Offset(
+                                                              0,
+                                                              renderBox!
+                                                                  .size
+                                                                  .height,
+                                                            )
+                                                      : Offset.zero,
+                                                  target: TrackContextTarget(
+                                                    track,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
 
-              // BOTTOM OVERLAY
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: MouseRegion(
-                  onEnter: (_) => _isHoveringControls = true,
-                  onExit: (_) => _isHoveringControls = false,
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 64, bottom: 24, left: 24, right: 24),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.85),
-                          Colors.black.withValues(alpha: 0.4),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                    child: SafeArea(
-                      top: false,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Metadata Row
-                          if (track != null)
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        track.name,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
+                      // BOTTOM OVERLAY
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: MouseRegion(
+                          onEnter: (_) => _isHoveringControls = true,
+                          onExit: (_) => _isHoveringControls = false,
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                              top: 64,
+                              bottom: 24,
+                              left: 24,
+                              right: 24,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  Colors.black.withValues(alpha: 0.85),
+                                  Colors.black.withValues(alpha: 0.4),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                            child: SafeArea(
+                              top: false,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Metadata Row
+                                  if (track != null)
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                track.name,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 4),
+                                              ArtistsLinks(
+                                                track: track,
+                                                style: TextStyle(
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.7),
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                        StreamBuilder<bool>(
+                                          stream: ref
+                                              .watch(db.appDatabaseProvider)
+                                              .watchTrackFavorite(
+                                                track.spotifyId,
+                                              ),
+                                          initialData: track.isFavorite,
+                                          builder: (context, snapshot) {
+                                            final isFav =
+                                                snapshot.data ??
+                                                track.isFavorite;
+                                            return TactileIconButton(
+                                              icon: isFav
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: isFav
+                                                  ? colorScheme.primary
+                                                  : Colors.white,
+                                              onTap: () {
+                                                _onInteraction();
+                                                playerNotifier.toggleFavorite(
+                                                  track.copyWith(
+                                                    isFavorite: isFav,
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  const SizedBox(height: 16),
+                                  // Progress Bar
+                                  SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      trackHeight: 4,
+                                      thumbShape: const RoundSliderThumbShape(
+                                        enabledThumbRadius: 6,
                                       ),
-                                      const SizedBox(height: 4),
-                                      ArtistsLinks(
-                                        track: track,
-                                        style: TextStyle(
-                                          color: Colors.white.withValues(alpha: 0.7),
-                                          fontSize: 14,
+                                      overlayShape:
+                                          const RoundSliderOverlayShape(
+                                            overlayRadius: 14,
+                                          ),
+                                      activeTrackColor: colorScheme.primary,
+                                      inactiveTrackColor: Colors.white
+                                          .withValues(alpha: 0.2),
+                                      thumbColor: Colors.white,
+                                    ),
+                                    child: Builder(
+                                      builder: (context) {
+                                        final maxDuration =
+                                            playerState.duration.inSeconds > 0
+                                            ? playerState.duration.inSeconds
+                                                  .toDouble()
+                                            : 1.0;
+                                        return Slider(
+                                          value:
+                                              (_dragValue ??
+                                                      playerState
+                                                          .position
+                                                          .inSeconds
+                                                          .toDouble())
+                                                  .clamp(0.0, maxDuration),
+                                          max: maxDuration,
+                                          onChangeStart: (v) {
+                                            _onInteraction();
+                                            setState(() => _dragValue = v);
+                                          },
+                                          onChanged: (v) {
+                                            _onInteraction();
+                                            setState(() => _dragValue = v);
+                                          },
+                                          onChangeEnd: (v) {
+                                            _onInteraction();
+                                            playerNotifier.seekTo(
+                                              Duration(seconds: v.toInt()),
+                                            );
+                                            setState(() => _dragValue = null);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          _formatDuration(
+                                            _dragValue != null
+                                                ? Duration(
+                                                    seconds: _dragValue!
+                                                        .toInt(),
+                                                  )
+                                                : playerState.position,
+                                          ),
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.7,
+                                            ),
+                                            fontSize: 12,
+                                          ),
                                         ),
+                                        Text(
+                                          _formatDuration(playerState.duration),
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.7,
+                                            ),
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  // Controls Row
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Left: Volume/Subtitle/Audio
+                                      Row(
+                                        children: [
+                                          if (_mkPlayer != null) ...[
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.closed_caption,
+                                                color: Colors.white,
+                                              ),
+                                              onPressed: () {
+                                                _onInteraction();
+                                                final player = _mkPlayer;
+                                                if (player != null) {
+                                                  _showTrackSelectionDialog(
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    )!.subtitles,
+                                                    player
+                                                        .state
+                                                        .tracks
+                                                        .subtitle,
+                                                    player.state.track.subtitle,
+                                                    (t) async {
+                                                      if (t.id == 'no' ||
+                                                          t.id == 'none') {
+                                                        await ref
+                                                            .read(
+                                                              playerProvider
+                                                                  .notifier,
+                                                            )
+                                                            .setSubtitleTrack(
+                                                              null,
+                                                            );
+                                                      } else {
+                                                        player.setSubtitleTrack(
+                                                          t,
+                                                        );
+                                                      }
+                                                    },
+                                                    onExternalLoad: () =>
+                                                        _pickExternalSubtitle(
+                                                          player,
+                                                        ),
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.audiotrack,
+                                                color: Colors.white,
+                                              ),
+                                              onPressed: () {
+                                                _onInteraction();
+                                                final player = _mkPlayer;
+                                                if (player != null) {
+                                                  _showTrackSelectionDialog(
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    )!.audioTracks,
+                                                    player.state.tracks.audio,
+                                                    player.state.track.audio,
+                                                    (t) =>
+                                                        player.setAudioTrack(t),
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                      // Center: Playback controls
+                                      Row(
+                                        children: [
+                                          TactileIconButton(
+                                            icon: Icons.shuffle,
+                                            color: playerState.isShuffled
+                                                ? colorScheme.primary
+                                                : Colors.white.withValues(
+                                                    alpha: 0.6,
+                                                  ),
+                                            onTap: () {
+                                              _onInteraction();
+                                              playerNotifier.toggleShuffle();
+                                            },
+                                          ),
+                                          TactileIconButton(
+                                            icon: Icons.skip_previous,
+                                            size: 32,
+                                            color: Colors.white,
+                                            onTap: () {
+                                              _onInteraction();
+                                              playerNotifier.skipPrevious();
+                                            },
+                                          ),
+                                          TactilePlayerPlayPauseButton(
+                                            isPlaying: playerState.isPlaying,
+                                            isLoading:
+                                                playerState.isLoadingVideo,
+                                            size: 64,
+                                            onTap: () {
+                                              _onInteraction();
+                                              playerNotifier.togglePlay();
+                                            },
+                                          ),
+                                          TactileIconButton(
+                                            icon: Icons.skip_next,
+                                            size: 32,
+                                            color: Colors.white,
+                                            onTap: () {
+                                              _onInteraction();
+                                              playerNotifier.skipNext();
+                                            },
+                                          ),
+                                          TactileIconButton(
+                                            icon:
+                                                playerState.repeatMode ==
+                                                    RepeatMode.one
+                                                ? Icons.repeat_one
+                                                : Icons.repeat,
+                                            color:
+                                                playerState.repeatMode !=
+                                                    RepeatMode.none
+                                                ? colorScheme.primary
+                                                : Colors.white.withValues(
+                                                    alpha: 0.6,
+                                                  ),
+                                            onTap: () {
+                                              _onInteraction();
+                                              playerNotifier.cycleRepeat();
+                                            },
+                                          ),
+                                          TactileIconButton(
+                                            icon: Icons.all_inclusive,
+                                            color: settings.autoplayEnabled
+                                                ? colorScheme.primary
+                                                : Colors.white.withValues(
+                                                    alpha: 0.6,
+                                                  ),
+                                            onTap: () {
+                                              _onInteraction();
+                                              ref
+                                                  .read(
+                                                    settingsProvider.notifier,
+                                                  )
+                                                  .toggleAutoplay(
+                                                    !settings.autoplayEnabled,
+                                                  );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      // Right: Queue, Fit/Fill, Mini-player, Fullscreen
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            key: const ValueKey(
+                                              'queue_toggle_button',
+                                            ),
+                                            icon: const Icon(
+                                              Icons.queue_music,
+                                              color: Colors.white,
+                                            ),
+                                            tooltip: AppLocalizations.of(
+                                              context,
+                                            )!.queue,
+                                            onPressed: () {
+                                              _onInteraction();
+                                              widget.onToggleQueue();
+                                            },
+                                          ),
+                                          if (supportsVideoFitMode)
+                                            IconButton(
+                                              icon: Icon(
+                                                settings.videoFitMode ==
+                                                        VideoFitMode.fill
+                                                    ? Icons.fit_screen
+                                                    : Icons.crop_free,
+                                                color: Colors.white,
+                                              ),
+                                              tooltip:
+                                                  settings.videoFitMode ==
+                                                      VideoFitMode.fill
+                                                  ? 'Fit'
+                                                  : 'Fill',
+                                              onPressed: () {
+                                                _onInteraction();
+                                                final next =
+                                                    settings.videoFitMode ==
+                                                        VideoFitMode.fit
+                                                    ? VideoFitMode.fill
+                                                    : VideoFitMode.fit;
+                                                ref
+                                                    .read(
+                                                      settingsProvider.notifier,
+                                                    )
+                                                    .setVideoFitMode(next);
+                                              },
+                                            ),
+                                          IconButton(
+                                            icon: Icon(
+                                              widget.isFullscreen
+                                                  ? Icons.fullscreen_exit
+                                                  : Icons.fullscreen,
+                                              color: Colors.white,
+                                            ),
+                                            tooltip: widget.isFullscreen
+                                                ? 'Exit Fullscreen'
+                                                : 'Fullscreen',
+                                            onPressed: () {
+                                              _onInteraction();
+                                              widget.onToggleFullscreen();
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ),
-                                StreamBuilder<bool>(
-                                  stream: ref
-                                      .watch(db.appDatabaseProvider)
-                                      .watchTrackFavorite(track.spotifyId),
-                                  initialData: track.isFavorite,
-                                  builder: (context, snapshot) {
-                                    final isFav = snapshot.data ?? track.isFavorite;
-                                    return TactileIconButton(
-                                      icon: isFav
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: isFav ? colorScheme.primary : Colors.white,
-                                      onTap: () {
-                                        _onInteraction();
-                                        playerNotifier.toggleFavorite(
-                                            track.copyWith(isFavorite: isFav));
-                                      },
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          const SizedBox(height: 16),
-                          // Progress Bar
-                          SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              trackHeight: 4,
-                              thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 6,
-                              ),
-                              overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 14,
-                              ),
-                              activeTrackColor: colorScheme.primary,
-                              inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
-                              thumbColor: Colors.white,
-                            ),
-                            child: Builder(
-                              builder: (context) {
-                                final maxDuration = playerState.duration.inSeconds > 0
-                                    ? playerState.duration.inSeconds.toDouble()
-                                    : 1.0;
-                                return Slider(
-                                  value: (_dragValue ??
-                                          playerState.position.inSeconds.toDouble())
-                                      .clamp(0.0, maxDuration),
-                                  max: maxDuration,
-                                  onChangeStart: (v) {
-                                    _onInteraction();
-                                    setState(() => _dragValue = v);
-                                  },
-                                  onChanged: (v) {
-                                    _onInteraction();
-                                    setState(() => _dragValue = v);
-                                  },
-                                  onChangeEnd: (v) {
-                                    _onInteraction();
-                                    playerNotifier
-                                        .seekTo(Duration(seconds: v.toInt()));
-                                    setState(() => _dragValue = null);
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  _formatDuration(
-                                    _dragValue != null
-                                        ? Duration(seconds: _dragValue!.toInt())
-                                        : playerState.position,
-                                  ),
-                                  style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.7),
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  _formatDuration(playerState.duration),
-                                  style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.7),
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          // Controls Row
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Left: Volume/Subtitle/Audio
-                              Row(
-                                children: [
-                                  if (_mkPlayer != null) ...[
-                                  IconButton(
-                                    icon: const Icon(Icons.closed_caption,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      _onInteraction();
-                                      final player = _mkPlayer;
-                                      if (player != null) {
-                                        _showTrackSelectionDialog(
-                                          AppLocalizations.of(context)!.subtitles,
-                                          player.state.tracks.subtitle,
-                                          player.state.track.subtitle,
-                                          (t) async {
-                                            if (t.id == 'no' || t.id == 'none') {
-                                              await ref
-                                                  .read(playerProvider.notifier)
-                                                  .setSubtitleTrack(null);
-                                            } else {
-                                              player.setSubtitleTrack(t);
-                                            }
-                                          },
-                                          onExternalLoad: () =>
-                                              _pickExternalSubtitle(player),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.audiotrack,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      _onInteraction();
-                                      final player = _mkPlayer;
-                                      if (player != null) {
-                                        _showTrackSelectionDialog(
-                                          AppLocalizations.of(context)!.audioTracks,
-                                          player.state.tracks.audio,
-                                          player.state.track.audio,
-                                          (t) => player.setAudioTrack(t),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  ],
                                 ],
                               ),
-                              // Center: Playback controls
-                              Row(
-                                children: [
-                                  TactileIconButton(
-                                    icon: Icons.shuffle,
-                                    color: playerState.isShuffled
-                                        ? colorScheme.primary
-                                        : Colors.white.withValues(alpha: 0.6),
-                                    onTap: () {
-                                      _onInteraction();
-                                      playerNotifier.toggleShuffle();
-                                    },
-                                  ),
-                                  TactileIconButton(
-                                    icon: Icons.skip_previous,
-                                    size: 32,
-                                    color: Colors.white,
-                                    onTap: () {
-                                      _onInteraction();
-                                      playerNotifier.skipPrevious();
-                                    },
-                                  ),
-                                  TactilePlayerPlayPauseButton(
-                                    isPlaying: playerState.isPlaying,
-                                    isLoading: playerState.isLoadingVideo,
-                                    size: 64,
-                                    onTap: () {
-                                      _onInteraction();
-                                      playerNotifier.togglePlay();
-                                    },
-                                  ),
-                                  TactileIconButton(
-                                    icon: Icons.skip_next,
-                                    size: 32,
-                                    color: Colors.white,
-                                    onTap: () {
-                                      _onInteraction();
-                                      playerNotifier.skipNext();
-                                    },
-                                  ),
-                                  TactileIconButton(
-                                    icon: playerState.repeatMode == RepeatMode.one
-                                        ? Icons.repeat_one
-                                        : Icons.repeat,
-                                    color: playerState.repeatMode != RepeatMode.none
-                                        ? colorScheme.primary
-                                        : Colors.white.withValues(alpha: 0.6),
-                                    onTap: () {
-                                      _onInteraction();
-                                      playerNotifier.cycleRepeat();
-                                    },
-                                  ),
-                                  TactileIconButton(
-                                    icon: Icons.all_inclusive,
-                                    color: settings.autoplayEnabled
-                                        ? colorScheme.primary
-                                        : Colors.white.withValues(alpha: 0.6),
-                                    onTap: () {
-                                      _onInteraction();
-                                      ref.read(settingsProvider.notifier).toggleAutoplay(!settings.autoplayEnabled);
-                                    },
-                                  ),
-                                ],
-                              ),
-                                  // Right: Queue, Fit/Fill, Mini-player, Fullscreen
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        key: const ValueKey('queue_toggle_button'),
-                                        icon: const Icon(
-                                          Icons.queue_music,
-                                          color: Colors.white,
-                                        ),
-                                        tooltip: AppLocalizations.of(context)!.queue,
-                                        onPressed: () {
-                                          _onInteraction();
-                                          widget.onToggleQueue();
-                                        },
-                                      ),
-                                      if (supportsVideoFitMode)
-                                    IconButton(
-                                      icon: Icon(
-                                        settings.videoFitMode == VideoFitMode.fill
-                                            ? Icons.fit_screen
-                                            : Icons.crop_free,
-                                        color: Colors.white,
-                                      ),
-                                      tooltip: settings.videoFitMode == VideoFitMode.fill
-                                          ? 'Fit'
-                                          : 'Fill',
-                                      onPressed: () {
-                                        _onInteraction();
-                                        final next = settings.videoFitMode == VideoFitMode.fit
-                                            ? VideoFitMode.fill
-                                            : VideoFitMode.fit;
-                                        ref.read(settingsProvider.notifier).setVideoFitMode(next);
-                                      },
-                                    ),
-                                  IconButton(
-                                    icon: Icon(
-                                      widget.isFullscreen
-                                          ? Icons.fullscreen_exit
-                                          : Icons.fullscreen,
-                                      color: Colors.white,
-                                    ),
-                                    tooltip: widget.isFullscreen
-                                        ? 'Exit Fullscreen'
-                                        : 'Fullscreen',
-                                    onPressed: () {
-                                      _onInteraction();
-                                      widget.onToggleFullscreen();
-                                    },
-                                  ),
-                                 ],
-                               ),
-                             ],
-                           ),
-                         ],
-                       ),
-                     ),
-                   ),
-                 ),
-               ),
-             ],        // end inner Stack children (auto-hiding controls)
-           ),          // end inner Stack
-         ),            // end IgnorePointer
-       ),              // end ExcludeFocus
-     ),                // end AnimatedOpacity (auto-hiding)
-
-     // ── Permanent back/collapse button ──────────────────────────────────
-     // MUST be the LAST child of the outer Stack so it is painted on top
-     // and hit-tested first. Stack traverses children in reverse order for
-     // hit-testing, so placing it last guarantees clicks reach it even
-     // when the IgnorePointer overlay sits beneath it in z-order.
-     Positioned(
-       top: 0,
-       left: 0,
-       child: SafeArea(
-         bottom: false,
-         child: Padding(
-           padding: const EdgeInsets.only(top: 16, left: 12),
-           child: TactileIconButton(
-             key: const ValueKey('player_back_button_permanent'),
-             icon: Icons.keyboard_arrow_down,
-             size: 32,
-             color: Colors.white,
-             padding: EdgeInsets.zero,
-             onTap: widget.onCollapse,
-           ),
-         ),
-       ),
-     ),
-   ],                  // end outer Stack children
- ),                    // end outer Stack
-),                     // end Focus
-);                     // end Listener / return
+                            ),
+                          ),
+                        ),
+                      ),
+                    ], // end inner Stack children (auto-hiding controls)
+                  ), // end inner Stack
+                ), // end IgnorePointer
+              ), // end ExcludeFocus
+            ), // end AnimatedOpacity (auto-hiding)
+            // ── Permanent back/collapse button ──────────────────────────────────
+            // MUST be the LAST child of the outer Stack so it is painted on top
+            // and hit-tested first. Stack traverses children in reverse order for
+            // hit-testing, so placing it last guarantees clicks reach it even
+            // when the IgnorePointer overlay sits beneath it in z-order.
+            Positioned(
+              top: 0,
+              left: 0,
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 12),
+                  child: TactileIconButton(
+                    key: const ValueKey('player_back_button_permanent'),
+                    icon: Icons.keyboard_arrow_down,
+                    size: 32,
+                    color: Colors.white,
+                    padding: EdgeInsets.zero,
+                    onTap: widget.onCollapse,
+                  ),
+                ),
+              ),
+            ),
+          ], // end outer Stack children
+        ), // end outer Stack
+      ), // end Focus
+    ); // end Listener / return
   }
 }

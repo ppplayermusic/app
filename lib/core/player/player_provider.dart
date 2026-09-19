@@ -74,15 +74,15 @@ class PlayerState {
     return PlayerState(
       playbackQueue: playbackQueue ?? this.playbackQueue,
       isPlaying: isPlaying ?? this.isPlaying,
-      videoId:
-          identical(videoId, _sentinel) ? this.videoId : videoId as String?,
+      videoId: identical(videoId, _sentinel)
+          ? this.videoId
+          : videoId as String?,
       isLoadingVideo: isLoadingVideo ?? this.isLoadingVideo,
-      loadError:
-          clearLoadError
-              ? null
-              : (identical(loadError, _sentinel)
-                  ? this.loadError
-                  : loadError as String?),
+      loadError: clearLoadError
+          ? null
+          : (identical(loadError, _sentinel)
+                ? this.loadError
+                : loadError as String?),
       position: position ?? this.position,
       duration: duration ?? this.duration,
       buffered: buffered ?? this.buffered,
@@ -190,7 +190,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
     ref.listen(settingsProvider, (previous, next) {
       if (previous?.continuePlaybackInPip != next.continuePlaybackInPip) {
         final status = ref.read(playbackStatusProvider).value;
-        final wantPip = next.continuePlaybackInPip && state.isPlaying && (status?.hasVideo ?? false);
+        final wantPip =
+            next.continuePlaybackInPip &&
+            state.isPlaying &&
+            (status?.hasVideo ?? false);
         PipHandler.setPipEnabled(
           wantPip,
           aspectRatio: status?.videoAspectRatio ?? (16 / 9),
@@ -237,7 +240,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
     // Let's just pass the current aspect ratio.
     if (wantPip != _lastPipEnabled) {
       _lastPipEnabled = wantPip;
-      PipHandler.setPipEnabled(wantPip, aspectRatio: status.videoAspectRatio ?? (16 / 9));
+      PipHandler.setPipEnabled(
+        wantPip,
+        aspectRatio: status.videoAspectRatio ?? (16 / 9),
+      );
     }
 
     // During 'preparing' the engine position/duration are always Duration.zero
@@ -269,7 +275,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
     // Restore complete: the IFrame fired the cued event and the engine is now
     // paused. Clear the restore guard so normal play commands are honoured.
     if (_restoringState && status.state == PlaybackState.paused) {
-      debugPrint('PlayerNotifier: restore complete — guard cleared (engine paused)');
+      debugPrint(
+        'PlayerNotifier: restore complete — guard cleared (engine paused)',
+      );
       _restoringState = false;
       _restoreTimeout?.cancel();
     }
@@ -393,13 +401,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
         final queue = PlaybackQueue.fromJson(jsonDecode(queueJson));
         final position = Duration(milliseconds: posMs ?? 0);
         final durMs = box.get('durationMs');
-        final duration =
-            durMs != null && durMs > 0
-                ? Duration(milliseconds: durMs)
-                : (queue.currentTrack?.durationMs != null &&
-                        queue.currentTrack!.durationMs! > 0)
-                    ? Duration(milliseconds: queue.currentTrack!.durationMs!)
-                    : Duration.zero;
+        final duration = durMs != null && durMs > 0
+            ? Duration(milliseconds: durMs)
+            : (queue.currentTrack?.durationMs != null &&
+                  queue.currentTrack!.durationMs! > 0)
+            ? Duration(milliseconds: queue.currentTrack!.durationMs!)
+            : Duration.zero;
 
         state = state.copyWith(
           playbackQueue: queue,
@@ -418,7 +425,6 @@ class PlayerNotifier extends Notifier<PlayerState> {
     }
   }
 
-
   /// Cues the restored track at [savedPosition] without starting audio.
   /// Runs after startup; sets _restoringState=false when done so
   /// external play commands from macOS are honoured again.
@@ -435,7 +441,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
     try {
       final service = ref.read(playbackServiceProvider);
       Track resolvedTrack = track;
-      
+
       if (!track.isLocal && !track.isNetworkStream) {
         final candidates = await service.resolveCandidates(track, null);
         if (_disposed || myGen != _playbackGeneration) {
@@ -450,7 +456,10 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
         final candidate = candidates.first;
         resolvedTrack = track.copyWith(youtubeVideoId: candidate.videoId);
-        await service.cacheYoutubeId(resolvedTrack.spotifyId, candidate.videoId);
+        await service.cacheYoutubeId(
+          resolvedTrack.spotifyId,
+          candidate.videoId,
+        );
         if (_disposed || myGen != _playbackGeneration) {
           _restoringState = false;
           return;
@@ -520,14 +529,11 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     final timestamp = DateTime.now().microsecondsSinceEpoch;
 
-    final q =
-        (queue ?? [track]).asMap().entries.map((e) {
-          final t = e.value;
-          if (t.queueItemId != null) return t;
-          return t.copyWith(
-            queueItemId: '${t.spotifyId}_${timestamp}_${e.key}',
-          );
-        }).toList();
+    final q = (queue ?? [track]).asMap().entries.map((e) {
+      final t = e.value;
+      if (t.queueItemId != null) return t;
+      return t.copyWith(queueItemId: '${t.spotifyId}_${timestamp}_${e.key}');
+    }).toList();
 
     int idx = 0;
     Track targetTrack;
@@ -535,15 +541,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
       idx = queueIndex;
       targetTrack = q[idx];
     } else {
-      targetTrack = q.firstWhere(
-        (t) {
-          if (track.queueItemId != null && t.queueItemId != null) {
-            return t.queueItemId == track.queueItemId;
-          }
-          return t.spotifyId == track.spotifyId && t.name == track.name;
-        },
-        orElse: () => q.first,
-      );
+      targetTrack = q.firstWhere((t) {
+        if (track.queueItemId != null && t.queueItemId != null) {
+          return t.queueItemId == track.queueItemId;
+        }
+        return t.spotifyId == track.spotifyId && t.name == track.name;
+      }, orElse: () => q.first);
       idx = q.indexOf(targetTrack);
     }
 
@@ -569,22 +572,22 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     try {
       final service = ref.read(playbackServiceProvider);
-      
+
       if (targetTrack.isLocal || targetTrack.isNetworkStream) {
         if (_disposed || myGen != _playbackGeneration) return;
         await _controller.stop();
         if (_disposed || myGen != _playbackGeneration) return;
-        
+
         state = state.copyWith(
           isLoadingVideo: true,
           subtitleUri: null, // Clear subtitles when a new track plays
         );
-        
+
         await _controller.play(
           targetTrack.toPlaybackTrack(),
           startAt: position ?? Duration.zero,
         );
-        
+
         if (_disposed || myGen != _playbackGeneration) return;
         _controller.setVolume(state.volume);
         if (_controller.supportsSpeed) {
@@ -681,10 +684,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
     String? contextArtistId,
   }) async {
     if (tracks.isEmpty) return;
-    final track =
-        (initialIndex >= 0 && initialIndex < tracks.length)
-            ? tracks[initialIndex]
-            : tracks.first;
+    final track = (initialIndex >= 0 && initialIndex < tracks.length)
+        ? tracks[initialIndex]
+        : tracks.first;
     await playTrack(track, queue: tracks, contextArtistId: contextArtistId);
   }
 
@@ -887,9 +889,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
   }
 
   Future<void> cycleRepeat() async {
-    final nextMode =
-        RepeatMode.values[(state.repeatMode.index + 1) %
-            RepeatMode.values.length];
+    final nextMode = RepeatMode
+        .values[(state.repeatMode.index + 1) % RepeatMode.values.length];
     state = state.copyWith(
       playbackQueue: state.playbackQueue.copyWith(repeatMode: nextMode),
     );
@@ -920,13 +921,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
     final newValue = !track.isFavorite;
     await ref.read(playbackServiceProvider).toggleFavorite(track, newValue);
 
-    final newQueue =
-        state.queue.map((t) {
-          if (t.spotifyId == track.spotifyId) {
-            return t.copyWith(isFavorite: newValue);
-          }
-          return t;
-        }).toList();
+    final newQueue = state.queue.map((t) {
+      if (t.spotifyId == track.spotifyId) {
+        return t.copyWith(isFavorite: newValue);
+      }
+      return t;
+    }).toList();
 
     state = state.copyWith(
       playbackQueue: state.playbackQueue.copyWith(tracks: newQueue),
@@ -948,7 +948,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     final currentTrack = queue.currentTrack;
     if (currentTrack == null) return;
-    
+
     if (currentTrack.isLocal || currentTrack.isNetworkStream) {
       return; // Autoplay feature requires online context
     }
@@ -960,10 +960,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
       String? seedArtistId = queue.contextArtistId;
 
       if (seedArtistId == null) {
-        final contextTracks =
-            queue.tracks
-                .where((t) => t.queueOrigin != QueueItemOrigin.autoplay)
-                .toList();
+        final contextTracks = queue.tracks
+            .where((t) => t.queueOrigin != QueueItemOrigin.autoplay)
+            .toList();
         if (contextTracks.length >= 2) {
           final artistCounts = <String, int>{};
           for (final t in contextTracks) {
@@ -983,27 +982,25 @@ class PlayerNotifier extends Notifier<PlayerState> {
         }
       }
 
-      final cacheResult =
-          await spotifyRepo
-              .watchRecommendations(
-                seedArtistId: seedArtistId,
-                seedTrackId: currentTrack.spotifyId,
-                limit: 30,
-              )
-              .first;
+      final cacheResult = await spotifyRepo
+          .watchRecommendations(
+            seedArtistId: seedArtistId,
+            seedTrackId: currentTrack.spotifyId,
+            limit: 30,
+          )
+          .first;
       final candidates = cacheResult.data;
 
       final queueIds = queue.tracks.map((t) => t.spotifyId).toSet();
-      final newTracks =
-          candidates
-              .where((t) {
-                if (queueIds.contains(t.spotifyId)) return false;
-                if (t.spotifyId == currentTrack.spotifyId) return false;
-                if (_autoplaySeenTrackIds.contains(t.spotifyId)) return false;
-                return true;
-              })
-              .map((t) => t.copyWith(queueOrigin: QueueItemOrigin.autoplay))
-              .toList();
+      final newTracks = candidates
+          .where((t) {
+            if (queueIds.contains(t.spotifyId)) return false;
+            if (t.spotifyId == currentTrack.spotifyId) return false;
+            if (_autoplaySeenTrackIds.contains(t.spotifyId)) return false;
+            return true;
+          })
+          .map((t) => t.copyWith(queueOrigin: QueueItemOrigin.autoplay))
+          .toList();
 
       if (newTracks.isNotEmpty) {
         _autoplaySeenTrackIds.addAll(newTracks.map((t) => t.spotifyId));

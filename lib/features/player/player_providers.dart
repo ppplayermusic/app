@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 class IsFullscreen extends Notifier<bool> {
   @override
   bool build() => false;
@@ -15,4 +14,6 @@ class IsFullscreen extends Notifier<bool> {
   }
 }
 
-final isFullscreenProvider = NotifierProvider<IsFullscreen, bool>(IsFullscreen.new);
+final isFullscreenProvider = NotifierProvider<IsFullscreen, bool>(
+  IsFullscreen.new,
+);

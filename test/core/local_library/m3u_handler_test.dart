@@ -12,14 +12,17 @@ void main() {
 /absolute/path/to/song.mp3
 relative/path/to/song2.mp3
 ''';
-      
-      final entries = await M3uHandler.parse(utf8.encode(content), sourceLocation: '/my/music/playlist.m3u');
-      
+
+      final entries = await M3uHandler.parse(
+        utf8.encode(content),
+        sourceLocation: '/my/music/playlist.m3u',
+      );
+
       expect(entries.length, 2);
       expect(entries[0].pathOrUri, '/absolute/path/to/song.mp3');
       expect(entries[0].title, 'Artist - Song');
       expect(entries[0].durationSeconds, 233);
-      
+
       expect(entries[1].pathOrUri, '/my/music/relative/path/to/song2.mp3');
       expect(entries[1].title, isNull);
     });
@@ -27,9 +30,12 @@ relative/path/to/song2.mp3
     test('handles BOM and different line endings', () async {
       // simulate BOM + CRLF
       final content = '\uFEFF#EXTM3U\r\n#EXTINF:-1,Unknown\r\nfile.mp3\r\n';
-      
-      final entries = await M3uHandler.parse(utf8.encode(content), sourceLocation: '/dir/playlist.m3u');
-      
+
+      final entries = await M3uHandler.parse(
+        utf8.encode(content),
+        sourceLocation: '/dir/playlist.m3u',
+      );
+
       expect(entries.length, 1);
       expect(entries[0].pathOrUri, '/dir/file.mp3');
       expect(entries[0].title, 'Unknown');
@@ -42,9 +48,12 @@ http://example.com/stream.mp3
 https://example.com/playlist.m3u8
 file.mp3
 ''';
-      
-      final entries = await M3uHandler.parse(utf8.encode(content), sourceLocation: '/dir/playlist.m3u');
-      
+
+      final entries = await M3uHandler.parse(
+        utf8.encode(content),
+        sourceLocation: '/dir/playlist.m3u',
+      );
+
       expect(entries.length, 1);
       expect(entries[0].pathOrUri, '/dir/file.mp3');
     });
@@ -75,13 +84,19 @@ file.mp3
         ),
       ];
 
-      final output = M3uHandler.generate(queue, exportDestinationDir: '/my/music');
-      
+      final output = M3uHandler.generate(
+        queue,
+        exportDestinationDir: '/my/music',
+      );
+
       expect(output.content, contains('#EXTM3U'));
       expect(output.content, contains('#EXTINF:120, - Song 1'));
       expect(output.content, contains('song1.mp3'));
       expect(output.content, contains('folder/song2.mp3'));
-      expect(output.content, contains('/other/path/song3.mp3')); // Falls back to absolute
+      expect(
+        output.content,
+        contains('/other/path/song3.mp3'),
+      ); // Falls back to absolute
       expect(output.skippedCount, 0);
     });
   });

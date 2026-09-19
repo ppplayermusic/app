@@ -652,6 +652,9 @@ class AppLocalizationsDa extends AppLocalizations {
   String get filterStations => 'Stationer';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Lokal musik';
 
   @override

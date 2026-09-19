@@ -38,12 +38,14 @@ class ArtistsLinks extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => LocalArtistDetailScreen(artistName: names[i]),
+                        builder: (_) =>
+                            LocalArtistDetailScreen(artistName: names[i]),
                       ),
                     );
                   } else {
-                    final id =
-                        i < ids.length ? ids[i] : (ids.isNotEmpty ? ids[0] : '');
+                    final id = i < ids.length
+                        ? ids[i]
+                        : (ids.isNotEmpty ? ids[0] : '');
                     if (id.isNotEmpty) {
                       context.push('/artist/$id');
                     }

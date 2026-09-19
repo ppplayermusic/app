@@ -653,6 +653,9 @@ class AppLocalizationsMs extends AppLocalizations {
   String get filterStations => 'Stesen';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Muzik Tempatan';
 
   @override

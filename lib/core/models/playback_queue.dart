@@ -45,8 +45,8 @@ class PlaybackQueue {
 
   Track? get currentTrack =>
       tracks.isNotEmpty && currentIndex >= 0 && currentIndex < tracks.length
-          ? tracks[currentIndex]
-          : null;
+      ? tracks[currentIndex]
+      : null;
 
   PlaybackQueue copyWith({
     List<Track>? tracks,

@@ -56,10 +56,9 @@ class YoutubeResolver {
     }
 
     // Harden candidates: YouTube IDs must be exactly 11 chars
-    final validCandidates =
-        rawCandidates
-            .where((c) => c.videoId.length == 11 && !c.videoId.contains('http'))
-            .toList();
+    final validCandidates = rawCandidates
+        .where((c) => c.videoId.length == 11 && !c.videoId.contains('http'))
+        .toList();
 
     // Sort by confidence score descending
     validCandidates.sort(
@@ -235,11 +234,10 @@ class YoutubeResolver {
                 )['itemSectionRenderer']['contents']
                 as List;
 
-        final videos =
-            itemSection
-                .where((c) => c.containsKey('videoRenderer'))
-                .take(15)
-                .toList();
+        final videos = itemSection
+            .where((c) => c.containsKey('videoRenderer'))
+            .take(15)
+            .toList();
 
         return videos.map<ResolvedVideoCandidate>((v) {
           final vr = v['videoRenderer'];

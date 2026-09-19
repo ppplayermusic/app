@@ -169,8 +169,7 @@ class ImportRoots extends Table {
   DateTimeColumn get addedAt => dateTime()();
   // Persisted scope — never inferred from file extensions alone.
   // Defaults to 'audio' for rows created before v11 (backward compat).
-  TextColumn get mediaScope =>
-      text().withDefault(const Constant('audio'))();
+  TextColumn get mediaScope => text().withDefault(const Constant('audio'))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -274,12 +273,18 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(importRoots);
       }
       if (from < 9) {
-        await m.alterTable(TableMigration(localFiles, newColumns: [localFiles.addedAt]));
-        await customStatement('UPDATE local_files SET added_at = last_scanned_at');
+        await m.alterTable(
+          TableMigration(localFiles, newColumns: [localFiles.addedAt]),
+        );
+        await customStatement(
+          'UPDATE local_files SET added_at = last_scanned_at',
+        );
       }
       if (from < 10) {
         // Drop the primary key constraint on playlist_tracks by recreating it
-        await m.alterTable(TableMigration(playlistTracks, newColumns: [playlistTracks.id]));
+        await m.alterTable(
+          TableMigration(playlistTracks, newColumns: [playlistTracks.id]),
+        );
       }
       if (from < 11) {
         // Add isVideo to local_files.
@@ -310,7 +315,10 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<model.Track>> getFavoriteAppTracks() async {
     final query = select(tracks).join([
-      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+      leftOuterJoin(
+        localFiles,
+        localFiles.libraryId.equalsExp(tracks.spotifyId),
+      ),
     ])..where(tracks.isFavorite.equals(true));
     final rows = await query.get();
     return rows.map(_mapTrackWithLocal).toList();
@@ -324,12 +332,16 @@ class AppDatabase extends _$AppDatabase {
           .get();
 
   Future<List<model.Track>> getRecentlyPlayedAppTracks({int limit = 50}) async {
-    final query = select(tracks).join([
-      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
-    ])
-      ..where(tracks.lastPlayedAt.isNotNull())
-      ..orderBy([OrderingTerm.desc(tracks.lastPlayedAt)])
-      ..limit(limit);
+    final query =
+        select(tracks).join([
+            leftOuterJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(tracks.lastPlayedAt.isNotNull())
+          ..orderBy([OrderingTerm.desc(tracks.lastPlayedAt)])
+          ..limit(limit);
     final rows = await query.get();
     return rows.map(_mapTrackWithLocal).toList();
   }
@@ -344,7 +356,7 @@ class AppDatabase extends _$AppDatabase {
   model.Track _mapTrackWithLocal(TypedResult row) {
     final t = row.readTable(tracks);
     final lf = row.readTableOrNull(localFiles);
-    
+
     if (lf != null) {
       return model.Track(
         spotifyId: t.spotifyId,
@@ -358,7 +370,7 @@ class AppDatabase extends _$AppDatabase {
         youtubeVideoId: t.youtubeVideoId,
         playCount: t.playCount,
         isFavorite: t.isFavorite,
-        
+
         sourceType: model.TrackSourceType.local,
         localFilePath: lf.locator,
         localArtworkPath: lf.artworkPath,
@@ -368,18 +380,22 @@ class AppDatabase extends _$AppDatabase {
         isVideoFile: lf.isVideo,
       );
     }
-    
+
     return model.Track.fromDb(t);
   }
 
   Stream<List<model.Track>> watchRecentlyPlayedAppTracks({int limit = 50}) {
-    final query = select(tracks).join([
-      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
-    ])
-      ..where(tracks.lastPlayedAt.isNotNull())
-      ..orderBy([OrderingTerm.desc(tracks.lastPlayedAt)])
-      ..limit(limit);
-      
+    final query =
+        select(tracks).join([
+            leftOuterJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(tracks.lastPlayedAt.isNotNull())
+          ..orderBy([OrderingTerm.desc(tracks.lastPlayedAt)])
+          ..limit(limit);
+
     return query.watch().map((rows) => rows.map(_mapTrackWithLocal).toList());
   }
 
@@ -390,19 +406,19 @@ class AppDatabase extends _$AppDatabase {
       into(tracks).insertOnConflictUpdate(entry);
 
   Future<void> cacheYoutubeId(String spotifyId, String? videoId) =>
-      (update(tracks)..where(
-        (t) => t.spotifyId.equals(spotifyId),
-      )).write(TracksCompanion(youtubeVideoId: Value(videoId)));
+      (update(tracks)..where((t) => t.spotifyId.equals(spotifyId))).write(
+        TracksCompanion(youtubeVideoId: Value(videoId)),
+      );
 
-  Future<void> toggleFavorite(String spotifyId, bool value) => (update(tracks)
-    ..where(
-      (t) => t.spotifyId.equals(spotifyId),
-    )).write(TracksCompanion(isFavorite: Value(value)));
+  Future<void> toggleFavorite(String spotifyId, bool value) =>
+      (update(tracks)..where((t) => t.spotifyId.equals(spotifyId))).write(
+        TracksCompanion(isFavorite: Value(value)),
+      );
 
   Stream<bool> watchTrackFavorite(String spotifyId) {
-    return (select(tracks)..where(
-      (t) => t.spotifyId.equals(spotifyId),
-    )).watchSingleOrNull().map((t) => t?.isFavorite ?? false);
+    return (select(tracks)..where((t) => t.spotifyId.equals(spotifyId)))
+        .watchSingleOrNull()
+        .map((t) => t?.isFavorite ?? false);
   }
 
   Stream<List<TrackEntry>> watchFavorites() {
@@ -411,9 +427,12 @@ class AppDatabase extends _$AppDatabase {
 
   Stream<List<model.Track>> watchFavoriteAppTracks() {
     final query = select(tracks).join([
-      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+      leftOuterJoin(
+        localFiles,
+        localFiles.libraryId.equalsExp(tracks.spotifyId),
+      ),
     ])..where(tracks.isFavorite.equals(true));
-    
+
     return query.watch().map((rows) => rows.map(_mapTrackWithLocal).toList());
   }
 
@@ -448,9 +467,9 @@ class AppDatabase extends _$AppDatabase {
     await into(artists).insertOnConflictUpdate(companion);
   }
 
-  Stream<Artist?> watchArtist(String spotifyId) =>
-      (select(artists)
-        ..where((a) => a.spotifyId.equals(spotifyId))).watchSingleOrNull();
+  Stream<Artist?> watchArtist(String spotifyId) => (select(
+    artists,
+  )..where((a) => a.spotifyId.equals(spotifyId))).watchSingleOrNull();
 
   Future<List<Artist>> getFollowedArtists() =>
       (select(artists)..where((a) => a.isFollowed.equals(true))).get();
@@ -489,8 +508,9 @@ class AppDatabase extends _$AppDatabase {
 
   Stream<Radio?> watchRadio(String seedId, String seedType) =>
       (select(radios)..where(
-        (r) => r.seedId.equals(seedId) & r.seedType.equals(seedType),
-      )).watchSingleOrNull();
+            (r) => r.seedId.equals(seedId) & r.seedType.equals(seedType),
+          ))
+          .watchSingleOrNull();
 
   Future<List<Radio>> getFollowedRadios() =>
       (select(radios)..where((r) => r.isFollowed.equals(true))).get();
@@ -532,9 +552,9 @@ class AppDatabase extends _$AppDatabase {
     await into(albums).insertOnConflictUpdate(companion);
   }
 
-  Stream<Album?> watchAlbum(String spotifyId) =>
-      (select(albums)
-        ..where((a) => a.spotifyId.equals(spotifyId))).watchSingleOrNull();
+  Stream<Album?> watchAlbum(String spotifyId) => (select(
+    albums,
+  )..where((a) => a.spotifyId.equals(spotifyId))).watchSingleOrNull();
 
   Future<List<Album>> getLikedAlbums() =>
       (select(albums)..where((a) => a.isLiked.equals(true))).get();
@@ -605,7 +625,10 @@ class AppDatabase extends _$AppDatabase {
 
   Future<model.Track?> getAppTrack(String id) async {
     final query = select(tracks).join([
-      leftOuterJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+      leftOuterJoin(
+        localFiles,
+        localFiles.libraryId.equalsExp(tracks.spotifyId),
+      ),
     ])..where(tracks.spotifyId.equals(id));
     final row = await query.getSingleOrNull();
     return row == null ? null : _mapTrackWithLocal(row);
@@ -613,7 +636,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<model.Track>> getLocalAppTracks() async {
     final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId)),
     ]);
     final rows = await query.get();
     return rows.map(_mapTrackWithLocal).toList();
@@ -623,7 +646,7 @@ class AppDatabase extends _$AppDatabase {
   /// badge on the music card (count includes both audio and video).
   Stream<List<model.Track>> watchLocalAppTracks() {
     final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId)),
     ]);
     return query.watch().map((rows) => rows.map(_mapTrackWithLocal).toList());
   }
@@ -632,7 +655,7 @@ class AppDatabase extends _$AppDatabase {
   /// views: songs, albums, artists, genres, folders.
   Stream<List<model.Track>> watchLocalAudioTracks() {
     final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId)),
     ])..where(localFiles.isVideo.equals(false));
     return query.watch().map((rows) => rows.map(_mapTrackWithLocal).toList());
   }
@@ -640,7 +663,7 @@ class AppDatabase extends _$AppDatabase {
   /// Confirmed video local tracks (is_video = true). Drives the Videos library.
   Stream<List<model.Track>> watchLocalVideoTracks() {
     final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
+      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId)),
     ])..where(localFiles.isVideo.equals(true));
     return query.watch().map((rows) => rows.map(_mapTrackWithLocal).toList());
   }
@@ -648,56 +671,75 @@ class AppDatabase extends _$AppDatabase {
   /// Total count of local video tracks.
   Stream<int> watchLocalVideoTracksCount() {
     final countExp = tracks.spotifyId.count();
-    final query = selectOnly(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
-    ])
-      ..addColumns([countExp])
-      ..where(localFiles.isVideo.equals(true));
+    final query =
+        selectOnly(tracks).join([
+            innerJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..addColumns([countExp])
+          ..where(localFiles.isVideo.equals(true));
     return query.watchSingle().map((row) => row.read(countExp) ?? 0);
   }
 
-
   /// Audio-only tracks in a given album (is_video = false).
   Future<List<model.Track>> getAlbumAppTracks(String albumGroupKey) async {
-    final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
-    ])
-      ..where(localFiles.albumGroupKey.equals(albumGroupKey))
-      ..where(localFiles.isVideo.equals(false));
+    final query =
+        select(tracks).join([
+            innerJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(localFiles.albumGroupKey.equals(albumGroupKey))
+          ..where(localFiles.isVideo.equals(false));
     final rows = await query.get();
-    return rows.map(_mapTrackWithLocal).toList()..sort((a, b) => a.name.compareTo(b.name));
+    return rows.map(_mapTrackWithLocal).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 
   /// Audio-only tracks by a given artist (is_video = false).
   Future<List<model.Track>> getArtistAppTracks(String artistName) async {
-    final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
-    ])
-      ..where(tracks.artistName.equals(artistName))
-      ..where(localFiles.isVideo.equals(false));
+    final query =
+        select(tracks).join([
+            innerJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(tracks.artistName.equals(artistName))
+          ..where(localFiles.isVideo.equals(false));
     final rows = await query.get();
-    return rows.map(_mapTrackWithLocal).toList()..sort((a, b) => a.name.compareTo(b.name));
+    return rows.map(_mapTrackWithLocal).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 
   /// Audio-only tracks in a given import-root folder (is_video = false).
   Future<List<model.Track>> getFolderAppTracks(String rootLocator) async {
-    final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
-    ])
-      ..where(localFiles.importRootLocator.equals(rootLocator))
-      ..where(localFiles.isVideo.equals(false));
+    final query =
+        select(tracks).join([
+            innerJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(localFiles.importRootLocator.equals(rootLocator))
+          ..where(localFiles.isVideo.equals(false));
     final rows = await query.get();
-    return rows.map(_mapTrackWithLocal).toList()..sort((a, b) => a.name.compareTo(b.name));
+    return rows.map(_mapTrackWithLocal).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 
   /// Audio-only albums (is_video = false).
   Stream<List<LocalAlbum>> watchLocalAlbums() {
-    final query = select(localFiles).join([
-      innerJoin(tracks, tracks.spotifyId.equalsExp(localFiles.libraryId))
-    ])
-      ..addColumns([localFiles.albumGroupKey.count()])
-      ..where(localFiles.isVideo.equals(false))
-      ..groupBy([localFiles.albumGroupKey]);
+    final query =
+        select(localFiles).join([
+            innerJoin(tracks, tracks.spotifyId.equalsExp(localFiles.libraryId)),
+          ])
+          ..addColumns([localFiles.albumGroupKey.count()])
+          ..where(localFiles.isVideo.equals(false))
+          ..groupBy([localFiles.albumGroupKey]);
 
     return query.watch().map((rows) {
       return rows.map((row) {
@@ -718,12 +760,16 @@ class AppDatabase extends _$AppDatabase {
 
   /// Audio-only artists (is_video = false).
   Stream<List<LocalArtist>> watchLocalArtists() {
-    final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
-    ])
-      ..addColumns([tracks.artistName.count()])
-      ..where(localFiles.isVideo.equals(false))
-      ..groupBy([tracks.artistName]);
+    final query =
+        select(tracks).join([
+            innerJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..addColumns([tracks.artistName.count()])
+          ..where(localFiles.isVideo.equals(false))
+          ..groupBy([tracks.artistName]);
 
     return query.watch().map((rows) {
       return rows.map((row) {
@@ -749,22 +795,31 @@ class AppDatabase extends _$AppDatabase {
       ..groupBy([localFiles.genre]);
 
     return query.watch().map((rows) {
-      return rows.map((row) => LocalGenre(
-        name: row.read(localFiles.genre)!,
-        trackCount: row.read(localFiles.genre.count()) ?? 0,
-      )).toList();
+      return rows
+          .map(
+            (row) => LocalGenre(
+              name: row.read(localFiles.genre)!,
+              trackCount: row.read(localFiles.genre.count()) ?? 0,
+            ),
+          )
+          .toList();
     });
   }
 
   /// Audio-only genre tracks (is_video = false).
   Future<List<model.Track>> getGenreAppTracks(String genre) async {
-    final query = select(tracks).join([
-      innerJoin(localFiles, localFiles.libraryId.equalsExp(tracks.spotifyId))
-    ])
-      ..where(localFiles.genre.equals(genre))
-      ..where(localFiles.isVideo.equals(false));
+    final query =
+        select(tracks).join([
+            innerJoin(
+              localFiles,
+              localFiles.libraryId.equalsExp(tracks.spotifyId),
+            ),
+          ])
+          ..where(localFiles.genre.equals(genre))
+          ..where(localFiles.isVideo.equals(false));
     final rows = await query.get();
-    return rows.map(_mapTrackWithLocal).toList()..sort((a, b) => a.name.compareTo(b.name));
+    return rows.map(_mapTrackWithLocal).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 
   /// Audio-only folders: roots that contain at least one audio track
@@ -779,21 +834,17 @@ class AppDatabase extends _$AppDatabase {
       return rows.map((row) {
         final locator = row.read(localFiles.importRootLocator);
         if (locator == null) {
-          return const LocalFolder(
-            path: 'imported',
-            name: 'Imported Files',
-          );
+          return const LocalFolder(path: 'imported', name: 'Imported Files');
         }
-        // Extract the last part of the path as the name. 
-        // We will do a full folder tree in the UI provider, 
+        // Extract the last part of the path as the name.
+        // We will do a full folder tree in the UI provider,
         // this is just the root folders for now.
         final uri = Uri.tryParse(locator) ?? Uri.file(locator);
-        final name = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : locator;
-        
-        return LocalFolder(
-          path: locator,
-          name: name,
-        );
+        final name = uri.pathSegments.isNotEmpty
+            ? uri.pathSegments.last
+            : locator;
+
+        return LocalFolder(path: locator, name: name);
       }).toList();
     });
   }
@@ -858,9 +909,9 @@ class AppDatabase extends _$AppDatabase {
   }) async {
     if (value) {
       // Like: create/add to playlists table if not exists
-      final existing =
-          await (select(playlists)
-            ..where((p) => p.spotifyId.equals(spotifyId))).getSingleOrNull();
+      final existing = await (select(
+        playlists,
+      )..where((p) => p.spotifyId.equals(spotifyId))).getSingleOrNull();
       if (existing == null) {
         await createPlaylist(
           name ?? 'Unnamed Playlist',
@@ -870,29 +921,30 @@ class AppDatabase extends _$AppDatabase {
       }
     } else {
       // Unlike: remove from playlists table
-      await (delete(playlists)
-        ..where((p) => p.spotifyId.equals(spotifyId))).go();
+      await (delete(
+        playlists,
+      )..where((p) => p.spotifyId.equals(spotifyId))).go();
     }
   }
 
   Stream<bool> watchPlaylistIsFavorite(String spotifyId) {
-    return (select(playlists)..where(
-      (p) => p.spotifyId.equals(spotifyId),
-    )).watch().map((list) => list.isNotEmpty);
+    return (select(playlists)..where((p) => p.spotifyId.equals(spotifyId)))
+        .watch()
+        .map((list) => list.isNotEmpty);
   }
 
   Future<void> deletePlaylist(int id) async {
     await (delete(playlists)..where((p) => p.id.equals(id))).go();
-    await (delete(playlistTracks)
-      ..where((pt) => pt.playlistId.equals(id))).go();
+    await (delete(
+      playlistTracks,
+    )..where((pt) => pt.playlistId.equals(id))).go();
   }
 
   Future<void> addToPlaylist(int playlistId, String spotifyId) async {
     // Get current max position
-    final maxPosQuery =
-        selectOnly(playlistTracks)
-          ..addColumns([playlistTracks.position.max()])
-          ..where(playlistTracks.playlistId.equals(playlistId));
+    final maxPosQuery = selectOnly(playlistTracks)
+      ..addColumns([playlistTracks.position.max()])
+      ..where(playlistTracks.playlistId.equals(playlistId));
     final maxPos =
         await maxPosQuery
             .map((row) => row.read(playlistTracks.position.max()))
@@ -920,8 +972,9 @@ class AppDatabase extends _$AppDatabase {
       }
 
       // 2. Clear existing links for this playlist
-      await (delete(playlistTracks)
-        ..where((pt) => pt.playlistId.equals(playlistId))).go();
+      await (delete(
+        playlistTracks,
+      )..where((pt) => pt.playlistId.equals(playlistId))).go();
 
       // 3. Rebuild the playlist structure with correct ordering
       for (int i = 0; i < trackCompanions.length; i++) {
@@ -936,14 +989,12 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
-  Future<void> reorderTracks(
-    List<int> entryIdsInOrder,
-  ) async {
+  Future<void> reorderTracks(List<int> entryIdsInOrder) async {
     await transaction(() async {
       for (int i = 0; i < entryIdsInOrder.length; i++) {
-        await (update(playlistTracks)..where(
-          (pt) => pt.id.equals(entryIdsInOrder[i]),
-        )).write(PlaylistTracksCompanion(position: Value(i)));
+        await (update(playlistTracks)
+              ..where((pt) => pt.id.equals(entryIdsInOrder[i])))
+            .write(PlaylistTracksCompanion(position: Value(i)));
       }
     });
   }
@@ -954,76 +1005,76 @@ class AppDatabase extends _$AppDatabase {
 
   // --- LocalFiles queries ---
 
-  Future<LocalFile?> getLocalFile(String libraryId) =>
-      (select(localFiles)
-        ..where((f) => f.libraryId.equals(libraryId))).getSingleOrNull();
+  Future<LocalFile?> getLocalFile(String libraryId) => (select(
+    localFiles,
+  )..where((f) => f.libraryId.equals(libraryId))).getSingleOrNull();
 
   Future<List<LocalFile>> getAllLocalFiles() => select(localFiles).get();
 
   Stream<List<LocalFile>> watchAllLocalFiles() => select(localFiles).watch();
 
-  Future<LocalFile?> getLocalFileByDeduplicationKey(String key) =>
-      (select(localFiles)
-        ..where((f) => f.deduplicationKey.equals(key))).getSingleOrNull();
+  Future<LocalFile?> getLocalFileByDeduplicationKey(String key) => (select(
+    localFiles,
+  )..where((f) => f.deduplicationKey.equals(key))).getSingleOrNull();
 
   /// Inserts a new local file record, or updates metadata fields on conflict.
   /// [addedAt] is intentionally excluded from the UPDATE so that re-scanning
   /// a file preserves the original import timestamp used for date-added sorting.
   /// [isVideo] is included: a re-probe during rescan may promote a file from
   /// audio to video (e.g. if it was imported before probing was implemented).
-  Future<void> upsertLocalFile(LocalFilesCompanion entry) =>
-      into(localFiles).insert(
-        entry,
-        onConflict: DoUpdate(
-          (_) => LocalFilesCompanion(
-            mechanism: entry.mechanism,
-            locator: entry.locator,
-            displayPath: entry.displayPath,
-            deduplicationKey: entry.deduplicationKey,
-            availabilityStatus: entry.availabilityStatus,
-            lastScannedAt: entry.lastScannedAt,
-            importRootLocator: entry.importRootLocator,
-            albumArtist: entry.albumArtist,
-            albumGroupKey: entry.albumGroupKey,
-            trackNumber: entry.trackNumber,
-            trackTotal: entry.trackTotal,
-            discNumber: entry.discNumber,
-            discTotal: entry.discTotal,
-            genre: entry.genre,
-            releaseYear: entry.releaseYear,
-            artworkPath: entry.artworkPath,
-            artworkMimeType: entry.artworkMimeType,
-            isVideo: entry.isVideo,
-            // addedAt intentionally absent — preserves the original import timestamp
-          ),
-          target: [localFiles.libraryId],
-        ),
-      );
+  Future<void> upsertLocalFile(
+    LocalFilesCompanion entry,
+  ) => into(localFiles).insert(
+    entry,
+    onConflict: DoUpdate(
+      (_) => LocalFilesCompanion(
+        mechanism: entry.mechanism,
+        locator: entry.locator,
+        displayPath: entry.displayPath,
+        deduplicationKey: entry.deduplicationKey,
+        availabilityStatus: entry.availabilityStatus,
+        lastScannedAt: entry.lastScannedAt,
+        importRootLocator: entry.importRootLocator,
+        albumArtist: entry.albumArtist,
+        albumGroupKey: entry.albumGroupKey,
+        trackNumber: entry.trackNumber,
+        trackTotal: entry.trackTotal,
+        discNumber: entry.discNumber,
+        discTotal: entry.discTotal,
+        genre: entry.genre,
+        releaseYear: entry.releaseYear,
+        artworkPath: entry.artworkPath,
+        artworkMimeType: entry.artworkMimeType,
+        isVideo: entry.isVideo,
+        // addedAt intentionally absent — preserves the original import timestamp
+      ),
+      target: [localFiles.libraryId],
+    ),
+  );
 
   Future<void> updateLocalFileStatus(
     String libraryId,
     String status,
     DateTime scannedAt,
-  ) =>
-      (update(localFiles)
-        ..where((f) => f.libraryId.equals(libraryId))).write(
-        LocalFilesCompanion(
-          availabilityStatus: Value(status),
-          lastScannedAt: Value(scannedAt),
-        ),
-      );
+  ) => (update(localFiles)..where((f) => f.libraryId.equals(libraryId))).write(
+    LocalFilesCompanion(
+      availabilityStatus: Value(status),
+      lastScannedAt: Value(scannedAt),
+    ),
+  );
 
   Future<void> deleteLocalFile(String libraryId) async {
-    await (delete(localFiles)
-      ..where((f) => f.libraryId.equals(libraryId))).go();
+    await (delete(
+      localFiles,
+    )..where((f) => f.libraryId.equals(libraryId))).go();
     // Also remove from Tracks so it disappears from playlists and history.
-    await (delete(tracks)
-      ..where((t) => t.spotifyId.equals(libraryId))).go();
+    await (delete(tracks)..where((t) => t.spotifyId.equals(libraryId))).go();
   }
 
   Future<List<LocalFile>> getLocalFilesByImportRoot(String rootLocator) =>
-      (select(localFiles)
-        ..where((f) => f.importRootLocator.equals(rootLocator))).get();
+      (select(
+        localFiles,
+      )..where((f) => f.importRootLocator.equals(rootLocator))).get();
 
   // --- ImportRoots queries ---
 

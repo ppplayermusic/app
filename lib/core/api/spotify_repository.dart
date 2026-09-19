@@ -83,11 +83,9 @@ class SpotifyRepository {
       key: CacheKeyBuilder.playlistTracks(playlistId, market),
       resourceType: ResourceType.playlistTracks,
       fetch: () => _client.getPlaylistTracks(playlistId),
-      decode:
-          (json) =>
-              (jsonDecode(json) as List)
-                  .map((e) => Track.fromJson(e as Map<String, dynamic>))
-                  .toList(),
+      decode: (json) => (jsonDecode(json) as List)
+          .map((e) => Track.fromJson(e as Map<String, dynamic>))
+          .toList(),
       encode: (data) => jsonEncode(data.map((t) => t.toJson()).toList()),
     );
   }
@@ -133,12 +131,11 @@ class SpotifyRepository {
         offset: offset,
       ),
       resourceType: ResourceType.categoryPlaylists,
-      fetch:
-          () => _client.getCategoryPlaylists(
-            categoryId,
-            limit: limit,
-            offset: offset,
-          ),
+      fetch: () => _client.getCategoryPlaylists(
+        categoryId,
+        limit: limit,
+        offset: offset,
+      ),
       decode: (json) => (jsonDecode(json) as List).cast<Map<String, dynamic>>(),
       encode: (data) => jsonEncode(data),
     );
@@ -169,18 +166,15 @@ class SpotifyRepository {
         limit: limit,
       ),
       resourceType: ResourceType.recommendations,
-      fetch:
-          () => _client.getRecommendations(
-            seedArtistId: seedArtistId,
-            seedTrackId: seedTrackId,
-            seedGenres: seedGenres,
-            limit: limit,
-          ),
-      decode:
-          (json) =>
-              (jsonDecode(json) as List)
-                  .map((e) => Track.fromJson(e as Map<String, dynamic>))
-                  .toList(),
+      fetch: () => _client.getRecommendations(
+        seedArtistId: seedArtistId,
+        seedTrackId: seedTrackId,
+        seedGenres: seedGenres,
+        limit: limit,
+      ),
+      decode: (json) => (jsonDecode(json) as List)
+          .map((e) => Track.fromJson(e as Map<String, dynamic>))
+          .toList(),
       encode: (data) => jsonEncode(data.map((t) => t.toJson()).toList()),
     );
   }
@@ -191,11 +185,9 @@ class SpotifyRepository {
       key: CacheKeyBuilder.popularTracks(market, limit: limit),
       resourceType: ResourceType.popularTracks,
       fetch: () => _client.getPopularTracks(limit: limit),
-      decode:
-          (json) =>
-              (jsonDecode(json) as List)
-                  .map((e) => Track.fromJson(e as Map<String, dynamic>))
-                  .toList(),
+      decode: (json) => (jsonDecode(json) as List)
+          .map((e) => Track.fromJson(e as Map<String, dynamic>))
+          .toList(),
       encode: (data) => jsonEncode(data.map((t) => t.toJson()).toList()),
     );
   }

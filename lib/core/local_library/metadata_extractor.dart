@@ -124,10 +124,10 @@ Future<String?> copyContentUriToTempFile(
 ) async {
   try {
     const ch = MethodChannel('com.ppplayer.app/local_files');
-    return await ch.invokeMethod<String>(
-      'copyToTemp',
-      {'uri': contentUri, 'name': displayName},
-    );
+    return await ch.invokeMethod<String>('copyToTemp', {
+      'uri': contentUri,
+      'name': displayName,
+    });
   } catch (_) {
     return null;
   }
@@ -150,13 +150,13 @@ String _albumGroupKey(String album, String albumArtist) {
 }
 
 String _extForMime(String? mime) => switch (mime?.toLowerCase()) {
-      'image/jpeg' || 'image/jpg' => '.jpg',
-      'image/png' => '.png',
-      'image/gif' => '.gif',
-      'image/webp' => '.webp',
-      'image/bmp' => '.bmp',
-      _ => '.jpg',
-    };
+  'image/jpeg' || 'image/jpg' => '.jpg',
+  'image/png' => '.png',
+  'image/gif' => '.gif',
+  'image/webp' => '.webp',
+  'image/bmp' => '.bmp',
+  _ => '.jpg',
+};
 
 bool _metadataGodInitialized = false;
 
@@ -174,7 +174,8 @@ Future<ExtractedMetadata> _doExtract(String filePath) async {
 
   Metadata? tag;
   try {
-    if (_metadataGodInitialized && !Platform.environment.containsKey('FLUTTER_TEST')) {
+    if (_metadataGodInitialized &&
+        !Platform.environment.containsKey('FLUTTER_TEST')) {
       tag = await MetadataGod.readMetadata(file: filePath);
     }
   } catch (_) {
@@ -223,12 +224,12 @@ Future<ExtractedMetadata> _doExtract(String filePath) async {
 }
 
 ExtractedMetadata _buildFallback(String filePath) => ExtractedMetadata(
-      title: _titleFallback(filePath),
-      artistName: 'Unknown Artist',
-      albumArtist: 'Unknown Artist',
-      albumName: 'Unknown Album',
-      albumGroupKey: _albumGroupKey('Unknown Album', 'Unknown Artist'),
-    );
+  title: _titleFallback(filePath),
+  artistName: 'Unknown Artist',
+  albumArtist: 'Unknown Artist',
+  albumName: 'Unknown Album',
+  albumGroupKey: _albumGroupKey('Unknown Album', 'Unknown Artist'),
+);
 
 String? _notEmpty(String? s) {
   if (s == null) return null;

@@ -22,7 +22,9 @@ void main() {
     await db.close();
   });
 
-  testWidgets('PlayerOverlays hides Fit/Fill button for online tracks', (WidgetTester tester) async {
+  testWidgets('PlayerOverlays hides Fit/Fill button for online tracks', (
+    WidgetTester tester,
+  ) async {
     final track = Track(
       youtubeVideoId: 'test',
       spotifyId: 'test',
@@ -44,9 +46,7 @@ void main() {
           playbackStatusProvider.overrideWith(
             (ref) => const Stream<PlaybackStatus>.empty(),
           ),
-          settingsProvider.overrideWith(
-            () => FakeSettingsNotifier(),
-          ),
+          settingsProvider.overrideWith(() => FakeSettingsNotifier()),
           appDatabaseProvider.overrideWithValue(db),
         ],
         child: MaterialApp(
@@ -79,7 +79,9 @@ void main() {
     await tester.pump(const Duration(seconds: 4));
   });
 
-  testWidgets('PlayerOverlays excludes focus when controls are hidden', (WidgetTester tester) async {
+  testWidgets('PlayerOverlays excludes focus when controls are hidden', (
+    WidgetTester tester,
+  ) async {
     final track = Track(
       spotifyId: 'test',
       name: 'Test Local',
@@ -100,9 +102,7 @@ void main() {
           playbackStatusProvider.overrideWith(
             (ref) => const Stream<PlaybackStatus>.empty(),
           ),
-          settingsProvider.overrideWith(
-            () => FakeSettingsNotifier(),
-          ),
+          settingsProvider.overrideWith(() => FakeSettingsNotifier()),
           appDatabaseProvider.overrideWithValue(db),
         ],
         child: MaterialApp(
@@ -126,13 +126,13 @@ void main() {
     await tester.pump();
     final focusFinder = find.byKey(const ValueKey('overlays_exclude_focus'));
     expect(focusFinder, findsOneWidget);
-    
+
     ExcludeFocus focusNode = tester.widget(focusFinder);
     expect(focusNode.excluding, false);
 
     // Wait 4 seconds for hide timer
     await tester.pump(const Duration(seconds: 4));
-    
+
     // State after hide timer: controls are invisible and excluded from focus
     focusNode = tester.widget(focusFinder);
     expect(focusNode.excluding, true);
@@ -144,7 +144,8 @@ void main() {
   });
 }
 
-class FakePlayerNotifier extends Notifier<PlayerState> implements PlayerNotifier {
+class FakePlayerNotifier extends Notifier<PlayerState>
+    implements PlayerNotifier {
   final PlayerState initialState;
   FakePlayerNotifier(this.initialState);
   @override
@@ -153,7 +154,8 @@ class FakePlayerNotifier extends Notifier<PlayerState> implements PlayerNotifier
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class FakeSettingsNotifier extends Notifier<SettingsState> implements SettingsNotifier {
+class FakeSettingsNotifier extends Notifier<SettingsState>
+    implements SettingsNotifier {
   @override
   SettingsState build() => SettingsState(selectedCountry: 'US');
   @override

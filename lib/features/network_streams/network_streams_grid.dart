@@ -20,16 +20,19 @@ class StreamPlaylistsSliverGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final service = ref.watch(networkStreamServiceProvider);
-    
+
     return StreamBuilder<List<StreamPlaylist>>(
       stream: service.watchPlaylists(),
       builder: (context, snap) {
         final isLoading = snap.connectionState == ConnectionState.waiting;
         var playlists = snap.data ?? [];
-        
+
         if (searchQuery.isNotEmpty) {
           playlists = playlists
-              .where((p) => p.title.toLowerCase().contains(searchQuery.toLowerCase()))
+              .where(
+                (p) =>
+                    p.title.toLowerCase().contains(searchQuery.toLowerCase()),
+              )
               .toList();
         }
 
@@ -54,7 +57,10 @@ class StreamPlaylistsSliverGrid extends ConsumerWidget {
             if (showHeader)
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: Row(
                     children: [
                       const Text(
@@ -67,7 +73,9 @@ class StreamPlaylistsSliverGrid extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Icon(
                         Icons.chevron_right_rounded,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
                     ],
                   ),
@@ -82,13 +90,10 @@ class StreamPlaylistsSliverGrid extends ConsumerWidget {
                   crossAxisSpacing: 16,
                   childAspectRatio: 0.75,
                 ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) {
-                    final playlist = playlists[i];
-                    return _StreamPlaylistCard(playlist: playlist);
-                  },
-                  childCount: playlists.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, i) {
+                  final playlist = playlists[i];
+                  return _StreamPlaylistCard(playlist: playlist);
+                }, childCount: playlists.length),
               ),
             ),
           ],
@@ -112,40 +117,46 @@ class _StreamPlaylistCard extends ConsumerWidget {
         onTap: () {
           context.push('/stream_playlist/${playlist.id}');
         },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Center(
-                child: Icon(Icons.connected_tv_rounded, size: 40, color: Colors.grey),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.connected_tv_rounded,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            playlist.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'IPTV / Stream',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-              fontSize: 12,
+            const SizedBox(height: 12),
+            Text(
+              playlist.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
             ),
-          ),
-        ],
-      ),
+            const SizedBox(height: 2),
+            Text(
+              'IPTV / Stream',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

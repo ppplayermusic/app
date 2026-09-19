@@ -8,19 +8,14 @@ import '../../core/models/track.dart';
 class StreamPlaylistDetailScreen extends ConsumerWidget {
   final int playlistId;
 
-  const StreamPlaylistDetailScreen({
-    super.key,
-    required this.playlistId,
-  });
+  const StreamPlaylistDetailScreen({super.key, required this.playlistId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final service = ref.watch(networkStreamServiceProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Network Stream'),
-      ),
+      appBar: AppBar(title: const Text('Network Stream')),
       body: StreamBuilder<List<StreamChannel>>(
         stream: service.watchChannelsForPlaylist(playlistId),
         builder: (context, snap) {
@@ -42,24 +37,28 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
                         channel.logo!,
                         width: 48,
                         height: 48,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.connected_tv),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.connected_tv),
                       )
                     : const Icon(Icons.connected_tv),
                 title: Text(channel.title),
-                subtitle: channel.groupTitle != null ? Text(channel.groupTitle!) : null,
+                subtitle: channel.groupTitle != null
+                    ? Text(channel.groupTitle!)
+                    : null,
                 onTap: () {
                   final track = Track.fromNetworkStream(
                     streamUrl: channel.streamUrl,
                     title: channel.title,
-                    liveStatus: StreamLiveStatus.fromValue(channel.liveStatus), // Don't assume live
+                    liveStatus: StreamLiveStatus.fromValue(
+                      channel.liveStatus,
+                    ), // Don't assume live
                     groupTitle: channel.groupTitle ?? 'IPTV',
                     logoUrl: channel.logo,
                   );
 
-                  ref.read(playerProvider.notifier).playTrack(
-                    track,
-                    queue: [track],
-                  );
+                  ref
+                      .read(playerProvider.notifier)
+                      .playTrack(track, queue: [track]);
                 },
               );
             },

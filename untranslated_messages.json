@@ -1,6 +1,7 @@
 {
   "ar": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -16,6 +17,7 @@
 
   "bn": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -31,6 +33,7 @@
 
   "cs": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -46,6 +49,7 @@
 
   "da": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -61,6 +65,7 @@
 
   "de": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -76,6 +81,7 @@
 
   "es": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -91,6 +97,7 @@
 
   "et": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -106,6 +113,7 @@
 
   "fa": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -121,6 +129,7 @@
 
   "fil": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -136,6 +145,7 @@
 
   "fr": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -151,6 +161,7 @@
 
   "gn": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -166,6 +177,7 @@
 
   "hi": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -181,6 +193,7 @@
 
   "hr": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -196,6 +209,7 @@
 
   "hu": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -211,6 +225,7 @@
 
   "id": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -226,6 +241,7 @@
 
   "it": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -241,6 +257,7 @@
 
   "ja": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -256,6 +273,7 @@
 
   "ka": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -271,6 +289,7 @@
 
   "kk": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -286,6 +305,7 @@
 
   "ko": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -301,6 +321,7 @@
 
   "lv": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -316,6 +337,7 @@
 
   "ms": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -331,6 +353,7 @@
 
   "my": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -346,6 +369,7 @@
 
   "pcm": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -361,6 +385,7 @@
 
   "pl": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -376,6 +401,7 @@
 
   "pt": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -391,6 +417,7 @@
 
   "ru": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -406,6 +433,7 @@
 
   "sv": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -421,6 +449,7 @@
 
   "tr": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -436,6 +465,7 @@
 
   "uz": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",
@@ -451,6 +481,7 @@
 
   "zh": [
     "sortBy",
+    "filterStreams",
     "importPlaylist",
     "importPlaylistSubtitle",
     "exportPlaylist",

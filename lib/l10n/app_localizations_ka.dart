@@ -654,6 +654,9 @@ class AppLocalizationsKa extends AppLocalizations {
   String get filterStations => 'სადგურები';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'ლოკალური მუსიკა';
 
   @override

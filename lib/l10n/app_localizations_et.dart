@@ -652,6 +652,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get filterStations => 'Jaamad';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Kohalik muusika';
 
   @override

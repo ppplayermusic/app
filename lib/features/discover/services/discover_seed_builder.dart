@@ -36,18 +36,17 @@ class DiscoverSeedBuilder {
     return DiscoverSeedContext(
       recentTracks: recentTracks,
       favoriteTracks: favoriteTracks,
-      followedArtists:
-          artistsDb
-              .map(
-                (a) => Artist(
-                  spotifyId: a.spotifyId,
-                  name: a.name,
-                  imageUrl: a.imageUrl,
-                  imageSmall: a.imageSmall,
-                  followers: a.followers,
-                ),
-              )
-              .toList(),
+      followedArtists: artistsDb
+          .map(
+            (a) => Artist(
+              spotifyId: a.spotifyId,
+              name: a.name,
+              imageUrl: a.imageUrl,
+              imageSmall: a.imageSmall,
+              followers: a.followers,
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -57,12 +56,12 @@ class DiscoverSeedBuilder {
     final random = Random(DateTime.now().hour); // Rotates every hour
 
     // Attempt to mix 2 recent, 2 fav, 1 artist
-    final recentPool =
-        ctx.recentTracks.map((t) => t.spotifyId).toList()..shuffle(random);
-    final favPool =
-        ctx.favoriteTracks.map((t) => t.spotifyId).toList()..shuffle(random);
-    final artistPool =
-        ctx.followedArtists.map((a) => a.spotifyId).toList()..shuffle(random);
+    final recentPool = ctx.recentTracks.map((t) => t.spotifyId).toList()
+      ..shuffle(random);
+    final favPool = ctx.favoriteTracks.map((t) => t.spotifyId).toList()
+      ..shuffle(random);
+    final artistPool = ctx.followedArtists.map((a) => a.spotifyId).toList()
+      ..shuffle(random);
 
     if (recentPool.isNotEmpty) seeds.addAll(recentPool.take(2));
     if (favPool.isNotEmpty) seeds.addAll(favPool.take(2));

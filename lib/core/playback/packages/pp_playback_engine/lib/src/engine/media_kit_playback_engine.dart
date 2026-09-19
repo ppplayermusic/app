@@ -192,6 +192,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
   // ── YouTube/IFrame state ──────────────────────────────────────────────────
   yt.YoutubePlayerController? _youtubeController;
+
   /// Long-lived IFrame subscriptions, separate from session subscriptions.
   final List<StreamSubscription<dynamic>> _iframeSubscriptions = [];
 
@@ -227,15 +228,18 @@ class MediaKitPlaybackEngine implements PlaybackController {
   // ---------------------------------------------------------------------------
 
   INativePlayerAdapter _makeAdapter() =>
-      nativeAdapterFactory != null ? nativeAdapterFactory!() : MediaKitPlayerAdapter();
+      nativeAdapterFactory != null
+          ? nativeAdapterFactory!()
+          : MediaKitPlayerAdapter();
 
   /// Immediately detach [_activeSession] (so its callbacks are rejected), then
   /// stop + dispose it asynchronously. Must be called *before* any await so
   /// a superseded open() cannot race with cleanup.
   Future<void> _invalidateActiveSession() async {
     final old = _activeSession;
-    _activeSession = null; // detach synchronously — callbacks rejected immediately
-    
+    _activeSession =
+        null; // detach synchronously — callbacks rejected immediately
+
     if (old == null) return;
 
     Future<void> doInvalidate() async {
@@ -246,10 +250,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
     }
 
     final previous = _invalidationFuture;
-    final current = (previous == null)
-        ? doInvalidate()
-        : previous.whenComplete(doInvalidate);
-        
+    final current =
+        (previous == null)
+            ? doInvalidate()
+            : previous.whenComplete(doInvalidate);
+
     _invalidationFuture = current;
     // We only await the current teardown if we want to serialize creation.
     // To avoid blocking the caller too long, we only await the OLD session's teardown.
@@ -267,10 +272,12 @@ class MediaKitPlaybackEngine implements PlaybackController {
       a.positionStream.listen((pos) {
         if (session != _activeSession || _disposed) return;
         if (_currentStatus.isIFrameMode) return;
-        _updateStatus(_currentStatus.copyWith(
-          position: pos,
-          isLive: _currentStatus.track?.liveStatus == PlaybackLiveStatus.live,
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(
+            position: pos,
+            isLive: _currentStatus.track?.liveStatus == PlaybackLiveStatus.live,
+          ),
+        );
       }),
       a.durationStream.listen((dur) {
         if (session != _activeSession || _disposed) return;
@@ -282,11 +289,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (isNetwork && track?.liveStatus != PlaybackLiveStatus.onDemand) {
           isSeekable = false;
         }
-        _updateStatus(_currentStatus.copyWith(
-          duration: dur,
-          isSeekable: isSeekable,
-          isLive: track?.liveStatus == PlaybackLiveStatus.live,
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(
+            duration: dur,
+            isSeekable: isSeekable,
+            isLive: track?.liveStatus == PlaybackLiveStatus.live,
+          ),
+        );
       }),
       a.bufferStream.listen((buf) {
         if (session != _activeSession || _disposed) return;
@@ -301,9 +310,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (playing) {
           _watchdogTimer?.cancel();
         }
-        _updateStatus(_currentStatus.copyWith(
-          state: playing ? PlaybackState.playing : PlaybackState.paused,
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(
+            state: playing ? PlaybackState.playing : PlaybackState.paused,
+          ),
+        );
       }),
       a.errorStream.listen((err) {
         if (session != _activeSession || _disposed) return;
@@ -322,10 +333,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
           errorCode = 'error:file_inaccessible';
         }
         _watchdogTimer?.cancel();
-        _updateStatus(_currentStatus.copyWith(
-          state: PlaybackState.error,
-          error: errorCode,
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(state: PlaybackState.error, error: errorCode),
+        );
       }),
       a.completedStream.listen((completed) {
         if (!completed) return;
@@ -342,9 +352,14 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (_currentStatus.state == PlaybackState.preparing && !buffering) {
           return;
         }
-        _updateStatus(_currentStatus.copyWith(
-          state: buffering ? PlaybackState.buffering : (_intendedState ?? PlaybackState.paused),
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(
+            state:
+                buffering
+                    ? PlaybackState.buffering
+                    : (_intendedState ?? PlaybackState.paused),
+          ),
+        );
       }),
       a.videoParamsStream.listen((params) {
         if (session != _activeSession || _disposed) return;
@@ -352,15 +367,18 @@ class MediaKitPlaybackEngine implements PlaybackController {
         final w = params.w ?? 0;
         final h = params.h ?? 0;
         final hasDimensions = w > 0 && h > 0;
-        
+
         // If the track is statically known to be a video, don't let a transient 0x0
         // size param hide the view, which breaks native macOS texture binding.
-        final hasVideo = (_currentStatus.track?.isVideo == true) || hasDimensions;
-        
-        _updateStatus(_currentStatus.copyWith(
-          hasVideo: hasVideo,
-          videoAspectRatio: hasDimensions ? w / h : null,
-        ));
+        final hasVideo =
+            (_currentStatus.track?.isVideo == true) || hasDimensions;
+
+        _updateStatus(
+          _currentStatus.copyWith(
+            hasVideo: hasVideo,
+            videoAspectRatio: hasDimensions ? w / h : null,
+          ),
+        );
       }),
     ]);
   }
@@ -397,11 +415,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (track.isLocal || track.sourceType == PlaybackSourceType.networkStream) {
       final uri = track.isLocal ? track.localMediaUri : track.networkMediaUri;
       if (uri == null) {
-        _updateStatus(_currentStatus.copyWith(
-          track: track,
-          state: PlaybackState.error,
-          error: 'Media URI is missing for ${track.id}',
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(
+            track: track,
+            state: PlaybackState.error,
+            error: 'Media URI is missing for ${track.id}',
+          ),
+        );
         return;
       }
 
@@ -435,37 +455,48 @@ class MediaKitPlaybackEngine implements PlaybackController {
       _watchdogTimer?.cancel();
       _watchdogTimer = Timer(Duration(seconds: track.isLocal ? 5 : 20), () {
         if (_disposed || _activeSession != session) return;
-        if (_currentStatus.state == PlaybackState.preparing || _currentStatus.state == PlaybackState.buffering) {
-          _failAttempt(myGen, track.isLocal ? 'error:file_inaccessible' : 'error:playback_timeout');
+        if (_currentStatus.state == PlaybackState.preparing ||
+            _currentStatus.state == PlaybackState.buffering) {
+          _failAttempt(
+            myGen,
+            track.isLocal
+                ? 'error:file_inaccessible'
+                : 'error:playback_timeout',
+          );
         }
       });
 
       // Publish the new renderer and status BEFORE opening media.
-      _updateStatus(_currentStatus.copyWith(
-        track: track,
-        state: PlaybackState.preparing,
-        clearError: true,
-        activeVideoId: track.id,
-        hasVideo: track.isVideo,
-        isIFrameMode: false,
-        generation: myGen,
-        isLive: track.liveStatus == PlaybackLiveStatus.live,
-        isSeekable: false,
-        position: Duration.zero,
-        duration: Duration.zero,
-        buffered: Duration.zero,
-      ));
+      _updateStatus(
+        _currentStatus.copyWith(
+          track: track,
+          state: PlaybackState.preparing,
+          clearError: true,
+          activeVideoId: track.id,
+          hasVideo: track.isVideo,
+          isIFrameMode: false,
+          generation: myGen,
+          isLive: track.liveStatus == PlaybackLiveStatus.live,
+          isSeekable: false,
+          position: Duration.zero,
+          duration: Duration.zero,
+          buffered: Duration.zero,
+        ),
+      );
 
       if (_currentStatus.isIFrameMode) {
         try {
-          await _youtubeController?.pauseVideo()
-              .timeout(const Duration(seconds: 1));
+          await _youtubeController?.pauseVideo().timeout(
+            const Duration(seconds: 1),
+          );
         } catch (_) {}
       }
 
       try {
         // Non-autoplay: open without starting playback.
-        await session.adapter.open(uri, play: false).timeout(const Duration(seconds: 10));
+        await session.adapter
+            .open(uri, play: false)
+            .timeout(const Duration(seconds: 10));
         if (_disposed || _activeSession != session) return;
 
         // Apply settings AFTER open() to avoid hanging media_kit on Android.
@@ -496,10 +527,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
             errStr.contains('timeout')) {
           errorCode = 'error:file_inaccessible';
         }
-        _updateStatus(_currentStatus.copyWith(
-          state: PlaybackState.error,
-          error: errorCode,
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(state: PlaybackState.error, error: errorCode),
+        );
       }
       return;
     }
@@ -516,18 +546,21 @@ class MediaKitPlaybackEngine implements PlaybackController {
       if (_disposed || _playGeneration != myGenYt) return;
     }
 
-    final ss = position?.inMilliseconds != null
-        ? position!.inMilliseconds / 1000.0
-        : null;
+    final ss =
+        position?.inMilliseconds != null
+            ? position!.inMilliseconds / 1000.0
+            : null;
     _currentStartSeconds = ss;
 
-    _updateStatus(_currentStatus.copyWith(
-      track: track,
-      state: PlaybackState.preparing,
-      isIFrameMode: true,
-      hasVideo: true,
-      activeVideoId: track.id,
-    ));
+    _updateStatus(
+      _currentStatus.copyWith(
+        track: track,
+        state: PlaybackState.preparing,
+        isIFrameMode: true,
+        hasVideo: true,
+        activeVideoId: track.id,
+      ),
+    );
 
     if (_youtubeController == null) {
       await _enterIFrameMode(track.id, generation: myGenYt);
@@ -562,11 +595,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (track.isLocal || track.sourceType == PlaybackSourceType.networkStream) {
       final uri = track.isLocal ? track.localMediaUri : track.networkMediaUri;
       if (uri == null) {
-        _updateStatus(_currentStatus.copyWith(
-          track: track,
-          state: PlaybackState.error,
-          error: 'Media URI is missing for ${track.id}',
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(
+            track: track,
+            state: PlaybackState.error,
+            error: 'Media URI is missing for ${track.id}',
+          ),
+        );
         return;
       }
 
@@ -600,30 +635,40 @@ class MediaKitPlaybackEngine implements PlaybackController {
       _watchdogTimer?.cancel();
       _watchdogTimer = Timer(Duration(seconds: track.isLocal ? 5 : 20), () {
         if (_disposed || _activeSession != session) return;
-        if (_currentStatus.state == PlaybackState.preparing || _currentStatus.state == PlaybackState.buffering) {
-          _failAttempt(myGen, track.isLocal ? 'error:file_inaccessible' : 'error:playback_timeout');
+        if (_currentStatus.state == PlaybackState.preparing ||
+            _currentStatus.state == PlaybackState.buffering) {
+          _failAttempt(
+            myGen,
+            track.isLocal
+                ? 'error:file_inaccessible'
+                : 'error:playback_timeout',
+          );
         }
       });
 
       // Publish the new renderer and status BEFORE opening media.
-      _updateStatus(_currentStatus.copyWith(
-        track: track,
-        state: PlaybackState.preparing,
-        clearError: true,
-        activeVideoId: track.id,
-        hasVideo: track.isVideo,
-        isIFrameMode: false,
-        generation: myGen,
-        isLive: track.liveStatus == PlaybackLiveStatus.live,
-        isSeekable: false,
-        position: Duration.zero,
-        duration: Duration.zero,
-        buffered: Duration.zero,
-      ));
+      _updateStatus(
+        _currentStatus.copyWith(
+          track: track,
+          state: PlaybackState.preparing,
+          clearError: true,
+          activeVideoId: track.id,
+          hasVideo: track.isVideo,
+          isIFrameMode: false,
+          generation: myGen,
+          isLive: track.liveStatus == PlaybackLiveStatus.live,
+          isSeekable: false,
+          position: Duration.zero,
+          duration: Duration.zero,
+          buffered: Duration.zero,
+        ),
+      );
 
       try {
         // Non-autoplay open: explicitly start after verifying session ownership.
-        await session.adapter.open(uri, play: false).timeout(const Duration(seconds: 10));
+        await session.adapter
+            .open(uri, play: false)
+            .timeout(const Duration(seconds: 10));
         if (_disposed || _activeSession != session) return;
 
         // Apply user settings AFTER open() to prevent Android deadlocks.
@@ -644,7 +689,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
         final terminalStates = {PlaybackState.error, PlaybackState.ended};
         if (!terminalStates.contains(_currentStatus.state) &&
             _currentStatus.state == PlaybackState.preparing) {
-          _updateStatus(_currentStatus.copyWith(state: PlaybackState.buffering));
+          _updateStatus(
+            _currentStatus.copyWith(state: PlaybackState.buffering),
+          );
         }
       } catch (e) {
         if (_disposed || _activeSession != session) return;
@@ -677,8 +724,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
       await _invalidateActiveSession();
     } else {
       try {
-        await _youtubeController?.pauseVideo()
-            .timeout(const Duration(seconds: 1));
+        await _youtubeController?.pauseVideo().timeout(
+          const Duration(seconds: 1),
+        );
       } catch (e) {
         debugPrint('MediaKitPlaybackEngine: pauseVideo failed/timed out: $e');
       }
@@ -690,17 +738,20 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _ready = false;
     _latePauseGeneration = null;
 
-    _updateStatus(_currentStatus.copyWith(
-      track: track,
-      state: PlaybackState.preparing,
-      clearError: true,
-      activeVideoId: track.id,
-      hasVideo: true,
-      isIFrameMode: true,
-      generation: myGenYt,
-    ));
+    _updateStatus(
+      _currentStatus.copyWith(
+        track: track,
+        state: PlaybackState.preparing,
+        clearError: true,
+        activeVideoId: track.id,
+        hasVideo: true,
+        isIFrameMode: true,
+        generation: myGenYt,
+      ),
+    );
 
-    final ss = startAt.inMilliseconds > 0 ? startAt.inMilliseconds / 1000.0 : null;
+    final ss =
+        startAt.inMilliseconds > 0 ? startAt.inMilliseconds / 1000.0 : null;
     _currentStartSeconds = ss;
     await _enterIFrameMode(track.id, generation: myGenYt, startSeconds: ss);
   }
@@ -713,16 +764,16 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (!_valid(generation)) return;
     _attemptActive = false;
     _watchdogTimer?.cancel();
-    _updateStatus(_currentStatus.copyWith(
-      state: PlaybackState.error,
-      error: error,
-    ));
+    _updateStatus(
+      _currentStatus.copyWith(state: PlaybackState.error, error: error),
+    );
   }
 
   void _armWatchdog(int generation, {required bool loading}) {
     _watchdogTimer?.cancel();
     _watchdogTimer = Timer(Duration(seconds: _recoveryUsed ? 10 : 20), () {
-      if (!_valid(generation) || _intendedState != PlaybackState.playing) return;
+      if (!_valid(generation) || _intendedState != PlaybackState.playing)
+        return;
       if (_currentStatus.state == PlaybackState.playing) return;
       if (!BackgroundPlaybackExperiment.enabled && isActivityStopped) return;
       if (_recoveryUsed) {
@@ -744,8 +795,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
                   _confirmedPlaybackPosition != null)
               ? _confirmedPlaybackPosition!.inMilliseconds / 1000.0
               : _currentStartSeconds;
-      unawaited(_load(generation, _currentStatus.track!.id,
-          startSeconds: recoveryStart));
+      unawaited(
+        _load(
+          generation,
+          _currentStatus.track!.id,
+          startSeconds: recoveryStart,
+        ),
+      );
     });
   }
 
@@ -796,138 +852,149 @@ class MediaKitPlaybackEngine implements PlaybackController {
 
       // Persistent generation-aware listener. This is the ONLY place that
       // calls playVideo() in response to a 'cued' state.
-      _iframeSubscriptions.add(_youtubeController!.listen((ytState) {
-        if (!_currentStatus.isIFrameMode || !_valid(_playGeneration)) return;
-        final eventId = ytState.metaData.videoId;
-        if (eventId.isNotEmpty && eventId != _currentStatus.track?.id) return;
+      _iframeSubscriptions.add(
+        _youtubeController!.listen((ytState) {
+          if (!_currentStatus.isIFrameMode || !_valid(_playGeneration)) return;
+          final eventId = ytState.metaData.videoId;
+          if (eventId.isNotEmpty && eventId != _currentStatus.track?.id) return;
 
-        final gen = _playGeneration;
-        _diag(
-          'BRIDGE gen=$gen iframeState=${ytState.playerState} '
-          'engineState=${_currentStatus.state} intended=$_intendedState '
-          'activityStopped=$isActivityStopped',
-        );
-
-        if (ytState.hasError && ytState.error != yt.YoutubeError.none) {
-          debugPrint(
-            'MediaKitPlaybackEngine: [ERROR] YouTube IFrame error: ${ytState.error}',
+          final gen = _playGeneration;
+          _diag(
+            'BRIDGE gen=$gen iframeState=${ytState.playerState} '
+            'engineState=${_currentStatus.state} intended=$_intendedState '
+            'activityStopped=$isActivityStopped',
           );
-          final eventVideoId = ytState.metaData.videoId;
-          final currentVideoId = _currentStatus.track?.id;
-          if (eventVideoId.isNotEmpty &&
-              currentVideoId != null &&
-              eventVideoId != currentVideoId) {
-            debugPrint(
-              'MediaKitPlaybackEngine: [BRIDGE] Ignoring stale error for $eventVideoId (current: $currentVideoId).',
-            );
-            return;
-          }
-          if (ytState.error == yt.YoutubeError.videoNotFound ||
-              ytState.error == yt.YoutubeError.notEmbeddable ||
-              ytState.error == yt.YoutubeError.cannotFindVideo ||
-              ytState.error == yt.YoutubeError.sameAsNotEmbeddable ||
-              ytState.error == yt.YoutubeError.invalidParam) {
-            _failAttempt(gen, 'unavailable_media:${ytState.error.name}');
-            return;
-          }
-          // Transient errors are ignored.
-        }
 
-        switch (ytState.playerState) {
-          case yt.PlayerState.cued:
-          case yt.PlayerState.unStarted:
-            _ready = true;
-            // Repeated readiness events must not restart the start deadline.
-            if (_lastPlayedGeneration != gen) {
-              if (_intendedState == PlaybackState.paused) {
-                // prepare() path: resolve to paused with saved position.
-                final savedPos = _currentStartSeconds != null
-                    ? Duration(
-                        milliseconds: (_currentStartSeconds! * 1000).toInt())
-                    : Duration.zero;
-                _updateStatus(_currentStatus.copyWith(
-                  state: PlaybackState.paused,
-                  position: savedPos,
-                  activeVideoId: _currentStatus.track?.id,
-                ));
-              } else {
-                unawaited(_dispatchIFramePlay(gen, ytState.playerState.name));
-              }
+          if (ytState.hasError && ytState.error != yt.YoutubeError.none) {
+            debugPrint(
+              'MediaKitPlaybackEngine: [ERROR] YouTube IFrame error: ${ytState.error}',
+            );
+            final eventVideoId = ytState.metaData.videoId;
+            final currentVideoId = _currentStatus.track?.id;
+            if (eventVideoId.isNotEmpty &&
+                currentVideoId != null &&
+                eventVideoId != currentVideoId) {
+              debugPrint(
+                'MediaKitPlaybackEngine: [BRIDGE] Ignoring stale error for $eventVideoId (current: $currentVideoId).',
+              );
+              return;
             }
-            break;
-          default:
-            break;
-        }
-
-        final newState = switch (ytState.playerState) {
-          yt.PlayerState.playing => PlaybackState.playing,
-          yt.PlayerState.paused => PlaybackState.paused,
-          yt.PlayerState.unStarted => PlaybackState.paused,
-          yt.PlayerState.buffering => PlaybackState.buffering,
-          yt.PlayerState.ended => PlaybackState.ended,
-          // A cued video is ready-but-paused.
-          yt.PlayerState.cued => PlaybackState.paused,
-          _ => _currentStatus.state,
-        };
-
-        if (newState == PlaybackState.ended) {
-          final eventVideoId = ytState.metaData.videoId;
-          final currentVideoId = _currentStatus.track?.id;
-          if (eventVideoId.isNotEmpty &&
-              currentVideoId != null &&
-              eventVideoId != currentVideoId) {
-            debugPrint(
-              'MediaKitPlaybackEngine: [BRIDGE] Ignoring stale ended event for $eventVideoId (current: $currentVideoId).',
-            );
-            return;
+            if (ytState.error == yt.YoutubeError.videoNotFound ||
+                ytState.error == yt.YoutubeError.notEmbeddable ||
+                ytState.error == yt.YoutubeError.cannotFindVideo ||
+                ytState.error == yt.YoutubeError.sameAsNotEmbeddable ||
+                ytState.error == yt.YoutubeError.invalidParam) {
+              _failAttempt(gen, 'unavailable_media:${ytState.error.name}');
+              return;
+            }
+            // Transient errors are ignored.
           }
-          _eventController.add(PlaybackEvent(
-            type: PlaybackEventType.trackEnded,
-            track: _currentStatus.track,
-            generation: gen,
-          ));
-        }
 
-        if ((newState == PlaybackState.playing ||
-                newState == PlaybackState.buffering) &&
-            _intendedState == PlaybackState.paused) {
-          if (!BackgroundPlaybackExperiment.enabled) {
-            _diag(
-              'BRIDGE SPURIOUS-PLAY: intendedState=paused. [BASELINE] forcing pauseVideo().',
-            );
-            unawaited(_youtubeController?.pauseVideo().catchError((Object error) {
-              _diag('Corrective pause failed: $error');
-            }));
-            return;
-          } else {
-            _diag(
-              'BRIDGE SPURIOUS-PLAY: intendedState=paused. [EXPERIMENT] OBSERVE ONLY.',
+          switch (ytState.playerState) {
+            case yt.PlayerState.cued:
+            case yt.PlayerState.unStarted:
+              _ready = true;
+              // Repeated readiness events must not restart the start deadline.
+              if (_lastPlayedGeneration != gen) {
+                if (_intendedState == PlaybackState.paused) {
+                  // prepare() path: resolve to paused with saved position.
+                  final savedPos =
+                      _currentStartSeconds != null
+                          ? Duration(
+                            milliseconds:
+                                (_currentStartSeconds! * 1000).toInt(),
+                          )
+                          : Duration.zero;
+                  _updateStatus(
+                    _currentStatus.copyWith(
+                      state: PlaybackState.paused,
+                      position: savedPos,
+                      activeVideoId: _currentStatus.track?.id,
+                    ),
+                  );
+                } else {
+                  unawaited(_dispatchIFramePlay(gen, ytState.playerState.name));
+                }
+              }
+              break;
+            default:
+              break;
+          }
+
+          final newState = switch (ytState.playerState) {
+            yt.PlayerState.playing => PlaybackState.playing,
+            yt.PlayerState.paused => PlaybackState.paused,
+            yt.PlayerState.unStarted => PlaybackState.paused,
+            yt.PlayerState.buffering => PlaybackState.buffering,
+            yt.PlayerState.ended => PlaybackState.ended,
+            // A cued video is ready-but-paused.
+            yt.PlayerState.cued => PlaybackState.paused,
+            _ => _currentStatus.state,
+          };
+
+          if (newState == PlaybackState.ended) {
+            final eventVideoId = ytState.metaData.videoId;
+            final currentVideoId = _currentStatus.track?.id;
+            if (eventVideoId.isNotEmpty &&
+                currentVideoId != null &&
+                eventVideoId != currentVideoId) {
+              debugPrint(
+                'MediaKitPlaybackEngine: [BRIDGE] Ignoring stale ended event for $eventVideoId (current: $currentVideoId).',
+              );
+              return;
+            }
+            _eventController.add(
+              PlaybackEvent(
+                type: PlaybackEventType.trackEnded,
+                track: _currentStatus.track,
+                generation: gen,
+              ),
             );
           }
-        }
 
-        if (ytState.playerState == yt.PlayerState.paused &&
-            _intendedState == PlaybackState.paused) {
-          _latePauseGeneration = null;
-        }
-        if (newState == PlaybackState.paused &&
-            _intendedState == PlaybackState.playing) {
+          if ((newState == PlaybackState.playing ||
+                  newState == PlaybackState.buffering) &&
+              _intendedState == PlaybackState.paused) {
+            if (!BackgroundPlaybackExperiment.enabled) {
+              _diag(
+                'BRIDGE SPURIOUS-PLAY: intendedState=paused. [BASELINE] forcing pauseVideo().',
+              );
+              unawaited(
+                _youtubeController?.pauseVideo().catchError((Object error) {
+                  _diag('Corrective pause failed: $error');
+                }),
+              );
+              return;
+            } else {
+              _diag(
+                'BRIDGE SPURIOUS-PLAY: intendedState=paused. [EXPERIMENT] OBSERVE ONLY.',
+              );
+            }
+          }
+
           if (ytState.playerState == yt.PlayerState.paused &&
-              _latePauseGeneration == gen) {
+              _intendedState == PlaybackState.paused) {
             _latePauseGeneration = null;
-            unawaited(_dispatchIFramePlay(gen, 'late-pause'));
           }
-          if (ytState.playerState == yt.PlayerState.unStarted) return;
-        }
-        if (newState == PlaybackState.playing) {
-          _watchdogTimer?.cancel();
-          _confirmedPositionGeneration = gen;
-        }
+          if (newState == PlaybackState.paused &&
+              _intendedState == PlaybackState.playing) {
+            if (ytState.playerState == yt.PlayerState.paused &&
+                _latePauseGeneration == gen) {
+              _latePauseGeneration = null;
+              unawaited(_dispatchIFramePlay(gen, 'late-pause'));
+            }
+            if (ytState.playerState == yt.PlayerState.unStarted) return;
+          }
+          if (newState == PlaybackState.playing) {
+            _watchdogTimer?.cancel();
+            _confirmedPositionGeneration = gen;
+          }
 
-        if (newState != _currentStatus.state) {
-          _updateStatus(_currentStatus.copyWith(state: newState));
-        }
-      }));
+          if (newState != _currentStatus.state) {
+            _updateStatus(_currentStatus.copyWith(state: newState));
+          }
+        }),
+      );
     }
 
     if (generation != _playGeneration) {
@@ -958,7 +1025,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
           _diag('ENGINE _load() BLOCKED: not eligible to play.');
           _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
         } else {
-          _diag('ENGINE _load() BLOCKED (prepare path): skipping spurious paused emit.');
+          _diag(
+            'ENGINE _load() BLOCKED (prepare path): skipping spurious paused emit.',
+          );
         }
         return;
       }
@@ -1011,13 +1080,16 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_currentStatus.isIFrameMode) {
       _latePauseGeneration = _playGeneration;
       try {
-        await _youtubeController?.pauseVideo()
-            .timeout(const Duration(seconds: 2));
+        await _youtubeController?.pauseVideo().timeout(
+          const Duration(seconds: 2),
+        );
       } catch (e) {
         debugPrint('MediaKitPlaybackEngine: pauseVideo failed/timed out: $e');
         if (failOnTimeout) {
           throw TimeoutException(
-              'Source pause failed (IFrame error)', const Duration(seconds: 2));
+            'Source pause failed (IFrame error)',
+            const Duration(seconds: 2),
+          );
         }
         if (_intendedState == PlaybackState.paused) {
           _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
@@ -1038,7 +1110,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
       );
       if (failOnTimeout && e is TimeoutException) {
         throw TimeoutException(
-            'Source pause unconfirmed by IFrame', const Duration(seconds: 2));
+          'Source pause unconfirmed by IFrame',
+          const Duration(seconds: 2),
+        );
       }
       _updateStatus(_currentStatus.copyWith(state: PlaybackState.paused));
     }
@@ -1063,8 +1137,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
     final revision = _intentRevision;
     _lastPlayedGeneration = expectedGeneration;
     try {
-      await _youtubeController!
-          .setVolume((_currentStatus.volume * 100).toInt());
+      await _youtubeController!.setVolume(
+        (_currentStatus.volume * 100).toInt(),
+      );
       if (!eligible() || revision != _intentRevision) return;
       _diag('DISPATCH playVideo gen=$expectedGeneration source=$source');
       final command = _youtubeController!.playVideo();
@@ -1073,7 +1148,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
     } catch (error) {
       if (eligible() && revision == _intentRevision) {
         _failAttempt(
-            expectedGeneration, 'YouTube playback dispatch failed: $error');
+          expectedGeneration,
+          'YouTube playback dispatch failed: $error',
+        );
       }
     }
   }
@@ -1139,19 +1216,23 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _intendedState = PlaybackState.paused;
 
     // Optimistically update before awaiting so the UI reflects idle immediately.
-    _updateStatus(_currentStatus.copyWith(
-      state: PlaybackState.idle,
-      track: null,
-      activeVideoId: null,
-    ));
+    _updateStatus(
+      _currentStatus.copyWith(
+        state: PlaybackState.idle,
+        track: null,
+        activeVideoId: null,
+      ),
+    );
 
     if (_currentStatus.isIFrameMode) {
       try {
-        await _youtubeController?.pauseVideo()
-            .timeout(const Duration(seconds: 2));
+        await _youtubeController?.pauseVideo().timeout(
+          const Duration(seconds: 2),
+        );
       } catch (e) {
         debugPrint(
-            'MediaKitPlaybackEngine: stop() pauseVideo threw/timed out: $e');
+          'MediaKitPlaybackEngine: stop() pauseVideo threw/timed out: $e',
+        );
       }
       // Keep IFrame controller alive to avoid recreating the platform view.
     } else {
@@ -1284,8 +1365,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
     _lastPolledPosition = -1;
     _frozenPositionTicks = 0;
     _iframePositionTimer?.cancel();
-    _iframePositionTimer =
-        Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+    _iframePositionTimer = Timer.periodic(const Duration(milliseconds: 500), (
+      timer,
+    ) async {
       if (_youtubeController == null || !_currentStatus.isIFrameMode) {
         timer.cancel();
         return;
@@ -1296,10 +1378,12 @@ class MediaKitPlaybackEngine implements PlaybackController {
       try {
         // Each JS bridge call is individually guarded so a single hung call
         // does not block the timer indefinitely.
-        currentTime = await _youtubeController!.currentTime
-            .timeout(const Duration(milliseconds: 400));
-        duration = await _youtubeController!.duration
-            .timeout(const Duration(milliseconds: 400));
+        currentTime = await _youtubeController!.currentTime.timeout(
+          const Duration(milliseconds: 400),
+        );
+        duration = await _youtubeController!.duration.timeout(
+          const Duration(milliseconds: 400),
+        );
       } catch (e) {
         return;
       }
@@ -1324,11 +1408,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
           timer.cancel();
           _iframePositionTimer = null;
           if (!_disposed) {
-            _eventController.add(PlaybackEvent(
-              type: PlaybackEventType.trackEnded,
-              track: _currentStatus.track,
-              generation: _playGeneration,
-            ));
+            _eventController.add(
+              PlaybackEvent(
+                type: PlaybackEventType.trackEnded,
+                track: _currentStatus.track,
+                generation: _playGeneration,
+              ),
+            );
           }
           _updateStatus(_currentStatus.copyWith(state: PlaybackState.ended));
           return;
@@ -1341,17 +1427,22 @@ class MediaKitPlaybackEngine implements PlaybackController {
       if (!_valid(generation)) return;
 
       if (_currentStatus.state == PlaybackState.playing) {
-        _diag('RENDERER gen=$generation position=$currentTime duration=$duration');
-        final positionDuration =
-            Duration(milliseconds: (currentTime * 1000).toInt());
+        _diag(
+          'RENDERER gen=$generation position=$currentTime duration=$duration',
+        );
+        final positionDuration = Duration(
+          milliseconds: (currentTime * 1000).toInt(),
+        );
         // Update confirmed position for watchdog recovery.
         if (_confirmedPositionGeneration == generation) {
           _confirmedPlaybackPosition = positionDuration;
         }
-        _updateStatus(_currentStatus.copyWith(
-          position: positionDuration,
-          duration: Duration(milliseconds: (duration * 1000).toInt()),
-        ));
+        _updateStatus(
+          _currentStatus.copyWith(
+            position: positionDuration,
+            duration: Duration(milliseconds: (duration * 1000).toInt()),
+          ),
+        );
       }
     });
   }

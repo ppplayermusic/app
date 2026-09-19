@@ -652,6 +652,9 @@ class AppLocalizationsFa extends AppLocalizations {
   String get filterStations => 'ایستگاه‌ها';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'موسیقی محلی';
 
   @override

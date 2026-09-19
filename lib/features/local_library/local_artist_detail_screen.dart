@@ -7,17 +7,15 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../core/player/player_provider.dart';
 
-final localArtistTracksProvider = FutureProvider.family<List<model.Track>, String>((ref, artistName) async {
-  return ref.watch(appDatabaseProvider).getArtistAppTracks(artistName);
-});
+final localArtistTracksProvider =
+    FutureProvider.family<List<model.Track>, String>((ref, artistName) async {
+      return ref.watch(appDatabaseProvider).getArtistAppTracks(artistName);
+    });
 
 class LocalArtistDetailScreen extends ConsumerWidget {
   final String artistName;
 
-  const LocalArtistDetailScreen({
-    super.key,
-    required this.artistName,
-  });
+  const LocalArtistDetailScreen({super.key, required this.artistName});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,10 +63,9 @@ class LocalArtistDetailScreen extends ConsumerWidget {
                         index: index + 1,
                         track: track,
                         onTap: () {
-                          ref.read(playerProvider.notifier).playTracks(
-                            tracks,
-                            initialIndex: index,
-                          );
+                          ref
+                              .read(playerProvider.notifier)
+                              .playTracks(tracks, initialIndex: index);
                         },
                       );
                     },

@@ -10,24 +10,30 @@ void main() {
     MediaKit.ensureInitialized();
   });
 
-  testWidgets('macOS Session Isolation Smoke Test', (WidgetTester tester) async {
+  testWidgets('macOS Session Isolation Smoke Test', (
+    WidgetTester tester,
+  ) async {
     final engine = MediaKitPlaybackEngine();
-    
+
     engine.statusStream.listen((status) {
-      print('TEST STATUS: ${status.state} - ${status.duration} - ${status.position}');
+      print(
+        'TEST STATUS: ${status.state} - ${status.duration} - ${status.position}',
+      );
     });
 
     final trackA = PlaybackTrack(
       id: 'track_a',
       title: 'Track A',
-      networkMediaUri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      networkMediaUri:
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       sourceType: PlaybackSourceType.networkStream,
     );
-    
+
     final trackB = PlaybackTrack(
       id: 'track_b',
       title: 'Track B',
-      networkMediaUri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      networkMediaUri:
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
       sourceType: PlaybackSourceType.networkStream,
     );
 
@@ -37,7 +43,9 @@ void main() {
     engine.play(trackB);
     await Future.delayed(const Duration(milliseconds: 100));
     engine.play(trackA);
-    await Future.delayed(const Duration(seconds: 10)); // Let it load and play (increased for Android)
+    await Future.delayed(
+      const Duration(seconds: 10),
+    ); // Let it load and play (increased for Android)
     expect(engine.currentStatus.state, PlaybackState.playing);
 
     print('--- 2. Same-URL Reopening ---');
@@ -49,7 +57,8 @@ void main() {
     final pauseCompleter = Completer<void>();
     StreamSubscription? sub;
     sub = engine.statusStream.listen((status) {
-      if (status.state == PlaybackState.buffering && !pauseCompleter.isCompleted) {
+      if (status.state == PlaybackState.buffering &&
+          !pauseCompleter.isCompleted) {
         pauseCompleter.complete();
       }
     });
@@ -59,14 +68,14 @@ void main() {
     await Future.delayed(const Duration(seconds: 4));
     sub.cancel();
     expect(engine.currentStatus.state, PlaybackState.paused);
-    
+
     print('--- 4. Stopping During Loading ---');
     engine.play(trackA);
     // Stop immediately
     engine.stop();
     await Future.delayed(const Duration(seconds: 2));
     expect(engine.currentStatus.state, PlaybackState.idle);
-    
+
     engine.dispose();
   });
 }

@@ -114,7 +114,7 @@ class FakePlaybackController implements PlaybackController {
   Future<void> setVolume(double volume) async {}
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     _statusController.close();
   }
 

@@ -32,8 +32,8 @@ class LocalSongsTab extends ConsumerWidget {
                 Text(
                   isSearching ? 'No songs found' : l10n.noLocalSongs,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -53,10 +53,9 @@ class LocalSongsTab extends ConsumerWidget {
                     index: index + 1,
                     track: track,
                     onTap: () {
-                      ref.read(playerProvider.notifier).playTracks(
-                            tracks,
-                            initialIndex: index,
-                          );
+                      ref
+                          .read(playerProvider.notifier)
+                          .playTracks(tracks, initialIndex: index);
                     },
                   );
                 },
@@ -81,11 +80,16 @@ class _SortHeader extends ConsumerWidget {
 
     String getSortName(LocalSortOption option) {
       switch (option) {
-        case LocalSortOption.title: return l10n.sortTitle;
-        case LocalSortOption.artist: return l10n.sortArtist;
-        case LocalSortOption.album: return l10n.sortAlbum;
-        case LocalSortOption.duration: return l10n.sortDuration;
-        case LocalSortOption.dateAdded: return l10n.sortDateAdded;
+        case LocalSortOption.title:
+          return l10n.sortTitle;
+        case LocalSortOption.artist:
+          return l10n.sortArtist;
+        case LocalSortOption.album:
+          return l10n.sortAlbum;
+        case LocalSortOption.duration:
+          return l10n.sortDuration;
+        case LocalSortOption.dateAdded:
+          return l10n.sortDateAdded;
       }
     }
 
@@ -96,9 +100,12 @@ class _SortHeader extends ConsumerWidget {
         children: [
           PopupMenuButton<LocalSortOption>(
             initialValue: sortOption,
-            onSelected: (option) => ref.read(localSortOptionProvider.notifier).update(option),
+            onSelected: (option) =>
+                ref.read(localSortOptionProvider.notifier).update(option),
             color: colorScheme.surfaceContainerHighest,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             itemBuilder: (context) => LocalSortOption.values.map((option) {
               return PopupMenuItem(
                 value: option,
@@ -109,15 +116,22 @@ class _SortHeader extends ConsumerWidget {
               children: [
                 const Icon(Icons.sort_rounded, size: 20),
                 const SizedBox(width: 8),
-                Text(getSortName(sortOption), style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  getSortName(sortOption),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),
           const SizedBox(width: 16),
           InkWell(
-            onTap: () => ref.read(localSortAscendingProvider.notifier).update(!isAscending),
+            onTap: () => ref
+                .read(localSortAscendingProvider.notifier)
+                .update(!isAscending),
             child: Icon(
-              isAscending ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+              isAscending
+                  ? Icons.arrow_upward_rounded
+                  : Icons.arrow_downward_rounded,
               size: 20,
             ),
           ),

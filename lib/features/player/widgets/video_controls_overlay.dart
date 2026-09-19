@@ -21,7 +21,8 @@ class VideoControlsOverlay extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<VideoControlsOverlay> createState() => _VideoControlsOverlayState();
+  ConsumerState<VideoControlsOverlay> createState() =>
+      _VideoControlsOverlayState();
 }
 
 class _VideoControlsOverlayState extends ConsumerState<VideoControlsOverlay> {
@@ -58,8 +59,8 @@ class _VideoControlsOverlayState extends ConsumerState<VideoControlsOverlay> {
                   final isSelected = track == currentTrack;
                   final dynamic t = track;
                   // Map 'no' track to 'Off'
-                  final String displayTitle = (t.id == 'no' || t.id == 'none') 
-                      ? AppLocalizations.of(context)!.off 
+                  final String displayTitle = (t.id == 'no' || t.id == 'none')
+                      ? AppLocalizations.of(context)!.off
                       : (t.title ?? t.language ?? t.id);
                   return ListTile(
                     title: Text(displayTitle),
@@ -103,7 +104,13 @@ class _VideoControlsOverlayState extends ConsumerState<VideoControlsOverlay> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorLoadingSubtitle(e.toString()))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.errorLoadingSubtitle(e.toString()),
+            ),
+          ),
+        );
       }
     }
   }
@@ -140,7 +147,10 @@ class _VideoControlsOverlayState extends ConsumerState<VideoControlsOverlay> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.closed_caption, color: Colors.white),
+                      icon: const Icon(
+                        Icons.closed_caption,
+                        color: Colors.white,
+                      ),
                       onPressed: () {
                         final player = _mkPlayer;
                         if (player != null) {
@@ -191,10 +201,14 @@ class _VideoControlsOverlayState extends ConsumerState<VideoControlsOverlay> {
                     ),
                     IconButton(
                       icon: Icon(
-                        widget.isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+                        widget.isFullscreen
+                            ? Icons.fullscreen_exit
+                            : Icons.fullscreen,
                         color: Colors.white,
                       ),
-                      tooltip: widget.isFullscreen ? 'Exit Fullscreen' : 'Fullscreen',
+                      tooltip: widget.isFullscreen
+                          ? 'Exit Fullscreen'
+                          : 'Fullscreen',
                       onPressed: widget.onToggleFullscreen,
                     ),
                   ],

@@ -652,6 +652,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filterStations => 'المحطات';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'موسيقى محلية';
 
   @override

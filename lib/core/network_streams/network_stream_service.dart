@@ -13,63 +13,64 @@ final networkStreamServiceProvider = Provider<NetworkStreamService>((ref) {
 class NetworkStreamService {
   final AppDatabase _db;
 
-
   NetworkStreamService(this._db);
 
   /// Analyzes a URL to see if it's a playlist or a direct stream.
   /// If it's a playlist, parses it and returns the list of channels.
   /// If it's a direct stream or HLS manifest, returns a single channel item representing the stream itself.
-  Future<List<PlaylistItem>> analyzeAndParseUrl(String url, {http.Client? client}) async {
+  Future<List<PlaylistItem>> analyzeAndParseUrl(
+    String url, {
+    http.Client? client,
+  }) async {
     final normalizedUrl = PlaylistParser.normalizeUrl(url);
 
     try {
-      final result = await PlaylistParser.fetchAndParse(normalizedUrl, client: client);
-      
+      final result = await PlaylistParser.fetchAndParse(
+        normalizedUrl,
+        client: client,
+      );
+
       switch (result.type) {
         case PlaylistType.channelList:
           return result.channels;
         case PlaylistType.hlsManifest:
         case PlaylistType.unknown:
           // Treat as a direct stream
-          return [
-            PlaylistItem(
-              title: 'Stream 1',
-              url: normalizedUrl,
-            )
-          ];
+          return [PlaylistItem(title: 'Stream 1', url: normalizedUrl)];
       }
     } catch (e) {
-      // If parsing fails (e.g., because it's a raw video file and bounded bytes didn't fail it), 
+      // If parsing fails (e.g., because it's a raw video file and bounded bytes didn't fail it),
       // treat as a direct stream.
-      return [
-        PlaylistItem(
-          title: 'Stream 1',
-          url: normalizedUrl,
-        )
-      ];
+      return [PlaylistItem(title: 'Stream 1', url: normalizedUrl)];
     }
   }
 
   /// Saves a parsed playlist into the database, clearing old channels for the same playlist.
-  Future<int> savePlaylist(String title, String sourceUrl, List<PlaylistItem> channels) async {
+  Future<int> savePlaylist(
+    String title,
+    String sourceUrl,
+    List<PlaylistItem> channels,
+  ) async {
     return await _db.transaction(() async {
       // Check if playlist already exists by URI
-      final existingPlaylists = await (_db.select(_db.streamPlaylists)
-            ..where((t) => t.sourceUri.equals(sourceUrl)))
-          .get();
+      final existingPlaylists = await (_db.select(
+        _db.streamPlaylists,
+      )..where((t) => t.sourceUri.equals(sourceUrl))).get();
 
       int playlistId;
       if (existingPlaylists.isNotEmpty) {
         playlistId = existingPlaylists.first.id;
-        
+
         // Update playlist metadata
-        await (_db.update(_db.streamPlaylists)
-              ..where((t) => t.id.equals(playlistId)))
-            .write(StreamPlaylistsCompanion(
-              lastRefreshed: drift.Value(DateTime.now()),
-            ));
+        await (_db.update(
+          _db.streamPlaylists,
+        )..where((t) => t.id.equals(playlistId))).write(
+          StreamPlaylistsCompanion(lastRefreshed: drift.Value(DateTime.now())),
+        );
       } else {
-        playlistId = await _db.into(_db.streamPlaylists).insert(
+        playlistId = await _db
+            .into(_db.streamPlaylists)
+            .insert(
               StreamPlaylistsCompanion.insert(
                 title: title,
                 sourceKind: 'url',
@@ -80,9 +81,9 @@ class NetworkStreamService {
       }
 
       // Fetch existing channels to preserve IDs
-      final existingChannels = await (_db.select(_db.streamChannels)
-            ..where((t) => t.playlistId.equals(playlistId)))
-          .get();
+      final existingChannels = await (_db.select(
+        _db.streamChannels,
+      )..where((t) => t.playlistId.equals(playlistId))).get();
 
       final existingByUrl = {for (var c in existingChannels) c.streamUrl: c};
       final urlsToKeep = <String>{};
@@ -96,7 +97,9 @@ class NetworkStreamService {
 
         if (existing != null) {
           // Update existing channel
-          await (_db.update(_db.streamChannels)..where((t) => t.id.equals(existing.id))).write(
+          await (_db.update(
+            _db.streamChannels,
+          )..where((t) => t.id.equals(existing.id))).write(
             StreamChannelsCompanion(
               title: drift.Value(c.title),
               tvgId: drift.Value(c.tvgId),
@@ -107,15 +110,17 @@ class NetworkStreamService {
           );
         } else {
           // Insert new channel
-          inserts.add(StreamChannelsCompanion.insert(
-            playlistId: playlistId,
-            title: c.title,
-            streamUrl: c.url,
-            tvgId: drift.Value(c.tvgId),
-            logo: drift.Value(c.tvgLogo),
-            groupTitle: drift.Value(c.groupTitle),
-            position: index,
-          ));
+          inserts.add(
+            StreamChannelsCompanion.insert(
+              playlistId: playlistId,
+              title: c.title,
+              streamUrl: c.url,
+              tvgId: drift.Value(c.tvgId),
+              logo: drift.Value(c.tvgLogo),
+              groupTitle: drift.Value(c.groupTitle),
+              position: index,
+            ),
+          );
         }
         index++;
       }
@@ -123,7 +128,9 @@ class NetworkStreamService {
       // Delete removed channels
       for (final old in existingChannels) {
         if (!urlsToKeep.contains(old.streamUrl)) {
-          await (_db.delete(_db.streamChannels)..where((t) => t.id.equals(old.id))).go();
+          await (_db.delete(
+            _db.streamChannels,
+          )..where((t) => t.id.equals(old.id))).go();
         }
       }
 
@@ -142,19 +149,19 @@ class NetworkStreamService {
   }
 
   Stream<List<StreamChannel>> watchChannelsForPlaylist(int playlistId) {
-    return (_db.select(_db.streamChannels)
-          ..where((t) => t.playlistId.equals(playlistId)))
-        .watch();
+    return (_db.select(
+      _db.streamChannels,
+    )..where((t) => t.playlistId.equals(playlistId))).watch();
   }
 
   Future<void> deletePlaylist(int playlistId) async {
     await _db.transaction(() async {
-      await (_db.delete(_db.streamChannels)
-            ..where((t) => t.playlistId.equals(playlistId)))
-          .go();
-      await (_db.delete(_db.streamPlaylists)
-            ..where((t) => t.id.equals(playlistId)))
-          .go();
+      await (_db.delete(
+        _db.streamChannels,
+      )..where((t) => t.playlistId.equals(playlistId))).go();
+      await (_db.delete(
+        _db.streamPlaylists,
+      )..where((t) => t.id.equals(playlistId))).go();
     });
   }
 }

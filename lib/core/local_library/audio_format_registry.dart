@@ -32,7 +32,7 @@ class AudioFormatRegistry {
     '.mlp', // MLP / TrueHD
     '.mka', // Matroska audio
     '.ape', // Monkey's Audio
-    '.wv',  // WavPack
+    '.wv', // WavPack
     '.mpc', // Musepack
     '.tta', // TrueAudio
     '.rm', '.ra', // RealAudio (ambiguous, probed at import if needed)
@@ -46,15 +46,11 @@ class AudioFormatRegistry {
   /// - MOD, XM, and S3M failed decoding on the tested macOS build.
   /// - IT remains completely unverified (not exercised by tests).
   /// Kept explicitly unverified and unavailable until their status is understood.
-  static const List<String> _trackerFormats = [
-    '.mod', '.xm', '.it', '.s3m',
-  ];
+  static const List<String> _trackerFormats = ['.mod', '.xm', '.it', '.s3m'];
 
   /// Special formats like MIDI that are known but explicitly excluded from general
   /// pickers. MIDI remains completely unverified (not exercised by tests) and is kept unavailable.
-  static const List<String> _specialFormats = [
-    '.mid', '.midi',
-  ];
+  static const List<String> _specialFormats = ['.mid', '.midi'];
 
   /// Formats in the original request that are intentionally omitted as standalone extensions
   /// because they are either typically found inside other containers (e.g. .mov, .mkv)
@@ -62,7 +58,7 @@ class AudioFormatRegistry {
   /// - DV Audio
   /// - QDM2/QDMC
   /// - MACE (Macintosh Audio Compression/Expansion)
-  /// ALAC, LPCM, ADPCM, A-law, and mu-law are supported via their standard 
+  /// ALAC, LPCM, ADPCM, A-law, and mu-law are supported via their standard
   /// container extensions (.m4a, .wav, .aiff).
 
   /// Video container formats accepted by libmpv/FFmpeg.  Files matching these
@@ -74,15 +70,19 @@ class AudioFormatRegistry {
   /// Videos library.  They will only appear in the music library if the user
   /// also imports them through an audio import action or "Open File".
   static const List<String> _videoFormats = [
-    '.mp4', '.m4v',
+    '.mp4',
+    '.m4v',
     '.mkv',
     '.mov',
     '.avi',
     '.wmv',
     '.flv',
     '.webm',
-    '.ts', '.m2ts', '.mts',
-    '.3gp', '.3g2',
+    '.ts',
+    '.m2ts',
+    '.mts',
+    '.3gp',
+    '.3g2',
     '.ogv',
     '.divx',
     '.rmvb',
@@ -91,7 +91,8 @@ class AudioFormatRegistry {
   ];
 
   /// All extensions accepted by a video file or folder picker.
-  static List<String> get videoImportCandidates => List.unmodifiable(_videoFormats);
+  static List<String> get videoImportCandidates =>
+      List.unmodifiable(_videoFormats);
 
   /// Extensions accepted by "Open File" which routes each file to the
   /// appropriate import path (audio vs video) based on its extension.

@@ -36,20 +36,36 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
   ProviderSubscription<AsyncValue<bool>>? _favoriteSub;
 
   void _updateTaskbar(bool isFav, {bool? playing}) {
-    if (kIsWeb || !Platform.isWindows || Platform.environment.containsKey('FLUTTER_TEST')) return;
+    if (kIsWeb ||
+        !Platform.isWindows ||
+        Platform.environment.containsKey('FLUTTER_TEST'))
+      return;
 
     final playerState = _container.read(playerProvider);
     final isPlaying = playing ?? playerState.isPlaying;
 
     WindowsTaskbar.setThumbnailToolbar([
       ThumbnailToolbarButton(
-        ThumbnailToolbarAssetIcon(isFav ? 'assets/icons/remove.ico' : 'assets/icons/add.ico'),
+        ThumbnailToolbarAssetIcon(
+          isFav ? 'assets/icons/remove.ico' : 'assets/icons/add.ico',
+        ),
         isFav ? 'Remove from library' : 'Add to library',
         () async {
           final currentTrack = _container.read(playerProvider).currentTrack;
           if (currentTrack != null) {
-            final currentFav = _container.read(favoritesStatusProvider((FavoriteType.track, currentTrack.spotifyId))).value ?? currentTrack.isFavorite;
-            await _container.read(favoritesControllerProvider.notifier).toggleTrackFavorite(currentTrack, currentFav);
+            final currentFav =
+                _container
+                    .read(
+                      favoritesStatusProvider((
+                        FavoriteType.track,
+                        currentTrack.spotifyId,
+                      )),
+                    )
+                    .value ??
+                currentTrack.isFavorite;
+            await _container
+                .read(favoritesControllerProvider.notifier)
+                .toggleTrackFavorite(currentTrack, currentFav);
           }
         },
       ),
@@ -59,7 +75,9 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
         () => skipToPrevious(),
       ),
       ThumbnailToolbarButton(
-        ThumbnailToolbarAssetIcon(isPlaying ? 'assets/icons/pause.ico' : 'assets/icons/play.ico'),
+        ThumbnailToolbarAssetIcon(
+          isPlaying ? 'assets/icons/pause.ico' : 'assets/icons/play.ico',
+        ),
         isPlaying ? 'Pause' : 'Play',
         () => isPlaying ? pause() : play(),
       ),
@@ -89,13 +107,13 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
         album: album,
         displayTitle: title,
         displaySubtitle: artist,
-        artUri:
-            (artUri != null && artUri.isNotEmpty) ? Uri.parse(artUri) : null,
+        artUri: (artUri != null && artUri.isNotEmpty)
+            ? Uri.parse(artUri)
+            : null,
         duration: duration,
-        extras:
-            (artCacheFile != null && artCacheFile.isNotEmpty)
-                ? {'artCacheFile': artCacheFile}
-                : null,
+        extras: (artCacheFile != null && artCacheFile.isNotEmpty)
+            ? {'artCacheFile': artCacheFile}
+            : null,
       ),
     );
   }
@@ -144,7 +162,10 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
         _favoriteSub = _container.listen<AsyncValue<bool>>(
           favoritesStatusProvider((FavoriteType.track, track.spotifyId)),
           (prev, next) {
-             _updateTaskbar(next.value ?? track.isFavorite, playing: playbackState.value.playing);
+            _updateTaskbar(
+              next.value ?? track.isFavorite,
+              playing: playbackState.value.playing,
+            );
           },
           fireImmediately: true,
         );
@@ -154,7 +175,16 @@ class PpPlayerAudioHandler extends BaseAudioHandler with QueueHandler {
     } else {
       bool isFav = false;
       if (track != null) {
-        isFav = _container.read(favoritesStatusProvider((FavoriteType.track, track.spotifyId))).value ?? track.isFavorite;
+        isFav =
+            _container
+                .read(
+                  favoritesStatusProvider((
+                    FavoriteType.track,
+                    track.spotifyId,
+                  )),
+                )
+                .value ??
+            track.isFavorite;
       }
       _updateTaskbar(isFav, playing: playing);
     }

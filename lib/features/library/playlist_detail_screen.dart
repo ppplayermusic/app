@@ -121,9 +121,9 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return StreamBuilder<db.Playlist?>(
-      stream:
-          (database.select(database.playlists)
-            ..where((p) => p.id.equals(widget.playlistId))).watchSingleOrNull(),
+      stream: (database.select(
+        database.playlists,
+      )..where((p) => p.id.equals(widget.playlistId))).watchSingleOrNull(),
       builder: (context, playlistSnapshot) {
         final playlist = playlistSnapshot.data;
 
@@ -174,18 +174,15 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
 
             final query = _searchController.text.toLowerCase();
 
-            final filteredTracks =
-                query.isEmpty
-                    ? allTracks
-                    : allTracks.where((track) {
-                      final titleMatch = track.name.toLowerCase().contains(
-                        query,
-                      );
-                      final artistMatch = track.artistName
-                          .toLowerCase()
-                          .contains(query);
-                      return titleMatch || artistMatch;
-                    }).toList();
+            final filteredTracks = query.isEmpty
+                ? allTracks
+                : allTracks.where((track) {
+                    final titleMatch = track.name.toLowerCase().contains(query);
+                    final artistMatch = track.artistName.toLowerCase().contains(
+                      query,
+                    );
+                    return titleMatch || artistMatch;
+                  }).toList();
 
             final modelTracks = filteredTracks;
 
@@ -316,28 +313,29 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
             Positioned.fill(
               child: Opacity(
                 opacity: 0.6,
-                child: Container(
-                      decoration: BoxDecoration(
-                        gradient: RadialGradient(
-                          center: const Alignment(-0.8, -0.6),
-                          radius: 1.5,
-                          colors: [colorScheme.primary, Colors.transparent],
+                child:
+                    Container(
+                          decoration: BoxDecoration(
+                            gradient: RadialGradient(
+                              center: const Alignment(-0.8, -0.6),
+                              radius: 1.5,
+                              colors: [colorScheme.primary, Colors.transparent],
+                            ),
+                          ),
+                        )
+                        .animate(onPlay: (c) => c.repeat(reverse: true))
+                        .scale(
+                          begin: const Offset(1, 1),
+                          end: const Offset(1.3, 1.3),
+                          duration: 10.seconds,
+                          curve: Curves.easeInOut,
+                        )
+                        .move(
+                          begin: const Offset(-20, -20),
+                          end: const Offset(20, 20),
+                          duration: 12.seconds,
+                          curve: Curves.easeInOut,
                         ),
-                      ),
-                    )
-                    .animate(onPlay: (c) => c.repeat(reverse: true))
-                    .scale(
-                      begin: const Offset(1, 1),
-                      end: const Offset(1.3, 1.3),
-                      duration: 10.seconds,
-                      curve: Curves.easeInOut,
-                    )
-                    .move(
-                      begin: const Offset(-20, -20),
-                      end: const Offset(20, 20),
-                      duration: 12.seconds,
-                      curve: Curves.easeInOut,
-                    ),
               ),
             ),
             DecoratedBox(
@@ -389,12 +387,11 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: PlaylistCover(
-                              images:
-                                  tracks
-                                      .take(4)
-                                      .map((t) => t.albumImage)
-                                      .whereType<String>()
-                                      .toList(),
+                              images: tracks
+                                  .take(4)
+                                  .map((t) => t.albumImage)
+                                  .whereType<String>()
+                                  .toList(),
                               size: 180,
                             ),
                           ),
@@ -568,14 +565,12 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                         final isLiked = statusAsync.value ?? false;
 
                         return TactileIconButton(
-                          icon:
-                              isLiked
-                                  ? Icons.favorite_rounded
-                                  : Icons.favorite_border_rounded,
-                          color:
-                              isLiked
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurfaceVariant,
+                          icon: isLiked
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          color: isLiked
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
                           size: 28,
                           onTap: () {
                             ref
@@ -607,7 +602,8 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
                       color: colorScheme.onSurfaceVariant,
                       size: 28,
                       onTap: () {
-                        final renderBox = btnContext.findRenderObject() as RenderBox?;
+                        final renderBox =
+                            btnContext.findRenderObject() as RenderBox?;
                         final offset = renderBox?.localToGlobal(Offset.zero);
                         if (offset == null) return;
                         showContentContextMenu(
@@ -665,21 +661,18 @@ class _PlaylistDetailScreenState extends ConsumerState<PlaylistDetailScreen> {
               index: index + 1,
               track: track,
               playlistId: playlist.id,
-              playlistEntryId: track.queueItemId != null ? int.tryParse(track.queueItemId!) : null,
-              onTap:
-                  () => ref
-                      .read(playerProvider.notifier)
-                      .playTrack(track, queue: modelTracks),
+              playlistEntryId: track.queueItemId != null
+                  ? int.tryParse(track.queueItemId!)
+                  : null,
+              onTap: () => ref
+                  .read(playerProvider.notifier)
+                  .playTrack(track, queue: modelTracks),
             ).animate().fadeIn(delay: (index * 30).ms).slideX(begin: 0.05),
           );
         },
         itemCount: modelTracks.length,
-        onReorderItem:
-            (oldIndex, newIndex) => _onReorder(
-              oldIndex,
-              newIndex,
-              modelTracks,
-            ),
+        onReorderItem: (oldIndex, newIndex) =>
+            _onReorder(oldIndex, newIndex, modelTracks),
       ),
       const SliverToBoxAdapter(child: SizedBox(height: 120)),
     ];

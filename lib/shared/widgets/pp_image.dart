@@ -37,18 +37,20 @@ class PPImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        errorBuilder:
-            (context, error, stackTrace) => _buildErrorWidget(context),
+        errorBuilder: (context, error, stackTrace) =>
+            _buildErrorWidget(context),
       );
     } else if (imageUrl!.startsWith('/') || imageUrl!.startsWith('file://')) {
-      final path = imageUrl!.startsWith('file://') ? imageUrl!.replaceFirst('file://', '') : imageUrl!;
+      final path = imageUrl!.startsWith('file://')
+          ? imageUrl!.replaceFirst('file://', '')
+          : imageUrl!;
       image = Image.file(
         File(path),
         width: width,
         height: height,
         fit: fit,
-        errorBuilder:
-            (context, error, stackTrace) => _buildErrorWidget(context),
+        errorBuilder: (context, error, stackTrace) =>
+            _buildErrorWidget(context),
       );
     } else {
       image = CachedNetworkImage(
@@ -57,10 +59,10 @@ class PPImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        placeholder:
-            (context, url) => placeholder ?? _buildPlaceholder(context),
-        errorWidget:
-            (context, url, error) => errorWidget ?? _buildErrorWidget(context),
+        placeholder: (context, url) =>
+            placeholder ?? _buildPlaceholder(context),
+        errorWidget: (context, url, error) =>
+            errorWidget ?? _buildErrorWidget(context),
       );
     }
 
@@ -105,7 +107,9 @@ class PPImage extends StatelessWidget {
     if (imageUrl.startsWith('asset:')) {
       return AssetImage(imageUrl.substring(6));
     } else if (imageUrl.startsWith('/') || imageUrl.startsWith('file://')) {
-      final path = imageUrl.startsWith('file://') ? imageUrl.replaceFirst('file://', '') : imageUrl;
+      final path = imageUrl.startsWith('file://')
+          ? imageUrl.replaceFirst('file://', '')
+          : imageUrl;
       return FileImage(File(path));
     } else {
       return CachedNetworkImageProvider(

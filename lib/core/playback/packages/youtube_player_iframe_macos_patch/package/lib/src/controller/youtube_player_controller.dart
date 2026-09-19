@@ -268,7 +268,8 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     try {
       _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       _localServerUrl = 'http://localhost:${_localServer!.port}/';
-      debugPrint("YoutubePlayerController: Local server started at $_localServerUrl");
+      debugPrint(
+          "YoutubePlayerController: Local server started at $_localServerUrl");
       _localServer!.listen((HttpRequest request) {
         request.response
           ..headers.contentType = ContentType.html
@@ -290,17 +291,20 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     String id = 'player',
   }) async {
     debugPrint("YoutubePlayerController: load() start");
-    
+
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
       await _ensureLocalServer();
     }
 
     final platform = kIsWeb ? 'web' : defaultTargetPlatform.name.toLowerCase();
-    
+
     final playerVarsMap = params.toMap();
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows && _localServerUrl != null) {
+    if (!kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.windows &&
+        _localServerUrl != null) {
       // Remove trailing slash for the origin parameter
-      playerVarsMap['origin'] = _localServerUrl!.substring(0, _localServerUrl!.length - 1);
+      playerVarsMap['origin'] =
+          _localServerUrl!.substring(0, _localServerUrl!.length - 1);
       playerVarsMap['widget_referrer'] = playerVarsMap['origin'];
     }
     final playerVars = jsonEncode(playerVarsMap);
@@ -498,7 +502,7 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     if (decoded is String) {
       decoded = jsonDecode(decoded);
     }
-    
+
     return VideoData.fromMap(decoded);
   }
 

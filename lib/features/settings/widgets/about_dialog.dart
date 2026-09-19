@@ -19,7 +19,7 @@ class PpAboutDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       contentPadding: const EdgeInsets.all(32),
@@ -29,7 +29,7 @@ class PpAboutDialog extends StatelessWidget {
           final packageInfo = snapshot.data;
           final version = packageInfo?.version ?? '';
           final build = packageInfo?.buildNumber ?? '';
-          
+
           // Show beta badge if the version string contains 'beta'
           final isBeta = version.toLowerCase().contains('beta');
 
@@ -40,11 +40,7 @@ class PpAboutDialog extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    'assets/logo.png',
-                    width: 80,
-                    height: 80,
-                  ),
+                  child: Image.asset('assets/logo.png', width: 80, height: 80),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -75,7 +71,10 @@ class PpAboutDialog extends StatelessWidget {
                     if (isBeta) ...[
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(4),
@@ -104,14 +103,38 @@ class PpAboutDialog extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _buildActionButton(context, Icons.public, l10n.website, 'https://ppplayer.com'),
-                    _buildActionButton(context, Icons.code, l10n.github, 'https://github.com/ppplayermusic/ppplayer'),
-                    _buildActionButton(context, Icons.article_outlined, l10n.releaseNotes, 'https://github.com/ppplayermusic/ppplayer/releases'),
-                    _buildActionButton(context, Icons.help_outline, l10n.support, 'https://ppplayer.com/support'),
+                    _buildActionButton(
+                      context,
+                      Icons.public,
+                      l10n.website,
+                      'https://ppplayer.com',
+                    ),
+                    _buildActionButton(
+                      context,
+                      Icons.code,
+                      l10n.github,
+                      'https://github.com/ppplayermusic/ppplayer',
+                    ),
+                    _buildActionButton(
+                      context,
+                      Icons.article_outlined,
+                      l10n.releaseNotes,
+                      'https://github.com/ppplayermusic/ppplayer/releases',
+                    ),
+                    _buildActionButton(
+                      context,
+                      Icons.help_outline,
+                      l10n.support,
+                      'https://ppplayer.com/support',
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                Divider(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                Divider(
+                  color: theme.colorScheme.outlineVariant.withValues(
+                    alpha: 0.5,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Wrap(
                   alignment: WrapAlignment.center,
@@ -132,7 +155,9 @@ class PpAboutDialog extends StatelessWidget {
                             builder: (_) => PPLicensePage(
                               applicationName: 'PPPlayer',
                               applicationVersion: version,
-                              applicationLegalese: l10n.copyright(DateTime.now().year.toString()),
+                              applicationLegalese: l10n.copyright(
+                                DateTime.now().year.toString(),
+                              ),
                             ),
                           ),
                         );
@@ -151,7 +176,7 @@ class PpAboutDialog extends StatelessWidget {
               ],
             ),
           );
-        }
+        },
       ),
       actions: [
         TextButton(
@@ -162,19 +187,26 @@ class PpAboutDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton(BuildContext context, IconData icon, String text, String url) {
+  Widget _buildActionButton(
+    BuildContext context,
+    IconData icon,
+    String text,
+    String url,
+  ) {
     return TextButton.icon(
       icon: Icon(icon, size: 18),
       label: Text(text),
       onPressed: () => _launchUrl(url),
       style: TextButton.styleFrom(
         foregroundColor: Theme.of(context).colorScheme.onSurface,
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        backgroundColor: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
     );
   }
-  
+
   void _showProjectLicense(BuildContext context) {
     showDialog(
       context: context,

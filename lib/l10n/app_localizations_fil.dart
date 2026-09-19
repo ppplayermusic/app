@@ -655,6 +655,9 @@ class AppLocalizationsFil extends AppLocalizations {
   String get filterStations => 'Mga Istasyon';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Lokal na Musika';
 
   @override

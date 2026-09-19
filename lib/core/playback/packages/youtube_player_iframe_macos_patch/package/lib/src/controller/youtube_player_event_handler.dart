@@ -34,6 +34,7 @@ class YoutubePlayerEventHandler {
   void reset() {
     _readyCompleter = Completer();
   }
+
   late final Map<String, ValueChanged<Object>> _events;
 
   /// Handles the [javaScriptMessage] from the player iframe and create events.

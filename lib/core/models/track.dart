@@ -31,7 +31,8 @@ Object? _readLiveStatus(Map json, String key) {
   return 0;
 }
 
-class StreamLiveStatusConverter implements JsonConverter<StreamLiveStatus, dynamic> {
+class StreamLiveStatusConverter
+    implements JsonConverter<StreamLiveStatus, dynamic> {
   const StreamLiveStatusConverter();
 
   @override
@@ -70,15 +71,19 @@ abstract class Track with _$Track {
     @Default(QueueItemOrigin.context) QueueItemOrigin queueOrigin,
     // --- Local music fields ---
     @Default(TrackSourceType.online) TrackSourceType sourceType,
+
     /// Absolute path or content URI stored by LocalFileResolver.
     /// Null only when [sourceType] == TrackSourceType.online.
     String? localFilePath,
+
     /// Local artwork absolute path (cached by MetadataExtractor).
     String? localArtworkPath,
+
     /// 'available' | 'missing' | 'permissionRevoked' | 'decodingError'
     @Default('available') String localAvailabilityStatus,
     String? localAlbumGroupKey,
     DateTime? localAddedAt,
+
     /// True when [VideoProbeService] confirmed a video stream in this file.
     /// False for all audio-only tracks, unclassified pre-v11 rows, and
     /// online tracks.
@@ -86,10 +91,12 @@ abstract class Track with _$Track {
     // --- Network Stream fields ---
     /// Stream URL for network streams.
     String? networkStreamUrl,
+
     /// The stream live status (unknown, live, onDemand).
     @StreamLiveStatusConverter()
     @JsonKey(readValue: _readLiveStatus)
-    @Default(StreamLiveStatus.unknown) StreamLiveStatus liveStatus,
+    @Default(StreamLiveStatus.unknown)
+    StreamLiveStatus liveStatus,
   }) = _Track;
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
@@ -97,7 +104,7 @@ abstract class Track with _$Track {
   /// Build from Drift database row
   factory Track.fromDb(dynamic t) {
     final String id = t.spotifyId;
-    
+
     if (id.startsWith('stream:')) {
       return Track(
         spotifyId: id,
@@ -128,7 +135,9 @@ abstract class Track with _$Track {
       youtubeVideoId: t.youtubeVideoId,
       playCount: t.playCount,
       isFavorite: t.isFavorite,
-      sourceType: id.startsWith('local:') ? TrackSourceType.local : TrackSourceType.online,
+      sourceType: id.startsWith('local:')
+          ? TrackSourceType.local
+          : TrackSourceType.online,
     );
   }
 
@@ -202,26 +211,23 @@ abstract class Track with _$Track {
     return Track(
       spotifyId: (json['id'] as String?) ?? '',
       name: (json['name'] as String?) ?? 'Unknown Title',
-      artistId:
-          artists.isNotEmpty
-              ? artists
-                  .map((a) => (a is Map ? a['id']?.toString() : null) ?? '')
-                  .where((id) => id.isNotEmpty)
-                  .join(',')
-              : '',
-      artistName:
-          artists.isNotEmpty
-              ? artists
-                  .map((a) => (a is Map ? a['name']?.toString() : null) ?? '')
-                  .where((n) => n.isNotEmpty)
-                  .join(', ')
-              : 'Unknown Artist',
+      artistId: artists.isNotEmpty
+          ? artists
+                .map((a) => (a is Map ? a['id']?.toString() : null) ?? '')
+                .where((id) => id.isNotEmpty)
+                .join(',')
+          : '',
+      artistName: artists.isNotEmpty
+          ? artists
+                .map((a) => (a is Map ? a['name']?.toString() : null) ?? '')
+                .where((n) => n.isNotEmpty)
+                .join(', ')
+          : 'Unknown Artist',
       albumId: album['id']?.toString(),
       albumName: album['name']?.toString(),
-      albumImage:
-          images.isNotEmpty && images[0] is Map
-              ? (images[0] as Map)['url']?.toString()
-              : null,
+      albumImage: images.isNotEmpty && images[0] is Map
+          ? (images[0] as Map)['url']?.toString()
+          : null,
       durationMs: json['duration_ms'] as int?,
     );
   }
@@ -233,6 +239,5 @@ extension TrackSourceX on Track {
 
   /// True when the track is local AND the file was last seen as accessible.
   /// An unavailable local track has isLocal=true but isAvailable=false.
-  bool get isAvailable =>
-      !isLocal || localAvailabilityStatus == 'available';
+  bool get isAvailable => !isLocal || localAvailabilityStatus == 'available';
 }

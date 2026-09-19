@@ -14,7 +14,8 @@ class NetworkStreamDialog extends ConsumerStatefulWidget {
   const NetworkStreamDialog({super.key});
 
   @override
-  ConsumerState<NetworkStreamDialog> createState() => _NetworkStreamDialogState();
+  ConsumerState<NetworkStreamDialog> createState() =>
+      _NetworkStreamDialogState();
 }
 
 class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
@@ -51,8 +52,11 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
 
     try {
       final service = ref.read(networkStreamServiceProvider);
-      final channels = await service.analyzeAndParseUrl(url, client: _activeClient);
-      
+      final channels = await service.analyzeAndParseUrl(
+        url,
+        client: _activeClient,
+      );
+
       if (channels.isEmpty) {
         if (!mounted) return;
         setState(() {
@@ -63,11 +67,13 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
       }
 
       await service.savePlaylist(title, url, channels);
-      
+
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Added ${channels.length} channels from stream!')),
+          SnackBar(
+            content: Text('Added ${channels.length} channels from stream!'),
+          ),
         );
       }
     } catch (e) {

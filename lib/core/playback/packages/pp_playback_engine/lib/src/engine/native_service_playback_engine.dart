@@ -293,7 +293,9 @@ class NativeServicePlaybackEngine implements PlaybackController {
   Future<void> dispose() async {
     _disposed = true;
     try {
-      await _channel.invokeMethod('stopService').timeout(const Duration(seconds: 2));
+      await _channel
+          .invokeMethod('stopService')
+          .timeout(const Duration(seconds: 2));
     } catch (_) {}
     _channel.setMethodCallHandler(null);
     _statusController.close();

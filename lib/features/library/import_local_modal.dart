@@ -26,9 +26,19 @@ void showImportLocalModal(BuildContext context, WidgetRef ref) {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.audio_file, color: Theme.of(context).colorScheme.onSurface),
+                  Icon(
+                    Icons.audio_file,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   const SizedBox(width: 16),
-                  Text(AppLocalizations.of(context)!.importAudioFiles, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(
+                    AppLocalizations.of(context)!.importAudioFiles,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -47,15 +57,33 @@ void showImportLocalModal(BuildContext context, WidgetRef ref) {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.folder, color: Theme.of(context).colorScheme.onSurface),
+                  Icon(
+                    Icons.folder,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(AppLocalizations.of(context)!.importFolder, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text(
+                          AppLocalizations.of(context)!.importFolder,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 2),
-                        Text(AppLocalizations.of(context)!.importFolderSubtitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
+                        Text(
+                          AppLocalizations.of(context)!.importFolderSubtitle,
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -77,15 +105,33 @@ void showImportLocalModal(BuildContext context, WidgetRef ref) {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.queue_music, color: Theme.of(context).colorScheme.onSurface),
+                  Icon(
+                    Icons.queue_music,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(AppLocalizations.of(context)!.importPlaylist, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text(
+                          AppLocalizations.of(context)!.importPlaylist,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 2),
-                        Text(AppLocalizations.of(context)!.importPlaylistSubtitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
+                        Text(
+                          AppLocalizations.of(context)!.importPlaylistSubtitle,
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
                     ),
                   ),

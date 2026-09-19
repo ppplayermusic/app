@@ -654,6 +654,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get filterStations => 'Állomások';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Helyi zene';
 
   @override

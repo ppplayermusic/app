@@ -45,7 +45,7 @@ class LocalLibraryService {
     for (final file in result) {
       String locator = file.path!;
       TrackSourceType mechanism = TrackSourceType.absolutePath;
-      
+
       if (Platform.isAndroid && locator.contains('/cache/')) {
         final copyPath = await _moveToManagedCopy(locator, file.name);
         if (copyPath == null) continue;
@@ -60,7 +60,7 @@ class LocalLibraryService {
           mechanism = TrackSourceType.absolutePath;
         }
       }
-      
+
       final track = await _processDiscoveredFile(
         locator: locator,
         displayPath: file.name,
@@ -132,9 +132,12 @@ class LocalLibraryService {
     for (final path in paths) {
       String locator = path;
       TrackSourceType mechanism = TrackSourceType.absolutePath;
-      
+
       if (Platform.isAndroid && locator.contains('/cache/')) {
-        final copyPath = await _moveToManagedCopy(locator, path.split('/').last);
+        final copyPath = await _moveToManagedCopy(
+          locator,
+          path.split('/').last,
+        );
         if (copyPath == null) continue;
         locator = copyPath;
         mechanism = TrackSourceType.managedCopy;
@@ -147,13 +150,14 @@ class LocalLibraryService {
           mechanism = TrackSourceType.absolutePath;
         }
       }
-      
+
       // When scope is 'both', detect by extension.
       final resolvedScope = scopeHint == ImportMediaScope.both
           ? (AudioFormatRegistry.isVideoFormatCandidate(
-                  AudioFormatRegistry.extensionOf(path))
-              ? ImportMediaScope.video
-              : ImportMediaScope.audio)
+                  AudioFormatRegistry.extensionOf(path),
+                )
+                ? ImportMediaScope.video
+                : ImportMediaScope.audio)
           : scopeHint;
 
       final track = await _processDiscoveredFile(
@@ -184,7 +188,9 @@ class LocalLibraryService {
 
   Future<void> _pickAndImportFolder({required ImportMediaScope scope}) async {
     debugPrint('Opening FilePicker for directory (scope: ${scope.name})...');
-    final rootPath = await FilePicker.getDirectoryPath(dialogTitle: 'Select folder to import');
+    final rootPath = await FilePicker.getDirectoryPath(
+      dialogTitle: 'Select folder to import',
+    );
     debugPrint('FilePicker returned: $rootPath');
     if (rootPath == null) return;
 
@@ -205,9 +211,13 @@ class LocalLibraryService {
 
     // Check for an existing root at this path to avoid duplicate library records.
     // If one already exists with a different scope, promote it to 'both'.
-    final existing = await _db.select(_db.importRoots)
+    final existing = await _db
+        .select(_db.importRoots)
         .get()
-        .then((roots) => roots.where((r) => r.rootLocator == rootLocator).firstOrNull);
+        .then(
+          (roots) =>
+              roots.where((r) => r.rootLocator == rootLocator).firstOrNull,
+        );
 
     final String effectiveRootId;
     final ImportMediaScope effectiveScope;
@@ -215,9 +225,7 @@ class LocalLibraryService {
     if (existing != null) {
       effectiveRootId = existing.id;
       final existingScope = ImportMediaScope.values.byName(existing.mediaScope);
-      effectiveScope = (existingScope == scope)
-          ? scope
-          : ImportMediaScope.both;
+      effectiveScope = (existingScope == scope) ? scope : ImportMediaScope.both;
     } else {
       effectiveRootId = rootId;
       effectiveScope = scope;
@@ -252,7 +260,11 @@ class LocalLibraryService {
     await processPlaylistFile(file.path!, file.name, onProgress: onProgress);
   }
 
-  Future<int> processPlaylistFile(String filePath, String fileName, {void Function(String?)? onProgress}) async {
+  Future<int> processPlaylistFile(
+    String filePath,
+    String fileName, {
+    void Function(String?)? onProgress,
+  }) async {
     String locator = filePath;
     TrackSourceType mechanism = TrackSourceType.absolutePath;
 
@@ -272,65 +284,78 @@ class LocalLibraryService {
     onProgress?.call('Importing playlist...');
 
     final bytes = await File(locator).readAsBytes();
-    final isTemporary = locator.contains('/cache/') || locator.contains('/tmp/') || mechanism == TrackSourceType.managedCopy;
+    final isTemporary =
+        locator.contains('/cache/') ||
+        locator.contains('/tmp/') ||
+        mechanism == TrackSourceType.managedCopy;
     final sourceLocation = isTemporary ? null : locator;
-    final entries = await M3uHandler.parse(bytes, sourceLocation: sourceLocation);
+    final entries = await M3uHandler.parse(
+      bytes,
+      sourceLocation: sourceLocation,
+    );
 
     onProgress?.call('Scanning ${entries.length} items...');
 
     final playlistName = fileName.replaceAll(RegExp(r'\.m3u8?$'), '');
-    final playlistId = await _db.into(_db.playlists).insert(
-      PlaylistsCompanion.insert(
-        name: playlistName,
-        createdAt: drift.Value(DateTime.now()),
-      )
-    );
+    final playlistId = await _db
+        .into(_db.playlists)
+        .insert(
+          PlaylistsCompanion.insert(
+            name: playlistName,
+            createdAt: drift.Value(DateTime.now()),
+          ),
+        );
 
     int processed = 0;
     for (final entry in entries) {
-       onProgress?.call('Importing track ${processed + 1}/${entries.length}...');
-       final trackMechanism = mechanism == TrackSourceType.androidContentUri && entry.pathOrUri.startsWith('content://')
-           ? TrackSourceType.androidContentUri
-           : TrackSourceType.absolutePath;
+      onProgress?.call('Importing track ${processed + 1}/${entries.length}...');
+      final trackMechanism =
+          mechanism == TrackSourceType.androidContentUri &&
+              entry.pathOrUri.startsWith('content://')
+          ? TrackSourceType.androidContentUri
+          : TrackSourceType.absolutePath;
 
-        final dedupeKey = _hashLocator(entry.pathOrUri);
-        var existingFile = await _db.getLocalFileByDeduplicationKey(dedupeKey);
+      final dedupeKey = _hashLocator(entry.pathOrUri);
+      var existingFile = await _db.getLocalFileByDeduplicationKey(dedupeKey);
 
-        if (existingFile == null && isTemporary) {
-           final searchPath = entry.pathOrUri.replaceAll('\\', '/');
-           final query = _db.select(_db.localFiles)..where((f) => f.locator.like('%$searchPath'));
-           final results = await query.get();
-           if (results.isNotEmpty) {
-              existingFile = results.first;
-           }
+      if (existingFile == null && isTemporary) {
+        final searchPath = entry.pathOrUri.replaceAll('\\', '/');
+        final query = _db.select(_db.localFiles)
+          ..where((f) => f.locator.like('%$searchPath'));
+        final results = await query.get();
+        if (results.isNotEmpty) {
+          existingFile = results.first;
         }
+      }
 
-       String spotifyId;
-       if (existingFile != null) {
-          spotifyId = existingFile.libraryId;
-       } else {
-          final track = await _processDiscoveredFile(
-            locator: entry.pathOrUri,
-            displayPath: entry.pathOrUri.split(Platform.pathSeparator).last,
-            mechanism: trackMechanism,
-            importRootLocator: null,
+      String spotifyId;
+      if (existingFile != null) {
+        spotifyId = existingFile.libraryId;
+      } else {
+        final track = await _processDiscoveredFile(
+          locator: entry.pathOrUri,
+          displayPath: entry.pathOrUri.split(Platform.pathSeparator).last,
+          mechanism: trackMechanism,
+          importRootLocator: null,
+        );
+        if (track == null) {
+          processed++;
+          continue;
+        }
+        spotifyId = track.spotifyId;
+      }
+
+      await _db
+          .into(_db.playlistTracks)
+          .insert(
+            PlaylistTracksCompanion.insert(
+              playlistId: playlistId,
+              trackSpotifyId: spotifyId,
+              position: processed,
+            ),
           );
-          if (track == null) {
-            processed++;
-            continue;
-          }
-          spotifyId = track.spotifyId;
-       }
 
-       await _db.into(_db.playlistTracks).insert(
-         PlaylistTracksCompanion.insert(
-           playlistId: playlistId,
-           trackSpotifyId: spotifyId,
-           position: processed,
-         )
-       );
-
-       processed++;
+      processed++;
     }
     onProgress?.call(null);
     return playlistId;
@@ -339,15 +364,22 @@ class LocalLibraryService {
   Future<M3uExportResult?> exportPlaylist(int playlistId) async {
     final playlistTracks = await _db.getPlaylistAppTracks(playlistId);
     if (playlistTracks.isEmpty) return null;
-    
-    final playlist = await (_db.select(_db.playlists)..where((p) => p.id.equals(playlistId))).getSingle();
 
-    final destDir = await FilePicker.getDirectoryPath(dialogTitle: 'Select export directory');
+    final playlist = await (_db.select(
+      _db.playlists,
+    )..where((p) => p.id.equals(playlistId))).getSingle();
+
+    final destDir = await FilePicker.getDirectoryPath(
+      dialogTitle: 'Select export directory',
+    );
     if (destDir == null) return null;
 
-    final result = M3uHandler.generate(playlistTracks, exportDestinationDir: destDir);
+    final result = M3uHandler.generate(
+      playlistTracks,
+      exportDestinationDir: destDir,
+    );
     final outputFile = p.join(destDir, '${playlist.name}.m3u8');
-    
+
     await File(outputFile).writeAsString(result.content);
     return result;
   }
@@ -355,12 +387,17 @@ class LocalLibraryService {
   Future<M3uExportResult?> exportQueue(List<Track> queueTracks) async {
     if (queueTracks.isEmpty) return null;
 
-    final destDir = await FilePicker.getDirectoryPath(dialogTitle: 'Select export directory');
+    final destDir = await FilePicker.getDirectoryPath(
+      dialogTitle: 'Select export directory',
+    );
     if (destDir == null) return null;
 
-    final result = M3uHandler.generate(queueTracks, exportDestinationDir: destDir);
+    final result = M3uHandler.generate(
+      queueTracks,
+      exportDestinationDir: destDir,
+    );
     final outputFile = p.join(destDir, 'queue.m3u8');
-    
+
     await File(outputFile).writeAsString(result.content);
     return result;
   }
@@ -381,15 +418,17 @@ class LocalLibraryService {
         scope: scope,
       );
     }
-    
+
     // Verify standalone files
     int verified = 0;
     for (final file in existingFiles) {
       if (file.importRootLocator != null) continue; // Handled by folder scan
-      
-      onProgress?.call('Verifying standalone files ($verified/${existingFiles.length})...');
+
+      onProgress?.call(
+        'Verifying standalone files ($verified/${existingFiles.length})...',
+      );
       final mechanism = TrackSourceType.values.byName(file.mechanism);
-      
+
       final source = LocalTrackSource(
         libraryId: file.libraryId,
         locator: file.locator,
@@ -405,13 +444,15 @@ class LocalLibraryService {
       );
       final resolver = LocalFileResolver.forSource(source);
       final status = await resolver.checkAccess(source);
-      
+
       if (status != TrackAvailabilityStatus.available) {
-        await _db.update(_db.localFiles)
-          .replace(file.copyWith(availabilityStatus: status.name));
+        await _db
+            .update(_db.localFiles)
+            .replace(file.copyWith(availabilityStatus: status.name));
       } else {
-        await _db.update(_db.localFiles)
-          .replace(file.copyWith(availabilityStatus: 'available'));
+        await _db
+            .update(_db.localFiles)
+            .replace(file.copyWith(availabilityStatus: 'available'));
       }
       verified++;
     }
@@ -452,20 +493,29 @@ class LocalLibraryService {
         // use a platform channel. But for now we only support macOS/Windows/Linux root scanning.
       }
       final dir = Directory(pathToScan);
-      debugPrint('Scanning directory: $pathToScan, exists: ${await dir.exists()} scope: ${scope.name}');
+      debugPrint(
+        'Scanning directory: $pathToScan, exists: ${await dir.exists()} scope: ${scope.name}',
+      );
       if (await dir.exists()) {
         final List<Directory> dirsToScan = [dir];
         while (dirsToScan.isNotEmpty) {
           final currentDir = dirsToScan.removeLast();
           try {
-            await for (final entity in currentDir.list(recursive: false, followLinks: false)) {
+            await for (final entity in currentDir.list(
+              recursive: false,
+              followLinks: false,
+            )) {
               if (entity is Directory) {
                 dirsToScan.add(entity);
               } else if (entity is File) {
                 final ext = AudioFormatRegistry.extensionOf(entity.path);
-                final isAudioExt = AudioFormatRegistry.isRecognizedImportCandidate(ext);
-                final isVideoExt = AudioFormatRegistry.isVideoFormatCandidate(ext);
-                final include = (scope.includesAudio && isAudioExt) ||
+                final isAudioExt =
+                    AudioFormatRegistry.isRecognizedImportCandidate(ext);
+                final isVideoExt = AudioFormatRegistry.isVideoFormatCandidate(
+                  ext,
+                );
+                final include =
+                    (scope.includesAudio && isAudioExt) ||
                     (scope.includesVideo && isVideoExt);
                 if (include) {
                   files.add(entity.path);
@@ -473,7 +523,9 @@ class LocalLibraryService {
               }
             }
           } catch (e) {
-            debugPrint('Skipping inaccessible directory ${currentDir.path}: $e');
+            debugPrint(
+              'Skipping inaccessible directory ${currentDir.path}: $e',
+            );
           }
         }
       }
@@ -516,7 +568,7 @@ class LocalLibraryService {
     final dedupeKey = _hashLocator(locator);
     final existing = await _db.getLocalFileByDeduplicationKey(dedupeKey);
     final libraryId = existing?.libraryId ?? 'local:${_uuid.v4()}';
-    
+
     String extractPath = locator;
     bool isTemp = false;
     if (mechanism == TrackSourceType.androidContentUri) {
@@ -528,13 +580,14 @@ class LocalLibraryService {
         return null;
       }
     }
-    
+
     var metadata = await extractMetadata(extractPath);
-    
+
     // --- Video probe ---
     // Determine whether to probe based on scope and extension.
     final ext = AudioFormatRegistry.extensionOf(locator);
-    final shouldProbe = scopeHint == ImportMediaScope.video ||
+    final shouldProbe =
+        scopeHint == ImportMediaScope.video ||
         (scopeHint == ImportMediaScope.both &&
             AudioFormatRegistry.isVideoFormatCandidate(ext));
 
@@ -550,7 +603,10 @@ class LocalLibraryService {
         case VideoProbeResult.hasVideo:
           isVideo = true;
           if (metadata.artworkPath == null) {
-            final thumbPath = await VideoThumbnailGenerator.generateAndSaveThumbnail(extractPath);
+            final thumbPath =
+                await VideoThumbnailGenerator.generateAndSaveThumbnail(
+                  extractPath,
+                );
             if (thumbPath != null) {
               metadata = ExtractedMetadata(
                 title: metadata.title,
@@ -572,20 +628,26 @@ class LocalLibraryService {
           }
         case VideoProbeResult.audioOnly:
           isVideo = false;
-          debugPrint('VideoProbe: $displayPath is audio-only (no video stream)');
+          debugPrint(
+            'VideoProbe: $displayPath is audio-only (no video stream)',
+          );
         case VideoProbeResult.probeFailed:
           // Failed probe: leave isVideo=false (safe default; will stay in audio
           // library or remain unclassified until a future rescan).
-          debugPrint('VideoProbe: $displayPath probe failed/timed out; defaulting to audio');
+          debugPrint(
+            'VideoProbe: $displayPath probe failed/timed out; defaulting to audio',
+          );
         case VideoProbeResult.cancelled:
           debugPrint('VideoProbe: $displayPath probe cancelled');
       }
     }
 
     if (isTemp) {
-      try { File(extractPath).deleteSync(); } catch (_) {}
+      try {
+        File(extractPath).deleteSync();
+      } catch (_) {}
     }
-    
+
     await _db.upsertLocalFile(
       LocalFilesCompanion.insert(
         libraryId: libraryId,
@@ -607,21 +669,23 @@ class LocalLibraryService {
         artworkPath: drift.Value(metadata.artworkPath),
         artworkMimeType: drift.Value(metadata.artworkMimeType),
         isVideo: drift.Value(isVideo),
-      )
+      ),
     );
-    
-    await _db.into(_db.tracks).insertOnConflictUpdate(
-      TracksCompanion.insert(
-        spotifyId: libraryId,
-        name: metadata.title,
-        artistId: 'local',
-        artistName: metadata.artistName,
-        albumId: drift.Value(metadata.albumGroupKey),
-        albumName: drift.Value(metadata.albumName),
-        albumImage: drift.Value(metadata.artworkPath),
-        durationMs: drift.Value(metadata.durationMs),
-      )
-    );
+
+    await _db
+        .into(_db.tracks)
+        .insertOnConflictUpdate(
+          TracksCompanion.insert(
+            spotifyId: libraryId,
+            name: metadata.title,
+            artistId: 'local',
+            artistName: metadata.artistName,
+            albumId: drift.Value(metadata.albumGroupKey),
+            albumName: drift.Value(metadata.albumName),
+            albumImage: drift.Value(metadata.artworkPath),
+            durationMs: drift.Value(metadata.durationMs),
+          ),
+        );
 
     return Track.fromLocalFile(
       libraryId: libraryId,

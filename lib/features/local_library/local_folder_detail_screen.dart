@@ -8,9 +8,10 @@ import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/track_tile.dart';
 import '../../core/player/player_provider.dart';
 
-final localFolderContentsProvider = FutureProvider.family<List<model.Track>, String>((ref, rootLocator) async {
-  return ref.watch(appDatabaseProvider).getFolderAppTracks(rootLocator);
-});
+final localFolderContentsProvider =
+    FutureProvider.family<List<model.Track>, String>((ref, rootLocator) async {
+      return ref.watch(appDatabaseProvider).getFolderAppTracks(rootLocator);
+    });
 
 class LocalFolderDetailScreen extends ConsumerWidget {
   final String rootLocator;
@@ -29,7 +30,9 @@ class LocalFolderDetailScreen extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
 
     final folderUri = Uri.tryParse(currentPath) ?? Uri.file(currentPath);
-    final folderName = folderUri.pathSegments.isNotEmpty ? folderUri.pathSegments.last : currentPath;
+    final folderName = folderUri.pathSegments.isNotEmpty
+        ? folderUri.pathSegments.last
+        : currentPath;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -65,20 +68,26 @@ class LocalFolderDetailScreen extends ConsumerWidget {
                   // Filter and organize items for currentPath
                   final Set<String> subfolders = {};
                   final List<model.Track> directTracks = [];
-                  
+
                   for (final track in tracks) {
                     final filePath = track.localFilePath; // absolute path
                     if (filePath == null) continue;
-                    
+
                     if (filePath.startsWith(currentPath)) {
-                      final relativePath = filePath.substring(currentPath.length);
+                      final relativePath = filePath.substring(
+                        currentPath.length,
+                      );
                       // Remove leading slash if any
-                      final cleanRelative = relativePath.startsWith('/') || relativePath.startsWith(Platform.pathSeparator) 
-                          ? relativePath.substring(1) 
+                      final cleanRelative =
+                          relativePath.startsWith('/') ||
+                              relativePath.startsWith(Platform.pathSeparator)
+                          ? relativePath.substring(1)
                           : relativePath;
-                          
-                      final segments = cleanRelative.split(Platform.pathSeparator);
-                      
+
+                      final segments = cleanRelative.split(
+                        Platform.pathSeparator,
+                      );
+
                       if (segments.length == 1) {
                         // Direct file
                         directTracks.add(track);
@@ -98,10 +107,17 @@ class LocalFolderDetailScreen extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       if (index < subfolderList.length) {
                         final subfolderName = subfolderList[index];
-                        final subfolderPath = '$currentPath${Platform.pathSeparator}$subfolderName';
+                        final subfolderPath =
+                            '$currentPath${Platform.pathSeparator}$subfolderName';
                         return ListTile(
-                          leading: Icon(Icons.folder_outlined, color: colorScheme.primary),
-                          title: Text(subfolderName, style: TextStyle(color: colorScheme.onSurface)),
+                          leading: Icon(
+                            Icons.folder_outlined,
+                            color: colorScheme.primary,
+                          ),
+                          title: Text(
+                            subfolderName,
+                            style: TextStyle(color: colorScheme.onSurface),
+                          ),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -121,10 +137,12 @@ class LocalFolderDetailScreen extends ConsumerWidget {
                           index: trackIndex + 1,
                           track: track,
                           onTap: () {
-                            ref.read(playerProvider.notifier).playTracks(
-                              directTracks,
-                              initialIndex: trackIndex,
-                            );
+                            ref
+                                .read(playerProvider.notifier)
+                                .playTracks(
+                                  directTracks,
+                                  initialIndex: trackIndex,
+                                );
                           },
                         );
                       }

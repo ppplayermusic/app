@@ -29,9 +29,11 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
-    
+
     _searchController.addListener(() {
-      ref.read(localSearchQueryProvider.notifier).update(_searchController.text);
+      ref
+          .read(localSearchQueryProvider.notifier)
+          .update(_searchController.text);
     });
   }
 
@@ -58,15 +60,27 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
               Container(
                 width: double.infinity,
                 color: colorScheme.primaryContainer,
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 24,
+                ),
                 child: Row(
                   children: [
-                    SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.onPrimaryContainer)),
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colorScheme.onPrimaryContainer,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         _scanStatus!,
-                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimaryContainer),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onPrimaryContainer,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -96,7 +110,9 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
                             style: TextStyle(color: colorScheme.onSurface),
                             decoration: InputDecoration(
                               hintText: l10n.searchLocalMusic,
-                              hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                              hintStyle: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
                               border: InputBorder.none,
                             ),
                           ),
@@ -129,22 +145,34 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
                         ),
                         const SizedBox(width: 8),
                         PopupMenuButton<String>(
-                          icon: Icon(Icons.add_circle_outline_rounded, color: colorScheme.onSurface),
+                          icon: Icon(
+                            Icons.add_circle_outline_rounded,
+                            color: colorScheme.onSurface,
+                          ),
                           tooltip: l10n.addMusic,
                           color: colorScheme.surfaceContainerHighest,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           onSelected: (value) async {
                             if (value == 'files') {
-                              ref.read(localLibraryServiceProvider).importFiles();
+                              ref
+                                  .read(localLibraryServiceProvider)
+                                  .importFiles();
                             } else if (value == 'folder') {
-                              ref.read(localLibraryServiceProvider).importFolder();
+                              ref
+                                  .read(localLibraryServiceProvider)
+                                  .importFolder();
                             } else if (value == 'rescan') {
                               setState(() => _scanStatus = l10n.rescanLibrary);
-                              await ref.read(localLibraryServiceProvider).rescanLibrary(
-                                onProgress: (msg) {
-                                  if (mounted) setState(() => _scanStatus = msg);
-                                },
-                              );
+                              await ref
+                                  .read(localLibraryServiceProvider)
+                                  .rescanLibrary(
+                                    onProgress: (msg) {
+                                      if (mounted)
+                                        setState(() => _scanStatus = msg);
+                                    },
+                                  );
                               if (mounted) setState(() => _scanStatus = null);
                             }
                           },
@@ -192,10 +220,7 @@ class _LocalLibraryScreenState extends ConsumerState<LocalLibraryScreen>
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
               indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(
-                  width: 3,
-                  color: colorScheme.primary,
-                ),
+                borderSide: BorderSide(width: 3, color: colorScheme.primary),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(3),
                 ),

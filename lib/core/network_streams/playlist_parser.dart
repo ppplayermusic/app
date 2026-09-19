@@ -19,20 +19,13 @@ class PlaylistItem {
   });
 }
 
-enum PlaylistType {
-  channelList,
-  hlsManifest,
-  unknown,
-}
+enum PlaylistType { channelList, hlsManifest, unknown }
 
 class PlaylistParseResult {
   final PlaylistType type;
   final List<PlaylistItem> channels;
 
-  PlaylistParseResult({
-    required this.type,
-    this.channels = const [],
-  });
+  PlaylistParseResult({required this.type, this.channels = const []});
 }
 
 class PlaylistParser {
@@ -40,7 +33,10 @@ class PlaylistParser {
   static String normalizeUrl(String url) {
     if (url.startsWith('https://github.com/') && url.contains('/blob/')) {
       return url
-          .replaceFirst('https://github.com/', 'https://raw.githubusercontent.com/')
+          .replaceFirst(
+            'https://github.com/',
+            'https://raw.githubusercontent.com/',
+          )
           .replaceFirst('/blob/', '/');
     }
     return url;
@@ -57,8 +53,9 @@ class PlaylistParser {
       try {
         final document = XmlDocument.parse(content);
         final root = document.rootElement;
-        
-        if (root.name.local.toLowerCase() == 'playlist' && root.name.namespaceUri?.contains('xspf') == true) {
+
+        if (root.name.local.toLowerCase() == 'playlist' &&
+            root.name.namespaceUri?.contains('xspf') == true) {
           return _parseXspf(document, url);
         } else if (root.name.local.toLowerCase() == 'asx') {
           return _parseAsx(document, url);
@@ -80,7 +77,7 @@ class PlaylistParser {
 
     final channels = <PlaylistItem>[];
     final lines = content.split(RegExp(r'\r?\n'));
-    
+
     String? currentTitle;
     String? currentTvgId;
     String? currentTvgLogo;
@@ -98,17 +95,23 @@ class PlaylistParser {
           currentTitle = 'Unknown Channel';
         }
         currentTvgId = RegExp(r'tvg-id="([^"]*)"').firstMatch(line)?.group(1);
-        currentTvgLogo = RegExp(r'tvg-logo="([^"]*)"').firstMatch(line)?.group(1);
-        currentGroupTitle = RegExp(r'group-title="([^"]*)"').firstMatch(line)?.group(1);
+        currentTvgLogo = RegExp(
+          r'tvg-logo="([^"]*)"',
+        ).firstMatch(line)?.group(1);
+        currentGroupTitle = RegExp(
+          r'group-title="([^"]*)"',
+        ).firstMatch(line)?.group(1);
       } else if (!line.startsWith('#')) {
         if (currentTitle != null) {
-          channels.add(PlaylistItem(
-            title: currentTitle,
-            url: _resolveUrl(normalizeUrl(line), baseUrl),
-            tvgId: currentTvgId,
-            tvgLogo: currentTvgLogo,
-            groupTitle: currentGroupTitle,
-          ));
+          channels.add(
+            PlaylistItem(
+              title: currentTitle,
+              url: _resolveUrl(normalizeUrl(line), baseUrl),
+              tvgId: currentTvgId,
+              tvgLogo: currentTvgLogo,
+              groupTitle: currentGroupTitle,
+            ),
+          );
         }
         currentTitle = null;
         currentTvgId = null;
@@ -116,13 +119,16 @@ class PlaylistParser {
         currentGroupTitle = null;
       }
     }
-    return PlaylistParseResult(type: PlaylistType.channelList, channels: channels);
+    return PlaylistParseResult(
+      type: PlaylistType.channelList,
+      channels: channels,
+    );
   }
 
   static PlaylistParseResult _parsePls(String content, String baseUrl) {
     final channels = <PlaylistItem>[];
     final lines = content.split(RegExp(r'\r?\n'));
-    
+
     final map = <String, String>{};
     for (var line in lines) {
       final eq = line.indexOf('=');
@@ -143,7 +149,7 @@ class PlaylistParser {
         if (match != null) {
           final prefix = match.group(1)!;
           final index = int.parse(match.group(2)!);
-          
+
           if (!entries.containsKey(index)) {
             entries[index] = {};
           }
@@ -157,10 +163,12 @@ class PlaylistParser {
       final entry = entries[index]!;
       final file = entry['file'];
       if (file != null) {
-        channels.add(PlaylistItem(
-          title: entry['title'] ?? 'Stream $index',
-          url: _resolveUrl(normalizeUrl(file), baseUrl),
-        ));
+        channels.add(
+          PlaylistItem(
+            title: entry['title'] ?? 'Stream $index',
+            url: _resolveUrl(normalizeUrl(file), baseUrl),
+          ),
+        );
       }
     }
 
@@ -168,13 +176,17 @@ class PlaylistParser {
       return PlaylistParseResult(type: PlaylistType.unknown);
     }
 
-    return PlaylistParseResult(type: PlaylistType.channelList, channels: channels);
+    return PlaylistParseResult(
+      type: PlaylistType.channelList,
+      channels: channels,
+    );
   }
 
   static PlaylistParseResult _parseXspf(XmlDocument document, String baseUrl) {
     final channels = <PlaylistItem>[];
     final trackList = document.findAllElements('trackList').firstOrNull;
-    if (trackList == null) return PlaylistParseResult(type: PlaylistType.unknown);
+    if (trackList == null)
+      return PlaylistParseResult(type: PlaylistType.unknown);
 
     final tracks = trackList.findElements('track');
     for (final track in tracks) {
@@ -183,14 +195,16 @@ class PlaylistParser {
         final title = track.findElements('title').firstOrNull?.innerText;
         final creator = track.findElements('creator').firstOrNull?.innerText;
         final image = track.findElements('image').firstOrNull?.innerText;
-        
+
         final resolvedUrl = _resolveUrl(normalizeUrl(location), baseUrl);
 
-        channels.add(PlaylistItem(
-          title: title ?? creator ?? 'Stream',
-          url: resolvedUrl,
-          tvgLogo: image,
-        ));
+        channels.add(
+          PlaylistItem(
+            title: title ?? creator ?? 'Stream',
+            url: resolvedUrl,
+            tvgLogo: image,
+          ),
+        );
       }
     }
 
@@ -198,15 +212,20 @@ class PlaylistParser {
       return PlaylistParseResult(type: PlaylistType.unknown);
     }
 
-    return PlaylistParseResult(type: PlaylistType.channelList, channels: channels);
+    return PlaylistParseResult(
+      type: PlaylistType.channelList,
+      channels: channels,
+    );
   }
 
   static PlaylistParseResult _parseAsx(XmlDocument document, String baseUrl) {
     final channels = <PlaylistItem>[];
-    
+
     // ASX is case-insensitive in Windows Media Player. The xml package is case-sensitive, so we check both.
     Iterable<XmlElement> getElements(XmlElement parent, String name) {
-      return parent.children.whereType<XmlElement>().where((e) => e.name.local.toLowerCase() == name.toLowerCase());
+      return parent.children.whereType<XmlElement>().where(
+        (e) => e.name.local.toLowerCase() == name.toLowerCase(),
+      );
     }
 
     String? getAttributeCaseInsensitive(XmlElement element, String name) {
@@ -219,20 +238,19 @@ class PlaylistParser {
     }
 
     final entries = getElements(document.rootElement, 'entry');
-    
+
     for (final entry in entries) {
       final ref = getElements(entry, 'ref').firstOrNull;
-      final href = ref != null ? getAttributeCaseInsensitive(ref, 'href') : null;
-      
+      final href = ref != null
+          ? getAttributeCaseInsensitive(ref, 'href')
+          : null;
+
       if (href != null && href.isNotEmpty) {
         final title = getElements(entry, 'title').firstOrNull?.innerText;
-        
+
         final resolvedUrl = _resolveUrl(normalizeUrl(href), baseUrl);
 
-        channels.add(PlaylistItem(
-          title: title ?? 'Stream',
-          url: resolvedUrl,
-        ));
+        channels.add(PlaylistItem(title: title ?? 'Stream', url: resolvedUrl));
       }
     }
 
@@ -240,7 +258,10 @@ class PlaylistParser {
       return PlaylistParseResult(type: PlaylistType.unknown);
     }
 
-    return PlaylistParseResult(type: PlaylistType.channelList, channels: channels);
+    return PlaylistParseResult(
+      type: PlaylistType.channelList,
+      channels: channels,
+    );
   }
 
   static String _resolveUrl(String url, String baseUrl) {
@@ -264,20 +285,22 @@ class PlaylistParser {
     final url = normalizeUrl(rawUrl);
     final internalClient = client ?? http.Client();
     StreamSubscription? subscription;
-    
+
     try {
       final request = http.Request('GET', Uri.parse(url));
-      
+
       bool timedOut = false;
       final responseFuture = internalClient.send(request);
-      
+
       // Ensure that if the headers arrive AFTER a timeout threw, we still safely drain and abort the socket.
       // Canceling the stream subscription is the supported package:http mechanism for aborting a transfer.
-      responseFuture.then((response) {
-        if (timedOut) {
-          response.stream.listen((_) {}).cancel();
-        }
-      }).catchError((_) {});
+      responseFuture
+          .then((response) {
+            if (timedOut) {
+              response.stream.listen((_) {}).cancel();
+            }
+          })
+          .catchError((_) {});
 
       final response = await responseFuture.timeout(
         timeout,
@@ -292,11 +315,13 @@ class PlaylistParser {
       }
 
       final contentType = response.headers['content-type']?.toLowerCase() ?? '';
-      
+
       // If it's a known stream type (not a playlist), return it as a direct stream
-      if (contentType.contains('video/mp2t') || 
+      if (contentType.contains('video/mp2t') ||
           contentType.contains('video/mp4') ||
-          (contentType.contains('audio/') && !contentType.contains('mpegurl') && !contentType.contains('x-scpls')) ||
+          (contentType.contains('audio/') &&
+              !contentType.contains('mpegurl') &&
+              !contentType.contains('x-scpls')) ||
           contentType.contains('application/dash+xml')) {
         // Cancel the stream safely without reading
         subscription = response.stream.listen((_) {});
@@ -314,7 +339,11 @@ class PlaylistParser {
           if (bytesReceived > maxBytes) {
             subscription?.cancel();
             if (!completer.isCompleted) {
-              completer.completeError(Exception('File too large (exceeds ${maxBytes / 1024 / 1024}MB bound)'));
+              completer.completeError(
+                Exception(
+                  'File too large (exceeds ${maxBytes / 1024 / 1024}MB bound)',
+                ),
+              );
             }
           } else {
             bytes.addAll(chunk);
@@ -343,8 +372,10 @@ class PlaylistParser {
   }
 
   static String _decodeBytes(List<int> bytes, String contentType, String url) {
-    bool isM3u8 = url.toLowerCase().endsWith('.m3u8') || contentType.contains('application/vnd.apple.mpegurl');
-    
+    bool isM3u8 =
+        url.toLowerCase().endsWith('.m3u8') ||
+        contentType.contains('application/vnd.apple.mpegurl');
+
     // Check Content-Type charset
     String? headerCharset;
     final match = RegExp(r'charset=([^\s;]+)').firstMatch(contentType);
@@ -352,11 +383,21 @@ class PlaylistParser {
 
     // XML encoding declaration check (XSPF, ASX)
     String? xmlCharset;
-    if (url.toLowerCase().endsWith('.xspf') || url.toLowerCase().endsWith('.asx') || contentType.contains('xml')) {
+    if (url.toLowerCase().endsWith('.xspf') ||
+        url.toLowerCase().endsWith('.asx') ||
+        contentType.contains('xml')) {
       // Decode only first ~200 bytes as ascii to find <?xml ... ?>
       final previewBytes = bytes.take(200).toList();
       final preview = ascii.decode(previewBytes, allowInvalid: true);
-      final xmlMatch = RegExp(r'<\?xml[^>]+encoding=["' + "'" + r']([^"'+ "'" + r']+)["'+ "'" + r']').firstMatch(preview);
+      final xmlMatch = RegExp(
+        r'<\?xml[^>]+encoding=["'
+        "'"
+        r']([^"'
+        "'"
+        r']+)["'
+        "'"
+        r']',
+      ).firstMatch(preview);
       if (xmlMatch != null) {
         xmlCharset = xmlMatch.group(1)?.toLowerCase();
       }

@@ -192,34 +192,29 @@ class _SpotifyCredentialsFormState
                   height: 54,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color:
-                        isCustom
-                            ? colorScheme.primary
-                            : colorScheme.onSurface.withValues(alpha: 0.1),
+                    color: isCustom
+                        ? colorScheme.primary
+                        : colorScheme.onSurface.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child:
-                      _isSaving
-                          ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: colorScheme.onPrimary,
-                              strokeWidth: 2,
-                            ),
-                          )
-                          : Text(
-                            'Save Credentials',
-                            style: TextStyle(
-                              color:
-                                  isCustom
-                                      ? colorScheme.onPrimary
-                                      : colorScheme.onSurface.withValues(
-                                        alpha: 0.5,
-                                      ),
-                              fontWeight: FontWeight.bold,
-                            ),
+                  child: _isSaving
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: colorScheme.onPrimary,
+                            strokeWidth: 2,
                           ),
+                        )
+                      : Text(
+                          'Save Credentials',
+                          style: TextStyle(
+                            color: isCustom
+                                ? colorScheme.onPrimary
+                                : colorScheme.onSurface.withValues(alpha: 0.5),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -327,7 +322,10 @@ class _YoutubeCredentialsFormState
               value: YoutubeSearchMethod.scraping,
               label: Text(AppLocalizations.of(context)!.scraping),
             ),
-            ButtonSegment(value: YoutubeSearchMethod.api, label: Text(AppLocalizations.of(context)!.api)),
+            ButtonSegment(
+              value: YoutubeSearchMethod.api,
+              label: Text(AppLocalizations.of(context)!.api),
+            ),
           ],
           selected: {settings.youtubeSearchMethod},
           onSelectionChanged: (set) {
@@ -429,42 +427,38 @@ class _YoutubeCredentialsFormState
                   Expanded(
                     flex: 2,
                     child: TactileTap(
-                      onTap:
-                          isCustomApi && !_isSaving ? _saveCredentials : null,
+                      onTap: isCustomApi && !_isSaving
+                          ? _saveCredentials
+                          : null,
                       child: Container(
                         height: 54,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color:
-                              isCustomApi
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurface.withValues(
-                                    alpha: 0.1,
-                                  ),
+                          color: isCustomApi
+                              ? colorScheme.primary
+                              : colorScheme.onSurface.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child:
-                            _isSaving
-                                ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    color: colorScheme.onPrimary,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                                : Text(
-                                  'Save Credentials',
-                                  style: TextStyle(
-                                    color:
-                                        isCustomApi
-                                            ? colorScheme.onPrimary
-                                            : colorScheme.onSurface.withValues(
-                                              alpha: 0.5,
-                                            ),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                        child: _isSaving
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: colorScheme.onPrimary,
+                                  strokeWidth: 2,
                                 ),
+                              )
+                            : Text(
+                                'Save Credentials',
+                                style: TextStyle(
+                                  color: isCustomApi
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurface.withValues(
+                                          alpha: 0.5,
+                                        ),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -472,8 +466,9 @@ class _YoutubeCredentialsFormState
               ),
             ],
           ),
-          crossFadeState:
-              isScraping ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+          crossFadeState: isScraping
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
           duration: 300.ms,
           sizeCurve: Curves.easeOutCubic,
         ),

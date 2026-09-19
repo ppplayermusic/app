@@ -12,10 +12,12 @@ class LocalVideoLibraryScreen extends ConsumerStatefulWidget {
   const LocalVideoLibraryScreen({super.key});
 
   @override
-  ConsumerState<LocalVideoLibraryScreen> createState() => _LocalVideoLibraryScreenState();
+  ConsumerState<LocalVideoLibraryScreen> createState() =>
+      _LocalVideoLibraryScreenState();
 }
 
-class _LocalVideoLibraryScreenState extends ConsumerState<LocalVideoLibraryScreen> {
+class _LocalVideoLibraryScreenState
+    extends ConsumerState<LocalVideoLibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   String? _scanStatus;
@@ -24,7 +26,9 @@ class _LocalVideoLibraryScreenState extends ConsumerState<LocalVideoLibraryScree
   void initState() {
     super.initState();
     _searchController.addListener(() {
-      ref.read(localVideoSearchQueryProvider.notifier).update(_searchController.text);
+      ref
+          .read(localVideoSearchQueryProvider.notifier)
+          .update(_searchController.text);
     });
   }
 
@@ -51,21 +55,27 @@ class _LocalVideoLibraryScreenState extends ConsumerState<LocalVideoLibraryScree
               Container(
                 width: double.infinity,
                 color: colorScheme.primaryContainer,
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 24,
+                ),
                 child: Row(
                   children: [
                     SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: colorScheme.onPrimaryContainer),
+                        strokeWidth: 2,
+                        color: colorScheme.onPrimaryContainer,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         _scanStatus!,
-                        style: textTheme.bodyMedium
-                            ?.copyWith(color: colorScheme.onPrimaryContainer),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onPrimaryContainer,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -95,7 +105,9 @@ class _LocalVideoLibraryScreenState extends ConsumerState<LocalVideoLibraryScree
                             style: TextStyle(color: colorScheme.onSurface),
                             decoration: InputDecoration(
                               hintText: l10n.searchLocalVideos,
-                              hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                              hintStyle: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
                               border: InputBorder.none,
                             ),
                           ),
@@ -128,24 +140,34 @@ class _LocalVideoLibraryScreenState extends ConsumerState<LocalVideoLibraryScree
                         ),
                         const SizedBox(width: 8),
                         PopupMenuButton<String>(
-                          icon: Icon(Icons.add_circle_outline_rounded,
-                              color: colorScheme.onSurface),
+                          icon: Icon(
+                            Icons.add_circle_outline_rounded,
+                            color: colorScheme.onSurface,
+                          ),
                           tooltip: l10n.addVideos,
                           color: colorScheme.surfaceContainerHighest,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           onSelected: (value) async {
                             if (value == 'files') {
-                              ref.read(localLibraryServiceProvider).importVideoFiles();
+                              ref
+                                  .read(localLibraryServiceProvider)
+                                  .importVideoFiles();
                             } else if (value == 'folder') {
-                              ref.read(localLibraryServiceProvider).importVideoFolder();
+                              ref
+                                  .read(localLibraryServiceProvider)
+                                  .importVideoFolder();
                             } else if (value == 'rescan') {
                               setState(() => _scanStatus = l10n.rescanLibrary);
-                              await ref.read(localLibraryServiceProvider).rescanLibrary(
-                                onProgress: (msg) {
-                                  if (mounted) setState(() => _scanStatus = msg);
-                                },
-                              );
+                              await ref
+                                  .read(localLibraryServiceProvider)
+                                  .rescanLibrary(
+                                    onProgress: (msg) {
+                                      if (mounted)
+                                        setState(() => _scanStatus = msg);
+                                    },
+                                  );
                               if (mounted) setState(() => _scanStatus = null);
                             }
                           },
@@ -198,11 +220,15 @@ class _LocalVideoLibraryScreenState extends ConsumerState<LocalVideoLibraryScree
                           Icon(
                             Icons.video_library_outlined,
                             size: 64,
-                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                            color: colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.5,
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            _isSearching ? l10n.noLocalVideos : l10n.noLocalVideos,
+                            _isSearching
+                                ? l10n.noLocalVideos
+                                : l10n.noLocalVideos,
                             style: textTheme.titleLarge?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -221,10 +247,9 @@ class _LocalVideoLibraryScreenState extends ConsumerState<LocalVideoLibraryScree
                         index: index + 1,
                         track: track,
                         onTap: () {
-                          ref.read(playerProvider.notifier).playTracks(
-                                tracks,
-                                initialIndex: index,
-                              );
+                          ref
+                              .read(playerProvider.notifier)
+                              .playTracks(tracks, initialIndex: index);
                         },
                       );
                     },
@@ -270,36 +295,60 @@ class _SortHeader extends ConsumerWidget {
           Text(
             l10n.sortBy,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
           PopupMenuButton<LocalVideoSortOption>(
             color: colorScheme.surfaceContainerHighest,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             onSelected: (option) {
               if (option == sortOption) {
-                ref.read(localVideoSortAscendingProvider.notifier).update(!isAscending);
+                ref
+                    .read(localVideoSortAscendingProvider.notifier)
+                    .update(!isAscending);
               } else {
                 ref.read(localVideoSortOptionProvider.notifier).update(option);
               }
             },
             itemBuilder: (context) => [
-              _buildMenuItem(context, LocalVideoSortOption.dateAdded, l10n.sortDateAdded, sortOption, isAscending),
-              _buildMenuItem(context, LocalVideoSortOption.title, l10n.sortTitle, sortOption, isAscending),
-              _buildMenuItem(context, LocalVideoSortOption.duration, l10n.sortDuration, sortOption, isAscending),
+              _buildMenuItem(
+                context,
+                LocalVideoSortOption.dateAdded,
+                l10n.sortDateAdded,
+                sortOption,
+                isAscending,
+              ),
+              _buildMenuItem(
+                context,
+                LocalVideoSortOption.title,
+                l10n.sortTitle,
+                sortOption,
+                isAscending,
+              ),
+              _buildMenuItem(
+                context,
+                LocalVideoSortOption.duration,
+                l10n.sortDuration,
+                sortOption,
+                isAscending,
+              ),
             ],
             child: Row(
               children: [
                 Text(
                   sortText,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(width: 4),
                 Icon(
-                  isAscending ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                  isAscending
+                      ? Icons.arrow_upward_rounded
+                      : Icons.arrow_downward_rounded,
                   size: 16,
                   color: colorScheme.primary,
                 ),
@@ -333,7 +382,9 @@ class _SortHeader extends ConsumerWidget {
           ),
           if (isSelected)
             Icon(
-              isAscending ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+              isAscending
+                  ? Icons.arrow_upward_rounded
+                  : Icons.arrow_downward_rounded,
               size: 16,
               color: Theme.of(context).colorScheme.primary,
             ),

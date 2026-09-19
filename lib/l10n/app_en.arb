@@ -471,6 +471,8 @@
   "@filterAlbums": {},
   "filterStations": "Stations",
   "@filterStations": {},
+  "filterStreams": "Streams",
+  "@filterStreams": {},
   "localMusicCard": "Local Music",
   "@localMusicCard": {},
   "createPlaylistButton": "Create Playlist",

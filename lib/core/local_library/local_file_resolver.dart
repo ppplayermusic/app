@@ -123,8 +123,7 @@ class _IOsBookmarkResolver implements LocalFileResolver {
       );
     }
     try {
-      final path =
-          await _LocalFilesChannel.resolveBookmark(source.locator);
+      final path = await _LocalFilesChannel.resolveBookmark(source.locator);
       if (path == null) {
         return LocalFileMissing(
           status: TrackAvailabilityStatus.missing,
@@ -143,8 +142,7 @@ class _IOsBookmarkResolver implements LocalFileResolver {
       return TrackAvailabilityStatus.permissionRevoked;
     }
     try {
-      final path =
-          await _LocalFilesChannel.resolveBookmark(source.locator);
+      final path = await _LocalFilesChannel.resolveBookmark(source.locator);
       return path != null
           ? TrackAvailabilityStatus.available
           : TrackAvailabilityStatus.missing;
@@ -170,10 +168,9 @@ class _LocalFilesChannel {
   /// Android only: returns whether ContentResolver can open the URI for reading.
   static Future<bool> canReadContentUri(String contentUri) async {
     try {
-      return await _ch.invokeMethod<bool>(
-            'canReadContentUri',
-            {'uri': contentUri},
-          ) ??
+      return await _ch.invokeMethod<bool>('canReadContentUri', {
+            'uri': contentUri,
+          }) ??
           false;
     } on PlatformException {
       return false;
@@ -186,10 +183,9 @@ class _LocalFilesChannel {
   /// Throws [_BookmarkError] if the bookmark is stale / revoked.
   static Future<String?> resolveBookmark(String base64Bookmark) async {
     try {
-      return await _ch.invokeMethod<String>(
-        'resolveBookmark',
-        {'bookmark': base64Bookmark},
-      );
+      return await _ch.invokeMethod<String>('resolveBookmark', {
+        'bookmark': base64Bookmark,
+      });
     } on PlatformException catch (e) {
       if (e.code == 'BOOKMARK_STALE' || e.code == 'BOOKMARK_REVOKED') {
         throw _BookmarkError(TrackAvailabilityStatus.permissionRevoked);
@@ -205,10 +201,10 @@ class _LocalFilesChannel {
     bool recursive = true,
   }) async {
     try {
-      final result = await _ch.invokeListMethod<String>(
-        'listAudioFiles',
-        {'treeUri': treeUri, 'recursive': recursive},
-      );
+      final result = await _ch.invokeListMethod<String>('listAudioFiles', {
+        'treeUri': treeUri,
+        'recursive': recursive,
+      });
       return result ?? [];
     } on PlatformException {
       return [];
@@ -219,10 +215,9 @@ class _LocalFilesChannel {
   /// Called once at import time; the base64 result is stored as [LocalTrackSource.locator].
   static Future<String?> createBookmark(String absolutePath) async {
     try {
-      final bookmark = await _ch.invokeMethod<String>(
-        'createBookmark',
-        {'path': absolutePath},
-      );
+      final bookmark = await _ch.invokeMethod<String>('createBookmark', {
+        'path': absolutePath,
+      });
       return bookmark;
     } on PlatformException catch (e) {
       if (e.code == 'MissingPluginException' ||

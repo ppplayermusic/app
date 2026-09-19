@@ -138,8 +138,9 @@ class FavoritesController extends Notifier<void> {
         albumId: albumId != null ? Value(albumId) : const Value.absent(),
         albumName: albumName != null ? Value(albumName) : const Value.absent(),
         albumImage: imageUrl != null ? Value(imageUrl) : const Value.absent(),
-        durationMs:
-            durationMs != null ? Value(durationMs) : const Value.absent(),
+        durationMs: durationMs != null
+            ? Value(durationMs)
+            : const Value.absent(),
         isFavorite: Value(newValue),
       ),
     );

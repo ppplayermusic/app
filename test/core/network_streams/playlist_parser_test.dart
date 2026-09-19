@@ -5,61 +5,70 @@ import 'package:http/http.dart' as http;
 import 'package:ppplayer/core/network_streams/playlist_parser.dart';
 
 class MockClient extends http.BaseClient {
-  final Future<http.StreamedResponse> Function(http.BaseRequest request) handler;
+  final Future<http.StreamedResponse> Function(http.BaseRequest request)
+  handler;
 
   MockClient(this.handler);
 
   @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) => handler(request);
+  Future<http.StreamedResponse> send(http.BaseRequest request) =>
+      handler(request);
 }
 
 void main() {
   group('PlaylistParser', () {
-    test('Early media classification returns unknown stream and cancels early', () async {
-      bool streamCancelled = false;
-      final controller = StreamController<List<int>>(
-        onCancel: () {
-          streamCancelled = true;
-        },
-      );
-      
-      final client = MockClient((request) async {
-        return http.StreamedResponse(
-          controller.stream,
-          200,
-          headers: {'content-type': 'video/mp4'},
+    test(
+      'Early media classification returns unknown stream and cancels early',
+      () async {
+        bool streamCancelled = false;
+        final controller = StreamController<List<int>>(
+          onCancel: () {
+            streamCancelled = true;
+          },
         );
-      });
 
-      final futureResult = PlaylistParser.fetchAndParse('http://example.com/stream.mp4', client: client);
-      
-      // Send some bytes
-      controller.add([1, 2, 3]);
-      
-      final result = await futureResult;
-      
-      expect(result.type, PlaylistType.unknown);
-      expect(streamCancelled, true);
-    });
+        final client = MockClient((request) async {
+          return http.StreamedResponse(
+            controller.stream,
+            200,
+            headers: {'content-type': 'video/mp4'},
+          );
+        });
+
+        final futureResult = PlaylistParser.fetchAndParse(
+          'http://example.com/stream.mp4',
+          client: client,
+        );
+
+        // Send some bytes
+        controller.add([1, 2, 3]);
+
+        final result = await futureResult;
+
+        expect(result.type, PlaylistType.unknown);
+        expect(streamCancelled, true);
+      },
+    );
 
     test('M3U parsing correctly decodes split-chunk UTF-8', () async {
-      final utf8Payload = '#EXTM3U\n#EXTINF:-1,📺 My Channel (Café)\nhttp://example.com/stream.m3u8';
+      final utf8Payload =
+          '#EXTM3U\n#EXTINF:-1,📺 My Channel (Café)\nhttp://example.com/stream.m3u8';
       final encoded = utf8.encode(utf8Payload);
-      
+
       final client = MockClient((request) async {
         return http.StreamedResponse(
           // Split right in the middle of a multi-byte character
-          Stream.fromIterable([
-            encoded.sublist(0, 30),
-            encoded.sublist(30),
-          ]),
+          Stream.fromIterable([encoded.sublist(0, 30), encoded.sublist(30)]),
           200,
           headers: {'content-type': 'application/vnd.apple.mpegurl'},
         );
       });
 
-      final result = await PlaylistParser.fetchAndParse('http://example.com/playlist.m3u8', client: client);
-      
+      final result = await PlaylistParser.fetchAndParse(
+        'http://example.com/playlist.m3u8',
+        client: client,
+      );
+
       expect(result.type, PlaylistType.channelList);
       expect(result.channels.length, 1);
       expect(result.channels.first.title, '📺 My Channel (Café)');
@@ -76,7 +85,7 @@ File7=http://example.com/stream7
 Title7=Stream Seven
       ''';
       final result = PlaylistParser.parseString(content, 'http://example.com');
-      
+
       expect(result.type, PlaylistType.channelList);
       expect(result.channels.length, 3);
       expect(result.channels[0].title, 'Stream Two');
@@ -97,13 +106,16 @@ Title7=Stream Seven
     </track>
   </trackList>
 </playlist>''';
-      
+
       final result = PlaylistParser.parseString(content, 'http://example.com');
-      
+
       expect(result.type, PlaylistType.channelList);
       expect(result.channels.length, 1);
       expect(result.channels[0].title, 'My XSPF Stream');
-      expect(result.channels[0].url, 'http://example.com/1'); // Only picks first
+      expect(
+        result.channels[0].url,
+        'http://example.com/1',
+      ); // Only picks first
     });
 
     test('ASX parsing handles case-insensitivity', () {
@@ -113,72 +125,95 @@ Title7=Stream Seven
     <rEf HrEf="http://example.com/asx" />
   </EnTrY>
 </AsX>''';
-      
+
       final result = PlaylistParser.parseString(content, 'http://example.com');
-      
+
       expect(result.type, PlaylistType.channelList);
       expect(result.channels.length, 1);
       expect(result.channels[0].title, 'My ASX Stream');
       expect(result.channels[0].url, 'http://example.com/asx');
     });
 
-    test('Parses encoding properly from headers and enforces UTF-8 for M3U8', () async {
-      final latin1Payload = '\#EXTM3U\n\#EXTINF:-1,* My Channel (Caf\xE9)\nhttp://example.com/stream.m3u8';
-      final encoded = latin1.encode(latin1Payload);
+    test(
+      'Parses encoding properly from headers and enforces UTF-8 for M3U8',
+      () async {
+        final latin1Payload =
+            '\#EXTM3U\n\#EXTINF:-1,* My Channel (Caf\xE9)\nhttp://example.com/stream.m3u8';
+        final encoded = latin1.encode(latin1Payload);
 
-      final client = MockClient((request) async {
-        return http.StreamedResponse(
-          Stream.fromIterable([encoded]),
-          200,
-          headers: {'content-type': 'application/vnd.apple.mpegurl'},
-          request: request,
+        final client = MockClient((request) async {
+          return http.StreamedResponse(
+            Stream.fromIterable([encoded]),
+            200,
+            headers: {'content-type': 'application/vnd.apple.mpegurl'},
+            request: request,
+          );
+        });
+
+        // Should fail because M3U8 must be UTF-8 and we gave it latin-1, so utf8.decode throws FormatException
+        expect(
+          () => PlaylistParser.fetchAndParse(
+            'http://example.com/playlist.m3u8',
+            client: client,
+          ),
+          throwsA(isA<FormatException>()),
         );
-      });
+      },
+    );
 
-      // Should fail because M3U8 must be UTF-8 and we gave it latin-1, so utf8.decode throws FormatException
-      expect(
-        () => PlaylistParser.fetchAndParse('http://example.com/playlist.m3u8', client: client),
-        throwsA(isA<FormatException>())
-      );
-    });
+    test(
+      'Handles redirects and resolves relative URLs against final URL',
+      () async {
+        final utf8Payload = '#EXTM3U\n#EXTINF:-1,Test\nstream.m3u8';
+        final encoded = utf8.encode(utf8Payload);
 
-    test('Handles redirects and resolves relative URLs against final URL', () async {
-      final utf8Payload = '#EXTM3U\n#EXTINF:-1,Test\nstream.m3u8';
-      final encoded = utf8.encode(utf8Payload);
+        final client = MockClient((request) async {
+          // Return a response where the final request URL was modified by redirect
+          final finalRequest = http.Request(
+            'GET',
+            Uri.parse('http://example.com/redirected/folder/playlist.m3u8'),
+          );
+          return http.StreamedResponse(
+            Stream.fromIterable([encoded]),
+            200,
+            headers: {'content-type': 'application/vnd.apple.mpegurl'},
+            request: finalRequest, // Mocks the redirect
+          );
+        });
 
-      final client = MockClient((request) async {
-        // Return a response where the final request URL was modified by redirect
-        final finalRequest = http.Request('GET', Uri.parse('http://example.com/redirected/folder/playlist.m3u8'));
-        return http.StreamedResponse(
-          Stream.fromIterable([encoded]),
-          200,
-          headers: {'content-type': 'application/vnd.apple.mpegurl'},
-          request: finalRequest, // Mocks the redirect
+        final result = await PlaylistParser.fetchAndParse(
+          'http://example.com/original.m3u8',
+          client: client,
         );
-      });
-
-      final result = await PlaylistParser.fetchAndParse('http://example.com/original.m3u8', client: client);
-      expect(result.channels.first.url, 'http://example.com/redirected/folder/stream.m3u8');
-    });
+        expect(
+          result.channels.first.url,
+          'http://example.com/redirected/folder/stream.m3u8',
+        );
+      },
+    );
 
     test('Times out if server takes too long to send headers', () async {
       final client = MockClient((request) async {
         await Future.delayed(const Duration(milliseconds: 200));
-        return http.StreamedResponse(
-          const Stream.empty(),
-          200,
-        );
+        return http.StreamedResponse(const Stream.empty(), 200);
       });
 
       expect(
-        () => PlaylistParser.fetchAndParse('http://example.com', client: client, timeout: const Duration(milliseconds: 50)),
-        throwsA(isA<TimeoutException>())
+        () => PlaylistParser.fetchAndParse(
+          'http://example.com',
+          client: client,
+          timeout: const Duration(milliseconds: 50),
+        ),
+        throwsA(isA<TimeoutException>()),
       );
     });
 
     test('Times out if server stream hangs during body transfer', () async {
       final client = MockClient((request) async {
-        final stream = Stream<List<int>>.periodic(const Duration(milliseconds: 100), (i) => [i]).take(10);
+        final stream = Stream<List<int>>.periodic(
+          const Duration(milliseconds: 100),
+          (i) => [i],
+        ).take(10);
         return http.StreamedResponse(
           stream,
           200,
@@ -187,33 +222,43 @@ Title7=Stream Seven
       });
 
       expect(
-        () => PlaylistParser.fetchAndParse('http://example.com', client: client, timeout: const Duration(milliseconds: 150)),
-        throwsA(isA<TimeoutException>())
+        () => PlaylistParser.fetchAndParse(
+          'http://example.com',
+          client: client,
+          timeout: const Duration(milliseconds: 150),
+        ),
+        throwsA(isA<TimeoutException>()),
       );
     });
 
-    test('Stream errors (e.g. connection aborted) are correctly bubbled up', () async {
-      // Simulate an aborted connection mid-stream
-      final client = MockClient((request) async {
-        final controller = StreamController<List<int>>();
-        controller.add([1, 2, 3]);
-        // Emit an error after a short delay
-        Future.delayed(const Duration(milliseconds: 50), () {
-          controller.addError(http.ClientException('Connection aborted'));
-          controller.close();
+    test(
+      'Stream errors (e.g. connection aborted) are correctly bubbled up',
+      () async {
+        // Simulate an aborted connection mid-stream
+        final client = MockClient((request) async {
+          final controller = StreamController<List<int>>();
+          controller.add([1, 2, 3]);
+          // Emit an error after a short delay
+          Future.delayed(const Duration(milliseconds: 50), () {
+            controller.addError(http.ClientException('Connection aborted'));
+            controller.close();
+          });
+
+          return http.StreamedResponse(
+            controller.stream,
+            200,
+            headers: {'content-type': 'application/x-mpegurl'},
+          );
         });
-        
-        return http.StreamedResponse(
-          controller.stream,
-          200,
-          headers: {'content-type': 'application/x-mpegurl'},
+
+        expect(
+          () => PlaylistParser.fetchAndParse(
+            'http://example.com',
+            client: client,
+          ),
+          throwsA(isA<http.ClientException>()),
         );
-      });
-      
-      expect(
-        () => PlaylistParser.fetchAndParse('http://example.com', client: client),
-        throwsA(isA<http.ClientException>())
-      );
-    });
+      },
+    );
   });
 }

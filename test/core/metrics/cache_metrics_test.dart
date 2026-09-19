@@ -109,19 +109,18 @@ void main() {
     () async {
       final futures = List.generate(
         10,
-        (index) =>
-            repository
-                .watchOrFetch<String>(
-                  key: 'dedup_test_multi',
-                  resourceType: ResourceType.artist,
-                  fetch: () async {
-                    await Future.delayed(const Duration(milliseconds: 50));
-                    return 'multi_data';
-                  },
-                  decode: (json) => json,
-                  encode: (data) => data,
-                )
-                .toList(),
+        (index) => repository
+            .watchOrFetch<String>(
+              key: 'dedup_test_multi',
+              resourceType: ResourceType.artist,
+              fetch: () async {
+                await Future.delayed(const Duration(milliseconds: 50));
+                return 'multi_data';
+              },
+              decode: (json) => json,
+              encode: (data) => data,
+            )
+            .toList(),
       );
 
       await Future.wait(futures);

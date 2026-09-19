@@ -70,23 +70,24 @@ class SettingsScreen extends ConsumerWidget {
 
           // Hero Section
           SliverToBoxAdapter(
-            child: Consumer(
-                  builder: (context, ref, _) {
-                    final settings = ref.watch(settingsProvider);
-                    final themeColor =
-                        AppTheme.themeColors[settings.themeIndex];
-                    final avatarColor =
-                        AppTheme.themeColors[settings.userAvatarColorIndex];
-                    return _SettingsHero(
-                      themeColor: themeColor,
-                      avatarColor: avatarColor,
-                      settings: settings,
-                    );
-                  },
-                )
-                .animate()
-                .fadeIn(duration: 600.ms)
-                .slideY(begin: 0.1, curve: Curves.easeOutCubic),
+            child:
+                Consumer(
+                      builder: (context, ref, _) {
+                        final settings = ref.watch(settingsProvider);
+                        final themeColor =
+                            AppTheme.themeColors[settings.themeIndex];
+                        final avatarColor =
+                            AppTheme.themeColors[settings.userAvatarColorIndex];
+                        return _SettingsHero(
+                          themeColor: themeColor,
+                          avatarColor: avatarColor,
+                          settings: settings,
+                        );
+                      },
+                    )
+                    .animate()
+                    .fadeIn(duration: 600.ms)
+                    .slideY(begin: 0.1, curve: Curves.easeOutCubic),
           ),
 
           // Settings Groups
@@ -101,10 +102,9 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSettingTile(
                       title: AppLocalizations.of(context)!.editProfile,
-                      subtitle:
-                          settings.userName.isEmpty
-                              ? 'Set your name and avatar'
-                              : settings.userName,
+                      subtitle: settings.userName.isEmpty
+                          ? 'Set your name and avatar'
+                          : settings.userName,
                       icon: Icons.person_rounded,
                       onTap: () => showEditProfileModal(context, ref),
                     )
@@ -131,13 +131,9 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSettingTile(
                       title: AppLocalizations.of(context)!.language,
-                      subtitle:
-                          settings.languageCode == null
-                              ? AppLocalizations.of(context)!.systemDefault
-                              : _getLanguageName(
-                                settings.languageCode,
-                                context,
-                              ),
+                      subtitle: settings.languageCode == null
+                          ? AppLocalizations.of(context)!.systemDefault
+                          : _getLanguageName(settings.languageCode, context),
                       icon: Icons.language_rounded,
                       onTap: () => _showLanguagePicker(context, ref),
                     )
@@ -147,15 +143,13 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSwitchTile(
                       title: AppLocalizations.of(context)!.showVideoPlayer,
-                      subtitle:
-                          AppLocalizations.of(
-                            context,
-                          )!.useYoutubePlayerWhenAvailable,
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!.useYoutubePlayerWhenAvailable,
                       icon: Icons.smart_display_rounded,
                       value: settings.showVideo,
-                      onChanged:
-                          (v) =>
-                              ref.read(settingsProvider.notifier).toggleVideo(),
+                      onChanged: (v) =>
+                          ref.read(settingsProvider.notifier).toggleVideo(),
                     )
                     .animate(delay: 300.ms)
                     .fadeIn(duration: 400.ms)
@@ -172,8 +166,8 @@ class SettingsScreen extends ConsumerWidget {
                       title: AppLocalizations.of(context)!.spotifyCredentials,
                       subtitle:
                           settings.spotifyProvider == SpotifyProviderType.custom
-                              ? 'Custom Provider'
-                              : 'PPPlayer Default',
+                          ? 'Custom Provider'
+                          : 'PPPlayer Default',
                       icon: Icons.key_rounded,
                       onTap: () => showSpotifyCredentialsModal(context),
                     )
@@ -185,12 +179,12 @@ class SettingsScreen extends ConsumerWidget {
                       title: AppLocalizations.of(context)!.youtubeCredentials,
                       subtitle:
                           settings.youtubeSearchMethod ==
-                                  YoutubeSearchMethod.scraping
-                              ? AppLocalizations.of(context)!.scraping
-                              : (settings.youtubeApiProvider ==
-                                      YoutubeApiProviderType.custom
-                                  ? 'Custom Provider'
-                                  : 'PPPlayer Default'),
+                              YoutubeSearchMethod.scraping
+                          ? AppLocalizations.of(context)!.scraping
+                          : (settings.youtubeApiProvider ==
+                                    YoutubeApiProviderType.custom
+                                ? 'Custom Provider'
+                                : 'PPPlayer Default'),
                       icon: Icons.play_arrow_rounded,
                       onTap: () => showYoutubeCredentialsModal(context),
                     )
@@ -205,16 +199,13 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSwitchTile(
                       title: AppLocalizations.of(context)!.autoplay,
-                      subtitle:
-                          AppLocalizations.of(
-                            context,
-                          )!.keepPlayingSimilarTracksWhenQueueEnds,
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!.keepPlayingSimilarTracksWhenQueueEnds,
                       icon: Icons.all_inclusive_rounded,
                       value: settings.autoplayEnabled,
-                      onChanged:
-                          (v) => ref
-                              .read(settingsProvider.notifier)
-                              .toggleAutoplay(v),
+                      onChanged: (v) =>
+                          ref.read(settingsProvider.notifier).toggleAutoplay(v),
                     )
                     .animate(delay: 390.ms)
                     .fadeIn(duration: 400.ms)
@@ -222,17 +213,14 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSwitchTile(
                       title: AppLocalizations.of(context)!.lowDataMode,
-                      subtitle:
-                          AppLocalizations.of(
-                            context,
-                          )!.forceAudioonlyStreamsToSaveData,
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!.forceAudioonlyStreamsToSaveData,
                       icon: Icons.data_usage_rounded,
                       value: settings.lowDataMode,
-                      onChanged:
-                          (v) =>
-                              ref
-                                  .read(settingsProvider.notifier)
-                                  .toggleLowDataMode(),
+                      onChanged: (v) => ref
+                          .read(settingsProvider.notifier)
+                          .toggleLowDataMode(),
                     )
                     .animate(delay: 450.ms)
                     .fadeIn(duration: 400.ms)
@@ -240,18 +228,17 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 if (Platform.isAndroid) ...[
                   TactileSwitchTile(
-                        title:
-                            AppLocalizations.of(context)!.pictureinpicturePip,
-                        subtitle:
-                            AppLocalizations.of(
-                              context,
-                            )!.continueVideoPlaybackInASmallWindow,
+                        title: AppLocalizations.of(
+                          context,
+                        )!.pictureinpicturePip,
+                        subtitle: AppLocalizations.of(
+                          context,
+                        )!.continueVideoPlaybackInASmallWindow,
                         icon: Icons.picture_in_picture_alt_rounded,
                         value: settings.continuePlaybackInPip,
-                        onChanged:
-                            (v) => ref
-                                .read(settingsProvider.notifier)
-                                .toggleContinuePlaybackInPip(v),
+                        onChanged: (v) => ref
+                            .read(settingsProvider.notifier)
+                            .toggleContinuePlaybackInPip(v),
                       )
                       .animate(delay: 480.ms)
                       .fadeIn(duration: 400.ms)
@@ -260,10 +247,9 @@ class SettingsScreen extends ConsumerWidget {
                 ],
                 TactileSettingTile(
                       title: AppLocalizations.of(context)!.clearRecentlyPlayed,
-                      subtitle:
-                          AppLocalizations.of(
-                            context,
-                          )!.permanentlyRemoveListeningHistory,
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!.permanentlyRemoveListeningHistory,
                       icon: Icons.history_rounded,
                       color: colorScheme.error.withValues(alpha: 0.8),
                       onTap: () => _showClearHistoryConfirm(context, ref),
@@ -274,10 +260,9 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TactileSettingTile(
                       title: AppLocalizations.of(context)!.clearCache,
-                      subtitle:
-                          AppLocalizations.of(
-                            context,
-                          )!.freesUpSpaceAndForcesFreshDataOnNextLoad,
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!.freesUpSpaceAndForcesFreshDataOnNextLoad,
                       icon: Icons.delete_outline_rounded,
                       color: colorScheme.error.withValues(alpha: 0.8),
                       onTap: () => _showClearCacheConfirm(context, ref),
@@ -302,7 +287,7 @@ class SettingsScreen extends ConsumerWidget {
                             error: (e, _) => 'Unknown',
                           ),
                           icon: Icons.info_outline_rounded,
-                          onTap: versionAsync.hasValue 
+                          onTap: versionAsync.hasValue
                               ? () {
                                   showDialog(
                                     context: context,
@@ -340,18 +325,19 @@ class SettingsScreen extends ConsumerWidget {
                 _buildSectionHeader(context, 'Theme Color'),
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
-                  child: Text(
-                        AppTheme.themeNames[settings.themeIndex],
-                        style: TextStyle(
-                          color: AppTheme.themeColors[settings.themeIndex],
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      )
-                      .animate(key: ValueKey(settings.themeIndex))
-                      .fadeIn()
-                      .slideX(begin: 0.2),
+                  child:
+                      Text(
+                            AppTheme.themeNames[settings.themeIndex],
+                            style: TextStyle(
+                              color: AppTheme.themeColors[settings.themeIndex],
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          )
+                          .animate(key: ValueKey(settings.themeIndex))
+                          .fadeIn()
+                          .slideX(begin: 0.2),
                 ),
               ],
             ),
@@ -381,8 +367,8 @@ class SettingsScreen extends ConsumerWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           physics: const BouncingScrollPhysics(),
                           itemCount: AppTheme.themeColors.length,
-                          separatorBuilder:
-                              (context, index) => const SizedBox(width: 16),
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(width: 16),
                           itemBuilder: (context, index) {
                             final color = AppTheme.themeColors[index];
                             final isSelected = settings.themeIndex == index;
@@ -407,25 +393,24 @@ class SettingsScreen extends ConsumerWidget {
                                       color: color,
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color:
-                                            isSelected
-                                                ? colorScheme.onSurface
-                                                : colorScheme.onSurface
-                                                    .withValues(alpha: 0.24),
+                                        color: isSelected
+                                            ? colorScheme.onSurface
+                                            : colorScheme.onSurface.withValues(
+                                                alpha: 0.24,
+                                              ),
                                         width: isSelected ? 3 : 1,
                                       ),
-                                      boxShadow:
-                                          isSelected
-                                              ? [
-                                                BoxShadow(
-                                                  color: color.withValues(
-                                                    alpha: 0.5,
-                                                  ),
-                                                  blurRadius: 20,
-                                                  spreadRadius: 2,
+                                      boxShadow: isSelected
+                                          ? [
+                                              BoxShadow(
+                                                color: color.withValues(
+                                                  alpha: 0.5,
                                                 ),
-                                              ]
-                                              : [],
+                                                blurRadius: 20,
+                                                spreadRadius: 2,
+                                              ),
+                                            ]
+                                          : [],
                                     ),
                                   ),
                                   if (isSelected)
@@ -515,44 +500,41 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Consumer(
-                  builder:
-                      (context, ref, _) => TactileTap(
-                        onTap: () async {
-                          // 1. Clear Catalog L1 and L2 Caches
-                          await ref
-                              .read(catalogCacheRepositoryProvider)
-                              .clearAll();
+                  builder: (context, ref, _) => TactileTap(
+                    onTap: () async {
+                      // 1. Clear Catalog L1 and L2 Caches
+                      await ref.read(catalogCacheRepositoryProvider).clearAll();
 
-                          // 2. Clear Image Caches (Disk and Memory)
-                          PaintingBinding.instance.imageCache.clear();
-                          PaintingBinding.instance.imageCache.clearLiveImages();
-                          await PPImageCacheManager.instance.emptyCache();
+                      // 2. Clear Image Caches (Disk and Memory)
+                      PaintingBinding.instance.imageCache.clear();
+                      PaintingBinding.instance.imageCache.clearLiveImages();
+                      await PPImageCacheManager.instance.emptyCache();
 
-                          // 3. Invalidate API and Repository Providers
-                          ref.invalidate(spotifyClientProvider);
-                          ref.invalidate(spotifyRepositoryProvider);
+                      // 3. Invalidate API and Repository Providers
+                      ref.invalidate(spotifyClientProvider);
+                      ref.invalidate(spotifyRepositoryProvider);
 
-                          // 4. Invalidate all feature-level catalog providers
-                          invalidateCatalogProviders(ref);
+                      // 4. Invalidate all feature-level catalog providers
+                      invalidateCatalogProviders(ref);
 
-                          if (context.mounted) Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 54,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: colorScheme.error,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.clearCache,
-                            style: TextStyle(
-                              color: colorScheme.onError,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: colorScheme.error,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.clearCache,
+                        style: TextStyle(
+                          color: colorScheme.onError,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -606,28 +588,27 @@ class SettingsScreen extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Consumer(
-                  builder:
-                      (context, ref, _) => TactileTap(
-                        onTap: () async {
-                          await ref.read(db.appDatabaseProvider).clearHistory();
-                          if (context.mounted) Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 54,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: colorScheme.error,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            'Clear All',
-                            style: TextStyle(
-                              color: colorScheme.onError,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                  builder: (context, ref, _) => TactileTap(
+                    onTap: () async {
+                      await ref.read(db.appDatabaseProvider).clearHistory();
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 54,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: colorScheme.error,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'Clear All',
+                        style: TextStyle(
+                          color: colorScheme.onError,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -710,14 +691,16 @@ class SettingsScreen extends ConsumerWidget {
 
   void _showLanguagePicker(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     // Build options dynamically from the app's generated supportedLocales
     final supportedLocales = [
       {'code': null, 'name': AppLocalizations.of(context)!.systemDefault},
-      ...AppLocalizations.supportedLocales.map((locale) => {
-        'code': locale.languageCode,
-        'name': _getLanguageName(locale.languageCode, context)
-      }),
+      ...AppLocalizations.supportedLocales.map(
+        (locale) => {
+          'code': locale.languageCode,
+          'name': _getLanguageName(locale.languageCode, context),
+        },
+      ),
     ];
 
     showPremiumModal(
@@ -754,18 +737,14 @@ class SettingsScreen extends ConsumerWidget {
                         vertical: 14,
                       ),
                       decoration: BoxDecoration(
-                        color:
-                            isSelected
-                                ? colorScheme.onSurface.withValues(alpha: 0.1)
-                                : colorScheme.onSurface.withValues(alpha: 0.03),
+                        color: isSelected
+                            ? colorScheme.onSurface.withValues(alpha: 0.1)
+                            : colorScheme.onSurface.withValues(alpha: 0.03),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color:
-                              isSelected
-                                  ? themeColor.withValues(alpha: 0.5)
-                                  : colorScheme.onSurface.withValues(
-                                    alpha: 0.1,
-                                  ),
+                          color: isSelected
+                              ? themeColor.withValues(alpha: 0.5)
+                              : colorScheme.onSurface.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -776,26 +755,25 @@ class SettingsScreen extends ConsumerWidget {
                             height: 24,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color:
-                                  isSelected ? themeColor : Colors.transparent,
+                              color: isSelected
+                                  ? themeColor
+                                  : Colors.transparent,
                               border: Border.all(
-                                color:
-                                    isSelected
-                                        ? themeColor
-                                        : colorScheme.onSurface.withValues(
-                                          alpha: 0.3,
-                                        ),
+                                color: isSelected
+                                    ? themeColor
+                                    : colorScheme.onSurface.withValues(
+                                        alpha: 0.3,
+                                      ),
                                 width: 2,
                               ),
                             ),
-                            child:
-                                isSelected
-                                    ? Icon(
-                                      Icons.check_rounded,
-                                      size: 16,
-                                      color: colorScheme.surface,
-                                    )
-                                    : null,
+                            child: isSelected
+                                ? Icon(
+                                    Icons.check_rounded,
+                                    size: 16,
+                                    color: colorScheme.surface,
+                                  )
+                                : null,
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -803,10 +781,9 @@ class SettingsScreen extends ConsumerWidget {
                               name,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight:
-                                    isSelected
-                                        ? FontWeight.w700
-                                        : FontWeight.w500,
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
                                 color: colorScheme.onSurface,
                               ),
                             ),
@@ -862,22 +839,16 @@ class SettingsScreen extends ConsumerWidget {
                             vertical: 14,
                           ),
                           decoration: BoxDecoration(
-                            color:
-                                isSelected
-                                    ? colorScheme.onSurface.withValues(
-                                      alpha: 0.1,
-                                    )
-                                    : colorScheme.onSurface.withValues(
-                                      alpha: 0.03,
-                                    ),
+                            color: isSelected
+                                ? colorScheme.onSurface.withValues(alpha: 0.1)
+                                : colorScheme.onSurface.withValues(alpha: 0.03),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color:
-                                  isSelected
-                                      ? colorScheme.onSurface.withValues(
-                                        alpha: 0.24,
-                                      )
-                                      : Colors.transparent,
+                              color: isSelected
+                                  ? colorScheme.onSurface.withValues(
+                                      alpha: 0.24,
+                                    )
+                                  : Colors.transparent,
                             ),
                           ),
                           child: Row(
@@ -886,12 +857,11 @@ class SettingsScreen extends ConsumerWidget {
                                 width: 32,
                                 height: 32,
                                 decoration: BoxDecoration(
-                                  color:
-                                      isSelected
-                                          ? themeColor
-                                          : colorScheme.onSurface.withValues(
-                                            alpha: 0.1,
-                                          ),
+                                  color: isSelected
+                                      ? themeColor
+                                      : colorScheme.onSurface.withValues(
+                                          alpha: 0.1,
+                                        ),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
@@ -911,16 +881,14 @@ class SettingsScreen extends ConsumerWidget {
                               Text(
                                 code,
                                 style: TextStyle(
-                                  color:
-                                      isSelected
-                                          ? colorScheme.onSurface
-                                          : colorScheme.onSurface.withValues(
-                                            alpha: 0.7,
-                                          ),
-                                  fontWeight:
-                                      isSelected
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
+                                  color: isSelected
+                                      ? colorScheme.onSurface
+                                      : colorScheme.onSurface.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                                 ),
                               ),
                               const Spacer(),
@@ -945,14 +913,13 @@ class SettingsScreen extends ConsumerWidget {
                   child: CircularProgressIndicator(color: themeColor),
                 );
               },
-              error:
-                  (err, _) => Center(
-                    child: Text(
-                      AppLocalizations.of(
-                        context,
-                      )!.errorLoadingMarkets(err.toString()),
-                    ),
-                  ),
+              error: (err, _) => Center(
+                child: Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.errorLoadingMarkets(err.toString()),
+                ),
+              ),
             );
           },
         ),
@@ -989,12 +956,10 @@ class _SettingsHero extends StatelessWidget {
           children: [
             // Mesh Gradient / Ambient Background
             Positioned.fill(
-              child: Animate(
-                onPlay: (controller) => controller.repeat(),
-              ).custom(
-                duration: const Duration(seconds: 15),
-                builder:
-                    (context, value, child) => CustomPaint(
+              child: Animate(onPlay: (controller) => controller.repeat())
+                  .custom(
+                    duration: const Duration(seconds: 15),
+                    builder: (context, value, child) => CustomPaint(
                       painter: _MeshPainter(
                         animationValue: value,
                         themeColor: themeColor,
@@ -1002,7 +967,7 @@ class _SettingsHero extends StatelessWidget {
                         tertiaryColor: colorScheme.tertiary,
                       ),
                     ),
-              ),
+                  ),
             ),
             // Glass Surface
             BackdropFilter(
@@ -1031,31 +996,32 @@ class _SettingsHero extends StatelessWidget {
                 children: [
                   Hero(
                     tag: 'app_logo',
-                    child: Container(
-                          padding: const EdgeInsets.all(24),
-                          width: 128,
-                          height: 128,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.transparent,
-                            boxShadow: [
-                              BoxShadow(
-                                color: themeColor.withValues(alpha: 0.3),
-                                blurRadius: 40,
-                                spreadRadius: 10,
+                    child:
+                        Container(
+                              padding: const EdgeInsets.all(24),
+                              width: 128,
+                              height: 128,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.transparent,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: themeColor.withValues(alpha: 0.3),
+                                    blurRadius: 40,
+                                    spreadRadius: 10,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/logo.png',
-                              width: 80,
-                              height: 80,
-                            ),
-                          ),
-                        )
-                        .animate(onPlay: (c) => c.repeat())
-                        .rotate(duration: 10.seconds, begin: 0, end: 1),
+                              child: Center(
+                                child: Image.asset(
+                                  'assets/logo.png',
+                                  width: 80,
+                                  height: 80,
+                                ),
+                              ),
+                            )
+                            .animate(onPlay: (c) => c.repeat())
+                            .rotate(duration: 10.seconds, begin: 0, end: 1),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -1101,8 +1067,8 @@ class _MeshPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
+    final paint = Paint()
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
 
     // Primary Brand Blob
     paint.color = themeColor.withValues(alpha: 0.3);

@@ -654,6 +654,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get filterStations => 'Stanice';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Místní hudba';
 
   @override

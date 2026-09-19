@@ -38,35 +38,48 @@ void main() {
       expect(playbackTrack.isVideo, isFalse);
     });
 
-    test('Imported local track preserves local locator and video flag, and selects native playback', () {
-      final importedTrack = Track.fromLocalFile(
-        libraryId: 'local:1234',
-        name: 'Imported Video',
-        artistName: 'Local Artist',
-        albumName: 'Local Album',
-        localFilePath: '/absolute/path/to/imported_video.mp4',
-        isVideoFile: true,
-      );
+    test(
+      'Imported local track preserves local locator and video flag, and selects native playback',
+      () {
+        final importedTrack = Track.fromLocalFile(
+          libraryId: 'local:1234',
+          name: 'Imported Video',
+          artistName: 'Local Artist',
+          albumName: 'Local Album',
+          localFilePath: '/absolute/path/to/imported_video.mp4',
+          isVideoFile: true,
+        );
 
-      final playbackTrack = importedTrack.toPlaybackTrack();
+        final playbackTrack = importedTrack.toPlaybackTrack();
 
-      expect(playbackTrack.sourceType, PlaybackSourceType.local);
-      expect(playbackTrack.localMediaUri, '/absolute/path/to/imported_video.mp4');
-      expect(playbackTrack.isVideo, isTrue);
-      expect(importedTrack.isLocal, isTrue);
-    });
+        expect(playbackTrack.sourceType, PlaybackSourceType.local);
+        expect(
+          playbackTrack.localMediaUri,
+          '/absolute/path/to/imported_video.mp4',
+        );
+        expect(playbackTrack.isVideo, isTrue);
+        expect(importedTrack.isLocal, isTrue);
+      },
+    );
 
-    test('toPlaybackTrack throws StateError for online track with UUID as youtubeVideoId', () {
-      final invalidOnlineTrack = const Track(
-        spotifyId: 'uuid-1234',
-        name: 'Online Track',
-        artistId: 'artist_1',
-        artistName: 'Artist',
-        sourceType: TrackSourceType.online,
-        youtubeVideoId: 'e4b9f2c1-d2e8-4b71-a2c9-9a7f3e8b0a1d', // UUID is 36 chars
-      );
+    test(
+      'toPlaybackTrack throws StateError for online track with UUID as youtubeVideoId',
+      () {
+        final invalidOnlineTrack = const Track(
+          spotifyId: 'uuid-1234',
+          name: 'Online Track',
+          artistId: 'artist_1',
+          artistName: 'Artist',
+          sourceType: TrackSourceType.online,
+          youtubeVideoId:
+              'e4b9f2c1-d2e8-4b71-a2c9-9a7f3e8b0a1d', // UUID is 36 chars
+        );
 
-      expect(() => invalidOnlineTrack.toPlaybackTrack(), throwsA(isA<StateError>()));
-    });
+        expect(
+          () => invalidOnlineTrack.toPlaybackTrack(),
+          throwsA(isA<StateError>()),
+        );
+      },
+    );
   });
 }

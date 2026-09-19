@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:media_kit/media_kit.dart';
@@ -17,18 +16,20 @@ class VideoThumbnailGenerator {
     );
     try {
       await player.open(Media(filePath), play: false);
-      
+
       // Wait for it to be ready
-      await player.stream.duration.firstWhere((d) => d > Duration.zero).timeout(const Duration(seconds: 3));
-      
+      await player.stream.duration
+          .firstWhere((d) => d > Duration.zero)
+          .timeout(const Duration(seconds: 3));
+
       // Seek to 10% of duration
       final duration = player.state.duration;
       final seekTo = duration * 0.1;
       await player.seek(seekTo);
-      
+
       // Wait a bit for seek
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       final bytes = await player.screenshot(format: 'image/jpeg');
       if (bytes != null && bytes.isNotEmpty) {
         return await _saveArtwork(bytes, 'image/jpeg', filePath);

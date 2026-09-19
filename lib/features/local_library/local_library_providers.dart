@@ -22,7 +22,8 @@ class LocalSortOptionNotifier extends Notifier<LocalSortOption> {
   Future<void> _load() async {
     final box = await Hive.openBox(_boxName);
     final idx = box.get(_key, defaultValue: LocalSortOption.title.index) as int;
-    state = LocalSortOption.values[idx.clamp(0, LocalSortOption.values.length - 1)];
+    state =
+        LocalSortOption.values[idx.clamp(0, LocalSortOption.values.length - 1)];
   }
 
   Future<void> update(LocalSortOption value) async {
@@ -31,7 +32,11 @@ class LocalSortOptionNotifier extends Notifier<LocalSortOption> {
     await box.put(_key, value.index);
   }
 }
-final localSortOptionProvider = NotifierProvider<LocalSortOptionNotifier, LocalSortOption>(LocalSortOptionNotifier.new);
+
+final localSortOptionProvider =
+    NotifierProvider<LocalSortOptionNotifier, LocalSortOption>(
+      LocalSortOptionNotifier.new,
+    );
 
 class LocalSortAscendingNotifier extends Notifier<bool> {
   static const _boxName = 'settings';
@@ -54,14 +59,22 @@ class LocalSortAscendingNotifier extends Notifier<bool> {
     await box.put(_key, value);
   }
 }
-final localSortAscendingProvider = NotifierProvider<LocalSortAscendingNotifier, bool>(LocalSortAscendingNotifier.new);
+
+final localSortAscendingProvider =
+    NotifierProvider<LocalSortAscendingNotifier, bool>(
+      LocalSortAscendingNotifier.new,
+    );
 
 class LocalSearchQueryNotifier extends Notifier<String> {
   @override
   String build() => '';
   void update(String value) => state = value;
 }
-final localSearchQueryProvider = NotifierProvider<LocalSearchQueryNotifier, String>(LocalSearchQueryNotifier.new);
+
+final localSearchQueryProvider =
+    NotifierProvider<LocalSearchQueryNotifier, String>(
+      LocalSearchQueryNotifier.new,
+    );
 
 final _localTracksStreamProvider = StreamProvider<List<model.Track>>((ref) {
   // Audio-only: excludes confirmed video files (is_video = true).
@@ -103,7 +116,9 @@ final sortedLocalSongsProvider = Provider<AsyncValue<List<model.Track>>>((ref) {
           break;
         case LocalSortOption.dateAdded:
           result = (a.localAddedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
-              .compareTo(b.localAddedAt ?? DateTime.fromMillisecondsSinceEpoch(0));
+              .compareTo(
+                b.localAddedAt ?? DateTime.fromMillisecondsSinceEpoch(0),
+              );
           break;
       }
       return isAscending ? result : -result;
@@ -119,7 +134,7 @@ final _localAlbumsStreamProvider = StreamProvider<List<LocalAlbum>>((ref) {
 final localAlbumsProvider = Provider<AsyncValue<List<LocalAlbum>>>((ref) {
   final albumsAsync = ref.watch(_localAlbumsStreamProvider);
   final searchQuery = ref.watch(localSearchQueryProvider).toLowerCase();
-  
+
   return albumsAsync.whenData((albums) {
     var filtered = albums;
     if (searchQuery.isNotEmpty) {
@@ -128,7 +143,7 @@ final localAlbumsProvider = Provider<AsyncValue<List<LocalAlbum>>>((ref) {
             (a.artist?.toLowerCase().contains(searchQuery) ?? false);
       }).toList();
     }
-    
+
     final sorted = List<LocalAlbum>.from(filtered);
     sorted.sort((a, b) => a.title.compareTo(b.title));
     return sorted;
@@ -146,9 +161,11 @@ final localArtistsProvider = Provider<AsyncValue<List<LocalArtist>>>((ref) {
   return artistsAsync.whenData((artists) {
     var filtered = artists;
     if (searchQuery.isNotEmpty) {
-      filtered = artists.where((a) => a.name.toLowerCase().contains(searchQuery)).toList();
+      filtered = artists
+          .where((a) => a.name.toLowerCase().contains(searchQuery))
+          .toList();
     }
-    
+
     final sorted = List<LocalArtist>.from(filtered);
     sorted.sort((a, b) => a.name.compareTo(b.name));
     return sorted;
@@ -170,9 +187,11 @@ final localGenresProvider = Provider<AsyncValue<List<LocalGenre>>>((ref) {
   return genresAsync.whenData((genres) {
     var filtered = genres;
     if (searchQuery.isNotEmpty) {
-      filtered = genres.where((a) => a.name.toLowerCase().contains(searchQuery)).toList();
+      filtered = genres
+          .where((a) => a.name.toLowerCase().contains(searchQuery))
+          .toList();
     }
-    
+
     final sorted = List<LocalGenre>.from(filtered);
     sorted.sort((a, b) => a.name.compareTo(b.name));
     return sorted;

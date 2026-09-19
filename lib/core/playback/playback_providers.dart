@@ -13,14 +13,18 @@ extension TrackToPlayback on Track {
   PlaybackTrack toPlaybackTrack() {
     if (sourceType == TrackSourceType.online) {
       if (youtubeVideoId == null) {
-        throw StateError('Cannot create PlaybackTrack: youtubeVideoId is null for online track');
+        throw StateError(
+          'Cannot create PlaybackTrack: youtubeVideoId is null for online track',
+        );
       }
       if (youtubeVideoId!.length != 11 || youtubeVideoId!.contains('http')) {
-        throw StateError('Cannot create PlaybackTrack: Invalid online source ID "$youtubeVideoId"');
+        throw StateError(
+          'Cannot create PlaybackTrack: Invalid online source ID "$youtubeVideoId"',
+        );
       }
     }
-    
-    PlaybackLiveStatus _mapLiveStatus(StreamLiveStatus status) {
+
+    PlaybackLiveStatus mapLiveStatus(StreamLiveStatus status) {
       switch (status) {
         case StreamLiveStatus.live:
           return PlaybackLiveStatus.live;
@@ -30,7 +34,7 @@ extension TrackToPlayback on Track {
           return PlaybackLiveStatus.unknown;
       }
     }
-    
+
     PlaybackSourceType playbackSource;
     switch (sourceType) {
       case TrackSourceType.local:
@@ -57,7 +61,7 @@ extension TrackToPlayback on Track {
       localMediaUri: localFilePath,
       networkMediaUri: networkStreamUrl,
       isVideo: isVideoFile,
-      liveStatus: _mapLiveStatus(this.liveStatus),
+      liveStatus: mapLiveStatus(liveStatus),
     );
   }
 }

@@ -12,19 +12,31 @@ import 'package:ppplayer/core/services/settings_provider.dart';
 
 class FakeSettingsNotifier extends SettingsNotifier {
   @override
-  SettingsState build() => SettingsState(selectedCountry: 'US', autoplayEnabled: false, isLoaded: true);
+  SettingsState build() => SettingsState(
+    selectedCountry: 'US',
+    autoplayEnabled: false,
+    isLoaded: true,
+  );
 }
 
 class FakePlaybackService implements PlaybackService {
   List<ResolvedVideoCandidate> candidates = [
-    const ResolvedVideoCandidate(videoId: 'online_vid', title: 'T', channel: 'C', confidenceScore: 1.0)
+    const ResolvedVideoCandidate(
+      videoId: 'online_vid',
+      title: 'T',
+      channel: 'C',
+      confidenceScore: 1.0,
+    ),
   ];
 
   @override
   Ref get ref => throw UnimplementedError();
 
   @override
-  Future<List<ResolvedVideoCandidate>> resolveCandidates(Track track, String? regionCode) async {
+  Future<List<ResolvedVideoCandidate>> resolveCandidates(
+    Track track,
+    String? regionCode,
+  ) async {
     return candidates;
   }
 
@@ -34,7 +46,7 @@ class FakePlaybackService implements PlaybackService {
   Future<void> recordPlay(Track track) async {}
   Future<void> registerAppTrack(Track track) async {}
   Future<Track?> getTrack(String spotifyId) async => null;
-  
+
   @override
   Future<List<Track>> getPlaylistTracks(int playlistId) async => [];
   @override
@@ -65,17 +77,23 @@ class SpeedMockEngine implements PlaybackController {
 
   @override
   Stream<PlaybackEvent> get eventStream => const Stream.empty();
-  
+
   @override
   PlaybackStatus get currentStatus => const PlaybackStatus();
 
   @override
-  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero}) async {
+  Future<void> play(
+    PlaybackTrack track, {
+    Duration startAt = Duration.zero,
+  }) async {
     _statusController.add(const PlaybackStatus(state: PlaybackState.playing));
   }
 
   @override
-  Future<void> pause({String caller = 'user', bool failOnTimeout = false}) async {}
+  Future<void> pause({
+    String caller = 'user',
+    bool failOnTimeout = false,
+  }) async {}
 
   @override
   Future<void> prepare(PlaybackTrack track, {Duration? position}) async {}
@@ -107,7 +125,7 @@ class SpeedMockEngine implements PlaybackController {
   yt.YoutubePlayerController? get youtubeController => null;
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     _statusController.close();
   }
 
@@ -118,10 +136,10 @@ class SpeedMockEngine implements PlaybackController {
 void main() {
   late ProviderContainer container;
   late SpeedMockEngine engine;
-  
+
   setUp(() {
     Hive.init(Directory.systemTemp.createTempSync('hive_test').path);
-    
+
     engine = SpeedMockEngine();
 
     container = ProviderContainer(
@@ -132,41 +150,44 @@ void main() {
       ],
     );
   });
-  
+
   tearDown(() {
     container.dispose();
   });
 
   group('Playback Speed in PlayerNotifier', () {
-    test('setSpeed sets state and delegates to local engine when playing local', () async {
-      final notifier = container.read(playerProvider.notifier);
-      
-      // Simulate local playback meaning engine supports speed
-      engine.setSupportsSpeed(true);
-      
-      const localTrack = Track(
-        spotifyId: 'local:1',
-        name: 'Local',
-        artistId: '1',
-        artistName: 'Artist',
-        durationMs: 1000,
-        sourceType: TrackSourceType.local,
-      );
-      
-      await notifier.playTrack(localTrack);
-      await Future.delayed(Duration.zero);
-      
-      await notifier.setSpeed(1.5);
-      
-      expect(container.read(playerProvider).speed, 1.5);
-      expect(engine.lastSetSpeed, 1.5);
-    });
+    test(
+      'setSpeed sets state and delegates to local engine when playing local',
+      () async {
+        final notifier = container.read(playerProvider.notifier);
+
+        // Simulate local playback meaning engine supports speed
+        engine.setSupportsSpeed(true);
+
+        const localTrack = Track(
+          spotifyId: 'local:1',
+          name: 'Local',
+          artistId: '1',
+          artistName: 'Artist',
+          durationMs: 1000,
+          sourceType: TrackSourceType.local,
+        );
+
+        await notifier.playTrack(localTrack);
+        await Future.delayed(Duration.zero);
+
+        await notifier.setSpeed(1.5);
+
+        expect(container.read(playerProvider).speed, 1.5);
+        expect(engine.lastSetSpeed, 1.5);
+      },
+    );
 
     test('setSpeed throws/ignores or resets when online is playing', () async {
       final notifier = container.read(playerProvider.notifier);
-      
+
       engine.setSupportsSpeed(false);
-      
+
       const onlineTrack = Track(
         spotifyId: 'online:1',
         name: 'Online',
@@ -175,64 +196,67 @@ void main() {
         durationMs: 1000,
         sourceType: TrackSourceType.online,
       );
-      
+
       await notifier.playTrack(onlineTrack);
       await Future.delayed(Duration.zero);
-      
+
       try {
         await notifier.setSpeed(1.5);
       } catch (e) {
         // Ignored
       }
-      
+
       expect(container.read(playerProvider).speed, 1.0);
     });
 
-    test('transitions between supported and unsupported tracks reset/preserve speed correctly', () async {
-      final notifier = container.read(playerProvider.notifier);
-      
-      engine.setSupportsSpeed(true);
-      const localTrack = Track(
-        spotifyId: 'local:1',
-        name: 'Local',
-        artistId: '1',
-        artistName: 'Artist',
-        durationMs: 1000,
-        sourceType: TrackSourceType.local,
-      );
-      
-      await notifier.playTrack(localTrack);
-      await Future.delayed(Duration.zero);
-      
-      await notifier.setSpeed(1.5);
-      expect(container.read(playerProvider).speed, 1.5);
-      expect(engine.lastSetSpeed, 1.5);
-      
-      // Transition to online
-      engine.setSupportsSpeed(false);
-      const onlineTrack = Track(
-        spotifyId: 'online:1',
-        name: 'Online',
-        artistId: '1',
-        artistName: 'Artist',
-        durationMs: 1000,
-        sourceType: TrackSourceType.online,
-      );
-      
-      await notifier.playTrack(onlineTrack);
-      await Future.delayed(Duration.zero);
-      
-      // State should have reset to 1.0
-      expect(container.read(playerProvider).speed, 1.0);
-      
-      // Transition back to local
-      engine.setSupportsSpeed(true);
-      await notifier.playTrack(localTrack);
-      await Future.delayed(Duration.zero);
-      
-      // It should apply the current state speed (which is now 1.0 due to the reset)
-      expect(container.read(playerProvider).speed, 1.0);
-      expect(engine.lastSetSpeed, 1.0);
-    });
+    test(
+      'transitions between supported and unsupported tracks reset/preserve speed correctly',
+      () async {
+        final notifier = container.read(playerProvider.notifier);
+
+        engine.setSupportsSpeed(true);
+        const localTrack = Track(
+          spotifyId: 'local:1',
+          name: 'Local',
+          artistId: '1',
+          artistName: 'Artist',
+          durationMs: 1000,
+          sourceType: TrackSourceType.local,
+        );
+
+        await notifier.playTrack(localTrack);
+        await Future.delayed(Duration.zero);
+
+        await notifier.setSpeed(1.5);
+        expect(container.read(playerProvider).speed, 1.5);
+        expect(engine.lastSetSpeed, 1.5);
+
+        // Transition to online
+        engine.setSupportsSpeed(false);
+        const onlineTrack = Track(
+          spotifyId: 'online:1',
+          name: 'Online',
+          artistId: '1',
+          artistName: 'Artist',
+          durationMs: 1000,
+          sourceType: TrackSourceType.online,
+        );
+
+        await notifier.playTrack(onlineTrack);
+        await Future.delayed(Duration.zero);
+
+        // State should have reset to 1.0
+        expect(container.read(playerProvider).speed, 1.0);
+
+        // Transition back to local
+        engine.setSupportsSpeed(true);
+        await notifier.playTrack(localTrack);
+        await Future.delayed(Duration.zero);
+
+        // It should apply the current state speed (which is now 1.0 due to the reset)
+        expect(container.read(playerProvider).speed, 1.0);
+        expect(engine.lastSetSpeed, 1.0);
+      },
+    );
   });
 }

@@ -42,9 +42,9 @@ void main() {
     expect(fetchCount, 1);
 
     // Verify L2
-    final dbEntry =
-        await (db.select(db.catalogCacheEntries)
-          ..where((t) => t.key.equals('test_key'))).getSingleOrNull();
+    final dbEntry = await (db.select(
+      db.catalogCacheEntries,
+    )..where((t) => t.key.equals('test_key'))).getSingleOrNull();
     expect(dbEntry, isNotNull);
     expect(dbEntry!.payload, 'fetched_data');
   });

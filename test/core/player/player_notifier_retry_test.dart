@@ -137,7 +137,7 @@ class FakePlaybackController implements PlaybackController {
   yt.YoutubePlayerController? get youtubeController => null;
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     disposed = true;
     _statusController.close();
   }
@@ -529,13 +529,16 @@ void main() {
             title: 'T',
             channel: 'C',
             confidenceScore: 1.0,
-          )
+          ),
         ],
       );
       final fakeController = FakePlaybackController();
-      final container = makeContainer(service: service, controller: fakeController);
+      final container = makeContainer(
+        service: service,
+        controller: fakeController,
+      );
       final notifier = container.read(playerProvider.notifier);
-      
+
       const localTrack = Track(
         spotifyId: 'local:1',
         name: 'Local',
@@ -544,13 +547,17 @@ void main() {
         durationMs: 1000,
         sourceType: TrackSourceType.local,
       );
-      
+
       await notifier.playTrack(localTrack);
       await Future.delayed(Duration.zero);
-      
-      expect(service.resolveCallCount, 0, reason: 'Should not resolve candidates for local track');
+
+      expect(
+        service.resolveCallCount,
+        0,
+        reason: 'Should not resolve candidates for local track',
+      );
       expect(fakeController.playedIds, contains('local:1'));
-      
+
       await disposeContainer(container, fakeController);
     });
   });

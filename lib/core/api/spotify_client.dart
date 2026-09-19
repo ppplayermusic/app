@@ -645,16 +645,16 @@ class SpotifyClient {
             final playlistId = playlist['id'] as String;
             // Fetch up to 3 tracks to create a collage cover
             final tracks = await getPlaylistTracks(playlistId, limit: 3);
-            final trackImages =
-                tracks
-                    .map((t) => t.albumImage)
-                    .whereType<String>()
-                    .take(3)
-                    .toList();
+            final trackImages = tracks
+                .map((t) => t.albumImage)
+                .whereType<String>()
+                .take(3)
+                .toList();
 
             if (trackImages.isNotEmpty) {
-              playlist['images'] =
-                  trackImages.map((url) => {'url': url}).toList();
+              playlist['images'] = trackImages
+                  .map((url) => {'url': url})
+                  .toList();
             }
           }
         } catch (e) {

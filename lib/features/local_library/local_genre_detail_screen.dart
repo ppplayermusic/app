@@ -6,17 +6,17 @@ import '../../core/player/player_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/track_tile.dart';
 
-final localGenreTracksProvider = FutureProvider.family<List<Track>, String>((ref, genre) {
+final localGenreTracksProvider = FutureProvider.family<List<Track>, String>((
+  ref,
+  genre,
+) {
   return ref.watch(appDatabaseProvider).getGenreAppTracks(genre);
 });
 
 class LocalGenreDetailScreen extends ConsumerWidget {
   final String genre;
 
-  const LocalGenreDetailScreen({
-    super.key,
-    required this.genre,
-  });
+  const LocalGenreDetailScreen({super.key, required this.genre});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,8 +54,10 @@ class LocalGenreDetailScreen extends ConsumerWidget {
                       icon: Icons.queue_music_rounded,
                       onTap: () {
                         final tracks = tracksAsync.value!;
-                        ref.read(playerProvider.notifier).addTracksToQueue(tracks);
-                        
+                        ref
+                            .read(playerProvider.notifier)
+                            .addTracksToQueue(tracks);
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Added to queue'),
@@ -78,7 +80,7 @@ class LocalGenreDetailScreen extends ConsumerWidget {
                       ),
                     );
                   }
-                  
+
                   return CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(
@@ -89,16 +91,20 @@ class LocalGenreDetailScreen extends ConsumerWidget {
                               Expanded(
                                 child: FilledButton.icon(
                                   onPressed: () {
-                                    ref.read(playerProvider.notifier).playTracks(
-                                      tracks,
-                                      initialIndex: 0,
-                                      contextArtistId: 'local_genre_$genre',
-                                    );
+                                    ref
+                                        .read(playerProvider.notifier)
+                                        .playTracks(
+                                          tracks,
+                                          initialIndex: 0,
+                                          contextArtistId: 'local_genre_$genre',
+                                        );
                                   },
                                   icon: const Icon(Icons.play_arrow_rounded),
                                   label: const Text('Play All'),
                                   style: FilledButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -109,15 +115,19 @@ class LocalGenreDetailScreen extends ConsumerWidget {
                               Expanded(
                                 child: FilledButton.tonalIcon(
                                   onPressed: () {
-                                    ref.read(playerProvider.notifier).shuffleAndPlay(
-                                      tracks,
-                                      contextArtistId: 'local_genre_$genre',
-                                    );
+                                    ref
+                                        .read(playerProvider.notifier)
+                                        .shuffleAndPlay(
+                                          tracks,
+                                          contextArtistId: 'local_genre_$genre',
+                                        );
                                   },
                                   icon: const Icon(Icons.shuffle_rounded),
                                   label: const Text('Shuffle'),
                                   style: FilledButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -131,22 +141,24 @@ class LocalGenreDetailScreen extends ConsumerWidget {
                       SliverPadding(
                         padding: const EdgeInsets.only(bottom: 120),
                         sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              return TrackTile(
-                                index: index + 1,
-                                track: tracks[index],
-                                onTap: () {
-                                  ref.read(playerProvider.notifier).playTracks(
-                                    tracks,
-                                    initialIndex: index,
-                                    contextArtistId: 'local_genre_$genre',
-                                  );
-                                },
-                              );
-                            },
-                            childCount: tracks.length,
-                          ),
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            return TrackTile(
+                              index: index + 1,
+                              track: tracks[index],
+                              onTap: () {
+                                ref
+                                    .read(playerProvider.notifier)
+                                    .playTracks(
+                                      tracks,
+                                      initialIndex: index,
+                                      contextArtistId: 'local_genre_$genre',
+                                    );
+                              },
+                            );
+                          }, childCount: tracks.length),
                         ),
                       ),
                     ],

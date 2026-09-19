@@ -39,7 +39,8 @@ class MediaSyncService {
     final track = currentStatus.track;
 
     final trackChanged = track != null && track.id != _lastTrackId;
-    final durationChanged = track != null && currentStatus.duration != _lastDuration;
+    final durationChanged =
+        track != null && currentStatus.duration != _lastDuration;
 
     if (trackChanged) {
       _lastArtCacheFile = null;
@@ -68,9 +69,9 @@ class MediaSyncService {
     final expectedPosition = _lastStatus != null && _lastStatus!.isPlaying
         ? _lastStatus!.position + now.difference(_lastUpdateTime)
         : _lastStatus?.position ?? Duration.zero;
-        
+
     // Only update OS if state/playing changed OR if position jumped significantly (seek)
-    final positionJumped = 
+    final positionJumped =
         (currentStatus.position - expectedPosition).inMilliseconds.abs() > 2000;
 
     if (stateChanged || playingChanged || positionJumped) {
@@ -125,10 +126,7 @@ class MediaSyncService {
     });
   }
 
-  Future<void> _resolveArtwork(
-    String trackId,
-    String artworkUrl,
-  ) async {
+  Future<void> _resolveArtwork(String trackId, String artworkUrl) async {
     try {
       // 1. Check if already cached locally
       final fileInfo = await PPImageCacheManager.instance.getFileFromCache(

@@ -645,6 +645,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get filterStations => '스테이션';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => '로컬 음악';
 
   @override

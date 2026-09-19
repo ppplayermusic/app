@@ -47,7 +47,9 @@ void main() async {
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
-    debugPrint('Warning: .env file not found or could not be loaded. Relying on --dart-define or defaults.');
+    debugPrint(
+      'Warning: .env file not found or could not be loaded. Relying on --dart-define or defaults.',
+    );
   }
 
   // Request notification permissions for background service stability on Android 13+
@@ -122,16 +124,18 @@ void main() async {
   // Initialize native dock menu service for macOS
   if (!kIsWeb && Platform.isMacOS) {
     globalContainer.read(dockMenuServiceProvider);
-    
+
     // Register file open handler
     MacosFileOpenHandler.instance.listen(
       (files) async {
         if (files.isEmpty) return;
-        final libraryService = globalContainer.read(localLibraryServiceProvider);
-        final tracks = await libraryService.importFilesByPaths(
-          files.map((e) => e.path).toList()
+        final libraryService = globalContainer.read(
+          localLibraryServiceProvider,
         );
-        
+        final tracks = await libraryService.importFilesByPaths(
+          files.map((e) => e.path).toList(),
+        );
+
         if (tracks.isNotEmpty) {
           final player = globalContainer.read(playerProvider.notifier);
           // Play the first track and add the rest to queue
@@ -149,10 +153,7 @@ void main() async {
   }
 
   // Instrument Flutter Lifecycle
-  AppLifecycleListener(
-    onStateChange: (AppLifecycleState state) {
-    },
-  );
+  AppLifecycleListener(onStateChange: (AppLifecycleState state) {});
 
   runApp(
     UncontrolledProviderScope(
@@ -169,22 +170,28 @@ class _AppLifecycleLogger extends StatefulWidget {
   State<_AppLifecycleLogger> createState() => _AppLifecycleLoggerState();
 }
 
-class _AppLifecycleLoggerState extends State<_AppLifecycleLogger> with WidgetsBindingObserver {
+class _AppLifecycleLoggerState extends State<_AppLifecycleLogger>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final time = DateTime.now().toIso8601String().substring(11, 23);
-    debugPrint('$time [PipDebug][FLUTTER] state=${state.name} inPip=${PipHandler.isInPipMode} activityStopped=${PipHandler.isActivityStopped}');
+    debugPrint(
+      '$time [PipDebug][FLUTTER] state=${state.name} inPip=${PipHandler.isInPipMode} activityStopped=${PipHandler.isActivityStopped}',
+    );
   }
+
   @override
   Widget build(BuildContext context) => widget.child;
 }
@@ -205,7 +212,9 @@ class PpPlayerApp extends ConsumerWidget {
       scrollBehavior: const AppScrollBehavior(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: settings.languageCode != null ? Locale(settings.languageCode!) : null,
+      locale: settings.languageCode != null
+          ? Locale(settings.languageCode!)
+          : null,
       routerConfig: router,
     );
   }

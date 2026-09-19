@@ -656,6 +656,9 @@ class AppLocalizationsLv extends AppLocalizations {
   String get filterStations => 'Stacijas';
 
   @override
+  String get filterStreams => 'Streams';
+
+  @override
   String get localMusicCard => 'Vietējā mūzika';
 
   @override

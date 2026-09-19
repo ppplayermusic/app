@@ -37,16 +37,13 @@ class RecentlyPlayedScreen extends ConsumerWidget {
             elevation: 0,
             actions: [
               tracksAsync.when(
-                data:
-                    (tracks) =>
-                        tracks.isEmpty
-                            ? const SizedBox.shrink()
-                            : TactileIconButton(
-                              icon: Icons.delete_sweep_rounded,
-                              onTap:
-                                  () => _showClearHistoryConfirm(context, ref),
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                data: (tracks) => tracks.isEmpty
+                    ? const SizedBox.shrink()
+                    : TactileIconButton(
+                        icon: Icons.delete_sweep_rounded,
+                        onTap: () => _showClearHistoryConfirm(context, ref),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                 loading: () => const SizedBox.shrink(),
                 error: (_, _) => const SizedBox.shrink(),
               ),
@@ -167,10 +164,9 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                               return TrackTile(
                                 track: track,
                                 isActive: isActive,
-                                onTap:
-                                    () => ref
-                                        .read(playerProvider.notifier)
-                                        .playTrack(track, queue: tracks),
+                                onTap: () => ref
+                                    .read(playerProvider.notifier)
+                                    .playTrack(track, queue: tracks),
                               );
                             },
                           ),
@@ -182,23 +178,19 @@ class RecentlyPlayedScreen extends ConsumerWidget {
                 ),
               );
             },
-            loading:
-                () => SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: colorScheme.primary,
-                    ),
-                  ),
+            loading: () => SliverFillRemaining(
+              child: Center(
+                child: CircularProgressIndicator(color: colorScheme.primary),
+              ),
+            ),
+            error: (e, _) => SliverFillRemaining(
+              child: Center(
+                child: Text(
+                  'Error: $e',
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
                 ),
-            error:
-                (e, _) => SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'Error: $e',
-                      style: TextStyle(color: colorScheme.onSurfaceVariant),
-                    ),
-                  ),
-                ),
+              ),
+            ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 140)),
         ],

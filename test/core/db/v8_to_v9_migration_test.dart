@@ -8,7 +8,7 @@ void main() {
   test('V8 to V9 migration correctly backfills added_at', () async {
     // 1. Set up an authentic v8 database using pure sqlite3
     final sqliteDb = sqlite.sqlite3.openInMemory();
-    
+
     // Set v8 schema explicitly
     sqliteDb.execute('PRAGMA user_version = 8;');
 
@@ -62,7 +62,7 @@ void main() {
         created_at INTEGER NOT NULL
       );
     ''');
-    
+
     sqliteDb.execute('''
       CREATE TABLE IF NOT EXISTS playlist_tracks (
         playlist_id INTEGER NOT NULL,
@@ -124,10 +124,13 @@ void main() {
 
     // 2. Wrap it with Drift and let it run migrations to v9
     final db = AppDatabase.forTesting(
-      NativeDatabase.opened(sqliteDb, setup: (rawDb) {
-        // Drift NativeDatabase might override PRAGMA user_version if we don't return it
-        // but it reads it on open to know if it needs to migrate.
-      })
+      NativeDatabase.opened(
+        sqliteDb,
+        setup: (rawDb) {
+          // Drift NativeDatabase might override PRAGMA user_version if we don't return it
+          // but it reads it on open to know if it needs to migrate.
+        },
+      ),
     );
     addTearDown(db.close);
 
@@ -138,13 +141,16 @@ void main() {
     // 3. Verify addedAt backfilled correctly
     final localFiles = await db.select(db.localFiles).get();
     expect(localFiles.length, 1);
-    
+
     final file = localFiles.first;
     expect(file.libraryId, 'local:uuid1');
-    expect(file.addedAt, file.lastScannedAt, 
-      reason: 'addedAt should be backfilled from lastScannedAt during v8->v9 migration'
+    expect(
+      file.addedAt,
+      file.lastScannedAt,
+      reason:
+          'addedAt should be backfilled from lastScannedAt during v8->v9 migration',
     );
-    
+
     // Verify relations survived
     final playlistTracks = await db.select(db.playlistTracks).get();
     expect(playlistTracks.length, 1);
@@ -156,23 +162,27 @@ void main() {
     // 4. Emulate a rescan update that changes lastScannedAt
     // The actual rescan path uses upsert, but we can verify at DB level first
     final newScanTime = DateTime(2024, 1, 1);
-    await db.into(db.localFiles).insertOnConflictUpdate(
-      LocalFilesCompanion.insert(
-        libraryId: file.libraryId,
-        mechanism: file.mechanism,
-        locator: file.locator,
-        displayPath: file.displayPath,
-        deduplicationKey: file.deduplicationKey,
-        lastScannedAt: newScanTime,
-        // we deliberately omit addedAt to simulate typical update without overwriting it
-      )
-    );
+    await db
+        .into(db.localFiles)
+        .insertOnConflictUpdate(
+          LocalFilesCompanion.insert(
+            libraryId: file.libraryId,
+            mechanism: file.mechanism,
+            locator: file.locator,
+            displayPath: file.displayPath,
+            deduplicationKey: file.deduplicationKey,
+            lastScannedAt: newScanTime,
+            // we deliberately omit addedAt to simulate typical update without overwriting it
+          ),
+        );
 
     // Validate addedAt remained the original backfilled value, not the new scan time
     final updatedFiles = await db.select(db.localFiles).get();
     expect(updatedFiles.first.lastScannedAt, newScanTime);
-    expect(updatedFiles.first.addedAt, file.addedAt, 
-      reason: 'addedAt should not be overwritten by subsequent rescans'
+    expect(
+      updatedFiles.first.addedAt,
+      file.addedAt,
+      reason: 'addedAt should not be overwritten by subsequent rescans',
     );
   });
 }

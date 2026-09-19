@@ -141,8 +141,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
         box.get(_performanceModeKey, defaultValue: -1) as int;
     final PerformanceMode defaultMode =
         (defaultTargetPlatform == TargetPlatform.android)
-            ? PerformanceMode.balanced
-            : PerformanceMode.high;
+        ? PerformanceMode.balanced
+        : PerformanceMode.high;
     final lowDataMode = box.get(_lowDataModeKey, defaultValue: false) as bool;
     final userName = box.get(_userNameKey, defaultValue: '') as String;
     final userAvatarColorIndex =
@@ -179,19 +179,15 @@ class SettingsNotifier extends Notifier<SettingsState> {
     state = state.copyWith(
       selectedCountry: country,
       showVideo: showVideo,
-      playerView:
-          PlayerView.values[playerViewIndex.clamp(
-            0,
-            PlayerView.values.length - 1,
-          )],
+      playerView: PlayerView
+          .values[playerViewIndex.clamp(0, PlayerView.values.length - 1)],
       themeIndex: themeIndex,
-      performanceMode:
-          performanceModeIndex == -1
-              ? defaultMode
-              : PerformanceMode.values[performanceModeIndex.clamp(
-                0,
-                PerformanceMode.values.length - 1,
-              )],
+      performanceMode: performanceModeIndex == -1
+          ? defaultMode
+          : PerformanceMode.values[performanceModeIndex.clamp(
+              0,
+              PerformanceMode.values.length - 1,
+            )],
       lowDataMode: lowDataMode,
       userName: userName,
       userAvatarColorIndex: userAvatarColorIndex,
@@ -214,11 +210,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
       autoplayEnabled: autoplayEnabled,
       continuePlaybackInPip: continuePlaybackInPip,
       languageCode: languageCode,
-      videoFitMode:
-          VideoFitMode.values[videoFitModeIndex.clamp(
-            0,
-            VideoFitMode.values.length - 1,
-          )],
+      videoFitMode: VideoFitMode
+          .values[videoFitModeIndex.clamp(0, VideoFitMode.values.length - 1)],
       isLoaded: true,
     );
   }

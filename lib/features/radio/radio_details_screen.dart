@@ -11,14 +11,14 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/services/favorites_provider.dart';
 
-final radioTracksProvider = FutureProvider.family<
-  List<Track>,
-  ({String type, String id})
->((ref, arg) async {
-  final repo = ref.watch(spotifyRepositoryProvider);
-  try {
-    final cacheResult =
-        await repo
+final radioTracksProvider =
+    FutureProvider.family<List<Track>, ({String type, String id})>((
+      ref,
+      arg,
+    ) async {
+      final repo = ref.watch(spotifyRepositoryProvider);
+      try {
+        final cacheResult = await repo
             .watchRecommendations(
               seedArtistId: arg.type == 'artist' ? arg.id : null,
               seedTrackId: arg.type == 'track' ? arg.id : null,
@@ -26,24 +26,25 @@ final radioTracksProvider = FutureProvider.family<
               limit: 50,
             )
             .first;
-    final tracks = cacheResult.data;
+        final tracks = cacheResult.data;
 
-    if (tracks.isNotEmpty) return tracks;
+        if (tracks.isNotEmpty) return tracks;
 
-    // Fallback 1: Try a safe genre seed
-    final fallbackCacheResult =
-        await repo.watchRecommendations(seedGenres: 'pop', limit: 50).first;
-    final fallbackTracks = fallbackCacheResult.data;
+        // Fallback 1: Try a safe genre seed
+        final fallbackCacheResult = await repo
+            .watchRecommendations(seedGenres: 'pop', limit: 50)
+            .first;
+        final fallbackTracks = fallbackCacheResult.data;
 
-    if (fallbackTracks.isNotEmpty) return fallbackTracks;
+        if (fallbackTracks.isNotEmpty) return fallbackTracks;
 
-    // Fallback 2: Ultimate fallback to popular tracks
-    return (await repo.watchPopularTracks(limit: 50).first).data;
-  } catch (e) {
-    // If targeted recommendation fails, return popular tracks as ultimate fallback
-    return (await repo.watchPopularTracks(limit: 50).first).data;
-  }
-});
+        // Fallback 2: Ultimate fallback to popular tracks
+        return (await repo.watchPopularTracks(limit: 50).first).data;
+      } catch (e) {
+        // If targeted recommendation fails, return popular tracks as ultimate fallback
+        return (await repo.watchPopularTracks(limit: 50).first).data;
+      }
+    });
 
 class RadioDetailsScreen extends ConsumerWidget {
   final String seedType;
@@ -118,32 +119,29 @@ class RadioDetailsScreen extends ConsumerWidget {
                   centerTitle: true,
                   expandedTitleScale: 1.0,
                   titlePadding: EdgeInsets.zero,
-                  title:
-                      isCollapsed
-                          ? ClipRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                              child: Container(
-                                width: double.infinity,
-                                height: kToolbarHeight + topPadding,
-                                padding: EdgeInsets.only(top: topPadding),
-                                color: colorScheme.surface.withValues(
-                                  alpha: 0.6,
+                  title: isCollapsed
+                      ? ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              width: double.infinity,
+                              height: kToolbarHeight + topPadding,
+                              padding: EdgeInsets.only(top: topPadding),
+                              color: colorScheme.surface.withValues(alpha: 0.6),
+                              alignment: Alignment.center,
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 17,
+                                  letterSpacing: -0.5,
+                                  color: colorScheme.onSurface,
                                 ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 17,
-                                    letterSpacing: -0.5,
-                                    color: colorScheme.onSurface,
-                                  ),
-                                ).animate().fadeIn(duration: 200.ms),
-                              ),
+                              ).animate().fadeIn(duration: 200.ms),
                             ),
-                          )
-                          : null,
+                          ),
+                        )
+                      : null,
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -153,31 +151,34 @@ class RadioDetailsScreen extends ConsumerWidget {
                       Positioned.fill(
                         child: Opacity(
                           opacity: 0.6,
-                          child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: RadialGradient(
-                                    center: const Alignment(-0.8, -0.6),
-                                    radius: 1.5,
-                                    colors: [
-                                      Theme.of(context).colorScheme.primary,
-                                      Colors.transparent,
-                                    ],
+                          child:
+                              Container(
+                                    decoration: BoxDecoration(
+                                      gradient: RadialGradient(
+                                        center: const Alignment(-0.8, -0.6),
+                                        radius: 1.5,
+                                        colors: [
+                                          Theme.of(context).colorScheme.primary,
+                                          Colors.transparent,
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .animate(
+                                    onPlay: (c) => c.repeat(reverse: true),
+                                  )
+                                  .scale(
+                                    begin: const Offset(1, 1),
+                                    end: const Offset(1.3, 1.3),
+                                    duration: 10.seconds,
+                                    curve: Curves.easeInOut,
+                                  )
+                                  .move(
+                                    begin: const Offset(-20, -20),
+                                    end: const Offset(20, 20),
+                                    duration: 12.seconds,
+                                    curve: Curves.easeInOut,
                                   ),
-                                ),
-                              )
-                              .animate(onPlay: (c) => c.repeat(reverse: true))
-                              .scale(
-                                begin: const Offset(1, 1),
-                                end: const Offset(1.3, 1.3),
-                                duration: 10.seconds,
-                                curve: Curves.easeInOut,
-                              )
-                              .move(
-                                begin: const Offset(-20, -20),
-                                end: const Offset(20, 20),
-                                duration: 12.seconds,
-                                curve: Curves.easeInOut,
-                              ),
                         ),
                       ),
 
@@ -336,18 +337,18 @@ class RadioDetailsScreen extends ConsumerWidget {
                                   children: [
                                     Icon(
                                       Icons.radio_rounded,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                       size: 12,
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
                                       'RADIO STATION',
                                       style: TextStyle(
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.primary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                         fontSize: 10,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 2.0,
@@ -411,15 +412,13 @@ class RadioDetailsScreen extends ConsumerWidget {
                               final isFollowed = statusAsync.value ?? false;
 
                               return TactileIconButton(
-                                icon:
-                                    isFollowed
-                                        ? Icons.favorite_rounded
-                                        : Icons.favorite_border_rounded,
+                                icon: isFollowed
+                                    ? Icons.favorite_rounded
+                                    : Icons.favorite_border_rounded,
                                 size: 28,
-                                color:
-                                    isFollowed
-                                        ? Theme.of(context).colorScheme.primary
-                                        : colorScheme.onSurfaceVariant,
+                                color: isFollowed
+                                    ? Theme.of(context).colorScheme.primary
+                                    : colorScheme.onSurfaceVariant,
                                 padding: const EdgeInsets.all(12),
                                 onTap: () {
                                   ref
@@ -477,103 +476,90 @@ class RadioDetailsScreen extends ConsumerWidget {
             ),
           ),
           tracksAsync.when(
-            data:
-                (tracks) =>
-                    tracks.isEmpty
-                        ? SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.music_off_rounded,
-                                  size: 64,
-                                  color: colorScheme.onSurface.withValues(
-                                    alpha: 0.1,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No tracks found for this radio.',
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface.withValues(
-                                      alpha: 0.5,
-                                    ),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Try another station or check your connection.',
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface.withValues(
-                                      alpha: 0.3,
-                                    ),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                        : SliverPadding(
-                          padding: const EdgeInsets.only(bottom: 120),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate((
-                              context,
-                              index,
-                            ) {
-                              final track = tracks[index];
-                              return TrackTile(
-                                    index: index + 1,
-                                    track: track,
-                                    showMore: false,
-                                    onTap:
-                                        () => ref
-                                            .read(playerProvider.notifier)
-                                            .playTrack(track, queue: tracks),
-                                  )
-                                  .animate(delay: (200 + index * 40).ms)
-                                  .fadeIn(duration: 400.ms)
-                                  .slideX(
-                                    begin: 0.05,
-                                    end: 0,
-                                    curve: Curves.easeOutCubic,
-                                  );
-                            }, childCount: tracks.length),
-                          ),
-                        ),
-            loading: () => const _RadioShimmerSliver(),
-            error:
-                (e, _) => SliverFillRemaining(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
+            data: (tracks) => tracks.isEmpty
+                ? SliverFillRemaining(
+                    hasScrollBody: false,
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.error_outline,
-                            size: 48,
-                            color: colorScheme.onSurface.withValues(
-                              alpha: 0.24,
-                            ),
+                            Icons.music_off_rounded,
+                            size: 64,
+                            color: colorScheme.onSurface.withValues(alpha: 0.1),
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Error loading radio results.\nCheck your connection and try again.',
-                            textAlign: TextAlign.center,
+                            'No tracks found for this radio.',
                             style: TextStyle(
-                              color: colorScheme.onSurfaceVariant,
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Try another station or check your connection.',
+                            style: TextStyle(
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.3,
+                              ),
+                              fontSize: 14,
                             ),
                           ),
                         ],
                       ),
                     ),
+                  )
+                : SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 120),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final track = tracks[index];
+                        return TrackTile(
+                              index: index + 1,
+                              track: track,
+                              showMore: false,
+                              onTap: () => ref
+                                  .read(playerProvider.notifier)
+                                  .playTrack(track, queue: tracks),
+                            )
+                            .animate(delay: (200 + index * 40).ms)
+                            .fadeIn(duration: 400.ms)
+                            .slideX(
+                              begin: 0.05,
+                              end: 0,
+                              curve: Curves.easeOutCubic,
+                            );
+                      }, childCount: tracks.length),
+                    ),
+                  ),
+            loading: () => const _RadioShimmerSliver(),
+            error: (e, _) => SliverFillRemaining(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: colorScheme.onSurface.withValues(alpha: 0.24),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Error loading radio results.\nCheck your connection and try again.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
+                    ],
                   ),
                 ),
+              ),
+            ),
           ),
         ],
       ),

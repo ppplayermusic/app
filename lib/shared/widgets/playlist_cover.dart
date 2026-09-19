@@ -58,7 +58,9 @@ class PlaylistCover extends StatelessWidget {
       return Column(
         children: [
           Expanded(
-            child: Row(children: [Expanded(child: _Image(url: images[0]))]),
+            child: Row(
+              children: [Expanded(child: _Image(url: images[0]))],
+            ),
           ),
           Expanded(
             child: Row(
