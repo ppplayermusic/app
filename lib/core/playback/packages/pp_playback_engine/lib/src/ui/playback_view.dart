@@ -110,13 +110,15 @@ class _PlaybackViewState extends State<PlaybackView> {
       );
     }
 
-    if (widget.controller.renderer == null) {
+    final renderer = widget.controller.renderer;
+    if (renderer == null) {
       // Headless mode (e.g. NativeServicePlaybackEngine on Android)
       return const ColoredBox(color: Colors.black);
     }
 
     return mk.Video(
-      controller: widget.controller.renderer,
+      key: ValueKey(renderer.hashCode),
+      controller: renderer,
       controls: widget.showControls ? mk.MaterialVideoControls : mk.NoVideoControls,
       fit: widget.fit,
       fill: Colors.transparent,

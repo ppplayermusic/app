@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/app_database.dart';
 import '../../core/network_streams/network_stream_service.dart';
 import '../../core/player/player_provider.dart';
+import '../../core/models/track.dart';
 
 class StreamPlaylistDetailScreen extends ConsumerWidget {
   final int playlistId;
