@@ -35,6 +35,10 @@ class SettingsState {
   final String? languageCode;
   final VideoFitMode videoFitMode;
 
+  final double subtitleTextSize;
+  final int subtitleBackgroundColor;
+  final String? subtitleLanguage;
+
   SettingsState({
     required this.selectedCountry,
     this.showVideo = true,
@@ -50,9 +54,12 @@ class SettingsState {
     this.youtubeSearchMethod = YoutubeSearchMethod.scraping,
     this.youtubeApiProvider = YoutubeApiProviderType.ppplayer,
     this.autoplayEnabled = true,
-    this.continuePlaybackInPip = false,
+    this.continuePlaybackInPip = true,
     this.languageCode,
     this.videoFitMode = VideoFitMode.fit,
+    this.subtitleTextSize = 24.0,
+    this.subtitleBackgroundColor = 0x80000000,
+    this.subtitleLanguage,
   });
 
   SettingsState copyWith({
@@ -73,6 +80,10 @@ class SettingsState {
     bool? continuePlaybackInPip,
     String? languageCode,
     VideoFitMode? videoFitMode,
+    double? subtitleTextSize,
+    int? subtitleBackgroundColor,
+    String? subtitleLanguage,
+    bool nullifyAvatar = false,
   }) {
     return SettingsState(
       selectedCountry: selectedCountry ?? this.selectedCountry,
@@ -83,7 +94,8 @@ class SettingsState {
       lowDataMode: lowDataMode ?? this.lowDataMode,
       userName: userName ?? this.userName,
       userAvatarColorIndex: userAvatarColorIndex ?? this.userAvatarColorIndex,
-      userAvatarBase64: userAvatarBase64 ?? this.userAvatarBase64,
+      userAvatarBase64:
+          nullifyAvatar ? null : (userAvatarBase64 ?? this.userAvatarBase64),
       isLoaded: isLoaded ?? this.isLoaded,
       spotifyProvider: spotifyProvider ?? this.spotifyProvider,
       youtubeSearchMethod: youtubeSearchMethod ?? this.youtubeSearchMethod,
@@ -93,6 +105,9 @@ class SettingsState {
           continuePlaybackInPip ?? this.continuePlaybackInPip,
       languageCode: languageCode ?? this.languageCode,
       videoFitMode: videoFitMode ?? this.videoFitMode,
+      subtitleTextSize: subtitleTextSize ?? this.subtitleTextSize,
+      subtitleBackgroundColor: subtitleBackgroundColor ?? this.subtitleBackgroundColor,
+      subtitleLanguage: subtitleLanguage ?? this.subtitleLanguage,
     );
   }
 }
@@ -212,6 +227,9 @@ class SettingsNotifier extends Notifier<SettingsState> {
       languageCode: languageCode,
       videoFitMode: VideoFitMode
           .values[videoFitModeIndex.clamp(0, VideoFitMode.values.length - 1)],
+      subtitleTextSize: box.get('subtitle_text_size', defaultValue: 24.0) as double,
+      subtitleBackgroundColor: box.get('subtitle_bg_color', defaultValue: 0x80000000) as int,
+      subtitleLanguage: box.get('subtitle_language') as String?,
       isLoaded: true,
     );
   }
@@ -230,6 +248,28 @@ class SettingsNotifier extends Notifier<SettingsState> {
       await box.put(_languageCodeKey, code);
     }
     state = state.copyWith(languageCode: code);
+  }
+
+  Future<void> setSubtitleTextSize(double size) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put('subtitle_text_size', size);
+    state = state.copyWith(subtitleTextSize: size);
+  }
+
+  Future<void> setSubtitleBackgroundColor(int colorValue) async {
+    final box = await Hive.openBox(_boxName);
+    await box.put('subtitle_bg_color', colorValue);
+    state = state.copyWith(subtitleBackgroundColor: colorValue);
+  }
+
+  Future<void> setSubtitleLanguage(String? lang) async {
+    final box = await Hive.openBox(_boxName);
+    if (lang == null) {
+      await box.delete('subtitle_language');
+    } else {
+      await box.put('subtitle_language', lang);
+    }
+    state = state.copyWith(subtitleLanguage: lang);
   }
 
   Future<void> setCountry(String country) async {

@@ -531,6 +531,33 @@ class HybridPlaybackEngine implements PlaybackController {
   }
 
   @override
+  Future<void> setSubtitleDelay(Duration delay) async {
+    await _foregroundEngine.setSubtitleDelay(delay);
+    await _backgroundEngine.setSubtitleDelay(delay);
+  }
+
+  @override
+  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {
+    await _foregroundEngine.setSubtitleAppearance(textSize: textSize, backgroundColor: backgroundColor);
+    await _backgroundEngine.setSubtitleAppearance(textSize: textSize, backgroundColor: backgroundColor);
+  }
+
+  @override
+  bool get supportsTrackSelection => _activeEngine.supportsTrackSelection;
+
+  @override
+  bool get supportsExternalSubtitles => _activeEngine.supportsExternalSubtitles;
+
+  @override
+  bool get supportsSubtitleDelay => _activeEngine.supportsSubtitleDelay;
+
+  @override
+  bool get supportsSubtitleTextSize => _activeEngine.supportsSubtitleTextSize;
+
+  @override
+  bool get supportsSubtitleBackgroundStyling => _activeEngine.supportsSubtitleBackgroundStyling;
+
+  @override
   Future<void> dispose() async {
     _disposed = true;
     PipHandler.removeActivityStoppedListener(_onActivityStopped);

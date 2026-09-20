@@ -1,0 +1,126 @@
+diff --git a/lib/core/player/player_provider.dart b/lib/core/player/player_provider.dart
+index 8277536..5a0a4a3 100644
+--- a/lib/core/player/player_provider.dart
++++ b/lib/core/player/player_provider.dart
+@@ -30,6 +30,7 @@ class PlayerState {
+     this.isPipMode = false,
+     this.isPipRequestPending = false,
+     this.subtitleUri,
++    this.subtitleDelay = Duration.zero,
+   });
+ 
+   final PlaybackQueue playbackQueue;
+@@ -46,6 +47,7 @@ class PlayerState {
+   final bool isPipMode;
+   final bool isPipRequestPending;
+   final String? subtitleUri;
++  final Duration subtitleDelay;
+ 
+   // Shortcuts to avoid breaking UI that expects these on state
+   List<Track> get queue => playbackQueue.tracks;
+@@ -69,20 +71,17 @@ class PlayerState {
+     bool? isPipMode,
+     bool? isPipRequestPending,
+     Object? subtitleUri = _sentinel,
++    Duration? subtitleDelay,
+     bool clearLoadError = false,
+   }) {
+     return PlayerState(
+       playbackQueue: playbackQueue ?? this.playbackQueue,
+       isPlaying: isPlaying ?? this.isPlaying,
+-      videoId: identical(videoId, _sentinel)
+-          ? this.videoId
+-          : videoId as String?,
++      videoId: videoId == _sentinel ? this.videoId : videoId as String?,
+       isLoadingVideo: isLoadingVideo ?? this.isLoadingVideo,
+       loadError: clearLoadError
+           ? null
+-          : (identical(loadError, _sentinel)
+-                ? this.loadError
+-                : loadError as String?),
++          : (loadError == _sentinel ? this.loadError : loadError as String?),
+       position: position ?? this.position,
+       duration: duration ?? this.duration,
+       buffered: buffered ?? this.buffered,
+@@ -91,9 +90,10 @@ class PlayerState {
+       supportsSpeed: supportsSpeed ?? this.supportsSpeed,
+       isPipMode: isPipMode ?? this.isPipMode,
+       isPipRequestPending: isPipRequestPending ?? this.isPipRequestPending,
+-      subtitleUri: identical(subtitleUri, _sentinel)
++      subtitleUri: subtitleUri == _sentinel
+           ? this.subtitleUri
+           : subtitleUri as String?,
++      subtitleDelay: subtitleDelay ?? this.subtitleDelay,
+     );
+   }
+ }
+@@ -133,6 +133,18 @@ class PlayerNotifier extends Notifier<PlayerState> {
+       _saveTimer?.cancel();
+       _restoreTimeout?.cancel();
+     });
++
++    // Listen to settings changes to apply subtitle appearance dynamically
++    ref.listen(settingsProvider, (previous, next) {
++      if (previous?.subtitleTextSize != next.subtitleTextSize ||
++          previous?.subtitleBackgroundColor != next.subtitleBackgroundColor) {
++        ref.read(playbackControllerProvider).setSubtitleAppearance(
++              textSize: next.subtitleTextSize,
++              backgroundColor: next.subtitleBackgroundColor,
++            );
++      }
++    });
++
+     // Listen to the playback engine's status and sync it to our state
+     ref.listen(playbackStatusProvider, (previous, next) {
+       if (next is AsyncData<PlaybackStatus>) {
+@@ -566,6 +578,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
+       position: Duration.zero,
+       duration: Duration.zero,
+       buffered: Duration.zero,
++      subtitleUri: null,
++      subtitleDelay: Duration.zero,
+     );
+     _scheduleSaveState();
+     _evaluateAutoplay();
+@@ -590,6 +604,13 @@ class PlayerNotifier extends Notifier<PlayerState> {
+ 
+         if (_disposed || myGen != _playbackGeneration) return;
+         _controller.setVolume(state.volume);
++        if (_controller.supportsSubtitleDelay) {
++          _controller.setSubtitleDelay(Duration.zero);
++        }
++        _controller.setSubtitleAppearance(
++          textSize: ref.read(settingsProvider).subtitleTextSize,
++          backgroundColor: ref.read(settingsProvider).subtitleBackgroundColor,
++        );
+         if (_controller.supportsSpeed) {
+           _controller.setSpeed(state.speed);
+         } else if (state.speed != 1.0) {
+@@ -669,6 +690,13 @@ class PlayerNotifier extends Notifier<PlayerState> {
+     );
+     if (_disposed || myGen != _playbackGeneration) return;
+     _controller.setVolume(state.volume);
++    if (_controller.supportsSubtitleDelay) {
++      _controller.setSubtitleDelay(Duration.zero);
++    }
++    _controller.setSubtitleAppearance(
++      textSize: ref.read(settingsProvider).subtitleTextSize,
++      backgroundColor: ref.read(settingsProvider).subtitleBackgroundColor,
++    );
+     if (_controller.supportsSpeed) {
+       _controller.setSpeed(state.speed);
+     } else if (state.speed != 1.0) {
+@@ -915,6 +943,13 @@ class PlayerNotifier extends Notifier<PlayerState> {
+   Future<void> setSubtitleTrack(String? uri) async {
+     state = state.copyWith(subtitleUri: uri);
+     await _controller.setSubtitleTrack(uri);
++    _scheduleSaveState();
++  }
++
++  Future<void> setSubtitleDelay(Duration delay) async {
++    state = state.copyWith(subtitleDelay: delay);
++    await _controller.setSubtitleDelay(delay);
++    // Do not save delay as a global preference or persistent state.
+   }
+ 
+   Future<void> toggleFavorite(Track track) async {

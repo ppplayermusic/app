@@ -1,10 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit/media_kit.dart' as mk;
 import 'package:ppplayer/l10n/app_localizations.dart';
 import '../../../core/playback/playback_providers.dart';
-import '../../../core/player/player_provider.dart';
+import 'subtitle_panel.dart';
 
 class VideoControlsOverlay extends ConsumerStatefulWidget {
   final VoidCallback onToggleFullscreen;
@@ -91,30 +91,6 @@ class _VideoControlsOverlayState extends ConsumerState<VideoControlsOverlay> {
     }
   }
 
-  Future<void> _pickExternalSubtitle(mk.Player player) async {
-    try {
-      final result = await FilePicker.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['srt', 'vtt'],
-      );
-
-      if (result.isNotEmpty && result.single.path != null) {
-        final path = result.single.path!;
-        await ref.read(playerProvider.notifier).setSubtitleTrack(path);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.errorLoadingSubtitle(e.toString()),
-            ),
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -154,21 +130,23 @@ class _VideoControlsOverlayState extends ConsumerState<VideoControlsOverlay> {
                       onPressed: () {
                         final player = _mkPlayer;
                         if (player != null) {
-                          _showTrackSelectionDialog(
-                            AppLocalizations.of(context)!.subtitles,
-                            player.state.tracks.subtitle,
-                            player.state.track.subtitle,
-                            (t) async {
-                              if (t.id == 'no' || t.id == 'none') {
-                                await ref
-                                    .read(playerProvider.notifier)
-                                    .setSubtitleTrack(null);
-                              } else {
-                                player.setSubtitleTrack(t);
-                              }
-                            },
-                            onExternalLoad: () => _pickExternalSubtitle(player),
-                          );
+                          if (Platform.isAndroid || Platform.isIOS) {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (ctx) => SubtitlePanel(player: player),
+                            );
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                contentPadding: EdgeInsets.zero,
+                                content: SizedBox(
+                                  width: 400,
+                                  child: SubtitlePanel(player: player),
+                                ),
+                              ),
+                            );
+                          }
                         }
                       },
                     ),

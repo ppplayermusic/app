@@ -269,6 +269,21 @@ class NativeServicePlaybackEngine implements PlaybackController {
   @override
   bool get supportsSpeed => true;
 
+  @override
+  bool get supportsTrackSelection => false;
+
+  @override
+  bool get supportsExternalSubtitles => false;
+
+  @override
+  bool get supportsSubtitleDelay => false;
+
+  @override
+  bool get supportsSubtitleTextSize => false;
+
+  @override
+  bool get supportsSubtitleBackgroundStyling => false;
+
   /// Always false: NativeServicePlaybackEngine is a headless audio service
   /// that has no visible UI rendering surface and cannot apply fit/fill scaling.
   @override
@@ -286,7 +301,17 @@ class NativeServicePlaybackEngine implements PlaybackController {
 
   @override
   Future<void> setSubtitleTrack(String? uri) async {
-    // No-op for background native service (only plays YouTube audio)
+    // Subtitles are not rendered in headless service mode.
+  }
+
+  @override
+  Future<void> setSubtitleDelay(Duration delay) async {
+    // Delay adjustment not supported in headless mode.
+  }
+
+  @override
+  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {
+    // Subtitles are not rendered in headless service mode.
   }
 
   @override

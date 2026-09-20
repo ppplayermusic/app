@@ -22,7 +22,7 @@ class FakeSettingsNotifier extends SettingsNotifier {
 class FakePlaybackService implements PlaybackService {
   List<ResolvedVideoCandidate> candidates = [
     const ResolvedVideoCandidate(
-      videoId: 'online_vid',
+      videoId: 'online_vid1',
       title: 'T',
       channel: 'C',
       confidenceScore: 1.0,
@@ -109,6 +109,25 @@ class SpeedMockEngine implements PlaybackController {
 
   @override
   Future<void> setVolume(double volume) async {}
+
+  @override
+  bool get supportsExternalSubtitles => false;
+
+  @override
+  bool get supportsSubtitleDelay => false;
+
+  @override
+  bool get supportsSubtitleTextSize => false;
+
+  @override
+  bool get supportsSubtitleBackgroundStyling => false;
+
+  @override
+  bool get supportsTrackSelection => false;
+
+  Future<void> setSubtitleDelay(Duration delay) async {}
+  @override
+  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {}
 
   @override
   Future<void> setSpeed(double speed) async {

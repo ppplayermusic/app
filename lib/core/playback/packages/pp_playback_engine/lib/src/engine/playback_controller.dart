@@ -17,7 +17,14 @@ abstract class PlaybackController {
   Future<void> setVolume(double volume);
   Future<void> setSpeed(double speed);
   Future<void> setSubtitleTrack(String? uri);
+  Future<void> setSubtitleDelay(Duration delay);
+  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor});
   bool get supportsSpeed;
+  bool get supportsTrackSelection;
+  bool get supportsExternalSubtitles;
+  bool get supportsSubtitleDelay;
+  bool get supportsSubtitleTextSize;
+  bool get supportsSubtitleBackgroundStyling;
 
   /// Whether the current rendering path supports switching between Fit and Fill
   /// video scaling modes. False when rendering via YouTube iframe, headless

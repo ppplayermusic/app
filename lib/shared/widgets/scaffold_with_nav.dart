@@ -23,6 +23,7 @@ import 'context_menu/content_context_menu.dart';
 import '../../core/models/track.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:media_kit_video/media_kit_video.dart' as mk;
 import '../../features/settings/widgets/about_dialog.dart';
 import '../../core/local_library/local_library_service.dart';
 import '../../features/network_streams/network_stream_dialog.dart';
@@ -2459,12 +2460,25 @@ class _StablePlaybackViewState extends State<_StablePlaybackView>
   @override
   Widget build(BuildContext context) {
     super.build(context); // required for AutomaticKeepAliveClientMixin
-    return RepaintBoundary(
-      child: PlaybackView(
-        controller: widget.controller,
-        status: widget.status,
-        fit: widget.fit,
-      ),
+    return Consumer(
+      builder: (context, ref, child) {
+        final settings = ref.watch(settingsProvider);
+        return RepaintBoundary(
+          child: PlaybackView(
+            controller: widget.controller,
+            status: widget.status,
+            fit: widget.fit,
+            subtitleViewConfiguration: mk.SubtitleViewConfiguration(
+              style: TextStyle(
+                fontSize: settings.subtitleTextSize,
+                color: Colors.white,
+                backgroundColor: Color(settings.subtitleBackgroundColor),
+              ),
+              padding: const EdgeInsets.all(24),
+            ),
+          ),
+        );
+      },
     );
   }
 }

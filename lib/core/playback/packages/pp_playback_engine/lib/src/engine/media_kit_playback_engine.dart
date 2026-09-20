@@ -54,6 +54,14 @@ abstract class INativePlayerAdapter {
   Future<void> setVolume(double volume100);
   Future<void> setRate(double rate);
   Future<void> setSubtitleTrack(SubtitleTrack track);
+  Future<void> setSubtitleDelay(Duration delay);
+  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor});
+
+  bool get supportsTrackSelection;
+  bool get supportsExternalSubtitles;
+  bool get supportsSubtitleDelay;
+  bool get supportsSubtitleTextSize;
+  bool get supportsSubtitleBackgroundStyling;
 
   /// Dispose this adapter and its underlying player. Must be idempotent.
   Future<void> dispose();
@@ -61,9 +69,14 @@ abstract class INativePlayerAdapter {
 
 /// Production adapter wrapping a real [media_kit] [Player].
 class MediaKitPlayerAdapter implements INativePlayerAdapter {
+  static Player? _sharedPlayer;
+  static VideoController? _sharedVideoController;
+
   MediaKitPlayerAdapter() {
-    _player = Player();
-    _videoController = VideoController(_player);
+    _sharedPlayer ??= Player();
+    _sharedVideoController ??= VideoController(_sharedPlayer!);
+    _player = _sharedPlayer!;
+    _videoController = _sharedVideoController!;
   }
 
   late final Player _player;
@@ -109,12 +122,49 @@ class MediaKitPlayerAdapter implements INativePlayerAdapter {
   @override
   Future<void> setSubtitleTrack(SubtitleTrack track) =>
       _player.setSubtitleTrack(track);
+  
+  @override
+  Future<void> setSubtitleDelay(Duration delay) async {
+    if (_player.platform != null) {
+      try {
+        await (_player.platform as dynamic).setProperty('sub-delay', (delay.inMilliseconds / 1000.0).toString());
+      } catch (e) {
+        debugPrint('Failed to set subtitle delay: $e');
+      }
+    }
+  }
+  @override
+  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {
+    if (_player.platform != null) {
+      try {
+        if (textSize != null) {
+          await (_player.platform as dynamic).setProperty('sub-font-size', textSize.toString());
+        }
+        if (backgroundColor != null) {
+          final hexColor = '#${backgroundColor.toRadixString(16).padLeft(8, '0')}';
+          await (_player.platform as dynamic).setProperty('sub-back-color', hexColor);
+        }
+      } catch (e) {
+        debugPrint('Failed to set subtitle appearance: $e');
+      }
+    }
+  }
+  @override
+  bool get supportsTrackSelection => true;
+  @override
+  bool get supportsExternalSubtitles => true;
+  @override
+  bool get supportsSubtitleDelay => true;
+  @override
+  bool get supportsSubtitleTextSize => true;
+  @override
+  bool get supportsSubtitleBackgroundStyling => true;
 
   @override
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
-    await _player.dispose();
+    // We do NOT dispose the shared player to avoid native FFI crashes.
   }
 }
 
@@ -569,13 +619,21 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_disposed || myGenYt != _playGeneration) return;
 
     try {
-      _diag('PREPARE cueVideoById gen=$myGenYt videoId=${track.id} ss=$ss');
-      await _youtubeController!.cueVideoById(
-        videoId: track.id,
-        startSeconds: ss,
-      );
+      _diag('PREPARE cueVideo/Playlist gen=$myGenYt videoId=${track.id} ss=$ss');
+      if (track.id.length > 11 && (track.id.startsWith('PL') || track.id.startsWith('RD') || track.id.startsWith('LL'))) {
+        await _youtubeController!.cuePlaylist(
+          list: [track.id],
+          listType: yt.ListType.playlist,
+          startSeconds: ss,
+        );
+      } else {
+        await _youtubeController!.cueVideoById(
+          videoId: track.id,
+          startSeconds: ss,
+        );
+      }
     } catch (e) {
-      debugPrint('MediaKitPlaybackEngine: prepare cueVideoById failed: $e');
+      debugPrint('MediaKitPlaybackEngine: prepare cueVideo/Playlist failed: $e');
     }
   }
 
@@ -1031,10 +1089,18 @@ class MediaKitPlaybackEngine implements PlaybackController {
         }
         return;
       }
-      await _youtubeController!.loadVideoById(
-        videoId: videoId,
-        startSeconds: startSeconds,
-      );
+      if (videoId.length > 11 && (videoId.startsWith('PL') || videoId.startsWith('RD') || videoId.startsWith('LL'))) {
+        await _youtubeController!.loadPlaylist(
+          list: [videoId],
+          listType: yt.ListType.playlist,
+          startSeconds: startSeconds,
+        );
+      } else {
+        await _youtubeController!.loadVideoById(
+          videoId: videoId,
+          startSeconds: startSeconds,
+        );
+      }
     } catch (error) {
       _failAttempt(generation, 'YouTube loading failed: $error');
     }
@@ -1326,7 +1392,32 @@ class MediaKitPlaybackEngine implements PlaybackController {
       await _activeSession?.adapter.setSubtitleTrack(SubtitleTrack.uri(uri));
     }
   }
+  @override
+  bool get supportsTrackSelection => _activeSession?.adapter.supportsTrackSelection ?? false;
 
+  @override
+  bool get supportsExternalSubtitles => _activeSession?.adapter.supportsExternalSubtitles ?? false;
+
+  @override
+  bool get supportsSubtitleDelay => _activeSession?.adapter.supportsSubtitleDelay ?? false;
+
+  @override
+  bool get supportsSubtitleTextSize => _activeSession?.adapter.supportsSubtitleTextSize ?? false;
+
+  @override
+  bool get supportsSubtitleBackgroundStyling => _activeSession?.adapter.supportsSubtitleBackgroundStyling ?? false;
+
+  @override
+  Future<void> setSubtitleDelay(Duration delay) async {
+    if (_currentStatus.isIFrameMode) return;
+    await _activeSession?.adapter.setSubtitleDelay(delay);
+  }
+
+  @override
+  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {
+    if (_currentStatus.isIFrameMode) return;
+    await _activeSession?.adapter.setSubtitleAppearance(textSize: textSize, backgroundColor: backgroundColor);
+  }
   // ---------------------------------------------------------------------------
   // Status update + IFrame position polling
   // ---------------------------------------------------------------------------

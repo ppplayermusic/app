@@ -120,6 +120,25 @@ class FakePlaybackController implements PlaybackController {
 
   @override
   Future<void> setSubtitleTrack(String? uri) async {}
+
+  @override
+  bool get supportsExternalSubtitles => false;
+
+  @override
+  bool get supportsSubtitleDelay => false;
+
+  @override
+  bool get supportsSubtitleTextSize => false;
+
+  @override
+  bool get supportsSubtitleBackgroundStyling => false;
+
+  @override
+  bool get supportsTrackSelection => false;
+
+  Future<void> setSubtitleDelay(Duration delay) async {}
+  @override
+  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {}
 }
 
 class FakeSpotifyRepository implements SpotifyRepository {

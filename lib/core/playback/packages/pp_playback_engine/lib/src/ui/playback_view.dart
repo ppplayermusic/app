@@ -13,6 +13,7 @@ class PlaybackView extends StatefulWidget {
   final PlaybackStatus status;
   final BoxFit fit;
   final bool showControls;
+  final mk.SubtitleViewConfiguration? subtitleViewConfiguration;
 
   const PlaybackView({
     super.key,
@@ -20,6 +21,7 @@ class PlaybackView extends StatefulWidget {
     required this.status,
     this.fit = BoxFit.cover,
     this.showControls = false,
+    this.subtitleViewConfiguration,
   });
 
   @override
@@ -125,6 +127,7 @@ class _PlaybackViewState extends State<PlaybackView> {
           widget.showControls ? mk.MaterialVideoControls : mk.NoVideoControls,
       fit: widget.fit,
       fill: Colors.transparent,
+      subtitleViewConfiguration: widget.subtitleViewConfiguration ?? const mk.SubtitleViewConfiguration(),
     );
   }
 }

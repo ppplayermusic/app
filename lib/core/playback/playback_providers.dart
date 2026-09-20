@@ -36,20 +36,40 @@ extension TrackToPlayback on Track {
     }
 
     PlaybackSourceType playbackSource;
+    String finalId = spotifyId;
+
     switch (sourceType) {
       case TrackSourceType.local:
         playbackSource = PlaybackSourceType.local;
         break;
       case TrackSourceType.networkStream:
         playbackSource = PlaybackSourceType.networkStream;
+        if (networkStreamUrl != null) {
+          for (var exp in [
+            RegExp(r"^https:\/\/(?:www\.|m\.)?youtube\.com\/watch\?(?:.*&)?v=([_\-a-zA-Z0-9]{10,11})(?:&.*)?$"),
+            RegExp(r"^https:\/\/(?:music\.)?youtube\.com\/watch\?(?:.*&)?v=([_\-a-zA-Z0-9]{10,11})(?:&.*)?$"),
+            RegExp(r"^https:\/\/(?:www\.|m\.)?youtube\.com\/shorts\/([_\-a-zA-Z0-9]{10,11})(?:\?.*)?$"),
+            RegExp(r"^https:\/\/(?:www\.|m\.)?youtube(?:-nocookie)?\.com\/embed\/([_\-a-zA-Z0-9]{10,11})(?:\?.*)?$"),
+            RegExp(r"^https:\/\/youtu\.be\/([_\-a-zA-Z0-9]{10,11})(?:\?.*)?$"),
+            RegExp(r"^https:\/\/(?:www\.|m\.)?youtube\.com\/playlist\?(?:.*&)?list=([_\-a-zA-Z0-9]+)(?:&.*)?$")
+          ]) {
+            final match = exp.firstMatch(networkStreamUrl!.trim());
+            if (match != null && match.groupCount >= 1) {
+              playbackSource = PlaybackSourceType.online;
+              finalId = match.group(1)!;
+              break;
+            }
+          }
+        }
         break;
       case TrackSourceType.online:
         playbackSource = PlaybackSourceType.online;
+        finalId = youtubeVideoId!;
         break;
     }
 
     return PlaybackTrack(
-      id: sourceType == TrackSourceType.online ? youtubeVideoId! : spotifyId,
+      id: finalId,
       title: name,
       artist: artistName,
       album: albumName,
