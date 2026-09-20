@@ -1,3 +1,0 @@
-
-09-16 11:11:07.898 16111 16111 I flutter : PipHandler: Failed to set PIP enabled: MissingPluginException(No implementation found for method setPipEnabled on channel com.ppplayer.app/pip)
-
