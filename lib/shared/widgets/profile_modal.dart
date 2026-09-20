@@ -129,7 +129,7 @@ void showEditProfileModal(
             ),
             const SizedBox(height: 24),
             Text(
-              'AVATAR COLOR',
+              'THEME & AVATAR COLOR',
               style: TextStyle(
                 color: colorScheme.onSurface.withValues(alpha: 0.4),
                 fontSize: 11,
@@ -192,6 +192,7 @@ void showEditProfileModal(
                 if (name.isNotEmpty) {
                   settingsNotifier.setUserName(name);
                   settingsNotifier.setUserAvatarColorIndex(selectedColorIndex);
+                  settingsNotifier.setTheme(selectedColorIndex);
                   settingsNotifier.setUserAvatarBase64(selectedAvatarBase64);
                   Navigator.pop(context);
                 }

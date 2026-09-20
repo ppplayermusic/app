@@ -380,6 +380,9 @@ class SettingsScreen extends ConsumerWidget {
                                   ref
                                       .read(settingsProvider.notifier)
                                       .setTheme(index);
+                                  ref
+                                      .read(settingsProvider.notifier)
+                                      .setUserAvatarColorIndex(index);
                                 }
                               },
                               child: Stack(
