@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/db/app_database.dart';
 import '../../core/network_streams/network_stream_service.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../core/player/player_provider.dart';
+import '../../shared/widgets/pp_image.dart';
 
 class StreamPlaylistsSliverGrid extends ConsumerWidget {
   final bool showHeader;
@@ -115,7 +117,17 @@ class _StreamPlaylistCard extends ConsumerWidget {
       hint: 'Double tap to open stream details',
       child: TactileTap(
         onTap: () {
-          context.push('/stream_playlist/${playlist.id}');
+          if (playlist.sourceKind == 'youtube_video') {
+            final track = Track.fromNetworkStream(
+              streamUrl: playlist.sourceUri,
+              title: playlist.title,
+              groupTitle: 'YouTube',
+              logoUrl: playlist.imageUrl,
+            );
+            ref.read(playerProvider.notifier).playTrack(track, queue: [track]);
+          } else {
+            context.push('/stream_playlist/${playlist.id}');
+          }
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,13 +139,21 @@ class _StreamPlaylistCard extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.connected_tv_rounded,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
-                ),
+                child: playlist.imageUrl != null && playlist.imageUrl!.isNotEmpty
+                    ? PPImage(
+                        imageUrl: playlist.imageUrl!,
+                        fit: BoxFit.cover,
+                        borderRadius: BorderRadius.circular(20),
+                      )
+                    : Center(
+                        child: Icon(
+                          playlist.sourceKind == 'youtube_video'
+                              ? Icons.play_circle_fill_rounded
+                              : Icons.connected_tv_rounded,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 12),
@@ -145,7 +165,7 @@ class _StreamPlaylistCard extends ConsumerWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              'IPTV / Stream',
+              playlist.sourceKind == 'youtube_video' ? 'YouTube Video' : 'IPTV / Stream',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

@@ -147,8 +147,10 @@ class NetworkStreamService {
   Future<int> savePlaylist(
     String title,
     String sourceUrl,
-    List<PlaylistItem> channels,
-  ) async {
+    List<PlaylistItem> channels, {
+    String? imageUrl,
+    String? sourceKind,
+  }) async {
     return await _db.transaction(() async {
       // Check if playlist already exists by URI
       final existingPlaylists = await (_db.select(
@@ -163,7 +165,11 @@ class NetworkStreamService {
         await (_db.update(
           _db.streamPlaylists,
         )..where((t) => t.id.equals(playlistId))).write(
-          StreamPlaylistsCompanion(lastRefreshed: drift.Value(DateTime.now())),
+          StreamPlaylistsCompanion(
+            lastRefreshed: drift.Value(DateTime.now()),
+            imageUrl: drift.Value(imageUrl),
+            sourceKind: drift.Value(sourceKind ?? 'url'),
+          ),
         );
       } else {
         playlistId = await _db
@@ -171,8 +177,9 @@ class NetworkStreamService {
             .insert(
               StreamPlaylistsCompanion.insert(
                 title: title,
-                sourceKind: 'url',
+                sourceKind: sourceKind ?? 'url',
                 sourceUri: sourceUrl,
+                imageUrl: drift.Value(imageUrl),
                 lastRefreshed: drift.Value(DateTime.now()),
               ),
             );

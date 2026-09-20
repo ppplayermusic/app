@@ -24,6 +24,7 @@ class NetworkStreamDialog extends ConsumerStatefulWidget {
 class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
   final _urlController = TextEditingController();
   final _titleController = TextEditingController();
+  final _imageUrlController = TextEditingController();
   http.Client? _activeClient;
   bool _isLoading = false;
   String? _error;
@@ -32,6 +33,7 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
   void dispose() {
     _urlController.dispose();
     _titleController.dispose();
+    _imageUrlController.dispose();
     _activeClient?.close();
     super.dispose();
   }
@@ -70,7 +72,8 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
       }
 
       if (saveToLibrary) {
-        await service.savePlaylist(title, url, channels);
+        final imgUrl = _imageUrlController.text.trim();
+        await service.savePlaylist(title, url, channels, imageUrl: imgUrl.isEmpty ? null : imgUrl);
 
         if (mounted) {
           Navigator.pop(context);
@@ -137,9 +140,12 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
                       final cleanUrl = 'https://youtube.com/watch?v=$videoId';
                       
                       if (saveToLibrary) {
+                        final enteredImg = _imageUrlController.text.trim();
+                        final imgUrl = enteredImg.isEmpty ? 'https://img.youtube.com/vi/$videoId/hqdefault.jpg' : enteredImg;
+                        
                         await service.savePlaylist(finalTitle, cleanUrl, [
                           PlaylistItem(title: finalTitle, url: cleanUrl),
-                        ]);
+                        ], imageUrl: imgUrl, sourceKind: 'youtube_video');
                         
                         if (mounted) {
                           Navigator.pop(context); // Close the network stream dialog
@@ -228,6 +234,17 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
               decoration: const InputDecoration(
                 labelText: 'Title (Optional)',
                 hintText: 'My Stream',
+                border: OutlineInputBorder(),
+              ),
+              enabled: !_isLoading,
+              onSubmitted: (_) => _submit(saveToLibrary: false),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _imageUrlController,
+              decoration: const InputDecoration(
+                labelText: 'Image URL (Optional)',
+                hintText: 'https://...',
                 border: OutlineInputBorder(),
               ),
               enabled: !_isLoading,

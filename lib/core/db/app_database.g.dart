@@ -5000,6 +5000,17 @@ class $StreamPlaylistsTable extends StreamPlaylists
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _imageUrlMeta = const VerificationMeta(
+    'imageUrl',
+  );
+  @override
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+    'image_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -5030,6 +5041,7 @@ class $StreamPlaylistsTable extends StreamPlaylists
     title,
     sourceKind,
     sourceUri,
+    imageUrl,
     createdAt,
     lastRefreshed,
   ];
@@ -5072,6 +5084,12 @@ class $StreamPlaylistsTable extends StreamPlaylists
     } else if (isInserting) {
       context.missing(_sourceUriMeta);
     }
+    if (data.containsKey('image_url')) {
+      context.handle(
+        _imageUrlMeta,
+        imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -5112,6 +5130,10 @@ class $StreamPlaylistsTable extends StreamPlaylists
         DriftSqlType.string,
         data['${effectivePrefix}source_uri'],
       )!,
+      imageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}image_url'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -5134,6 +5156,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
   final String title;
   final String sourceKind;
   final String sourceUri;
+  final String? imageUrl;
   final DateTime createdAt;
   final DateTime? lastRefreshed;
   const StreamPlaylist({
@@ -5141,6 +5164,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
     required this.title,
     required this.sourceKind,
     required this.sourceUri,
+    this.imageUrl,
     required this.createdAt,
     this.lastRefreshed,
   });
@@ -5151,6 +5175,9 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
     map['title'] = Variable<String>(title);
     map['source_kind'] = Variable<String>(sourceKind);
     map['source_uri'] = Variable<String>(sourceUri);
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || lastRefreshed != null) {
       map['last_refreshed'] = Variable<DateTime>(lastRefreshed);
@@ -5164,6 +5191,9 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
       title: Value(title),
       sourceKind: Value(sourceKind),
       sourceUri: Value(sourceUri),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
       createdAt: Value(createdAt),
       lastRefreshed: lastRefreshed == null && nullToAbsent
           ? const Value.absent()
@@ -5181,6 +5211,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
       title: serializer.fromJson<String>(json['title']),
       sourceKind: serializer.fromJson<String>(json['sourceKind']),
       sourceUri: serializer.fromJson<String>(json['sourceUri']),
+      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       lastRefreshed: serializer.fromJson<DateTime?>(json['lastRefreshed']),
     );
@@ -5193,6 +5224,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
       'title': serializer.toJson<String>(title),
       'sourceKind': serializer.toJson<String>(sourceKind),
       'sourceUri': serializer.toJson<String>(sourceUri),
+      'imageUrl': serializer.toJson<String?>(imageUrl),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'lastRefreshed': serializer.toJson<DateTime?>(lastRefreshed),
     };
@@ -5203,6 +5235,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
     String? title,
     String? sourceKind,
     String? sourceUri,
+    Value<String?> imageUrl = const Value.absent(),
     DateTime? createdAt,
     Value<DateTime?> lastRefreshed = const Value.absent(),
   }) => StreamPlaylist(
@@ -5210,6 +5243,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
     title: title ?? this.title,
     sourceKind: sourceKind ?? this.sourceKind,
     sourceUri: sourceUri ?? this.sourceUri,
+    imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
     createdAt: createdAt ?? this.createdAt,
     lastRefreshed: lastRefreshed.present
         ? lastRefreshed.value
@@ -5223,6 +5257,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
           ? data.sourceKind.value
           : this.sourceKind,
       sourceUri: data.sourceUri.present ? data.sourceUri.value : this.sourceUri,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       lastRefreshed: data.lastRefreshed.present
           ? data.lastRefreshed.value
@@ -5237,6 +5272,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
           ..write('title: $title, ')
           ..write('sourceKind: $sourceKind, ')
           ..write('sourceUri: $sourceUri, ')
+          ..write('imageUrl: $imageUrl, ')
           ..write('createdAt: $createdAt, ')
           ..write('lastRefreshed: $lastRefreshed')
           ..write(')'))
@@ -5244,8 +5280,15 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, title, sourceKind, sourceUri, createdAt, lastRefreshed);
+  int get hashCode => Object.hash(
+    id,
+    title,
+    sourceKind,
+    sourceUri,
+    imageUrl,
+    createdAt,
+    lastRefreshed,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -5254,6 +5297,7 @@ class StreamPlaylist extends DataClass implements Insertable<StreamPlaylist> {
           other.title == this.title &&
           other.sourceKind == this.sourceKind &&
           other.sourceUri == this.sourceUri &&
+          other.imageUrl == this.imageUrl &&
           other.createdAt == this.createdAt &&
           other.lastRefreshed == this.lastRefreshed);
 }
@@ -5263,6 +5307,7 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
   final Value<String> title;
   final Value<String> sourceKind;
   final Value<String> sourceUri;
+  final Value<String?> imageUrl;
   final Value<DateTime> createdAt;
   final Value<DateTime?> lastRefreshed;
   const StreamPlaylistsCompanion({
@@ -5270,6 +5315,7 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
     this.title = const Value.absent(),
     this.sourceKind = const Value.absent(),
     this.sourceUri = const Value.absent(),
+    this.imageUrl = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.lastRefreshed = const Value.absent(),
   });
@@ -5278,6 +5324,7 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
     required String title,
     required String sourceKind,
     required String sourceUri,
+    this.imageUrl = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.lastRefreshed = const Value.absent(),
   }) : title = Value(title),
@@ -5288,6 +5335,7 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
     Expression<String>? title,
     Expression<String>? sourceKind,
     Expression<String>? sourceUri,
+    Expression<String>? imageUrl,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? lastRefreshed,
   }) {
@@ -5296,6 +5344,7 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
       if (title != null) 'title': title,
       if (sourceKind != null) 'source_kind': sourceKind,
       if (sourceUri != null) 'source_uri': sourceUri,
+      if (imageUrl != null) 'image_url': imageUrl,
       if (createdAt != null) 'created_at': createdAt,
       if (lastRefreshed != null) 'last_refreshed': lastRefreshed,
     });
@@ -5306,6 +5355,7 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
     Value<String>? title,
     Value<String>? sourceKind,
     Value<String>? sourceUri,
+    Value<String?>? imageUrl,
     Value<DateTime>? createdAt,
     Value<DateTime?>? lastRefreshed,
   }) {
@@ -5314,6 +5364,7 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
       title: title ?? this.title,
       sourceKind: sourceKind ?? this.sourceKind,
       sourceUri: sourceUri ?? this.sourceUri,
+      imageUrl: imageUrl ?? this.imageUrl,
       createdAt: createdAt ?? this.createdAt,
       lastRefreshed: lastRefreshed ?? this.lastRefreshed,
     );
@@ -5334,6 +5385,9 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
     if (sourceUri.present) {
       map['source_uri'] = Variable<String>(sourceUri.value);
     }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -5350,6 +5404,7 @@ class StreamPlaylistsCompanion extends UpdateCompanion<StreamPlaylist> {
           ..write('title: $title, ')
           ..write('sourceKind: $sourceKind, ')
           ..write('sourceUri: $sourceUri, ')
+          ..write('imageUrl: $imageUrl, ')
           ..write('createdAt: $createdAt, ')
           ..write('lastRefreshed: $lastRefreshed')
           ..write(')'))
@@ -8512,6 +8567,7 @@ typedef $$StreamPlaylistsTableCreateCompanionBuilder =
       required String title,
       required String sourceKind,
       required String sourceUri,
+      Value<String?> imageUrl,
       Value<DateTime> createdAt,
       Value<DateTime?> lastRefreshed,
     });
@@ -8521,6 +8577,7 @@ typedef $$StreamPlaylistsTableUpdateCompanionBuilder =
       Value<String> title,
       Value<String> sourceKind,
       Value<String> sourceUri,
+      Value<String?> imageUrl,
       Value<DateTime> createdAt,
       Value<DateTime?> lastRefreshed,
     });
@@ -8551,6 +8608,11 @@ class $$StreamPlaylistsTableFilterComposer
 
   ColumnFilters<String> get sourceUri => $composableBuilder(
     column: $table.sourceUri,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8594,6 +8656,11 @@ class $$StreamPlaylistsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -8627,6 +8694,9 @@ class $$StreamPlaylistsTableAnnotationComposer
 
   GeneratedColumn<String> get sourceUri =>
       $composableBuilder(column: $table.sourceUri, builder: (column) => column);
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -8678,6 +8748,7 @@ class $$StreamPlaylistsTableTableManager
                 Value<String> title = const Value.absent(),
                 Value<String> sourceKind = const Value.absent(),
                 Value<String> sourceUri = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime?> lastRefreshed = const Value.absent(),
               }) => StreamPlaylistsCompanion(
@@ -8685,6 +8756,7 @@ class $$StreamPlaylistsTableTableManager
                 title: title,
                 sourceKind: sourceKind,
                 sourceUri: sourceUri,
+                imageUrl: imageUrl,
                 createdAt: createdAt,
                 lastRefreshed: lastRefreshed,
               ),
@@ -8694,6 +8766,7 @@ class $$StreamPlaylistsTableTableManager
                 required String title,
                 required String sourceKind,
                 required String sourceUri,
+                Value<String?> imageUrl = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime?> lastRefreshed = const Value.absent(),
               }) => StreamPlaylistsCompanion.insert(
@@ -8701,6 +8774,7 @@ class $$StreamPlaylistsTableTableManager
                 title: title,
                 sourceKind: sourceKind,
                 sourceUri: sourceUri,
+                imageUrl: imageUrl,
                 createdAt: createdAt,
                 lastRefreshed: lastRefreshed,
               ),

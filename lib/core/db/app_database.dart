@@ -178,10 +178,11 @@ class ImportRoots extends Table {
 class StreamPlaylists extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get title => text()();
-  // 'url' | 'local'
+  // 'url' | 'local' | 'youtube_video'
   TextColumn get sourceKind => text()();
   // e.g. "https://raw.github.../fj.m3u" or "/Users/..."
   TextColumn get sourceUri => text()();
+  TextColumn get imageUrl => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get lastRefreshed => dateTime().nullable()();
 }
@@ -224,7 +225,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -312,6 +313,11 @@ class AppDatabase extends _$AppDatabase {
       if (from < 13) {
         if (from >= 12) {
           await m.addColumn(streamChannels, streamChannels.liveStatus);
+        }
+      }
+      if (from < 14) {
+        if (from >= 12) {
+          await m.addColumn(streamPlaylists, streamPlaylists.imageUrl);
         }
       }
     },

@@ -191,6 +191,7 @@ class _TactilePlayerPlayPauseButtonState
     with TickerProviderStateMixin {
   late AnimationController _transitionController;
   late AnimationController _loopController;
+  late AnimationController _loadingController;
   double _scale = 1.0;
   bool _isHovered = false;
 
@@ -211,8 +212,17 @@ class _TactilePlayerPlayPauseButtonState
       duration: const Duration(milliseconds: 3600),
     );
 
+    _loadingController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
     if (widget.isPlaying) {
       _loopController.repeat();
+    }
+    
+    if (widget.isLoading) {
+      _loadingController.repeat();
     }
   }
 
@@ -228,12 +238,21 @@ class _TactilePlayerPlayPauseButtonState
         _loopController.stop();
       }
     }
+
+    if (widget.isLoading != oldWidget.isLoading) {
+      if (widget.isLoading) {
+        _loadingController.repeat();
+      } else {
+        _loadingController.stop();
+      }
+    }
   }
 
   @override
   void dispose() {
     _transitionController.dispose();
     _loopController.dispose();
+    _loadingController.dispose();
     super.dispose();
   }
 
@@ -258,7 +277,7 @@ class _TactilePlayerPlayPauseButtonState
         (widget.isPlaying ? 'Pause' : AppLocalizations.of(context)!.play);
 
     Widget buttonContent = AnimatedBuilder(
-      animation: Listenable.merge([_transitionController, _loopController]),
+      animation: Listenable.merge([_transitionController, _loopController, _loadingController]),
       builder: (context, _) {
         final transition = _transitionController.value;
         final isReversing =
@@ -413,12 +432,13 @@ class _TactilePlayerPlayPauseButtonState
                   children: [
                     // Loading indicator
                     if (widget.isLoading)
-                      SizedBox(
-                        width: iconSize,
-                        height: iconSize,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          color: colorScheme.onPrimary,
+                      Transform.rotate(
+                        angle: _loadingController.value * 2 * math.pi,
+                        child: Image.asset(
+                          'assets/logo.png',
+                          width: logoSize,
+                          height: logoSize,
+                          fit: BoxFit.contain,
                         ),
                       ),
 
@@ -448,7 +468,7 @@ class _TactilePlayerPlayPauseButtonState
                       ),
 
                     // 2. Ignition State: Spinning PPPlayer Logo
-                    if (logoOpacity > 0.01)
+                    if (logoOpacity > 0.01 && !widget.isLoading)
                       Opacity(
                         opacity: logoOpacity.clamp(0.0, 1.0),
                         child: Transform.scale(
