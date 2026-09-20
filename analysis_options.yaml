@@ -11,3 +11,10 @@ analyzer:
     - macos/**
     - linux/**
     - lib/core/playback/packages/**
+
+linter:
+  rules:
+    avoid_print: false
+    use_null_aware_elements: false
+    curly_braces_in_flow_control_structures: false
+    unnecessary_string_escapes: false

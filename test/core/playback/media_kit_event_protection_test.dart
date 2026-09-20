@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 
 // Mocks to simulate the exact logic used in MediaKitPlaybackEngine

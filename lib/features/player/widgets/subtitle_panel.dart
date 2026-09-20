@@ -176,7 +176,7 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
       type: FileType.custom,
       allowedExtensions: ['srt', 'vtt', 'ass', 'ssa', 'sub'],
     );
-    if (result != null && result.isNotEmpty && result.single.path != null) {
+    if (result.isNotEmpty && result.single.path != null) {
       final path = result.single.path!;
       await ref.read(playerProvider.notifier).setSubtitleTrack(path);
       if (mounted) Navigator.pop(context);

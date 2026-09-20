@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import '../../core/network_streams/network_stream_service.dart';
 import '../../core/network_streams/playlist_parser.dart';
 import '../../core/player/player_provider.dart';
-import '../../core/models/track.dart';
 
 void showNetworkStreamDialog(BuildContext context) {
   showDialog(

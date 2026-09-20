@@ -125,6 +125,7 @@ class SpeedMockEngine implements PlaybackController {
   @override
   bool get supportsTrackSelection => false;
 
+  @override
   Future<void> setSubtitleDelay(Duration delay) async {}
   @override
   Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {}

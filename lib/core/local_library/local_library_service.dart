@@ -369,16 +369,22 @@ class LocalLibraryService {
       _db.playlists,
     )..where((p) => p.id.equals(playlistId))).getSingle();
 
-    final destDir = await FilePicker.getDirectoryPath(
-      dialogTitle: 'Select export directory',
+    final outputFileUri = await FilePicker.saveFile(
+      dialogTitle: 'Export Playlist',
+      fileName: '${playlist.name}.m3u8',
+      type: FileType.custom,
+      allowedExtensions: ['m3u', 'm3u8'],
+      bytes: Uint8List(0),
     );
-    if (destDir == null) return null;
+    if (outputFileUri == null) return null;
+
+    final String outputFile = outputFileUri.toFilePath();
+    final destDir = p.dirname(outputFile);
 
     final result = M3uHandler.generate(
       playlistTracks,
       exportDestinationDir: destDir,
     );
-    final outputFile = p.join(destDir, '${playlist.name}.m3u8');
 
     await File(outputFile).writeAsString(result.content);
     return result;
@@ -387,16 +393,22 @@ class LocalLibraryService {
   Future<M3uExportResult?> exportQueue(List<Track> queueTracks) async {
     if (queueTracks.isEmpty) return null;
 
-    final destDir = await FilePicker.getDirectoryPath(
-      dialogTitle: 'Select export directory',
+    final outputFileUri = await FilePicker.saveFile(
+      dialogTitle: 'Export Queue',
+      fileName: 'queue.m3u8',
+      type: FileType.custom,
+      allowedExtensions: ['m3u', 'm3u8'],
+      bytes: Uint8List(0),
     );
-    if (destDir == null) return null;
+    if (outputFileUri == null) return null;
+
+    final String outputFile = outputFileUri.toFilePath();
+    final destDir = p.dirname(outputFile);
 
     final result = M3uHandler.generate(
       queueTracks,
       exportDestinationDir: destDir,
     );
-    final outputFile = p.join(destDir, 'queue.m3u8');
 
     await File(outputFile).writeAsString(result.content);
     return result;
