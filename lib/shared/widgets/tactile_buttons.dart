@@ -439,6 +439,7 @@ class _TactilePlayerPlayPauseButtonState
                           width: logoSize,
                           height: logoSize,
                           fit: BoxFit.contain,
+                          color: colorScheme.onPrimary,
                         ),
                       ),
 
@@ -480,6 +481,7 @@ class _TactilePlayerPlayPauseButtonState
                               width: logoSize,
                               height: logoSize,
                               fit: BoxFit.contain,
+                              color: colorScheme.onPrimary,
                             ),
                           ),
                         ),
