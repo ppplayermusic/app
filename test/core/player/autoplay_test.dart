@@ -28,7 +28,7 @@ class FakePlaybackService implements PlaybackService {
   ) async {
     return [
       ResolvedVideoCandidate(
-        videoId: 'youtube_id_for_${track.spotifyId}',
+        videoId: 'yt_id_${track.spotifyId}'.padRight(11, '0').substring(0, 11),
         title: 'Title',
         channel: 'Channel',
         confidenceScore: 1.0,

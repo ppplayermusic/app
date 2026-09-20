@@ -40,7 +40,7 @@ void main() {
 
       // Verify user_version is updated
       final versionResult = sqliteDb.select('PRAGMA user_version;');
-      expect(versionResult.first.values.first, 12);
+      expect(versionResult.first.values.first, 13);
 
       // Verify stream_playlists table exists
       final playlistTableInfo = sqliteDb.select(

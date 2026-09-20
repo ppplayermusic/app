@@ -475,13 +475,13 @@ void main() {
         final fakeService = FakePlaybackService(
           candidates: [
             ResolvedVideoCandidate(
-              videoId: 'vid_1',
+              videoId: 'vid_0000001',
               title: 'A',
               channel: 'C',
               confidenceScore: 1.0,
             ),
             ResolvedVideoCandidate(
-              videoId: 'vid_2',
+              videoId: 'vid_0000002',
               title: 'B',
               channel: 'C',
               confidenceScore: 1.0,
@@ -534,7 +534,7 @@ void main() {
         expect(fakeController.playedIds.length, 2);
         expect(
           notifier.state.currentTrack?.youtubeVideoId,
-          'vid_2',
+          'vid_0000002',
         ); // Now running candidate 2
       },
     );

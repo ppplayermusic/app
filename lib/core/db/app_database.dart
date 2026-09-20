@@ -229,6 +229,8 @@ class AppDatabase extends _$AppDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
+      bool localFilesAltered = false;
+
       if (from < 2) {
         await m.createTable(playlists);
         await m.createTable(playlistTracks);
@@ -239,8 +241,10 @@ class AppDatabase extends _$AppDatabase {
       if (from < 4) {
         await m.addColumn(artists, artists.isFollowed);
         await m.addColumn(albums, albums.isLiked);
-        await m.addColumn(playlists, playlists.spotifyId);
-        await m.addColumn(playlists, playlists.imageUrl);
+        if (from >= 2) {
+          await m.addColumn(playlists, playlists.spotifyId);
+          await m.addColumn(playlists, playlists.imageUrl);
+        }
       }
       if (from < 5) {
         await m.addColumn(artists, artists.updatedAt);
@@ -273,37 +277,42 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(importRoots);
       }
       if (from < 9) {
-        await m.alterTable(
-          TableMigration(localFiles, newColumns: [localFiles.addedAt]),
-        );
+        if (from >= 8) {
+          await m.alterTable(
+            TableMigration(
+              localFiles,
+              newColumns: [localFiles.addedAt, localFiles.isVideo],
+            ),
+          );
+          localFilesAltered = true;
+        }
         await customStatement(
           'UPDATE local_files SET added_at = last_scanned_at',
         );
       }
       if (from < 10) {
-        // Drop the primary key constraint on playlist_tracks by recreating it
-        await m.alterTable(
-          TableMigration(playlistTracks, newColumns: [playlistTracks.id]),
-        );
+        if (from >= 2) {
+          await m.alterTable(
+            TableMigration(playlistTracks, newColumns: [playlistTracks.id]),
+          );
+        }
       }
       if (from < 11) {
-        // Add isVideo to local_files.
-        // Backfill: all existing rows are pre-probe / unclassified.
-        // is_video defaults to 0 (false), which keeps them in the audio
-        // library.  A bounded background rescan can promote confirmed video
-        // files after the migration.  No data loss occurs.
-        await m.addColumn(localFiles, localFiles.isVideo);
-        // Add mediaScope to import_roots.
-        // Backfill: all existing roots were audio-only imports, so 'audio' is
-        // the correct default value for backward compatibility.
-        await m.addColumn(importRoots, importRoots.mediaScope);
+        if (from >= 8 && !localFilesAltered) {
+          await m.addColumn(localFiles, localFiles.isVideo);
+        }
+        if (from >= 8) {
+          await m.addColumn(importRoots, importRoots.mediaScope);
+        }
       }
       if (from < 12) {
         await m.createTable(streamPlaylists);
         await m.createTable(streamChannels);
       }
       if (from < 13) {
-        await m.addColumn(streamChannels, streamChannels.liveStatus);
+        if (from >= 12) {
+          await m.addColumn(streamChannels, streamChannels.liveStatus);
+        }
       }
     },
   );

@@ -125,6 +125,7 @@ void main() {
       // Unmount and flush drift stream cancellation timers
       await tester.pumpWidget(const SizedBox());
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 3)); // Flush engine dispose timers
     },
   );
 }
