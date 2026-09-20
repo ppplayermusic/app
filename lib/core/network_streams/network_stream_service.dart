@@ -4,6 +4,7 @@ import 'package:drift/drift.dart' as drift;
 import '../db/app_database.dart';
 import 'playlist_parser.dart';
 import '../services/secure_credentials_service.dart';
+import 'video_metadata.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -141,6 +142,220 @@ class NetworkStreamService {
         localClient.close();
       }
     }
+  }
+
+  Future<String?> extractDirectStreamUrl(String videoUrl) async {
+    // If user pasted an <iframe> embed, extract the src URL
+    final trimmedInput = videoUrl.trim();
+    if (trimmedInput.toLowerCase().startsWith('<iframe')) {
+      final srcMatch = RegExp(r'src="([^"]+)"').firstMatch(trimmedInput);
+      if (srcMatch != null) videoUrl = srcMatch.group(1)!;
+    }
+
+    try {
+      if (videoUrl.contains('dai.ly') || videoUrl.contains('dailymotion.com')) {
+        final uri = Uri.parse(videoUrl);
+        String? videoId;
+        if (uri.host == 'dai.ly') {
+          videoId = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : null;
+        } else {
+          final segments = uri.pathSegments;
+          if (segments.contains('video')) {
+            videoId = segments[segments.indexOf('video') + 1];
+          } else if (uri.queryParameters.containsKey('video')) {
+            videoId = uri.queryParameters['video'];
+          }
+        }
+        if (videoId != null) {
+          final response = await http.get(Uri.parse('https://www.dailymotion.com/player/metadata/video/$videoId'));
+          if (response.statusCode == 200) {
+            final data = json.decode(response.body);
+            final qualities = data['qualities'] as Map<String, dynamic>?;
+            if (qualities != null && qualities.containsKey('auto')) {
+              final autoList = qualities['auto'] as List<dynamic>;
+              if (autoList.isNotEmpty) {
+                final masterUrl = autoList[0]['url'] as String;
+                final cookies = response.headers['set-cookie'];
+                final client = http.Client();
+                final req = http.Request('GET', Uri.parse(masterUrl));
+                if (cookies != null) {
+                  req.headers['Cookie'] = cookies.split(',').map((c) => c.split(';')[0]).join('; ');
+                }
+                final masterResp = await client.send(req);
+                if (masterResp.statusCode == 200) {
+                  final body = await masterResp.stream.bytesToString();
+                  final lines = body.split('\n');
+                  String? bestStreamUrl;
+                  for (final line in lines) {
+                    if (line.startsWith('http')) {
+                      bestStreamUrl = line.trim();
+                    }
+                  }
+                  if (bestStreamUrl != null) {
+                    return bestStreamUrl;
+                  }
+                }
+                return masterUrl;
+              }
+            }
+          }
+        }
+      } else if (videoUrl.contains('vimeo.com')) {
+        final uri = Uri.parse(videoUrl);
+        // Find numeric video ID from path segments
+        String? videoId;
+        String? hashToken;
+        for (int i = 0; i < uri.pathSegments.length; i++) {
+          final seg = uri.pathSegments[i];
+          if (RegExp(r'^\d+$').hasMatch(seg)) {
+            videoId = seg;
+            // Next segment might be a hash/privacy token
+            if (i + 1 < uri.pathSegments.length) {
+              final next = uri.pathSegments[i + 1];
+              if (RegExp(r'^[a-f0-9]+$').hasMatch(next)) {
+                hashToken = next;
+              }
+            }
+            break;
+          }
+        }
+        // Also check the query param 'h' for hash
+        hashToken ??= uri.queryParameters['h'];
+
+        if (videoId != null) {
+          // Build player URL - use the embed player page which exposes window.playerConfig
+          String playerUrl;
+          if (uri.host == 'player.vimeo.com') {
+            // Already a player URL, use as-is but strip extraneous params
+            playerUrl = 'https://player.vimeo.com/video/$videoId${hashToken != null ? '?h=$hashToken' : ''}';
+          } else {
+            playerUrl = 'https://player.vimeo.com/video/$videoId${hashToken != null ? '?h=$hashToken' : ''}';
+          }
+
+          final response = await http.get(Uri.parse(playerUrl));
+          if (response.statusCode == 200) {
+            final body = response.body;
+            // Parse window.playerConfig from the embed HTML
+            const startStr = 'window.playerConfig = ';
+            final startIndex = body.indexOf(startStr);
+            if (startIndex != -1) {
+              final jsonStart = startIndex + startStr.length;
+              final endIndex = body.indexOf('</script>', jsonStart);
+              if (endIndex != -1) {
+                String jsonStr = body.substring(jsonStart, endIndex).trim();
+                if (jsonStr.endsWith(';')) jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+                try {
+                  final data = json.decode(jsonStr);
+                  // Prefer progressive (MP4) for direct compatibility
+                  final mp4s = data['request']?['files']?['progressive'] as List<dynamic>?;
+                  if (mp4s != null && mp4s.isNotEmpty) {
+                    return mp4s[0]['url'] as String?;
+                  }
+                  // Fall back to HLS
+                  final hls = data['request']?['files']?['hls']?['cdns'];
+                  if (hls is Map && hls.isNotEmpty) {
+                    // Prefer the avc_url (H.264) over url which may be HEVC/AV1
+                    final firstCdn = hls.values.first;
+                    final avcUrl = firstCdn['avc_url'] as String?;
+                    final url = avcUrl ?? firstCdn['url'] as String?;
+                    if (url != null && url.contains('/drm/')) {
+                      throw Exception('This video is DRM-protected and cannot be played directly.');
+                    }
+                    return url;
+                  }
+                } catch (e) {
+                  if (e.toString().contains('DRM-protected')) rethrow;
+                }
+              }
+            }
+          } else if (response.statusCode == 403) {
+            throw Exception('This video has privacy restrictions and cannot be played outside of Vimeo.');
+          }
+        }
+      }
+    } catch (e) {
+      // Ignored
+    }
+    return null;
+  }
+
+  Future<VideoMetadata> fetchVideoMetadata(String url, {http.Client? client}) async {
+    // Extract src from <iframe> embed code if user pasted one
+    final trimmed = url.trim();
+    if (trimmed.toLowerCase().startsWith('<iframe')) {
+      final srcMatch = RegExp(r'src="([^"]+)"').firstMatch(trimmed);
+      if (srcMatch != null) url = srcMatch.group(1)!;
+    }
+
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://$url';
+    }
+
+    final uri = Uri.tryParse(url);
+    if (uri == null) return const VideoMetadata(title: '', platform: VideoPlatform.custom);
+
+    VideoPlatform platform = VideoPlatform.custom;
+    final host = uri.host.toLowerCase();
+    
+    if (host.contains('youtube.com') || host == 'youtu.be') {
+      platform = VideoPlatform.youtube;
+    } else if (host.contains('vimeo.com')) {
+      platform = VideoPlatform.vimeo;
+    } else if (host.contains('dailymotion.com') || host == 'dai.ly') {
+      platform = VideoPlatform.dailymotion;
+    } else {
+      return VideoMetadata(title: uri.pathSegments.lastOrNull ?? 'Unknown Stream', platform: platform);
+    }
+
+    final localClient = client ?? http.Client();
+    try {
+      if (platform == VideoPlatform.youtube) {
+        final oembedUrl = Uri.parse('https://www.youtube.com/oembed?url=$url&format=json');
+        final res = await localClient.get(oembedUrl);
+        if (res.statusCode == 200) {
+          final data = json.decode(res.body);
+          return VideoMetadata(
+            title: data['title'] ?? 'YouTube Video',
+            thumbnailUrl: data['thumbnail_url'],
+            platform: platform,
+          );
+        }
+      } else if (platform == VideoPlatform.vimeo) {
+        final oembedUrl = Uri.parse('https://vimeo.com/api/oembed.json?url=$url');
+        final res = await localClient.get(oembedUrl);
+        if (res.statusCode == 200) {
+          final data = json.decode(res.body);
+          return VideoMetadata(
+            title: data['title'] ?? 'Vimeo Video',
+            thumbnailUrl: data['thumbnail_url'],
+            platform: platform,
+          );
+        }
+      } else if (platform == VideoPlatform.dailymotion) {
+        final oembedUrl = Uri.parse('https://www.dailymotion.com/services/oembed?url=$url&format=json');
+        final res = await localClient.get(oembedUrl, headers: {'User-Agent': 'Mozilla/5.0'});
+        if (res.statusCode == 200) {
+          try {
+            final data = json.decode(res.body);
+            return VideoMetadata(
+              title: data['title'] ?? 'Dailymotion Video',
+              thumbnailUrl: data['thumbnail_url'],
+              platform: platform,
+            );
+          } catch (_) {
+            // JSON parsing failed, likely returned an error string instead of JSON
+          }
+        }
+      }
+    } catch (_) {
+      // Ignore errors and fallback
+    } finally {
+      if (client == null) {
+        localClient.close();
+      }
+    }
+
+    return VideoMetadata(title: '${platform.displayName} Video', platform: platform);
   }
 
   /// Saves a parsed playlist into the database, clearing old channels for the same playlist.

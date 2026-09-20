@@ -40,7 +40,7 @@ class PpAboutDialog extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.asset('assets/logo.png', width: 80, height: 80),
+                  child: Image.asset('assets/logo.png', width: 80, height: 80, color: theme.colorScheme.primary),
                 ),
                 const SizedBox(height: 16),
                 Text(

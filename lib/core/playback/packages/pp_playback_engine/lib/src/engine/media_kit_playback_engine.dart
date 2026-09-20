@@ -105,7 +105,11 @@ class MediaKitPlayerAdapter implements INativePlayerAdapter {
 
   @override
   Future<void> open(String uri, {bool play = false}) =>
-      _player.open(Media(uri), play: play);
+      _player.open(Media(uri, httpHeaders: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': '*/*',
+        'Referer': 'https://www.dailymotion.com/'
+      }), play: play);
 
   @override
   Future<void> play() => _player.play();
@@ -335,8 +339,8 @@ class MediaKitPlaybackEngine implements PlaybackController {
         final track = _currentStatus.track;
         final isNetwork = track?.sourceType == PlaybackSourceType.networkStream;
         bool isSeekable = dur > Duration.zero;
-        // Conservatively disable seeking for live/unknown network streams.
-        if (isNetwork && track?.liveStatus != PlaybackLiveStatus.onDemand) {
+        // Conservatively disable seeking for explicitly live network streams.
+        if (isNetwork && track?.liveStatus == PlaybackLiveStatus.live) {
           isSeekable = false;
         }
         _updateStatus(

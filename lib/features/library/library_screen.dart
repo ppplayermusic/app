@@ -328,9 +328,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                           spreadRadius: -2,
                                         ),
                                       ],
-                                      image: const DecorationImage(
-                                        image: AssetImage('assets/logo.png'),
+                                      image: DecorationImage(
+                                        image: const AssetImage('assets/logo.png'),
                                         fit: BoxFit.cover,
+                                        colorFilter: ColorFilter.mode(
+                                          colorScheme.primary,
+                                          BlendMode.srcIn,
+                                        ),
                                       ),
                                     ),
                                   ).animate().fadeIn().scale(

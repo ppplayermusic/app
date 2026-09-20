@@ -10,6 +10,7 @@ import '../playback/playback_providers.dart';
 import '../playback/pip_handler.dart';
 import '../api/spotify_repository.dart';
 import '../services/settings_provider.dart';
+import '../network_streams/network_stream_service.dart';
 
 export '../models/track.dart' show Track;
 export '../models/playback_queue.dart' show PlaybackQueue, RepeatMode;
@@ -589,6 +590,15 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
       if (targetTrack.isLocal || targetTrack.isNetworkStream) {
         if (_disposed || myGen != _playbackGeneration) return;
+
+        var resolvedTrack = targetTrack;
+        if (resolvedTrack.sourceType == TrackSourceType.networkStream && resolvedTrack.networkStreamUrl != null) {
+          final extractedUrl = await ref.read(networkStreamServiceProvider).extractDirectStreamUrl(resolvedTrack.networkStreamUrl!);
+          if (extractedUrl != null) {
+            resolvedTrack = resolvedTrack.copyWith(networkStreamUrl: extractedUrl);
+          }
+        }
+
         await _controller.stop();
         if (_disposed || myGen != _playbackGeneration) return;
 
@@ -598,7 +608,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
         );
 
         await _controller.play(
-          targetTrack.toPlaybackTrack(),
+          resolvedTrack.toPlaybackTrack(),
           startAt: position ?? Duration.zero,
         );
 
@@ -641,10 +651,13 @@ class PlayerNotifier extends Notifier<PlayerState> {
       }
     } catch (e) {
       if (_disposed || myGen != _playbackGeneration) return;
-      debugPrint('Failed to resolve YouTube ID for ${targetTrack.name}: $e');
+      debugPrint('Failed to resolve track ${targetTrack.name}: $e');
       await _controller.stop();
       if (_disposed || myGen != _playbackGeneration) return;
-      _handleLogicalTrackFailure('Failed to resolve YouTube ID');
+      final errorMessage = e.toString().contains('Exception:') 
+          ? e.toString().split('Exception: ').last 
+          : 'Failed to resolve track playback URL';
+      _handleLogicalTrackFailure(errorMessage);
       return;
     }
   }

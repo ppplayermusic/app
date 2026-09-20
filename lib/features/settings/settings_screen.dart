@@ -1020,6 +1020,7 @@ class _SettingsHero extends StatelessWidget {
                                   'assets/logo.png',
                                   width: 80,
                                   height: 80,
+                                  color: themeColor,
                                 ),
                               ),
                             )

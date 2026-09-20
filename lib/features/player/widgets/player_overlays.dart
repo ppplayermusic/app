@@ -515,6 +515,8 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                       activeTrackColor: colorScheme.primary,
                                       inactiveTrackColor: Colors.white
                                           .withValues(alpha: 0.2),
+                                      secondaryActiveTrackColor: Colors.white
+                                          .withValues(alpha: 0.4),
                                       thumbColor: Colors.white,
                                     ),
                                     child: Builder(
@@ -524,6 +526,10 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                             ? playerState.duration.inSeconds
                                                   .toDouble()
                                             : 1.0;
+                                        final buffered = playerState.buffered
+                                            .inSeconds
+                                            .toDouble()
+                                            .clamp(0.0, maxDuration);
                                         return Slider(
                                           value:
                                               (_dragValue ??
@@ -532,6 +538,7 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                                           .inSeconds
                                                           .toDouble())
                                                   .clamp(0.0, maxDuration),
+                                          secondaryTrackValue: buffered,
                                           max: maxDuration,
                                           onChangeStart: (v) {
                                             _onInteraction();

@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import '../../core/network_streams/network_stream_service.dart';
 import '../../core/network_streams/playlist_parser.dart';
+import '../../core/network_streams/video_metadata.dart';
 import '../../core/player/player_provider.dart';
+import '../../shared/widgets/pp_logo_loader.dart';
 
 void showNetworkStreamDialog(BuildContext context) {
   showDialog(
@@ -25,24 +28,117 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
   final _urlController = TextEditingController();
   final _titleController = TextEditingController();
   final _imageUrlController = TextEditingController();
+  final _urlFocusNode = FocusNode();
+  
+  VideoPlatform _selectedPlatform = VideoPlatform.autoDetect;
+  Timer? _debounce;
   http.Client? _activeClient;
   bool _isLoading = false;
+  bool _isFetchingMetadata = false;
   String? _error;
 
   @override
+  void initState() {
+    super.initState();
+    _urlController.addListener(_onUrlChanged);
+    _urlFocusNode.addListener(_onUrlFocusChanged);
+  }
+
+  @override
   void dispose() {
+    _urlController.removeListener(_onUrlChanged);
+    _urlFocusNode.removeListener(_onUrlFocusChanged);
     _urlController.dispose();
     _titleController.dispose();
     _imageUrlController.dispose();
+    _urlFocusNode.dispose();
+    _debounce?.cancel();
     _activeClient?.close();
     super.dispose();
   }
 
+  String _cleanUrl(String input) {
+    input = input.trim();
+    if (input.toLowerCase().startsWith('<iframe')) {
+      final srcMatch = RegExp(r'src="([^"]+)"').firstMatch(input);
+      if (srcMatch != null) {
+        input = srcMatch.group(1)!;
+      }
+    }
+    return input;
+  }
+
+  void _onUrlChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 600), () {
+      _fetchMetadataForUrl(_urlController.text.trim());
+    });
+  }
+  
+  void _onUrlFocusChanged() {
+    if (!_urlFocusNode.hasFocus) {
+      _fetchMetadataForUrl(_urlController.text.trim());
+    }
+  }
+  
+  Future<void> _fetchMetadataForUrl(String rawUrl) async {
+    final url = _cleanUrl(rawUrl);
+    if (url.isEmpty) return;
+    
+    // Update the controller with the clean URL if it changed (e.g. from iframe)
+    if (url != rawUrl && _urlController.text.trim() == rawUrl) {
+      _urlController.text = url;
+    }
+    
+    // Only auto-fetch if we are in auto-detect or if the platform might have changed
+    if (_selectedPlatform != VideoPlatform.autoDetect) {
+      // If user manually chose a platform, don't overwrite blindly unless they want auto.
+      // But actually, maybe it's fine to fetch anyway, we'll let the service decide.
+    }
+
+    setState(() {
+      _isFetchingMetadata = true;
+    });
+
+    try {
+      final service = ref.read(networkStreamServiceProvider);
+      final metadata = await service.fetchVideoMetadata(url);
+      
+      if (!mounted) return;
+      
+      setState(() {
+        if (metadata.platform != VideoPlatform.custom) {
+          _selectedPlatform = metadata.platform;
+        }
+        
+        if (_titleController.text.isEmpty || _titleController.text == 'YouTube Video' || _titleController.text == 'Vimeo Video' || _titleController.text == 'Dailymotion Video') {
+          _titleController.text = metadata.title;
+        }
+        
+        if (metadata.thumbnailUrl != null && _imageUrlController.text.isEmpty) {
+          _imageUrlController.text = metadata.thumbnailUrl!;
+        }
+      });
+    } catch (_) {
+      // Ignore errors on auto-fetch
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isFetchingMetadata = false;
+        });
+      }
+    }
+  }
+
   Future<void> _submit({bool saveToLibrary = true}) async {
-    final url = _urlController.text.trim();
-    var title = _titleController.text.trim();
+    var url = _cleanUrl(_urlController.text.trim());
     if (url.isEmpty) return;
 
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://$url';
+    }
+
+    var title = _titleController.text.trim();
     if (title.isEmpty) {
       title = 'Network Stream';
     }
@@ -57,6 +153,36 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
 
     try {
       final service = ref.read(networkStreamServiceProvider);
+      
+      // If platform is youtube, vimeo, dailymotion, and it's a single video, we can save it directly
+      if (_selectedPlatform == VideoPlatform.youtube || _selectedPlatform == VideoPlatform.vimeo || _selectedPlatform == VideoPlatform.dailymotion) {
+         if (saveToLibrary) {
+           await service.savePlaylist(title, url, [
+              PlaylistItem(title: title, url: url, tvgLogo: _imageUrlController.text.trim()),
+            ], imageUrl: _imageUrlController.text.trim(), sourceKind: _selectedPlatform.dbSourceKind);
+            
+            if (mounted) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Added video successfully!')),
+              );
+            }
+         } else {
+            if (mounted) {
+              Navigator.pop(context);
+              final track = Track.fromNetworkStream(
+                streamUrl: url,
+                title: title,
+                groupTitle: _selectedPlatform.displayName,
+                logoUrl: _imageUrlController.text.trim(),
+              );
+              ref.read(playerProvider.notifier).playTrack(track, queue: [track]);
+            }
+         }
+         return;
+      }
+      
+      // For autoDetect or custom, try parsing as playlist
       final channels = await service.analyzeAndParseUrl(
         url,
         client: _activeClient,
@@ -73,7 +199,7 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
 
       if (saveToLibrary) {
         final imgUrl = _imageUrlController.text.trim();
-        await service.savePlaylist(title, url, channels, imageUrl: imgUrl.isEmpty ? null : imgUrl);
+        await service.savePlaylist(title, url, channels, imageUrl: imgUrl.isEmpty ? null : imgUrl, sourceKind: _selectedPlatform.dbSourceKind);
 
         if (mounted) {
           Navigator.pop(context);
@@ -129,6 +255,7 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
                     
                     setState(() {
                       _isLoading = true;
+                      _selectedPlatform = VideoPlatform.youtube;
                     });
                     
                     try {
@@ -218,12 +345,48 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
               style: TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 16),
+            InputDecorator(
+              decoration: const InputDecoration(
+                labelText: 'Platform / Type',
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<VideoPlatform>(
+                  value: _selectedPlatform,
+                  isExpanded: true,
+                  items: VideoPlatform.values.map((p) {
+                    return DropdownMenuItem(
+                      value: p,
+                      child: Text(p.displayName),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() => _selectedPlatform = val);
+                    }
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: _urlController,
-              decoration: const InputDecoration(
+              focusNode: _urlFocusNode,
+              decoration: InputDecoration(
                 labelText: 'Stream URL',
                 hintText: 'https://...',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                suffixIcon: _isFetchingMetadata
+                    ? const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: PPLogoLoader(size: 20),
+                        ),
+                      )
+                    : null,
               ),
               enabled: !_isLoading,
               onSubmitted: (_) => _submit(saveToLibrary: false),
@@ -250,6 +413,21 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
               enabled: !_isLoading,
               onSubmitted: (_) => _submit(saveToLibrary: false),
             ),
+            if (_imageUrlController.text.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    _imageUrlController.text,
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const SizedBox(),
+                  ),
+                ),
+              ),
+            ],
             if (_error != null) ...[
               const SizedBox(height: 16),
               Text(
@@ -259,7 +437,7 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
             ],
             if (_isLoading) ...[
               const SizedBox(height: 24),
-              const Center(child: CircularProgressIndicator()),
+              const Center(child: PPLogoLoader()),
             ],
           ],
         ),
@@ -281,3 +459,4 @@ class _NetworkStreamDialogState extends ConsumerState<NetworkStreamDialog> {
     );
   }
 }
+

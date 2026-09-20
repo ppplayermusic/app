@@ -56,11 +56,8 @@ class AppTheme {
     'Nebula Dream',
   ];
 
-  static const _bgColor = Color(0xFF0A0A0A);
   static const _surfaceColor = Color(0xFF121212);
   static const _surfaceHoverColor = Color(0xFF1A1A1A);
-  static const _surfaceFocusedColor = Color(0xFF242424);
-  static const _surfaceVariantColor = Color(0xFF2C2C2C);
   static const _onSurfaceColor = Color(0xFFFFFFFF);
   static const _onSurfaceVariantColor = Color(0xFFB3B3B3);
   static const _outlineColor = Color(0xFF6A6A6A);
@@ -74,28 +71,24 @@ class AppTheme {
       seedColor: primaryColor,
       brightness: Brightness.dark,
       primary: primaryColor,
-      surface: _bgColor,
-      surfaceContainer: _surfaceColor,
-      surfaceContainerLow: _surfaceHoverColor,
-      surfaceContainerHigh: _surfaceFocusedColor,
-      surfaceContainerHighest: _surfaceVariantColor,
+      // Let the color scheme generator handle surfaces so they are tinted
       outline: _outlineColor,
       onSurface: _onSurfaceColor,
       onSurfaceVariant: _onSurfaceVariantColor,
     );
 
     return base.copyWith(
-      scaffoldBackgroundColor: _bgColor,
+      scaffoldBackgroundColor: colorScheme.surface,
       colorScheme: colorScheme,
       textTheme: _buildTextTheme(base.textTheme),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: _bgColor,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surface,
         foregroundColor: _onSurfaceColor,
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: _surfaceColor,
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: colorScheme.surfaceContainer,
         selectedItemColor: _onSurfaceColor,
         unselectedItemColor: _onSurfaceVariantColor,
         type: BottomNavigationBarType.fixed,

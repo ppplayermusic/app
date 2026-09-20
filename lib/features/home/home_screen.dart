@@ -1671,7 +1671,7 @@ class _MixCardState extends State<_MixCard> {
                               'assets/logo.png',
                               width: 13,
                               height: 13,
-                              color: Colors.white.withValues(alpha: 0.5),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                             ),
                           ),
                         ),
@@ -1689,22 +1689,23 @@ class _MixCardState extends State<_MixCard> {
                           width: 28,
                           height: 28,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE50914),
+                            color: Theme.of(context).colorScheme.primary,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(
-                                  0xFFE50914,
-                                ).withValues(alpha: 0.6),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withValues(alpha: 0.6),
                                 blurRadius: 10,
                                 spreadRadius: 1,
                               ),
                             ],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.play_arrow_rounded,
                             size: 18,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                       ),
@@ -1815,7 +1816,7 @@ class _StaggeredHeader extends StatelessWidget {
             width: 3,
             height: 24,
             decoration: BoxDecoration(
-              color: const Color(0xFFE50914), // Red vertical line
+              color: Theme.of(context).colorScheme.primary, // Theme vertical line
               borderRadius: BorderRadius.circular(1.5),
             ),
           ),

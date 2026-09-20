@@ -6,6 +6,7 @@ import '../../core/network_streams/network_stream_service.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../core/player/player_provider.dart';
 import '../../shared/widgets/pp_image.dart';
+import '../../shared/widgets/pp_logo_loader.dart';
 
 class StreamPlaylistsSliverGrid extends ConsumerWidget {
   final bool showHeader;
@@ -42,7 +43,7 @@ class StreamPlaylistsSliverGrid extends ConsumerWidget {
           return const SliverToBoxAdapter(
             child: SizedBox(
               height: 120,
-              child: Center(child: CircularProgressIndicator()),
+              child: Center(child: PPLogoLoader()),
             ),
           );
         }
@@ -117,11 +118,18 @@ class _StreamPlaylistCard extends ConsumerWidget {
       hint: 'Double tap to open stream details',
       child: TactileTap(
         onTap: () {
-          if (playlist.sourceKind == 'youtube_video') {
+          if (playlist.sourceKind == 'youtube_video' ||
+              playlist.sourceKind == 'vimeo_video' ||
+              playlist.sourceKind == 'dailymotion_video') {
+            String groupTitle = 'Network Video';
+            if (playlist.sourceKind == 'youtube_video') groupTitle = 'YouTube';
+            if (playlist.sourceKind == 'vimeo_video') groupTitle = 'Vimeo';
+            if (playlist.sourceKind == 'dailymotion_video') groupTitle = 'Dailymotion';
+
             final track = Track.fromNetworkStream(
               streamUrl: playlist.sourceUri,
               title: playlist.title,
-              groupTitle: 'YouTube',
+              groupTitle: groupTitle,
               logoUrl: playlist.imageUrl,
             );
             ref.read(playerProvider.notifier).playTrack(track, queue: [track]);
@@ -147,7 +155,9 @@ class _StreamPlaylistCard extends ConsumerWidget {
                       )
                     : Center(
                         child: Icon(
-                          playlist.sourceKind == 'youtube_video'
+                          (playlist.sourceKind == 'youtube_video' ||
+                                  playlist.sourceKind == 'vimeo_video' ||
+                                  playlist.sourceKind == 'dailymotion_video')
                               ? Icons.play_circle_fill_rounded
                               : Icons.connected_tv_rounded,
                           size: 40,
@@ -165,7 +175,9 @@ class _StreamPlaylistCard extends ConsumerWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              playlist.sourceKind == 'youtube_video' ? 'YouTube Video' : 'IPTV / Stream',
+              (playlist.sourceKind == 'youtube_video' || playlist.sourceKind == 'vimeo_video' || playlist.sourceKind == 'dailymotion_video') 
+                  ? '${playlist.sourceKind.split('_').first.replaceFirst(playlist.sourceKind[0], playlist.sourceKind[0].toUpperCase())} Video' 
+                  : 'IPTV / Stream',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

@@ -1039,6 +1039,7 @@ class _MiniPlayerBar extends ConsumerWidget {
                             'assets/logo.png',
                             width: 100,
                             height: 100,
+                            color: colorScheme.primary,
                           ),
                         ),
                       ),
@@ -1163,7 +1164,7 @@ class _DesktopSidebar extends ConsumerWidget {
               children: [
                 Hero(
                       tag: 'app_logo',
-                      child: Image.asset('assets/logo.png', height: 28),
+                      child: Image.asset('assets/logo.png', height: 28, color: colorScheme.primary),
                     )
                     .animate(
                       onPlay: (controller) => controller.repeat(reverse: true),

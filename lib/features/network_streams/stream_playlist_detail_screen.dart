@@ -5,6 +5,7 @@ import '../../core/db/app_database.dart';
 import '../../core/network_streams/network_stream_service.dart';
 import '../../core/player/player_provider.dart';
 import '../../core/models/track.dart';
+import '../../shared/widgets/pp_logo_loader.dart';
 
 class StreamPlaylistDetailScreen extends ConsumerWidget {
   final int playlistId;
@@ -115,7 +116,7 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
         if (playlist == null) {
           return Scaffold(
             appBar: AppBar(title: const Text('Network Stream')),
-            body: const Center(child: CircularProgressIndicator()),
+            body: const Center(child: PPLogoLoader()),
           );
         }
 
@@ -160,7 +161,7 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
             stream: service.watchChannelsForPlaylist(playlistId),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: PPLogoLoader());
               }
               final channels = snap.data ?? [];
               if (channels.isEmpty) {

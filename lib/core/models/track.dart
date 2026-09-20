@@ -190,16 +190,16 @@ abstract class Track with _$Track {
       // We prefix with 'stream:' to avoid Spotify ID collisions.
       spotifyId: 'stream:$streamUrl',
       name: title,
-      artistId: 'stream',
-      artistName: groupTitle ?? 'Network Stream',
-      albumId: null,
-      albumName: null,
+      artistId: 'iptv_group',
+      artistName: groupTitle ?? 'IPTV',
+      albumId: 'iptv',
+      albumName: 'Network Stream',
       albumImage: logoUrl,
       sourceType: TrackSourceType.networkStream,
       networkStreamUrl: streamUrl,
       isFavorite: isFavorite,
+      isVideoFile: true,
       liveStatus: liveStatus,
-      isVideoFile: true, // Most IPTV streams are video
     );
   }
 

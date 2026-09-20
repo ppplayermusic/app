@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit_video/media_kit_video.dart' as mk;
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'pp_logo_loader.dart';
 
 import '../engine/playback_controller.dart';
 import '../models/playback_status.dart';
@@ -100,11 +101,8 @@ class _PlaybackViewState extends State<PlaybackView> {
                   ),
                   if (widget.status.state == PlaybackState.preparing ||
                       widget.status.state == PlaybackState.buffering)
-                    const Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
+                    Center(
+                      child: PPLogoLoader(size: 60, color: Colors.white),
                     ),
                 ],
               ),

@@ -36,7 +36,7 @@ class UserAvatarWidget extends StatelessWidget {
         width: size,
         height: size,
         child: ClipOval(
-          child: Image.asset('assets/logo.png', fit: BoxFit.cover),
+          child: Image.asset('assets/logo.png', fit: BoxFit.cover, color: Theme.of(context).colorScheme.primary),
         ),
       );
     }
