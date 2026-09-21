@@ -150,6 +150,10 @@ class FakePlayerNotifier extends Notifier<PlayerState>
   FakePlayerNotifier(this.initialState);
   @override
   PlayerState build() => initialState;
+
+  @override
+  PlaybackTrack? get currentPlaybackTrack => null;
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
