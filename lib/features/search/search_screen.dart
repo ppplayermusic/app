@@ -190,7 +190,11 @@ class _EmptySearch extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-              child:
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
                   Text(
                         AppLocalizations.of(context)!.recentSearches,
                         style: TextStyle(
@@ -203,6 +207,24 @@ class _EmptySearch extends ConsumerWidget {
                       .animate()
                       .fadeIn(duration: 600.ms)
                       .slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
+                  TextButton(
+                    onPressed: () {
+                      ref.read(recentSearchesProvider.notifier).clearSearches();
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: colorScheme.onSurfaceVariant,
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text('Clear all'),
+                  )
+                      .animate()
+                      .fadeIn(duration: 600.ms)
+                      .slideX(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
+                ],
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -273,8 +295,8 @@ class _EmptySearch extends ConsumerWidget {
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200,
                 childAspectRatio: 1.6,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
               ),
               delegate: SliverChildBuilderDelegate((context, index) {
                 final cat = categories[index];
