@@ -343,7 +343,7 @@ class _EmptySearch extends ConsumerWidget {
   }
 }
 
-class _CategoryCard extends StatelessWidget {
+class _CategoryCard extends ConsumerWidget {
   final String id;
   final String name;
   final Color color;
@@ -356,9 +356,95 @@ class _CategoryCard extends StatelessWidget {
     required this.imageUrl,
   });
 
+  Widget _buildRotatedImage(String url, ColorScheme colorScheme, double angle, double size) {
+    return Transform.rotate(
+      angle: angle,
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.scrim.withValues(alpha: 0.4),
+              blurRadius: 15,
+              offset: const Offset(-2, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: PPImage(
+            imageUrl: url,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final collageImages = ref.watch(categoryCollageImagesProvider(id)).value ?? [];
+
+    Widget buildCollage() {
+      if (collageImages.isEmpty) {
+        if (imageUrl.isNotEmpty) {
+          return Positioned(
+            bottom: -20,
+            right: -25,
+            child: _buildRotatedImage(imageUrl, colorScheme, 0.45, 110),
+          );
+        }
+        return const SizedBox.shrink();
+      }
+
+      if (collageImages.length == 1) {
+        return Positioned(
+          bottom: -20,
+          right: -25,
+          child: _buildRotatedImage(collageImages[0], colorScheme, 0.45, 110),
+        );
+      }
+
+      if (collageImages.length == 2) {
+        return Positioned(
+          bottom: -20,
+          right: -45,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Transform.translate(
+                offset: const Offset(30, -10),
+                child: _buildRotatedImage(collageImages[1], colorScheme, 0.60, 100),
+              ),
+              _buildRotatedImage(collageImages[0], colorScheme, 0.40, 110),
+            ],
+          ),
+        );
+      }
+
+      // 3 images
+      return Positioned(
+        bottom: -20,
+        right: -60,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Transform.translate(
+              offset: const Offset(60, -20),
+              child: _buildRotatedImage(collageImages[2], colorScheme, 0.75, 90),
+            ),
+            Transform.translate(
+              offset: const Offset(30, -10),
+              child: _buildRotatedImage(collageImages[1], colorScheme, 0.55, 100),
+            ),
+            _buildRotatedImage(collageImages[0], colorScheme, 0.35, 110),
+          ],
+        ),
+      );
+    }
+
     return TactileTap(
       onTap: () => context.push(
         Uri(path: '/genre/$id', queryParameters: {'name': name}).toString(),
@@ -366,79 +452,47 @@ class _CategoryCard extends StatelessWidget {
       scaleDown: 0.94,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              color.withValues(alpha: 0.8),
-              color.withValues(alpha: 0.4),
+              color,
+              color.withValues(alpha: 0.7),
             ],
-          ),
-          border: Border.all(
-            color: colorScheme.onSurface.withValues(alpha: 0.1),
-            width: 0.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.scrim.withValues(alpha: 0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
+              color: colorScheme.scrim.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: AdaptiveBlur(
-          sigmaX: 20,
-          sigmaY: 20,
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            children: [
-              if (imageUrl.isNotEmpty)
-                Positioned(
-                  bottom: -15,
-                  right: -15,
-                  child: Transform.rotate(
-                    angle: 0.3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.scrim.withValues(alpha: 0.3),
-                            blurRadius: 20,
-                          ),
-                        ],
-                      ),
-                      child: PPImage(
-                        imageUrl: imageUrl,
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                      ),
+        clipBehavior: Clip.hardEdge,
+        child: Stack(
+          children: [
+            buildCollage(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Text(
+                name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black38,
+                      offset: Offset(0, 2),
+                      blurRadius: 4,
                     ),
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  name,
-                  style: TextStyle(
-                    color: colorScheme
-                        .onPrimary, // Standard for vibrant cards, semantic value below
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                    shadows: [
-                      Shadow(
-                        color: colorScheme.scrim.withValues(alpha: 0.3),
-                        offset: const Offset(0, 1),
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     ).animate().shimmer(

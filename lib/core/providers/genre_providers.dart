@@ -6,7 +6,7 @@ final browseCategoriesProvider = StreamProvider<List<Map<String, dynamic>>>((
   ref,
 ) {
   final repo = ref.watch(spotifyRepositoryProvider);
-  return repo.watchBrowseCategories().map((res) => res.data);
+  return repo.watchBrowseCategories(limit: 50).map((res) => res.data);
 });
 
 final categoryPlaylistsProvider =
@@ -38,4 +38,21 @@ final categoryTopTracksProvider = StreamProvider.family<List<Track>, String>((
 
   final repo = ref.watch(spotifyRepositoryProvider);
   yield* repo.watchPlaylistTracks(playlistId).map((r) => r.data);
+});
+
+final categoryCollageImagesProvider = StreamProvider.family<List<String>, String>((
+  ref,
+  categoryId,
+) async* {
+  final tracks = await ref.watch(categoryTopTracksProvider(categoryId).future);
+
+  final images = <String>{};
+  for (final track in tracks) {
+    if (track.albumImage != null && track.albumImage!.isNotEmpty) {
+      images.add(track.albumImage!);
+      if (images.length >= 3) break;
+    }
+  }
+
+  yield images.toList();
 });
