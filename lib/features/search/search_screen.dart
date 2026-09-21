@@ -10,6 +10,8 @@ import '../../shared/widgets/track_tile.dart';
 import '../../shared/widgets/banner_ad_widget.dart';
 import '../../shared/widgets/promotion_tile.dart';
 import '../../shared/widgets/tactile_buttons.dart';
+import '../../shared/widgets/shared_search_input.dart';
+import '../../shared/widgets/empty_results_widget.dart';
 import '../../core/services/ad_service.dart';
 import '../../core/providers/genre_providers.dart';
 import '../home/genre_details_screen.dart';
@@ -23,7 +25,7 @@ import 'package:ppplayer/l10n/app_localizations.dart';
 
 final searchResultsProvider = StreamProvider.autoDispose
     .family<Map<String, dynamic>, String>((ref, query) async* {
-      if (query.isEmpty) {
+      if (query.trim().isEmpty) {
         yield {};
         return;
       }
@@ -36,11 +38,6 @@ final searchResultsProvider = StreamProvider.autoDispose
 
       if (didDispose) {
         return;
-      }
-
-      // Automatically save to recent searches since the user paused typing
-      if (query.trim().isNotEmpty) {
-        ref.read(recentSearchesProvider.notifier).addSearch(query);
       }
 
       yield* ref
@@ -137,86 +134,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                   color: colorScheme.surface.withValues(alpha: 0.2),
                 ),
               ),
-              title: Container(
-                height: 48,
-                decoration: BoxDecoration(
-                  color: colorScheme.onSurface.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.15),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.scrim.withValues(alpha: 0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                    BoxShadow(
-                      color: colorScheme.primary.withValues(alpha: 0.15),
-                      blurRadius: 20,
-                      spreadRadius: -5,
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: _ctrl,
-                  focusNode: _focusNode,
-                  autofocus: false,
-                  style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
-                  cursorColor: colorScheme.primary,
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(
-                      context,
-                    )!.whatDoYouWantToListenTo,
-                    hintStyle: TextStyle(
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.4,
-                      ),
-                      fontSize: 15,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.6,
-                      ),
-                      size: 22,
-                    ),
-                    suffixIcon: _ctrl.text.isNotEmpty
-                        ? TactileIconButton(
-                            icon: Icons.close_rounded,
-                            onTap: () {
-                              _ctrl.clear();
-                              ref
-                                  .read(searchQueryProvider.notifier)
-                                  .updateQuery('');
-                              setState(() {});
-                            },
-                            size: 20,
-                            color: colorScheme.onSurfaceVariant,
-                          )
-                        : null,
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 13),
-                  ),
-                  onChanged: (val) {
-                    ref.read(searchQueryProvider.notifier).updateQuery(val);
-                  },
-                  onSubmitted: (val) {
-                    if (val.trim().isNotEmpty) {
-                      ref.read(recentSearchesProvider.notifier).addSearch(val);
-                    }
-                  },
-                ),
+              title: SharedSearchInput(
+                controller: _ctrl,
+                focusNode: _focusNode,
               ),
-              bottom: query.isEmpty
+              bottom: query.trim().isEmpty
                   ? null
                   : PreferredSize(
                       preferredSize: const Size.fromHeight(48),
                       child: searchTabs,
                     ),
             ),
-      body: query.isEmpty
+      body: query.trim().isEmpty
           ? _EmptySearch()
           : Column(
               children: [
@@ -504,8 +433,12 @@ class _TrackResults extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (items.isEmpty)
-      return Center(child: Text(AppLocalizations.of(context)!.noTracksFound));
+    if (items.isEmpty) {
+      return EmptyResultsWidget(
+        icon: Icons.music_off,
+        message: AppLocalizations.of(context)!.noTracksFound,
+      );
+    }
     final tracks = items
         .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
         .toList();
@@ -550,8 +483,12 @@ class _ArtistResults extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty)
-      return Center(child: Text(AppLocalizations.of(context)!.noArtistsFound));
+    if (items.isEmpty) {
+      return EmptyResultsWidget(
+        icon: Icons.person_off_rounded,
+        message: AppLocalizations.of(context)!.noArtistsFound,
+      );
+    }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 16),
       itemCount: items.length + (items.length / 8).ceil(),
@@ -674,8 +611,12 @@ class _AlbumResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty)
-      return Center(child: Text(AppLocalizations.of(context)!.noAlbumsFound));
+    if (items.isEmpty) {
+      return EmptyResultsWidget(
+        icon: Icons.album_outlined,
+        message: AppLocalizations.of(context)!.noAlbumsFound,
+      );
+    }
     return CustomScrollView(
       slivers: [
         const SliverToBoxAdapter(
@@ -795,10 +736,12 @@ class _PlaylistResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (items.isEmpty)
-      return Center(
-        child: Text(AppLocalizations.of(context)!.noPlaylistsFound),
+    if (items.isEmpty) {
+      return EmptyResultsWidget(
+        icon: Icons.queue_music_rounded,
+        message: AppLocalizations.of(context)!.noPlaylistsFound,
       );
+    }
     return CustomScrollView(
       slivers: [
         const SliverToBoxAdapter(

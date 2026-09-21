@@ -11,7 +11,6 @@ import '../../core/player/video_layout_provider.dart';
 import '../../core/services/settings_provider.dart';
 import '../../features/player/player_providers.dart';
 import '../../core/providers/search_provider.dart';
-import '../../core/providers/recent_searches_provider.dart';
 import '../../shared/widgets/tactile_buttons.dart';
 import '../../shared/widgets/pp_image.dart';
 import 'user_avatar.dart';
@@ -20,6 +19,7 @@ import 'premium_modals.dart';
 import '../../core/db/app_database.dart' as db;
 import 'artists_links.dart';
 import 'context_menu/content_context_menu.dart';
+import 'shared_search_input.dart';
 import '../../core/models/track.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -416,12 +416,12 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
         // Only handle key down events to prevent triggering twice
         if (event is! KeyDownEvent) return KeyEventResult.ignored;
 
-        // Skip handling if a text field or other input has primary focus
         final primaryFocus = FocusManager.instance.primaryFocus;
         if (primaryFocus != null && primaryFocus.context != null) {
-          final isTextInput = primaryFocus.context!.widget is EditableText ||
-              primaryFocus.context!.findAncestorWidgetOfExactType<TextField>() != null ||
-              primaryFocus.context!.findAncestorWidgetOfExactType<EditableText>() != null;
+          final ctx = primaryFocus.context!;
+          final isTextInput = ctx.widget is EditableText ||
+              ctx.findAncestorStateOfType<EditableTextState>() != null ||
+              ctx.findAncestorWidgetOfExactType<TextField>() != null;
           if (isTextInput) {
             return KeyEventResult.ignored;
           }
@@ -2281,15 +2281,31 @@ class _DesktopTopBar extends ConsumerStatefulWidget {
 
 class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
   late final TextEditingController _ctrl;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _ctrl = TextEditingController(text: ref.read(searchQueryProvider));
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (_focusNode.hasFocus) {
+      final path = GoRouterState.of(context).uri.path;
+      if (path != '/search') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) context.go('/search');
+        });
+      }
+    }
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
     _ctrl.dispose();
     super.dispose();
   }
@@ -2317,73 +2333,11 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
           Expanded(
             child: Row(
               children: [
-                Container(
+                SizedBox(
                   width: 320,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: colorScheme.onSurface.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.search,
-                        color: colorScheme.onSurface.withValues(alpha: 0.5),
-                        size: 20,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextField(
-                          controller: _ctrl,
-                          onTap: () {
-                            if (GoRouterState.of(context).uri.path !=
-                                '/search') {
-                              context.go('/search');
-                            }
-                          },
-                          onChanged: (val) {
-                            ref
-                                .read(searchQueryProvider.notifier)
-                                .updateQuery(val);
-                          },
-                          onSubmitted: (val) {
-                            if (val.trim().isNotEmpty) {
-                              ref
-                                  .read(recentSearchesProvider.notifier)
-                                  .addSearch(val);
-                            }
-                          },
-                          style: TextStyle(
-                            color: colorScheme.onSurface,
-                            fontSize: 14,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context)!.searchHint,
-                            hintStyle: TextStyle(
-                              color: colorScheme.onSurface.withValues(
-                                alpha: 0.5,
-                              ),
-                              fontSize: 14,
-                            ),
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            filled: false,
-                            hoverColor: Colors.transparent,
-                            focusColor: Colors.transparent,
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          cursorColor: colorScheme.primary,
-                        ),
-                      ),
-                    ],
+                  child: SharedSearchInput(
+                    controller: _ctrl,
+                    focusNode: _focusNode,
                   ),
                 ),
               ],
