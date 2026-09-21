@@ -1222,7 +1222,7 @@ class _AlbumCardState extends State<_AlbumCard> {
   }
 }
 
-class _ArtistCircle extends StatelessWidget {
+class _ArtistCircle extends ConsumerWidget {
   const _ArtistCircle({
     required this.name,
     required this.imageUrl,
@@ -1236,7 +1236,7 @@ class _ArtistCircle extends StatelessWidget {
   final String? id;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     Widget circle = TactileTap(
       onTap: onTap,
@@ -1265,7 +1265,32 @@ class _ArtistCircle extends StatelessWidget {
               ),
               child: ClipOval(
                 child: HoverPlayOverlay(
-                  onPlay: onTap,
+                  onPlay: () async {
+                    if (id == null) {
+                      onTap();
+                      return;
+                    }
+                    try {
+                      final cacheResult = await ref
+                          .read(spotifyRepositoryProvider)
+                          .watchArtistTopTracks(id!)
+                          .first;
+                      final rawTracks = cacheResult.data;
+                      final tracks = rawTracks
+                          .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
+                          .toList();
+                      if (tracks.isNotEmpty) {
+                        ref
+                            .read(playerProvider.notifier)
+                            .playTrack(tracks.first, queue: tracks);
+                      } else {
+                        onTap();
+                      }
+                    } catch (e) {
+                      debugPrint('Failed to play artist tracks: $e');
+                      onTap();
+                    }
+                  },
                   size: 40,
                   child: PPImage(
                     imageUrl: imageUrl,

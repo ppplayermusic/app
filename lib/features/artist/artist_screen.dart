@@ -943,17 +943,37 @@ class _ArtistAlbumCardState extends ConsumerState<_ArtistAlbumCard> {
   }
 }
 
-class _RelatedArtistCard extends StatefulWidget {
+class _RelatedArtistCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> artist;
 
   const _RelatedArtistCard({required this.artist});
 
   @override
-  State<_RelatedArtistCard> createState() => _RelatedArtistCardState();
+  ConsumerState<_RelatedArtistCard> createState() => _RelatedArtistCardState();
 }
 
-class _RelatedArtistCardState extends State<_RelatedArtistCard> {
+class _RelatedArtistCardState extends ConsumerState<_RelatedArtistCard> {
   bool _isHovered = false;
+
+  void _onPlay() async {
+    final id = widget.artist['id'] as String?;
+    if (id == null) return;
+    try {
+      final cacheResult = await ref
+          .read(spotifyRepositoryProvider)
+          .watchArtistTopTracks(id)
+          .first;
+      final rawTracks = cacheResult.data;
+      final tracks = rawTracks
+          .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
+          .toList();
+      if (tracks.isNotEmpty) {
+        ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+      }
+    } catch (e) {
+      debugPrint('Failed to play related artist tracks: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1009,7 +1029,12 @@ class _RelatedArtistCardState extends State<_RelatedArtistCard> {
                       ],
                     ),
                     child: ClipOval(
-                      child: PPImage(imageUrl: rImgUrl, fit: BoxFit.cover),
+                      child: HoverPlayOverlay(
+                        onPlay: _onPlay,
+                        isHovered: _isHovered,
+                        size: 40,
+                        child: PPImage(imageUrl: rImgUrl, fit: BoxFit.cover),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 14),
