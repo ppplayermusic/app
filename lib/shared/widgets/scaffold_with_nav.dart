@@ -2334,7 +2334,7 @@ class _DesktopTopBarState extends ConsumerState<_DesktopTopBar> {
             child: Row(
               children: [
                 SizedBox(
-                  width: 320,
+                  width: 540,
                   child: SharedSearchInput(
                     controller: _ctrl,
                     focusNode: _focusNode,

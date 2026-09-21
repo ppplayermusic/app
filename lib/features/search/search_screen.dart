@@ -207,22 +207,44 @@ class _EmptySearch extends ConsumerWidget {
                       .animate()
                       .fadeIn(duration: 600.ms)
                       .slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
-                  TextButton(
-                    onPressed: () {
-                      ref.read(recentSearchesProvider.notifier).clearAll();
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: colorScheme.onSurfaceVariant,
-                      textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text('Clear all'),
-                  )
-                      .animate()
-                      .fadeIn(duration: 600.ms)
-                      .slideX(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          // "Show all" implementation pending or empty for now
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: colorScheme.onSurfaceVariant,
+                          textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text('Show all'),
+                      )
+                          .animate()
+                          .fadeIn(duration: 600.ms)
+                          .slideX(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        onPressed: () {
+                          ref.read(recentSearchesProvider.notifier).clearAll();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: colorScheme.onSurfaceVariant,
+                          textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text('Clear all'),
+                      )
+                          .animate()
+                          .fadeIn(duration: 600.ms)
+                          .slideX(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -269,7 +291,7 @@ class _EmptySearch extends ConsumerWidget {
           child: Padding(
             padding: EdgeInsets.fromLTRB(
               16,
-              recentSearches.isNotEmpty ? 32 : 24,
+              recentSearches.isNotEmpty ? 48 : 24,
               16,
               16,
             ),
@@ -293,8 +315,8 @@ class _EmptySearch extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverGrid(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 1.6,
+                maxCrossAxisExtent: 260,
+                mainAxisExtent: 150,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
               ),
