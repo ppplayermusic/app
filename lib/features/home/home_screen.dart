@@ -1058,7 +1058,7 @@ class _HistoryCardState extends State<_HistoryCard> {
   }
 }
 
-class _AlbumCard extends StatefulWidget {
+class _AlbumCard extends ConsumerStatefulWidget {
   const _AlbumCard({
     required this.title,
     required this.subtitle,
@@ -1080,11 +1080,49 @@ class _AlbumCard extends StatefulWidget {
   final ContextMenuTarget? contextTarget;
 
   @override
-  State<_AlbumCard> createState() => _AlbumCardState();
+  ConsumerState<_AlbumCard> createState() => _AlbumCardState();
 }
 
-class _AlbumCardState extends State<_AlbumCard> {
+class _AlbumCardState extends ConsumerState<_AlbumCard> {
   bool _isHovered = false;
+
+  void _onPlay() async {
+    final target = widget.contextTarget;
+    if (target is PlaylistContextTarget) {
+      try {
+        final cacheResult = await ref
+            .read(spotifyRepositoryProvider)
+            .watchPlaylistTracks(target.id)
+            .first;
+        final rawTracks = cacheResult.data;
+        if (rawTracks.isNotEmpty) {
+          ref.read(playerProvider.notifier).playTrack(rawTracks.first, queue: rawTracks);
+        }
+      } catch (e) {
+        widget.onTap();
+      }
+    } else if (target is AlbumContextTarget) {
+      try {
+        final cacheResult = await ref
+            .read(spotifyRepositoryProvider)
+            .watchAlbum(target.id)
+            .first;
+        final tracksList = cacheResult.data['tracks']?['items'] as List?;
+        if (tracksList != null) {
+          final tracks = tracksList
+              .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
+              .toList();
+          if (tracks.isNotEmpty) {
+            ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+          }
+        }
+      } catch (e) {
+        widget.onTap();
+      }
+    } else {
+      widget.onTap();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1146,7 +1184,7 @@ class _AlbumCardState extends State<_AlbumCard> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: HoverPlayOverlay(
-                        onPlay: widget.onTap,
+                        onPlay: _onPlay,
                         isHovered: _isHovered,
                         size: 40,
                         child: Stack(
