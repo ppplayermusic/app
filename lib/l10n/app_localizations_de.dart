@@ -479,7 +479,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get sortDateAdded => 'Nach Hinzufügedatum sortieren';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Sortieren nach';
 
   @override
   String get trackInformation => 'Titelinformationen';
@@ -681,13 +681,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get importFolderSubtitle => 'Wählen Sie einen Ordner mit Audiodateien';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Wiedergabeliste importieren';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '.m3u oder .m3u8 Datei importieren';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Wiedergabeliste exportieren';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -697,25 +697,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Lokale Videos';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Keine Videos gefunden';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Lokale Videos durchsuchen';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Videos hinzufügen';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Untertitel';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Audiospuren';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Untertiteldatei laden...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -723,5 +723,5 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Aus';
 }

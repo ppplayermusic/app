@@ -477,7 +477,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get sortDateAdded => 'مرتب‌سازی بر اساس تاریخ افزودن';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'مرتب‌سازی بر اساس';
 
   @override
   String get trackInformation => 'اطلاعات آهنگ';
@@ -652,7 +652,7 @@ class AppLocalizationsFa extends AppLocalizations {
   String get filterStations => 'ایستگاه‌ها';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'جریان‌ها';
 
   @override
   String get localMusicCard => 'موسیقی محلی';
@@ -679,13 +679,13 @@ class AppLocalizationsFa extends AppLocalizations {
   String get importFolderSubtitle => 'پوشه‌ای حاوی فایل‌های صوتی انتخاب کنید';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'وارد کردن لیست پخش';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'وارد کردن فایل .m3u یا .m3u8';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'خروجی گرفتن لیست پخش';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -695,25 +695,25 @@ class AppLocalizationsFa extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'ویدیوهای محلی';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'هیچ ویدیویی یافت نشد';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'جستجوی ویدیوهای محلی';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'افزودن ویدیوها';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'زیرنویس‌ها';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'ترک‌های صوتی';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'بارگیری فایل زیرنویس...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -721,5 +721,5 @@ class AppLocalizationsFa extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'خاموش';
 }

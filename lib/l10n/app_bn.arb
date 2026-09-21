@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "সাজান",
+  "@sortBy": {},
+  "filterStreams": "স্ট্রিম",
+  "@filterStreams": {},
+  "importPlaylist": "প্লেলিস্ট ইমপোর্ট করুন",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": ".m3u বা .m3u8 ফাইল ইমপোর্ট করুন",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "প্লেলিস্ট এক্সপোর্ট করুন",
+  "@exportPlaylist": {},
+  "localVideosCard": "লোকাল ভিডিও",
+  "@localVideosCard": {},
+  "noLocalVideos": "কোনো ভিডিও পাওয়া যায়নি",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "লোকাল ভিডিও খুঁজুন",
+  "@searchLocalVideos": {},
+  "addVideos": "ভিডিও যোগ করুন",
+  "@addVideos": {},
+  "subtitles": "সাবটাইটেল",
+  "@subtitles": {},
+  "audioTracks": "অডিও ট্র্যাক",
+  "@audioTracks": {},
+  "loadSubtitleFile": "সাবটাইটেল ফাইল লোড করুন...",
+  "@loadSubtitleFile": {},
+  "off": "বন্ধ",
+  "@off": {}
 }

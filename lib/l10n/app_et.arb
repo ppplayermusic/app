@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Sorteeri",
+  "@sortBy": {},
+  "filterStreams": "Vood",
+  "@filterStreams": {},
+  "importPlaylist": "Impordi esitusloend",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Impordi .m3u või .m3u8 fail",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Ekspordi esitusloend",
+  "@exportPlaylist": {},
+  "localVideosCard": "Kohalikud videod",
+  "@localVideosCard": {},
+  "noLocalVideos": "Videoid ei leitud",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Otsi kohalikke videoid",
+  "@searchLocalVideos": {},
+  "addVideos": "Lisa videod",
+  "@addVideos": {},
+  "subtitles": "Subtiitrid",
+  "@subtitles": {},
+  "audioTracks": "Helirajad",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Laadi subtiitrifail...",
+  "@loadSubtitleFile": {},
+  "off": "Väljas",
+  "@off": {}
 }

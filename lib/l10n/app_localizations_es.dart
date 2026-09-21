@@ -478,7 +478,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sortDateAdded => 'Ordenar por fecha';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Ordenar por';
 
   @override
   String get trackInformation => 'Información de la pista';
@@ -683,13 +683,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Elige una carpeta que contenga archivos de audio';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Importar Playlist';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Importar archivos .m3u o .m3u8';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Exportar Playlist';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -699,25 +699,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Videos locales';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'No se encontraron videos';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Buscar videos locales';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Añadir videos';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Subtítulos';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Pistas de audio';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Cargar archivo de subtítulos...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -725,5 +725,5 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Desactivado';
 }

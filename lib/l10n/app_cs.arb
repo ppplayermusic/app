@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Řadit podle",
+  "@sortBy": {},
+  "filterStreams": "Filtrovat streamy",
+  "@filterStreams": {},
+  "importPlaylist": "Importovat playlist",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Importovat soubor .m3u nebo .m3u8",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Exportovat playlist",
+  "@exportPlaylist": {},
+  "localVideosCard": "Místní videa",
+  "@localVideosCard": {},
+  "noLocalVideos": "Nenalezena žádná videa",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Hledat místní videa",
+  "@searchLocalVideos": {},
+  "addVideos": "Přidat videa",
+  "@addVideos": {},
+  "subtitles": "Titulky",
+  "@subtitles": {},
+  "audioTracks": "Zvukové stopy",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Načíst soubor s titulky...",
+  "@loadSubtitleFile": {},
+  "off": "Vypnuto",
+  "@off": {}
 }

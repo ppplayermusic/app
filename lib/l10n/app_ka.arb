@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "დახარისხება",
+  "@sortBy": {},
+  "filterStreams": "სტრიმები",
+  "@filterStreams": {},
+  "importPlaylist": "ფლეილისტის იმპორტი",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": ".m3u ან .m3u8 ფაილის იმპორტი",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "ფლეილისტის ექსპორტი",
+  "@exportPlaylist": {},
+  "localVideosCard": "ლოკალური ვიდეოები",
+  "@localVideosCard": {},
+  "noLocalVideos": "ვიდეო ვერ მოიძებნა",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "ლოკალური ვიდეოების ძიება",
+  "@searchLocalVideos": {},
+  "addVideos": "ვიდეოს დამატება",
+  "@addVideos": {},
+  "subtitles": "სუბტიტრები",
+  "@subtitles": {},
+  "audioTracks": "აუდიო ტრეკები",
+  "@audioTracks": {},
+  "loadSubtitleFile": "სუბტიტრების ფაილის ჩატვირთვა...",
+  "@loadSubtitleFile": {},
+  "off": "გამორთული",
+  "@off": {}
 }

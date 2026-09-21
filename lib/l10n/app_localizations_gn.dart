@@ -478,7 +478,7 @@ class AppLocalizationsGn extends AppLocalizations {
   String get sortDateAdded => 'Oñemohenda ára rupi';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Mohenda';
 
   @override
   String get trackInformation => 'Purahéi marandu';
@@ -653,7 +653,7 @@ class AppLocalizationsGn extends AppLocalizations {
   String get filterStations => 'Ñe\'ẽasãiha';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Mboguata';
 
   @override
   String get localMusicCard => 'Mba\'epu ñande mba\'e';
@@ -681,13 +681,13 @@ class AppLocalizationsGn extends AppLocalizations {
       'Eiporavo peteĩ ñongatupy oguerekóva ñe\'ẽ';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Gueru playlist';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Gueru .m3u térã .m3u8';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Guenohẽ playlist';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -697,25 +697,25 @@ class AppLocalizationsGn extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Ta\'ãngamýi ko\'ápe';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Ndojejuhúi ta\'ãngamýi';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Heka ta\'ãngamýi';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Moĩve ta\'ãngamýi';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Jehaí';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Ñe\'ẽ';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Gueru jehai...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -723,5 +723,5 @@ class AppLocalizationsGn extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Mboty';
 }

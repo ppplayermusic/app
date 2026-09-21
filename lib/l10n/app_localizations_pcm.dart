@@ -678,13 +678,13 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get importFolderSubtitle => 'Choose folder wey get audio files';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Import playlist';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 file';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Export playlist';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -697,13 +697,13 @@ class AppLocalizationsPcm extends AppLocalizations {
   String get localVideosCard => 'Local Videos';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'No video dey';
 
   @override
   String get searchLocalVideos => 'Search local videos';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Add videos';
 
   @override
   String get subtitles => 'Subtitles';

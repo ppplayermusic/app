@@ -475,7 +475,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sortDateAdded => 'الترتيب حسب تاريخ الإضافة';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'ترتيب حسب';
 
   @override
   String get trackInformation => 'معلومات المسار';
@@ -652,7 +652,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filterStations => 'المحطات';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'البث المباشر';
 
   @override
   String get localMusicCard => 'موسيقى محلية';
@@ -679,13 +679,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importFolderSubtitle => 'اختر مجلدًا يحتوي على ملفات صوتية';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'استيراد قائمة تشغيل';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'استيراد ملفات .m3u أو .m3u8';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'تصدير قائمة تشغيل';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -695,25 +695,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'مقاطع فيديو محلية';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'لم يتم العثور على مقاطع فيديو';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'البحث في مقاطع الفيديو المحلية';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'إضافة مقاطع فيديو';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'الترجمات';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'المقاطع الصوتية';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'تحميل ملف ترجمة...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -721,5 +721,5 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'إيقاف';
 }

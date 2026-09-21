@@ -479,7 +479,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sortDateAdded => 'Eklenme Tarihine Göre Sırala';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Sıralama ölçütü';
 
   @override
   String get trackInformation => 'Parça Bilgisi';
@@ -653,7 +653,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get filterStations => 'İstasyonlar';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Yayınlar';
 
   @override
   String get localMusicCard => 'Yerel Müzik';
@@ -680,13 +680,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get importFolderSubtitle => 'Klasörü İçe Aktarma Altyazısı';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Oynatma listesini içe aktar';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '.m3u veya .m3u8 dosyası içe aktar';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Oynatma listesini dışa aktar';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -696,25 +696,25 @@ class AppLocalizationsTr extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Yerel Videolar';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Video bulunamadı';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Yerel videoları ara';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Video ekle';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Altyazılar';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Ses Parçaları';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Altyazı dosyası yükle...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -722,5 +722,5 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Kapalı';
 }

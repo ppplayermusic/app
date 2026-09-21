@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Сұрыптау",
+  "@sortBy": {},
+  "filterStreams": "Ағындар",
+  "@filterStreams": {},
+  "importPlaylist": "Ойнату тізімін импорттау",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": ".m3u немесе .m3u8 файлын импорттау",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Ойнату тізімін экспорттау",
+  "@exportPlaylist": {},
+  "localVideosCard": "Жергілікті бейнелер",
+  "@localVideosCard": {},
+  "noLocalVideos": "Бейнелер табылмады",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Жергілікті бейнелерді іздеу",
+  "@searchLocalVideos": {},
+  "addVideos": "Бейнелер қосу",
+  "@addVideos": {},
+  "subtitles": "Субтитрлер",
+  "@subtitles": {},
+  "audioTracks": "Аудио жолдар",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Субтитр файлын жүктеу...",
+  "@loadSubtitleFile": {},
+  "off": "Өшірулі",
+  "@off": {}
 }

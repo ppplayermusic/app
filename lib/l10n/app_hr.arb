@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Poredaj po",
+  "@sortBy": {},
+  "filterStreams": "Tokovi",
+  "@filterStreams": {},
+  "importPlaylist": "Uvezi popis pjesama",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Uvezi .m3u ili .m3u8 datoteku",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Izvezi popis pjesama",
+  "@exportPlaylist": {},
+  "localVideosCard": "Lokalni videozapisi",
+  "@localVideosCard": {},
+  "noLocalVideos": "Nisu pronađeni videozapisi",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Pretraži lokalne videozapise",
+  "@searchLocalVideos": {},
+  "addVideos": "Dodaj videozapise",
+  "@addVideos": {},
+  "subtitles": "Titlovi",
+  "@subtitles": {},
+  "audioTracks": "Audio zapisi",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Učitaj datoteku titlova...",
+  "@loadSubtitleFile": {},
+  "off": "Isključeno",
+  "@off": {}
 }

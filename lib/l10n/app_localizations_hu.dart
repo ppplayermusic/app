@@ -480,7 +480,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get sortDateAdded => 'Rendezés hozzáadás dátuma szerint';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Rendezés';
 
   @override
   String get trackInformation => 'Szám információi';
@@ -654,7 +654,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get filterStations => 'Állomások';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Streamek';
 
   @override
   String get localMusicCard => 'Helyi zene';
@@ -682,13 +682,13 @@ class AppLocalizationsHu extends AppLocalizations {
       'Válasszon egy mappát, amely hangfájlokat tartalmaz';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Lejátszási lista importálása';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '.m3u vagy .m3u8 fájl importálása';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Lejátszási lista exportálása';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -698,25 +698,25 @@ class AppLocalizationsHu extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Helyi videók';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Nem található videó';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Helyi videók keresése';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Videók hozzáadása';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Feliratok';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Hangsávok';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Feliratfájl betöltése...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -724,5 +724,5 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Ki';
 }

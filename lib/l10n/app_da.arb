@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Sortér efter",
+  "@sortBy": {},
+  "filterStreams": "Strømme",
+  "@filterStreams": {},
+  "importPlaylist": "Importer afspilningsliste",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Importer .m3u eller .m3u8 fil",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Eksporter afspilningsliste",
+  "@exportPlaylist": {},
+  "localVideosCard": "Lokale videoer",
+  "@localVideosCard": {},
+  "noLocalVideos": "Ingen videoer fundet",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Søg i lokale videoer",
+  "@searchLocalVideos": {},
+  "addVideos": "Tilføj videoer",
+  "@addVideos": {},
+  "subtitles": "Undertekster",
+  "@subtitles": {},
+  "audioTracks": "Lydspor",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Indlæs undertekstfil...",
+  "@loadSubtitleFile": {},
+  "off": "Fra",
+  "@off": {}
 }

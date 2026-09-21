@@ -471,7 +471,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sortDateAdded => '追加日順';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => '並べ替え';
 
   @override
   String get trackInformation => 'トラック情報';
@@ -645,7 +645,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get filterStations => 'ステーション';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'ストリーム';
 
   @override
   String get localMusicCard => 'ローカルの音楽';
@@ -672,13 +672,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get importFolderSubtitle => 'オーディオファイルを含むフォルダを選択してください';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'プレイリストをインポート';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '.m3u または .m3u8 ファイルをインポート';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'プレイリストをエクスポート';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -688,25 +688,25 @@ class AppLocalizationsJa extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'ローカルビデオ';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'ビデオが見つかりません';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'ローカルビデオを検索';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'ビデオを追加';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => '字幕';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'オーディオトラック';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => '字幕ファイルを読み込む...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -714,5 +714,5 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'オフ';
 }

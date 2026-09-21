@@ -479,7 +479,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get sortDateAdded => 'Қосылған күні бойынша сұрыптау';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Сұрыптау';
 
   @override
   String get trackInformation => 'Трек ақпараты';
@@ -654,7 +654,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get filterStations => 'Станциялар';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Ағындар';
 
   @override
   String get localMusicCard => 'Жергілікті музыка';
@@ -681,13 +681,13 @@ class AppLocalizationsKk extends AppLocalizations {
   String get importFolderSubtitle => 'Аудио файлдары бар қалтаны таңдаңыз';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Ойнату тізімін импорттау';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '.m3u немесе .m3u8 файлын импорттау';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Ойнату тізімін экспорттау';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -697,25 +697,25 @@ class AppLocalizationsKk extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Жергілікті бейнелер';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Бейнелер табылмады';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Жергілікті бейнелерді іздеу';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Бейнелер қосу';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Субтитрлер';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Аудио жолдар';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Субтитр файлын жүктеу...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -723,5 +723,5 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Өшірулі';
 }

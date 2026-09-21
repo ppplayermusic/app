@@ -476,7 +476,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get sortDateAdded => 'Ordenar por data de adição';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Ordenar por';
 
   @override
   String get trackInformation => 'Informações da faixa';
@@ -680,13 +680,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Escolha uma pasta que contenha arquivos de áudio';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Importar Playlist';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Importar arquivos .m3u ou .m3u8';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Exportar Playlist';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -696,25 +696,25 @@ class AppLocalizationsPt extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Vídeos Locais';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Nenhum vídeo encontrado';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Pesquisar vídeos locais';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Adicionar Vídeos';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Legendas';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Faixas de Áudio';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Carregar arquivo de legenda...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -722,5 +722,5 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Desativado';
 }

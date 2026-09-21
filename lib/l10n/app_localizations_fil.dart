@@ -479,7 +479,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get sortDateAdded => 'Pagbukud-bukurin ayon sa Petsa';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Pagbukud-bukurin';
 
   @override
   String get trackInformation => 'Impormasyon ng Track';
@@ -655,7 +655,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get filterStations => 'Mga Istasyon';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Mga stream';
 
   @override
   String get localMusicCard => 'Lokal na Musika';
@@ -683,13 +683,13 @@ class AppLocalizationsFil extends AppLocalizations {
       'Pumili ng folder na naglalaman ng mga audio file';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Mag-import ng playlist';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Mag-import ng .m3u o .m3u8 file';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'I-export ang playlist';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -699,25 +699,25 @@ class AppLocalizationsFil extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Mga Lokal na Video';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Walang nahanap na mga video';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Maghanap ng mga lokal na video';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Magdagdag ng mga video';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Mga Subtitle';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Mga Audio Track';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Mag-load ng file ng subtitle...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -725,5 +725,5 @@ class AppLocalizationsFil extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Naka-off';
 }

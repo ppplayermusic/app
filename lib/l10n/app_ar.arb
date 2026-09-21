@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "ترتيب حسب",
+  "@sortBy": {},
+  "filterStreams": "البث المباشر",
+  "@filterStreams": {},
+  "importPlaylist": "استيراد قائمة تشغيل",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "استيراد ملفات .m3u أو .m3u8",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "تصدير قائمة تشغيل",
+  "@exportPlaylist": {},
+  "localVideosCard": "مقاطع فيديو محلية",
+  "@localVideosCard": {},
+  "noLocalVideos": "لم يتم العثور على مقاطع فيديو",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "البحث في مقاطع الفيديو المحلية",
+  "@searchLocalVideos": {},
+  "addVideos": "إضافة مقاطع فيديو",
+  "@addVideos": {},
+  "subtitles": "الترجمات",
+  "@subtitles": {},
+  "audioTracks": "المقاطع الصوتية",
+  "@audioTracks": {},
+  "loadSubtitleFile": "تحميل ملف ترجمة...",
+  "@loadSubtitleFile": {},
+  "off": "إيقاف",
+  "@off": {}
 }

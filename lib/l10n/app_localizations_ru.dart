@@ -480,7 +480,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sortDateAdded => 'Сортировать по дате добавления';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Сортировать по';
 
   @override
   String get trackInformation => 'Информация о треке';
@@ -658,7 +658,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get filterStations => 'Станции';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Стримы';
 
   @override
   String get localMusicCard => 'Локальная музыка';
@@ -685,13 +685,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get importFolderSubtitle => 'Выберите папку, содержащую аудиофайлы';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Импорт плейлиста';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Импорт файлов .m3u или .m3u8';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Экспорт плейлиста';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -701,25 +701,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Локальные видео';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Видео не найдены';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Поиск локальных видео';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Добавить видео';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Субтитры';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Аудиодорожки';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Загрузить файл субтитров...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -727,5 +727,5 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Выкл.';
 }

@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "စီစဥ်ရန်",
+  "@sortBy": {},
+  "filterStreams": "စထရင်းများ",
+  "@filterStreams": {},
+  "importPlaylist": "ဖွင့်ရန်စာရင်းကို တင်သွင်းရန်",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": ".m3u သို့မဟုတ် .m3u8 ဖိုင်ကို တင်သွင်းရန်",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "ဖွင့်ရန်စာရင်းကို ထုတ်ယူရန်",
+  "@exportPlaylist": {},
+  "localVideosCard": "စက်တွင်း ဗီဒီယိုများ",
+  "@localVideosCard": {},
+  "noLocalVideos": "ဗီဒီယိုများ မတွေ့ပါ",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "စက်တွင်း ဗီဒီယိုများကို ရှာရန်",
+  "@searchLocalVideos": {},
+  "addVideos": "ဗီဒီယိုများ ထည့်ရန်",
+  "@addVideos": {},
+  "subtitles": "စာတန်းထိုးများ",
+  "@subtitles": {},
+  "audioTracks": "အသံဖိုင်များ",
+  "@audioTracks": {},
+  "loadSubtitleFile": "စာတန်းထိုးဖိုင်ကို ထည့်သွင်းရန်...",
+  "@loadSubtitleFile": {},
+  "off": "ပိတ်ရန်",
+  "@off": {}
 }

@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "정렬 기준",
+  "@sortBy": {},
+  "filterStreams": "스트림",
+  "@filterStreams": {},
+  "importPlaylist": "재생 목록 가져오기",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": ".m3u 또는 .m3u8 파일 가져오기",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "재생 목록 내보내기",
+  "@exportPlaylist": {},
+  "localVideosCard": "로컬 비디오",
+  "@localVideosCard": {},
+  "noLocalVideos": "비디오를 찾을 수 없음",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "로컬 비디오 검색",
+  "@searchLocalVideos": {},
+  "addVideos": "비디오 추가",
+  "@addVideos": {},
+  "subtitles": "자막",
+  "@subtitles": {},
+  "audioTracks": "오디오 트랙",
+  "@audioTracks": {},
+  "loadSubtitleFile": "자막 파일 불러오기...",
+  "@loadSubtitleFile": {},
+  "off": "끄기",
+  "@off": {}
 }

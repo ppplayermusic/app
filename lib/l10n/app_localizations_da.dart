@@ -477,7 +477,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get sortDateAdded => 'Sortér efter tilføjelsesdato';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Sortér efter';
 
   @override
   String get trackInformation => 'Sporinformation';
@@ -652,7 +652,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get filterStations => 'Stationer';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Strømme';
 
   @override
   String get localMusicCard => 'Lokal musik';
@@ -679,13 +679,13 @@ class AppLocalizationsDa extends AppLocalizations {
   String get importFolderSubtitle => 'Vælg en mappe, der indeholder lydfiler';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Importer afspilningsliste';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Importer .m3u eller .m3u8 fil';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Eksporter afspilningsliste';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -695,25 +695,25 @@ class AppLocalizationsDa extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Lokale videoer';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Ingen videoer fundet';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Søg i lokale videoer';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Tilføj videoer';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Undertekster';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Lydspor';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Indlæs undertekstfil...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -721,5 +721,5 @@ class AppLocalizationsDa extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Fra';
 }

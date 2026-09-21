@@ -470,7 +470,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sortDateAdded => '按添加日期排序';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => '排序方式';
 
   @override
   String get trackInformation => '曲目信息';
@@ -644,7 +644,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get filterStations => '电台';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => '流媒体';
 
   @override
   String get localMusicCard => '本地音乐';
@@ -671,13 +671,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get importFolderSubtitle => '选择一个包含音频文件的文件夹';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => '导入播放列表';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '导入 .m3u 或 .m3u8 文件';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => '导出播放列表';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -687,25 +687,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => '本地视频';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => '未找到视频';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => '搜索本地视频';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => '添加视频';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => '字幕';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => '音轨';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => '加载字幕文件...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -713,5 +713,5 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => '关闭';
 }

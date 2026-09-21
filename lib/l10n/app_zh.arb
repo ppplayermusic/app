@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "排序方式",
+  "@sortBy": {},
+  "filterStreams": "流媒体",
+  "@filterStreams": {},
+  "importPlaylist": "导入播放列表",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "导入 .m3u 或 .m3u8 文件",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "导出播放列表",
+  "@exportPlaylist": {},
+  "localVideosCard": "本地视频",
+  "@localVideosCard": {},
+  "noLocalVideos": "未找到视频",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "搜索本地视频",
+  "@searchLocalVideos": {},
+  "addVideos": "添加视频",
+  "@addVideos": {},
+  "subtitles": "字幕",
+  "@subtitles": {},
+  "audioTracks": "音轨",
+  "@audioTracks": {},
+  "loadSubtitleFile": "加载字幕文件...",
+  "@loadSubtitleFile": {},
+  "off": "关闭",
+  "@off": {}
 }

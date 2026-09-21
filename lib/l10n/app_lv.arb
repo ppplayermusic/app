@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Kārtot pēc",
+  "@sortBy": {},
+  "filterStreams": "Straumējumi",
+  "@filterStreams": {},
+  "importPlaylist": "Importēt atskaņošanas sarakstu",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Importēt .m3u vai .m3u8 failu",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Eksportēt atskaņošanas sarakstu",
+  "@exportPlaylist": {},
+  "localVideosCard": "Lokālie videoklipi",
+  "@localVideosCard": {},
+  "noLocalVideos": "Videoklipi nav atrast",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Meklēt lokālos videoklipus",
+  "@searchLocalVideos": {},
+  "addVideos": "Pievienot videoklipus",
+  "@addVideos": {},
+  "subtitles": "Subtitri",
+  "@subtitles": {},
+  "audioTracks": "Audio celiņi",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Ielādēt subtitru failu...",
+  "@loadSubtitleFile": {},
+  "off": "Izslēgts",
+  "@off": {}
 }

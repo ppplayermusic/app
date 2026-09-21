@@ -471,7 +471,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get sortDateAdded => '추가된 날짜순으로 정렬';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => '정렬 기준';
 
   @override
   String get trackInformation => '트랙 정보';
@@ -645,7 +645,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get filterStations => '스테이션';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => '스트림';
 
   @override
   String get localMusicCard => '로컬 음악';
@@ -672,13 +672,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get importFolderSubtitle => '오디오 파일이 포함된 폴더를 선택하세요';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => '재생 목록 가져오기';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '.m3u 또는 .m3u8 파일 가져오기';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => '재생 목록 내보내기';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -688,25 +688,25 @@ class AppLocalizationsKo extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => '로컬 비디오';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => '비디오를 찾을 수 없음';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => '로컬 비디오 검색';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => '비디오 추가';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => '자막';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => '오디오 트랙';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => '자막 파일 불러오기...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -714,5 +714,5 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => '끄기';
 }

@@ -479,7 +479,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get sortDateAdded => 'যোগ করার তারিখ অনুযায়ী সাজান';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'সাজান';
 
   @override
   String get trackInformation => 'ট্র্যাকের তথ্য';
@@ -655,7 +655,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get filterStations => 'স্টেশন';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'স্ট্রিম';
 
   @override
   String get localMusicCard => 'স্থানীয় সঙ্গীত';
@@ -683,13 +683,13 @@ class AppLocalizationsBn extends AppLocalizations {
       'অডিও ফাইল ধারণকারী একটি ফোল্ডার চয়ন করুন';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'প্লেলিস্ট ইমপোর্ট করুন';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '.m3u বা .m3u8 ফাইল ইমপোর্ট করুন';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'প্লেলিস্ট এক্সপোর্ট করুন';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -699,25 +699,25 @@ class AppLocalizationsBn extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'লোকাল ভিডিও';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'কোনো ভিডিও পাওয়া যায়নি';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'লোকাল ভিডিও খুঁজুন';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'ভিডিও যোগ করুন';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'সাবটাইটেল';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'অডিও ট্র্যাক';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'সাবটাইটেল ফাইল লোড করুন...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -725,5 +725,5 @@ class AppLocalizationsBn extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'বন্ধ';
 }

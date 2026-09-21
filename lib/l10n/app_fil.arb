@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Pagbukud-bukurin",
+  "@sortBy": {},
+  "filterStreams": "Mga stream",
+  "@filterStreams": {},
+  "importPlaylist": "Mag-import ng playlist",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Mag-import ng .m3u o .m3u8 file",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "I-export ang playlist",
+  "@exportPlaylist": {},
+  "localVideosCard": "Mga Lokal na Video",
+  "@localVideosCard": {},
+  "noLocalVideos": "Walang nahanap na mga video",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Maghanap ng mga lokal na video",
+  "@searchLocalVideos": {},
+  "addVideos": "Magdagdag ng mga video",
+  "@addVideos": {},
+  "subtitles": "Mga Subtitle",
+  "@subtitles": {},
+  "audioTracks": "Mga Audio Track",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Mag-load ng file ng subtitle...",
+  "@loadSubtitleFile": {},
+  "off": "Naka-off",
+  "@off": {}
 }

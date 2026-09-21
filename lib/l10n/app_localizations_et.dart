@@ -477,7 +477,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get sortDateAdded => 'Sordi lisamiskuupäeva järgi';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Sorteeri';
 
   @override
   String get trackInformation => 'Loo teave';
@@ -652,7 +652,7 @@ class AppLocalizationsEt extends AppLocalizations {
   String get filterStations => 'Jaamad';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Vood';
 
   @override
   String get localMusicCard => 'Kohalik muusika';
@@ -679,13 +679,13 @@ class AppLocalizationsEt extends AppLocalizations {
   String get importFolderSubtitle => 'Vali kaust, mis sisaldab helifaile';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Impordi esitusloend';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Impordi .m3u või .m3u8 fail';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Ekspordi esitusloend';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -695,25 +695,25 @@ class AppLocalizationsEt extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Kohalikud videod';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Videoid ei leitud';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Otsi kohalikke videoid';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Lisa videod';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Subtiitrid';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Helirajad';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Laadi subtiitrifail...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -721,5 +721,5 @@ class AppLocalizationsEt extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Väljas';
 }

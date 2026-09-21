@@ -479,7 +479,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get sortDateAdded => 'Seřadit podle data přidání';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Řadit podle';
 
   @override
   String get trackInformation => 'Informace o skladbě';
@@ -654,7 +654,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get filterStations => 'Stanice';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Filtrovat streamy';
 
   @override
   String get localMusicCard => 'Místní hudba';
@@ -682,13 +682,13 @@ class AppLocalizationsCs extends AppLocalizations {
       'Vyberte složku obsahující zvukové soubory';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Importovat playlist';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Importovat soubor .m3u nebo .m3u8';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Exportovat playlist';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -698,25 +698,25 @@ class AppLocalizationsCs extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Místní videa';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Nenalezena žádná videa';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Hledat místní videa';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Přidat videa';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Titulky';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Zvukové stopy';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Načíst soubor s titulky...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -724,5 +724,5 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Vypnuto';
 }

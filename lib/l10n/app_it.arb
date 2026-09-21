@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Ordina per",
+  "@sortBy": {},
+  "filterStreams": "Stream",
+  "@filterStreams": {},
+  "importPlaylist": "Importa playlist",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Importa file .m3u o .m3u8",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Esporta playlist",
+  "@exportPlaylist": {},
+  "localVideosCard": "Video locali",
+  "@localVideosCard": {},
+  "noLocalVideos": "Nessun video trovato",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Cerca video locali",
+  "@searchLocalVideos": {},
+  "addVideos": "Aggiungi video",
+  "@addVideos": {},
+  "subtitles": "Sottotitoli",
+  "@subtitles": {},
+  "audioTracks": "Tracce audio",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Carica file sottotitoli...",
+  "@loadSubtitleFile": {},
+  "off": "Spento",
+  "@off": {}
 }

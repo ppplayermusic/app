@@ -482,7 +482,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get sortDateAdded => 'Poredaj po datumu';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Poredaj po';
 
   @override
   String get trackInformation => 'Informacije o zapisu';
@@ -657,7 +657,7 @@ class AppLocalizationsHr extends AppLocalizations {
   String get filterStations => 'Postaje';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Tokovi';
 
   @override
   String get localMusicCard => 'Lokalna glazba';
@@ -685,13 +685,13 @@ class AppLocalizationsHr extends AppLocalizations {
       'Odaberite mapu koja sadrži audio datoteke';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Uvezi popis pjesama';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Uvezi .m3u ili .m3u8 datoteku';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Izvezi popis pjesama';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -701,25 +701,25 @@ class AppLocalizationsHr extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Lokalni videozapisi';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Nisu pronađeni videozapisi';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Pretraži lokalne videozapise';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Dodaj videozapise';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Titlovi';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Audio zapisi';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Učitaj datoteku titlova...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -727,5 +727,5 @@ class AppLocalizationsHr extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Isključeno';
 }

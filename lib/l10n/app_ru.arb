@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Сортировать по",
+  "@sortBy": {},
+  "filterStreams": "Стримы",
+  "@filterStreams": {},
+  "importPlaylist": "Импорт плейлиста",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": "Импорт файлов .m3u или .m3u8",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Экспорт плейлиста",
+  "@exportPlaylist": {},
+  "localVideosCard": "Локальные видео",
+  "@localVideosCard": {},
+  "noLocalVideos": "Видео не найдены",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Поиск локальных видео",
+  "@searchLocalVideos": {},
+  "addVideos": "Добавить видео",
+  "@addVideos": {},
+  "subtitles": "Субтитры",
+  "@subtitles": {},
+  "audioTracks": "Аудиодорожки",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Загрузить файл субтитров...",
+  "@loadSubtitleFile": {},
+  "off": "Выкл.",
+  "@off": {}
 }

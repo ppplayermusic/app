@@ -481,7 +481,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get sortDateAdded => 'ပေါင်းထည့်သည့်ရက်စွဲအလိုက် စီရန်';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'စီစဥ်ရန်';
 
   @override
   String get trackInformation => 'တေးသွား အချက်အလက်';
@@ -658,7 +658,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get filterStations => 'စခန်းများ';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'စထရင်းများ';
 
   @override
   String get localMusicCard => 'ပြည်တွင်းတေးဂီတ';
@@ -685,13 +685,14 @@ class AppLocalizationsMy extends AppLocalizations {
   String get importFolderSubtitle => 'အသံဖိုင်များပါသော ဖိုင်တွဲကို ရွေးပါ';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'ဖွင့်ရန်စာရင်းကို တင်သွင်းရန်';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle =>
+      '.m3u သို့မဟုတ် .m3u8 ဖိုင်ကို တင်သွင်းရန်';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'ဖွင့်ရန်စာရင်းကို ထုတ်ယူရန်';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -701,25 +702,25 @@ class AppLocalizationsMy extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'စက်တွင်း ဗီဒီယိုများ';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'ဗီဒီယိုများ မတွေ့ပါ';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'စက်တွင်း ဗီဒီယိုများကို ရှာရန်';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'ဗီဒီယိုများ ထည့်ရန်';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'စာတန်းထိုးများ';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'အသံဖိုင်များ';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'စာတန်းထိုးဖိုင်ကို ထည့်သွင်းရန်...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -727,5 +728,5 @@ class AppLocalizationsMy extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'ပိတ်ရန်';
 }

@@ -498,5 +498,31 @@
         "description": "The specific error message"
       }
     }
-  }
+  },
+  "sortBy": "Sıralama ölçütü",
+  "@sortBy": {},
+  "filterStreams": "Yayınlar",
+  "@filterStreams": {},
+  "importPlaylist": "Oynatma listesini içe aktar",
+  "@importPlaylist": {},
+  "importPlaylistSubtitle": ".m3u veya .m3u8 dosyası içe aktar",
+  "@importPlaylistSubtitle": {},
+  "exportPlaylist": "Oynatma listesini dışa aktar",
+  "@exportPlaylist": {},
+  "localVideosCard": "Yerel Videolar",
+  "@localVideosCard": {},
+  "noLocalVideos": "Video bulunamadı",
+  "@noLocalVideos": {},
+  "searchLocalVideos": "Yerel videoları ara",
+  "@searchLocalVideos": {},
+  "addVideos": "Video ekle",
+  "@addVideos": {},
+  "subtitles": "Altyazılar",
+  "@subtitles": {},
+  "audioTracks": "Ses Parçaları",
+  "@audioTracks": {},
+  "loadSubtitleFile": "Altyazı dosyası yükle...",
+  "@loadSubtitleFile": {},
+  "off": "Kapalı",
+  "@off": {}
 }

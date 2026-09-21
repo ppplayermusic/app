@@ -479,7 +479,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get sortDateAdded => 'დალაგება დამატების თარიღის მიხედვით';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'დახარისხება';
 
   @override
   String get trackInformation => 'ტრეკის ინფორმაცია';
@@ -654,7 +654,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get filterStations => 'სადგურები';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'სტრიმები';
 
   @override
   String get localMusicCard => 'ლოკალური მუსიკა';
@@ -682,13 +682,13 @@ class AppLocalizationsKa extends AppLocalizations {
       'აირჩიეთ საქაღალდე, რომელიც შეიცავს აუდიო ფაილებს';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'ფლეილისტის იმპორტი';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => '.m3u ან .m3u8 ფაილის იმპორტი';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'ფლეილისტის ექსპორტი';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -698,25 +698,25 @@ class AppLocalizationsKa extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'ლოკალური ვიდეოები';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'ვიდეო ვერ მოიძებნა';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'ლოკალური ვიდეოების ძიება';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'ვიდეოს დამატება';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'სუბტიტრები';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'აუდიო ტრეკები';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'სუბტიტრების ფაილის ჩატვირთვა...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -724,5 +724,5 @@ class AppLocalizationsKa extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'გამორთული';
 }

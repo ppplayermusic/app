@@ -480,7 +480,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get sortDateAdded => 'Kārtot pēc pievienošanas datuma';
 
   @override
-  String get sortBy => 'Sort by';
+  String get sortBy => 'Kārtot pēc';
 
   @override
   String get trackInformation => 'Sliežu ceļa informācija';
@@ -656,7 +656,7 @@ class AppLocalizationsLv extends AppLocalizations {
   String get filterStations => 'Stacijas';
 
   @override
-  String get filterStreams => 'Streams';
+  String get filterStreams => 'Straumējumi';
 
   @override
   String get localMusicCard => 'Vietējā mūzika';
@@ -683,13 +683,13 @@ class AppLocalizationsLv extends AppLocalizations {
   String get importFolderSubtitle => 'Izvēlieties mapi, kurā ir audio faili';
 
   @override
-  String get importPlaylist => 'Import Playlist';
+  String get importPlaylist => 'Importēt atskaņošanas sarakstu';
 
   @override
-  String get importPlaylistSubtitle => 'Import .m3u or .m3u8 files';
+  String get importPlaylistSubtitle => 'Importēt .m3u vai .m3u8 failu';
 
   @override
-  String get exportPlaylist => 'Export Playlist';
+  String get exportPlaylist => 'Eksportēt atskaņošanas sarakstu';
 
   @override
   String get playbackErrorUnsupportedFormat =>
@@ -699,25 +699,25 @@ class AppLocalizationsLv extends AppLocalizations {
   String get playbackErrorFileInaccessible => 'File inaccessible or not found';
 
   @override
-  String get localVideosCard => 'Local Videos';
+  String get localVideosCard => 'Lokālie videoklipi';
 
   @override
-  String get noLocalVideos => 'No videos found';
+  String get noLocalVideos => 'Videoklipi nav atrast';
 
   @override
-  String get searchLocalVideos => 'Search local videos';
+  String get searchLocalVideos => 'Meklēt lokālos videoklipus';
 
   @override
-  String get addVideos => 'Add Videos';
+  String get addVideos => 'Pievienot videoklipus';
 
   @override
-  String get subtitles => 'Subtitles';
+  String get subtitles => 'Subtitri';
 
   @override
-  String get audioTracks => 'Audio Tracks';
+  String get audioTracks => 'Audio celiņi';
 
   @override
-  String get loadSubtitleFile => 'Load subtitle file...';
+  String get loadSubtitleFile => 'Ielādēt subtitru failu...';
 
   @override
   String errorLoadingSubtitle(String error) {
@@ -725,5 +725,5 @@ class AppLocalizationsLv extends AppLocalizations {
   }
 
   @override
-  String get off => 'Off';
+  String get off => 'Izslēgts';
 }
