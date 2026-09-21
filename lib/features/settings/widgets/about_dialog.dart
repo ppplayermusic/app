@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'package:ppplayer/l10n/app_localizations.dart';
 import 'pp_license_page.dart';
 
@@ -105,43 +105,43 @@ class PpAboutDialog extends StatelessWidget {
                   children: [
                     _buildActionButton(
                       context,
-                      Icons.public,
+                      const Icon(Icons.public, size: 18),
                       l10n.website,
                       'https://ppplayer.com',
                     ),
                     _buildActionButton(
                       context,
-                      Icons.code,
+                      const Icon(Icons.code, size: 18),
                       l10n.github,
                       'https://github.com/ppplayermusic/ppplayer',
                     ),
                     _buildActionButton(
                       context,
-                      Icons.article_outlined,
+                      const Icon(Icons.article_outlined, size: 18),
                       l10n.releaseNotes,
                       'https://github.com/ppplayermusic/ppplayer/releases',
                     ),
                     _buildActionButton(
                       context,
-                      Icons.help_outline,
+                      const Icon(Icons.help_outline, size: 18),
                       l10n.support,
                       'https://ppplayer.com/support',
                     ),
                     _buildActionButton(
                       context,
-                      Icons.camera_alt_outlined,
+                      const FaIcon(FontAwesomeIcons.instagram, size: 18),
                       'Instagram',
                       'https://www.instagram.com/ppplayermusic/',
                     ),
                     _buildActionButton(
                       context,
-                      Icons.facebook,
+                      const FaIcon(FontAwesomeIcons.facebook, size: 18),
                       'Facebook',
                       'https://www.facebook.com/ppplayermusic',
                     ),
                     _buildActionButton(
                       context,
-                      Icons.work_outline,
+                      const FaIcon(FontAwesomeIcons.linkedin, size: 18),
                       'LinkedIn',
                       'https://www.linkedin.com/company/ppplayer/',
                     ),
@@ -207,12 +207,12 @@ class PpAboutDialog extends StatelessWidget {
 
   Widget _buildActionButton(
     BuildContext context,
-    IconData icon,
+    Widget iconWidget,
     String text,
     String url,
   ) {
     return TextButton.icon(
-      icon: Icon(icon, size: 18),
+      icon: iconWidget,
       label: Text(text),
       onPressed: () => _launchUrl(url),
       style: TextButton.styleFrom(

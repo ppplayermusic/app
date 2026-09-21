@@ -60,6 +60,7 @@ dependencies:
   fullscreen_window: ^1.2.1
   http: ^1.6.0
   xml: ^6.6.1
+  font_awesome_flutter: ^11.0.0
 dev_dependencies:
   integration_test:
     sdk: flutter
