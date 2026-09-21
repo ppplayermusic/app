@@ -546,7 +546,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   crossAxisCount: crossAxisCount,
                                   crossAxisSpacing: 12,
                                   mainAxisSpacing: 12,
-                                  childAspectRatio: 2.5,
+                                  childAspectRatio: 1.6,
                                 ),
                             itemCount: items.length.clamp(0, 12),
                             itemBuilder: (context, index) {
@@ -574,15 +574,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           );
                         } else {
                           return SizedBox(
-                            height: 140,
+                            height: 96,
                             child: GridView.builder(
                               scrollDirection: Axis.horizontal,
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 12,
+                                    crossAxisCount: 1,
                                     mainAxisSpacing: 12,
-                                    childAspectRatio: 0.45,
+                                    childAspectRatio: 0.6,
                                   ),
                               itemCount: items.length,
                               itemBuilder: (context, index) {
@@ -849,20 +848,24 @@ class _GenreCard extends StatelessWidget {
   final String imageUrl;
   final VoidCallback onTap;
 
+  Color _getGenreColor(String name) {
+    final int hash = name.hashCode;
+    final double hue = (hash % 360).abs().toDouble();
+    return HSLColor.fromAHSL(1.0, hue, 0.75, 0.35).toColor();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final bgColor = _getGenreColor(name);
+
     return TactileTap(
       onTap: onTap,
       scaleDown: 0.98,
       child: Container(
         decoration: BoxDecoration(
-          color: colorScheme.onSurface.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: colorScheme.onSurface.withValues(alpha: 0.1),
-            width: 0.5,
-          ),
+          color: bgColor,
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: colorScheme.scrim.withValues(alpha: 0.2),
@@ -874,7 +877,7 @@ class _GenreCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            // Background Glow
+            // Background Glow / Lighter highlight
             Positioned(
               right: -20,
               bottom: -20,
@@ -885,7 +888,7 @@ class _GenreCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      colorScheme.onSurface.withValues(alpha: 0.05),
+                      Colors.white.withValues(alpha: 0.15),
                       Colors.transparent,
                     ],
                   ),
@@ -895,17 +898,17 @@ class _GenreCard extends StatelessWidget {
 
             if (imageUrl.isNotEmpty)
               Positioned(
-                right: -10,
-                bottom: -5,
+                right: -15,
+                bottom: -15,
                 child: Transform.rotate(
-                  angle: 0.4,
+                  angle: 0.45,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: colorScheme.scrim.withValues(alpha: 0.5),
-                          blurRadius: 12,
+                          color: Colors.black.withValues(alpha: 0.5),
+                          blurRadius: 10,
                           offset: const Offset(2, 2),
                         ),
                       ],
@@ -914,8 +917,8 @@ class _GenreCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       child: PPImage(
                         imageUrl: imageUrl,
-                        width: 64,
-                        height: 64,
+                        width: 76,
+                        height: 76,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -923,7 +926,7 @@ class _GenreCard extends StatelessWidget {
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -931,11 +934,11 @@ class _GenreCard extends StatelessWidget {
                     name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.w900,
-                      fontSize: 14,
+                      fontSize: 18,
                       letterSpacing: -0.5,
-                      color: colorScheme.onSurface,
+                      color: Colors.white,
                       height: 1.1,
                     ),
                   ),
