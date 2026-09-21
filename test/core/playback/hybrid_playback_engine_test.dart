@@ -58,6 +58,7 @@ class FakeEngine implements PlaybackController {
   @override
   Future<void> play(
     PlaybackTrack track, {
+    bool play = true,
     Duration startAt = Duration.zero,
   }) async {
     playCalls++;

@@ -288,7 +288,7 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
   Future<void> load({
     required YoutubePlayerParams params,
     String? baseUrl,
-    String id = 'player',
+    String id = 'YoutubePlayerChannel',
   }) async {
     debugPrint("YoutubePlayerController: load() start");
 

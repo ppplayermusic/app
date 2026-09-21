@@ -9,7 +9,7 @@ abstract class PlaybackController {
   Stream<PlaybackEvent> get eventStream;
   PlaybackStatus get currentStatus;
 
-  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero});
+  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero, bool play = true});
   Future<void> pause({String caller = 'user', bool failOnTimeout = false});
   Future<void> resume();
   Future<void> stop();

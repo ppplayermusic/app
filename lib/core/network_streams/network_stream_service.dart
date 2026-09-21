@@ -8,6 +8,12 @@ import 'video_metadata.dart';
 
 import 'package:http/http.dart' as http;
 
+class ExtractedStream {
+  final String url;
+  final Map<String, String>? httpHeaders;
+  const ExtractedStream({required this.url, this.httpHeaders});
+}
+
 class YoutubeApiKeyMissingException implements Exception {
   final String message;
   YoutubeApiKeyMissingException([this.message = 'YouTube API Key is missing']);
@@ -144,7 +150,7 @@ class NetworkStreamService {
     }
   }
 
-  Future<String?> extractDirectStreamUrl(String videoUrl) async {
+  Future<ExtractedStream?> extractDirectStreamUrl(String videoUrl) async {
     // If user pasted an <iframe> embed, extract the src URL
     final trimmedInput = videoUrl.trim();
     if (trimmedInput.toLowerCase().startsWith('<iframe')) {
@@ -174,28 +180,18 @@ class NetworkStreamService {
             if (qualities != null && qualities.containsKey('auto')) {
               final autoList = qualities['auto'] as List<dynamic>;
               if (autoList.isNotEmpty) {
-                final masterUrl = autoList[0]['url'] as String;
+                String masterUrl = autoList[0]['url'] as String;
+                if (masterUrl.startsWith('//')) {
+                  masterUrl = 'https:$masterUrl';
+                }
                 final cookies = response.headers['set-cookie'];
-                final client = http.Client();
-                final req = http.Request('GET', Uri.parse(masterUrl));
+                final headers = <String, String>{};
                 if (cookies != null) {
-                  req.headers['Cookie'] = cookies.split(',').map((c) => c.split(';')[0]).join('; ');
+                  headers['Cookie'] = cookies.split(',').map((c) => c.split(';')[0]).join('; ');
                 }
-                final masterResp = await client.send(req);
-                if (masterResp.statusCode == 200) {
-                  final body = await masterResp.stream.bytesToString();
-                  final lines = body.split('\n');
-                  String? bestStreamUrl;
-                  for (final line in lines) {
-                    if (line.startsWith('http')) {
-                      bestStreamUrl = line.trim();
-                    }
-                  }
-                  if (bestStreamUrl != null) {
-                    return bestStreamUrl;
-                  }
-                }
-                return masterUrl;
+                headers['Referer'] = 'https://www.dailymotion.com/';
+
+                return ExtractedStream(url: masterUrl, httpHeaders: headers);
               }
             }
           }
@@ -246,10 +242,15 @@ class NetworkStreamService {
                 if (jsonStr.endsWith(';')) jsonStr = jsonStr.substring(0, jsonStr.length - 1);
                 try {
                   final data = json.decode(jsonStr);
+                  final vimeoHeaders = {
+                    'Referer': 'https://vimeo.com/'
+                  };
+
                   // Prefer progressive (MP4) for direct compatibility
                   final mp4s = data['request']?['files']?['progressive'] as List<dynamic>?;
                   if (mp4s != null && mp4s.isNotEmpty) {
-                    return mp4s[0]['url'] as String?;
+                    final url = mp4s[0]['url'] as String?;
+                    return url != null ? ExtractedStream(url: url, httpHeaders: vimeoHeaders) : null;
                   }
                   // Fall back to HLS
                   final hls = data['request']?['files']?['hls']?['cdns'];
@@ -261,7 +262,7 @@ class NetworkStreamService {
                     if (url != null && url.contains('/drm/')) {
                       throw Exception('This video is DRM-protected and cannot be played directly.');
                     }
-                    return url;
+                    return url != null ? ExtractedStream(url: url, httpHeaders: vimeoHeaders) : null;
                   }
                 } catch (e) {
                   if (e.toString().contains('DRM-protected')) rethrow;

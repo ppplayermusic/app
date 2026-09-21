@@ -514,9 +514,9 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                           ),
                                       activeTrackColor: colorScheme.primary,
                                       inactiveTrackColor: Colors.white
-                                          .withValues(alpha: 0.2),
+                                          .withValues(alpha: 0.15),
                                       secondaryActiveTrackColor: Colors.white
-                                          .withValues(alpha: 0.4),
+                                          .withValues(alpha: 0.5),
                                       thumbColor: Colors.white,
                                     ),
                                     child: Builder(
@@ -530,6 +530,8 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                             .inSeconds
                                             .toDouble()
                                             .clamp(0.0, maxDuration);
+                                        final isDailymotion = playerNotifier.currentPlaybackTrack?.networkMediaUri?.contains('dailymotion.com') == true || playerNotifier.currentPlaybackTrack?.networkMediaUri?.contains('dmcdn.net') == true;
+                                        debugPrint('SLIDER: isDailymotion=$isDailymotion, uri=${playerNotifier.currentPlaybackTrack?.networkMediaUri}');
                                         return Slider(
                                           value:
                                               (_dragValue ??
@@ -542,14 +544,26 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                           max: maxDuration,
                                           onChangeStart: (v) {
                                             _onInteraction();
+                                            if (isDailymotion) {
+                                              final maxV = (buffered - 3.0).clamp(0.0, maxDuration);
+                                              if (v > maxV) v = maxV;
+                                            }
                                             setState(() => _dragValue = v);
                                           },
                                           onChanged: (v) {
                                             _onInteraction();
+                                            if (isDailymotion) {
+                                              final maxV = (buffered - 3.0).clamp(0.0, maxDuration);
+                                              if (v > maxV) v = maxV;
+                                            }
                                             setState(() => _dragValue = v);
                                           },
                                           onChangeEnd: (v) {
                                             _onInteraction();
+                                            if (isDailymotion) {
+                                              final maxV = (buffered - 3.0).clamp(0.0, maxDuration);
+                                              if (v > maxV) v = maxV;
+                                            }
                                             playerNotifier.seekTo(
                                               Duration(seconds: v.toInt()),
                                             );

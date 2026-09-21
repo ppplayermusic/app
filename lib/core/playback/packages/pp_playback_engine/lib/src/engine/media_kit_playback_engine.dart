@@ -46,7 +46,7 @@ abstract class INativePlayerAdapter {
   /// that do not render video (e.g. audio-only test fakes).
   VideoController? get videoController;
 
-  Future<void> open(String uri, {bool play = false});
+  Future<void> open(String uri, {bool play = false, Map<String, String>? httpHeaders});
   Future<void> play();
   Future<void> pause();
   Future<void> stop();
@@ -73,10 +73,24 @@ class MediaKitPlayerAdapter implements INativePlayerAdapter {
   static VideoController? _sharedVideoController;
 
   MediaKitPlayerAdapter() {
-    _sharedPlayer ??= Player();
+    _sharedPlayer ??= Player(configuration: const PlayerConfiguration(logLevel: MPVLogLevel.debug));
     _sharedVideoController ??= VideoController(_sharedPlayer!);
     _player = _sharedPlayer!;
     _videoController = _sharedVideoController!;
+    _player.stream.log.listen((event) => print('MPV_LOG: ${event.level} - ${event.prefix}: ${event.text}'));
+    try {
+      // Enable ffmpeg HTTPS reconnects to prevent EOF/partial file when seeking
+      (_player.platform as dynamic).setProperty('stream-lavf-o', 'reconnect=1,reconnect_streamed=1,reconnect_delay_max=5,reconnect_on_network_error=1,reconnect_on_http_error=5xx');
+      // Keep some cache around
+      (_player.platform as dynamic).setProperty('cache-secs', '100');
+      // Disable exact seeking (hr-seek) for much better performance/stability on fMP4 HLS streams
+      (_player.platform as dynamic).setProperty('hr-seek', 'no');
+      // Increase demuxer cache to prevent stalling when skipping fragments
+      (_player.platform as dynamic).setProperty('demuxer-max-bytes', '150000000'); // 150MB
+      (_player.platform as dynamic).setProperty('demuxer-max-back-bytes', '50000000'); // 50MB
+    } catch (e) {
+      debugPrint('MediaKitPlaybackEngine: Failed to set mpv properties: $e');
+    }
   }
 
   late final Player _player;
@@ -103,13 +117,19 @@ class MediaKitPlayerAdapter implements INativePlayerAdapter {
   @override
   Stream<VideoParams> get videoParamsStream => _player.stream.videoParams;
 
+  Media? _currentMedia;
+
   @override
-  Future<void> open(String uri, {bool play = false}) =>
-      _player.open(Media(uri, httpHeaders: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': '*/*',
-        'Referer': 'https://www.dailymotion.com/'
-      }), play: play);
+  Future<void> open(String uri, {bool play = false, Map<String, String>? httpHeaders}) {
+    final headers = <String, String>{};
+    headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+    headers['Accept'] = '*/*';
+    if (httpHeaders != null) {
+      headers.addAll(httpHeaders);
+    }
+    _currentMedia = Media(uri, httpHeaders: headers);
+    return _player.open(_currentMedia!, play: play);
+  }
 
   @override
   Future<void> play() => _player.play();
@@ -337,10 +357,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (session != _activeSession || _disposed) return;
         if (_currentStatus.isIFrameMode) return;
         final track = _currentStatus.track;
-        final isNetwork = track?.sourceType == PlaybackSourceType.networkStream;
-        bool isSeekable = dur > Duration.zero;
-        // Conservatively disable seeking for explicitly live network streams.
-        if (isNetwork && track?.liveStatus == PlaybackLiveStatus.live) {
+        bool isSeekable = dur > Duration.zero || (track?.duration != null && track!.duration! > Duration.zero);
+        // Conservatively disable seeking for explicitly live streams.
+        if (track?.liveStatus == PlaybackLiveStatus.live) {
           isSeekable = false;
         }
         _updateStatus(
@@ -371,6 +390,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
         );
       }),
       a.errorStream.listen((err) {
+        print('MediaKitPlaybackEngine: [ERROR] $err');
         if (session != _activeSession || _disposed) return;
         if (_currentStatus.isIFrameMode) return;
         final errStr = err.toLowerCase();
@@ -549,7 +569,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
       try {
         // Non-autoplay: open without starting playback.
         await session.adapter
-            .open(uri, play: false)
+            .open(uri, play: false, httpHeaders: track.httpHeaders)
             .timeout(const Duration(seconds: 10));
         if (_disposed || _activeSession != session) return;
 
@@ -645,10 +665,10 @@ class MediaKitPlaybackEngine implements PlaybackController {
   // play()
   // ---------------------------------------------------------------------------
 
-  @override
   Future<void> play(
     PlaybackTrack track, {
     Duration startAt = Duration.zero,
+    bool play = true,
   }) async {
     if (_disposed) return;
 
@@ -670,7 +690,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
       // ── Invalidate immediately BEFORE any await ───────────────────────────
       _attemptActive = false;
       _intentRevision++;
-      _intendedState = PlaybackState.playing;
+      _intendedState = play ? PlaybackState.playing : PlaybackState.paused;
       _playGeneration++;
       final myGen = _playGeneration;
       _watchdogTimer?.cancel();
@@ -729,7 +749,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
       try {
         // Non-autoplay open: explicitly start after verifying session ownership.
         await session.adapter
-            .open(uri, play: false)
+            .open(uri, play: false, httpHeaders: track.httpHeaders)
             .timeout(const Duration(seconds: 10));
         if (_disposed || _activeSession != session) return;
 
@@ -777,7 +797,7 @@ class MediaKitPlaybackEngine implements PlaybackController {
     // ── YouTube play path ─────────────────────────────────────────────────────
     _attemptActive = false;
     _intentRevision++;
-    _intendedState = PlaybackState.playing;
+    _intendedState = play ? PlaybackState.playing : PlaybackState.paused;
     _playGeneration++;
     final myGenYt = _playGeneration;
 
@@ -1079,7 +1099,6 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (!_valid(generation)) return;
     bool eligible() =>
         _valid(generation) &&
-        _intendedState == PlaybackState.playing &&
         (BackgroundPlaybackExperiment.enabled || !isActivityStopped);
     try {
       if (!eligible()) {
@@ -1093,17 +1112,33 @@ class MediaKitPlaybackEngine implements PlaybackController {
         }
         return;
       }
-      if (videoId.length > 11 && (videoId.startsWith('PL') || videoId.startsWith('RD') || videoId.startsWith('LL'))) {
-        await _youtubeController!.loadPlaylist(
-          list: [videoId],
-          listType: yt.ListType.playlist,
-          startSeconds: startSeconds,
-        );
+      final isPlaylist = videoId.length > 11 && (videoId.startsWith('PL') || videoId.startsWith('RD') || videoId.startsWith('LL'));
+      if (_intendedState == PlaybackState.paused) {
+        if (isPlaylist) {
+          await _youtubeController!.cuePlaylist(
+            list: [videoId],
+            listType: yt.ListType.playlist,
+            startSeconds: startSeconds,
+          );
+        } else {
+          await _youtubeController!.cueVideoById(
+            videoId: videoId,
+            startSeconds: startSeconds,
+          );
+        }
       } else {
-        await _youtubeController!.loadVideoById(
-          videoId: videoId,
-          startSeconds: startSeconds,
-        );
+        if (isPlaylist) {
+          await _youtubeController!.loadPlaylist(
+            list: [videoId],
+            listType: yt.ListType.playlist,
+            startSeconds: startSeconds,
+          );
+        } else {
+          await _youtubeController!.loadVideoById(
+            videoId: videoId,
+            startSeconds: startSeconds,
+          );
+        }
       }
     } catch (error) {
       _failAttempt(generation, 'YouTube loading failed: $error');

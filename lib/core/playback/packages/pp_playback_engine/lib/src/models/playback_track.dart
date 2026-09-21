@@ -22,6 +22,7 @@ class PlaybackTrack {
   /// Explicit flag set by the upstream coordinator (e.g. manifest parser)
   /// to indicate this stream is known to be a live broadcast.
   final PlaybackLiveStatus liveStatus;
+  final Map<String, String>? httpHeaders;
 
   const PlaybackTrack({
     required this.id,
@@ -35,6 +36,7 @@ class PlaybackTrack {
     this.networkMediaUri,
     this.isVideo = false,
     this.liveStatus = PlaybackLiveStatus.unknown,
+    this.httpHeaders,
   });
 
   bool get isLocal => sourceType == PlaybackSourceType.local;

@@ -90,6 +90,7 @@ class FakePlaybackController implements PlaybackController {
   Future<void> play(
     PlaybackTrack track, {
     Duration startAt = Duration.zero,
+    bool play = true,
   }) async {}
 
   @override

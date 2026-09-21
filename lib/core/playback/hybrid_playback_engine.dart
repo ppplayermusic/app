@@ -408,16 +408,14 @@ class HybridPlaybackEngine implements PlaybackController {
   }
 
   @override
-  Future<void> play(
-    PlaybackTrack track, {
-    Duration startAt = Duration.zero,
-  }) async {
+  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero, bool play = true}) async {
     _playGeneration++;
     _handoffGeneration++;
+    _statusController.add(const PlaybackStatus(state: PlaybackState.preparing));
     _isTransferring = false;
     _currentTrack = track;
     _prewarmedTrack = null; // new track supersedes any prior pre-warm
-    _intendedState = PlaybackState.playing;
+    _intendedState = play ? PlaybackState.playing : PlaybackState.paused;
     _inactiveEngine.stop();
 
     final playingFuture = _activeEngine.statusStream

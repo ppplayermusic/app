@@ -13,6 +13,9 @@ import 'package:ppplayer/core/playback/playback_providers.dart';
 import 'package:ppplayer/core/playback/playback_service.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart' as yt;
 import 'package:ppplayer/core/services/settings_provider.dart';
+import 'package:ppplayer/core/network_streams/network_stream_service.dart';
+
+import 'fake_network_stream_service.dart';
 
 class FakeSettingsNotifier extends SettingsNotifier {
   @override
@@ -48,6 +51,7 @@ class FakePlaybackService implements PlaybackService {
   ) async {
     resolveCallCount++;
     if (_throwError != null) throw _throwError;
+    await Future.delayed(const Duration(milliseconds: 100));
     return candidates;
   }
 
@@ -84,6 +88,7 @@ class FakePlaybackController implements PlaybackController {
   final List<String> playedIds = [];
   Completer<void>? nextPlay;
   bool disposed = false;
+  Duration? lastStartAt;
 
   void emitStatus(PlaybackStatus s) => _statusController.add(s);
 
@@ -100,8 +105,10 @@ class FakePlaybackController implements PlaybackController {
   Future<void> play(
     PlaybackTrack track, {
     Duration startAt = Duration.zero,
+    bool play = true,
   }) async {
     playedIds.add(track.id);
+    lastStartAt = startAt;
     nextPlay?.complete();
     nextPlay = null;
   }
@@ -189,6 +196,7 @@ ProviderContainer makeContainer({
       playbackServiceProvider.overrideWithValue(service),
       playbackControllerProvider.overrideWithValue(controller),
       settingsProvider.overrideWith(FakeSettingsNotifier.new),
+      networkStreamServiceProvider.overrideWithValue(FakeNetworkStreamService()),
     ],
   );
 }
@@ -370,7 +378,7 @@ void main() {
       expect(controller.playedIds, isEmpty);
       expect(
         container.read(playerProvider).loadError,
-        'Failed to resolve YouTube ID',
+        'network error',
       );
     });
 

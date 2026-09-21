@@ -10,7 +10,7 @@ export 'package:pp_playback_engine/pp_playback_engine.dart';
 
 // Extension to convert App Track to PlaybackTrack
 extension TrackToPlayback on Track {
-  PlaybackTrack toPlaybackTrack() {
+  PlaybackTrack toPlaybackTrack({Map<String, String>? httpHeaders}) {
     if (sourceType == TrackSourceType.online) {
       if (youtubeVideoId == null) {
         throw StateError(
@@ -82,6 +82,7 @@ extension TrackToPlayback on Track {
       networkMediaUri: networkStreamUrl,
       isVideo: isVideoFile,
       liveStatus: mapLiveStatus(liveStatus),
+      httpHeaders: httpHeaders,
     );
   }
 }

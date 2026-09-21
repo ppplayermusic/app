@@ -85,6 +85,7 @@ class SpeedMockEngine implements PlaybackController {
   Future<void> play(
     PlaybackTrack track, {
     Duration startAt = Duration.zero,
+    bool play = true,
   }) async {
     _statusController.add(const PlaybackStatus(state: PlaybackState.playing));
   }

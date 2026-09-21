@@ -143,6 +143,7 @@ class NativeServicePlaybackEngine implements PlaybackController {
   Future<void> play(
     PlaybackTrack track, {
     Duration startAt = Duration.zero,
+    bool play = true,
   }) async {
     // Increment commandId BEFORE dispatching — invalidates any pending pre-warm cue.
     final id = ++_commandId;

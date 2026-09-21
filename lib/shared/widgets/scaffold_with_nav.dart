@@ -1688,6 +1688,7 @@ class _DesktopPlayerBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final playerState = ref.watch(playerProvider);
+    final playerNotifier = ref.read(playerProvider.notifier);
     final track = playerState.currentTrack;
     final isLocalTrack = track?.sourceType == TrackSourceType.local;
     final showVideo = ref.watch(settingsProvider.select((s) => s.showVideo));
@@ -1946,6 +1947,15 @@ class _DesktopPlayerBar extends ConsumerWidget {
             progress: progress,
             bufferedProgress: bufferedProgress,
             duration: playerState.duration,
+            isDailymotion:
+                playerNotifier.currentPlaybackTrack?.networkMediaUri?.contains(
+                      'dailymotion.com',
+                    ) ==
+                    true ||
+                playerNotifier.currentPlaybackTrack?.networkMediaUri?.contains(
+                      'dmcdn.net',
+                    ) ==
+                    true,
             onSeek: (pos) => ref.read(playerProvider.notifier).seekTo(pos),
           ),
         ),
@@ -1959,12 +1969,14 @@ class _DesktopProgressBar extends StatefulWidget {
   final double bufferedProgress;
   final Duration duration;
   final ValueChanged<Duration> onSeek;
+  final bool isDailymotion;
 
   const _DesktopProgressBar({
     required this.progress,
     required this.bufferedProgress,
     required this.duration,
     required this.onSeek,
+    this.isDailymotion = false,
   });
 
   @override
@@ -1986,7 +1998,14 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
 
   void _handleSeek(Offset localPosition, double totalWidth) {
     if (totalWidth <= 0 || widget.duration.inMilliseconds <= 0) return;
-    final ratio = (localPosition.dx / totalWidth).clamp(0.0, 1.0);
+    double ratio = (localPosition.dx / totalWidth).clamp(0.0, 1.0);
+    if (widget.isDailymotion) {
+      final safeBufferMs = (widget.duration.inMilliseconds * widget.bufferedProgress) - 3000;
+      final maxRatio = safeBufferMs > 0 ? safeBufferMs / widget.duration.inMilliseconds : 0.0;
+      if (ratio > maxRatio) {
+        ratio = maxRatio;
+      }
+    }
     setState(() {
       _dragProgress = ratio;
     });
@@ -2035,11 +2054,15 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
           onHover: (details) {
             if (constraints.maxWidth > 0) {
               setState(() {
-                _hoverProgress =
+                double hoverRatio =
                     (details.localPosition.dx / constraints.maxWidth).clamp(
                       0.0,
                       1.0,
                     );
+                if (widget.isDailymotion && hoverRatio > widget.bufferedProgress) {
+                  hoverRatio = widget.bufferedProgress;
+                }
+                _hoverProgress = hoverRatio;
               });
             }
           },
@@ -2130,7 +2153,7 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
                           height: isActive ? 4.5 : 2.5,
                           decoration: BoxDecoration(
                             color: colorScheme.onSurface.withValues(
-                              alpha: 0.25,
+                              alpha: 0.40,
                             ),
                             borderRadius: BorderRadius.circular(4),
                           ),
