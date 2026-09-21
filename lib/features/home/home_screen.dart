@@ -854,6 +854,21 @@ class _GenreCard extends StatelessWidget {
     return HSLColor.fromAHSL(1.0, hue, 0.75, 0.35).toColor();
   }
 
+  IconData _getGenreIcon(String name) {
+    final lowerName = name.toLowerCase();
+    if (lowerName.contains('top') || lowerName.contains('chart')) return Icons.bar_chart_rounded;
+    if (lowerName.contains('pop')) return Icons.mic_external_on_rounded;
+    if (lowerName.contains('hip-hop') || lowerName.contains('rap') || lowerName.contains('r&b')) return Icons.speaker_rounded;
+    if (lowerName.contains('rock') || lowerName.contains('metal')) return Icons.electric_bolt_rounded;
+    if (lowerName.contains('mood')) return Icons.wb_twilight_rounded;
+    if (lowerName.contains('workout') || lowerName.contains('fitness')) return Icons.monitor_heart_rounded;
+    if (lowerName.contains('chill') || lowerName.contains('sleep')) return Icons.nightlight_round;
+    if (lowerName.contains('party') || lowerName.contains('dance')) return Icons.celebration_rounded;
+    if (lowerName.contains('focus') || lowerName.contains('study')) return Icons.center_focus_strong_rounded;
+    if (lowerName.contains('indie') || lowerName.contains('alternative')) return Icons.camera_alt_rounded;
+    return Icons.music_note_rounded;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -896,35 +911,18 @@ class _GenreCard extends StatelessWidget {
               ),
             ),
 
-            if (imageUrl.isNotEmpty)
-              Positioned(
-                right: -15,
-                bottom: -15,
-                child: Transform.rotate(
-                  angle: 0.45,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          blurRadius: 10,
-                          offset: const Offset(2, 2),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: PPImage(
-                        imageUrl: imageUrl,
-                        width: 76,
-                        height: 76,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+            Positioned(
+              bottom: -20,
+              right: -20,
+              child: Transform.rotate(
+                angle: 0.2,
+                child: Icon(
+                  _getGenreIcon(name),
+                  size: 110,
+                  color: Colors.white.withValues(alpha: 0.2),
                 ),
               ),
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
