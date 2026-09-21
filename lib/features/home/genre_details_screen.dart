@@ -441,26 +441,42 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final playlist = widget.playlist;
+    final playlistId = playlist['id'] as String;
+    
+    // Default images (fallback)
     final rawImages = (playlist['images'] as List?) ?? [];
-    final images = rawImages.map((i) => i['url'] as String).toList();
-    final imageUrl = images.firstOrNull ?? '';
+    final fallbackImages = rawImages.map((i) => i['url'] as String).toList();
+    final fallbackImageUrl = fallbackImages.firstOrNull ?? '';
+
+    // Collage images
+    final collageImagesAsync = ref.watch(playlistCollageImagesProvider(playlistId));
+    final collageImages = collageImagesAsync.value ?? [];
 
     Widget imageWidget;
-    if (images.length > 1) {
+    if (collageImages.length >= 2) {
       imageWidget = PlaylistCover(
-        images: images,
+        images: collageImages,
+        size: double.infinity,
+        borderRadius: 16,
+      );
+    } else if (fallbackImages.length > 1) {
+      imageWidget = PlaylistCover(
+        images: fallbackImages,
         size: double.infinity,
         borderRadius: 16,
       );
     } else {
-      imageWidget = PPImage(imageUrl: imageUrl, fit: BoxFit.cover);
+      imageWidget = PPImage(
+        imageUrl: collageImages.isNotEmpty ? collageImages.first : fallbackImageUrl, 
+        fit: BoxFit.cover
+      );
     }
 
     return ContentContextMenuRegion(
       target: PlaylistContextTarget(
         id: playlist['id'] as String,
         name: playlist['name'] ?? '',
-        imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
+        imageUrl: fallbackImageUrl.isNotEmpty ? fallbackImageUrl : null,
       ),
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),

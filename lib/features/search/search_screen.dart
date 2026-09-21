@@ -365,7 +365,7 @@ class _EmptySearch extends ConsumerWidget {
   }
 }
 
-class _CategoryCard extends ConsumerWidget {
+class _CategoryCard extends StatefulWidget {
   final String id;
   final String name;
   final Color color;
@@ -378,149 +378,99 @@ class _CategoryCard extends ConsumerWidget {
     required this.imageUrl,
   });
 
-  Widget _buildRotatedImage(String url, ColorScheme colorScheme, double angle, double size) {
-    return Transform.rotate(
-      angle: angle,
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.scrim.withValues(alpha: 0.4),
-              blurRadius: 15,
-              offset: const Offset(-2, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: PPImage(
-            imageUrl: url,
-            width: size,
-            height: size,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-    );
+  @override
+  State<_CategoryCard> createState() => _CategoryCardState();
+}
+
+class _CategoryCardState extends State<_CategoryCard> {
+  bool _isHovered = false;
+
+  IconData _getCategoryIcon(String name) {
+    final lowerName = name.toLowerCase();
+    if (lowerName.contains('top') || lowerName.contains('chart')) return Icons.bar_chart_rounded;
+    if (lowerName.contains('pop')) return Icons.mic_external_on_rounded;
+    if (lowerName.contains('hip-hop') || lowerName.contains('rap') || lowerName.contains('r&b')) return Icons.speaker_rounded;
+    if (lowerName.contains('rock') || lowerName.contains('metal')) return Icons.electric_bolt_rounded;
+    if (lowerName.contains('mood')) return Icons.wb_twilight_rounded;
+    if (lowerName.contains('workout') || lowerName.contains('fitness')) return Icons.monitor_heart_rounded;
+    if (lowerName.contains('chill') || lowerName.contains('sleep')) return Icons.nightlight_round;
+    if (lowerName.contains('party') || lowerName.contains('dance')) return Icons.celebration_rounded;
+    if (lowerName.contains('focus') || lowerName.contains('study')) return Icons.center_focus_strong_rounded;
+    if (lowerName.contains('indie') || lowerName.contains('alternative')) return Icons.camera_alt_rounded;
+    return Icons.music_note_rounded;
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final collageImages = ref.watch(categoryCollageImagesProvider(id)).value ?? [];
-
-    Widget buildCollage() {
-      if (collageImages.isEmpty) {
-        if (imageUrl.isNotEmpty) {
-          return Positioned(
-            bottom: -20,
-            right: -25,
-            child: _buildRotatedImage(imageUrl, colorScheme, 0.45, 110),
-          );
-        }
-        return const SizedBox.shrink();
-      }
-
-      if (collageImages.length == 1) {
-        return Positioned(
-          bottom: -20,
-          right: -25,
-          child: _buildRotatedImage(collageImages[0], colorScheme, 0.45, 110),
-        );
-      }
-
-      if (collageImages.length == 2) {
-        return Positioned(
-          bottom: -20,
-          right: -45,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Transform.translate(
-                offset: const Offset(30, -10),
-                child: _buildRotatedImage(collageImages[1], colorScheme, 0.60, 100),
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: TactileTap(
+        onTap: () => context.push(
+          Uri(path: '/genre/${widget.id}', queryParameters: {'name': widget.name}).toString(),
+        ),
+        scaleDown: 0.94,
+        child: AnimatedScale(
+          scale: _isHovered ? 1.02 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  widget.color,
+                  widget.color.withValues(alpha: 0.6),
+                ],
               ),
-              _buildRotatedImage(collageImages[0], colorScheme, 0.40, 110),
-            ],
-          ),
-        );
-      }
-
-      // 3 images
-      return Positioned(
-        bottom: -20,
-        right: -60,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Transform.translate(
-              offset: const Offset(60, -20),
-              child: _buildRotatedImage(collageImages[2], colorScheme, 0.75, 90),
-            ),
-            Transform.translate(
-              offset: const Offset(30, -10),
-              child: _buildRotatedImage(collageImages[1], colorScheme, 0.55, 100),
-            ),
-            _buildRotatedImage(collageImages[0], colorScheme, 0.35, 110),
-          ],
-        ),
-      );
-    }
-
-    return TactileTap(
-      onTap: () => context.push(
-        Uri(path: '/genre/$id', queryParameters: {'name': name}).toString(),
-      ),
-      scaleDown: 0.94,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              color,
-              color.withValues(alpha: 0.7),
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.scrim.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        clipBehavior: Clip.hardEdge,
-        child: Stack(
-          children: [
-            buildCollage(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Text(
-                name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -0.5,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black38,
-                      offset: Offset(0, 2),
-                      blurRadius: 4,
-                    ),
-                  ],
+              boxShadow: _isHovered ? [
+                BoxShadow(
+                  color: widget.color.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
                 ),
-              ),
+              ] : null,
+              border: _isHovered ? Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5) : null,
             ),
-          ],
+            clipBehavior: Clip.hardEdge,
+            child: Stack(
+              children: [
+                Positioned(
+                  bottom: -20,
+                  right: -20,
+                  child: Transform.rotate(
+                    angle: 0.2,
+                    child: Icon(
+                      _getCategoryIcon(widget.name),
+                      size: 110,
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: Text(
+                    widget.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     ).animate().shimmer(
       delay: 5.seconds,
       duration: 2.seconds,
-      color: colorScheme.onSurface.withValues(alpha: 0.05),
+      color: Colors.white.withValues(alpha: 0.1),
     );
   }
 }

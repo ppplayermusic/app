@@ -50,8 +50,17 @@ class PlaylistCover extends StatelessWidget {
       );
     }
 
-    if (images.length < 3) {
+    if (images.length < 2) {
       return _Image(url: images.first);
+    }
+
+    if (images.length == 2) {
+      return Row(
+        children: [
+          Expanded(child: _Image(url: images[0])),
+          Expanded(child: _Image(url: images[1])),
+        ],
+      );
     }
 
     if (images.length == 3) {

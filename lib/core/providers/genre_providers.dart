@@ -56,3 +56,22 @@ final categoryCollageImagesProvider = StreamProvider.family<List<String>, String
 
   yield images.toList();
 });
+
+final playlistCollageImagesProvider = StreamProvider.family<List<String>, String>((
+  ref,
+  playlistId,
+) async* {
+  final repo = ref.watch(spotifyRepositoryProvider);
+  final tracksStream = repo.watchPlaylistTracks(playlistId);
+
+  await for (final cacheResult in tracksStream) {
+    final images = <String>{};
+    for (final track in cacheResult.data) {
+      if (track.albumImage != null && track.albumImage!.isNotEmpty) {
+        images.add(track.albumImage!);
+        if (images.length >= 3) break;
+      }
+    }
+    yield images.toList();
+  }
+});
