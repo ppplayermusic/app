@@ -71,6 +71,11 @@ class SharedSearchInput extends ConsumerWidget {
                 )
               : null,
           border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          filled: false,
+          hoverColor: Colors.transparent,
+          focusColor: Colors.transparent,
           contentPadding: const EdgeInsets.symmetric(vertical: 13),
         ),
         onChanged: (val) {
