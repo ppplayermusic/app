@@ -209,7 +209,7 @@ class _EmptySearch extends ConsumerWidget {
                       .slideX(begin: -0.1, end: 0, curve: Curves.easeOutCubic),
                   TextButton(
                     onPressed: () {
-                      ref.read(recentSearchesProvider.notifier).clearSearches();
+                      ref.read(recentSearchesProvider.notifier).clearAll();
                     },
                     style: TextButton.styleFrom(
                       foregroundColor: colorScheme.onSurfaceVariant,

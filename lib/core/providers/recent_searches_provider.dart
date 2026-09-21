@@ -59,4 +59,10 @@ class RecentSearchesNotifier extends Notifier<List<String>> {
       state = box.values.toList().reversed.toList();
     }
   }
+
+  Future<void> clearAll() async {
+    final box = await Hive.openBox<String>(_boxName);
+    await box.clear();
+    state = [];
+  }
 }
