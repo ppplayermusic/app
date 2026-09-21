@@ -60,18 +60,21 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     with SingleTickerProviderStateMixin {
   late final TextEditingController _ctrl;
   late final TabController _tabCtrl;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _ctrl = TextEditingController();
     _tabCtrl = TabController(length: 4, vsync: this);
+    _focusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _ctrl.dispose();
     _tabCtrl.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -158,6 +161,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                 ),
                 child: TextField(
                   controller: _ctrl,
+                  focusNode: _focusNode,
                   autofocus: false,
                   style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
                   cursorColor: colorScheme.primary,

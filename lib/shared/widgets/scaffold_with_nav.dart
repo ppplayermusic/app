@@ -418,9 +418,13 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
 
         // Skip handling if a text field or other input has primary focus
         final primaryFocus = FocusManager.instance.primaryFocus;
-        if (primaryFocus != null &&
-            primaryFocus.context?.widget is EditableText) {
-          return KeyEventResult.ignored;
+        if (primaryFocus != null && primaryFocus.context != null) {
+          final isTextInput = primaryFocus.context!.widget is EditableText ||
+              primaryFocus.context!.findAncestorWidgetOfExactType<TextField>() != null ||
+              primaryFocus.context!.findAncestorWidgetOfExactType<EditableText>() != null;
+          if (isTextInput) {
+            return KeyEventResult.ignored;
+          }
         }
 
         if (event.logicalKey == LogicalKeyboardKey.space) {
