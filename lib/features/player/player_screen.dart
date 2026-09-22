@@ -661,7 +661,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               if (!isPipMode)
                 PlayerOverlays(
                   isFullscreen: isFullscreen,
-                  alwaysShowControls: !hasVideo || (isQueueView && !isDesktop),
+                  alwaysShowControls: !hasVideo || (isQueueView && !isDesktop) || (!kIsWeb && Platform.isWindows && (status?.isIFrameMode ?? false)),
                   onToggleFullscreen: () => _setFullscreen(!isFullscreen),
                   onCollapse: () {
                     if (isFullscreen) {

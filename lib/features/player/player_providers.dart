@@ -17,3 +17,16 @@ class IsFullscreen extends Notifier<bool> {
 final isFullscreenProvider = NotifierProvider<IsFullscreen, bool>(
   IsFullscreen.new,
 );
+
+class ControlsVisibility extends Notifier<bool> {
+  @override
+  bool build() => true;
+
+  void setVisible(bool value) {
+    state = value;
+  }
+}
+
+final controlsVisibilityProvider = NotifierProvider<ControlsVisibility, bool>(
+  ControlsVisibility.new,
+);

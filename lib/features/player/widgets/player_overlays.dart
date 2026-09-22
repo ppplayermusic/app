@@ -11,6 +11,7 @@ import '../../../shared/widgets/tactile_buttons.dart';
 import '../../../shared/widgets/artists_links.dart';
 import '../../../core/db/app_database.dart' as db;
 import '../../../shared/widgets/context_menu/content_context_menu.dart';
+import '../player_providers.dart';
 import 'subtitle_panel.dart';
 
 class PlayerOverlays extends ConsumerStatefulWidget {
@@ -37,7 +38,6 @@ class PlayerOverlays extends ConsumerStatefulWidget {
 
 class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
   Timer? _hideTimer;
-  bool _controlsVisible = true;
   bool _isHoveringControls = false;
   double? _dragValue;
   final FocusNode _overlayFocusNode = FocusNode();
@@ -60,7 +60,7 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
       _onInteraction();
     } else {
       _isHoveringControls = false;
-      if (_controlsVisible) {
+      if (ref.read(controlsVisibilityProvider)) {
         _startHideTimer();
       }
     }
@@ -78,9 +78,9 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
   void didUpdateWidget(PlayerOverlays oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.alwaysShowControls && !oldWidget.alwaysShowControls) {
-      if (!_controlsVisible) {
-        setState(() {
-          _controlsVisible = true;
+      if (!ref.read(controlsVisibilityProvider)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) ref.read(controlsVisibilityProvider.notifier).setVisible(true);
         });
       }
     }
@@ -95,19 +95,15 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
             !_isHoveringControls &&
             _dragValue == null &&
             !widget.alwaysShowControls) {
-          setState(() {
-            _controlsVisible = false;
-          });
+          ref.read(controlsVisibilityProvider.notifier).setVisible(false);
         }
       }
     });
   }
 
   void _onInteraction() {
-    if (!_controlsVisible) {
-      setState(() {
-        _controlsVisible = true;
-      });
+    if (!ref.read(controlsVisibilityProvider)) {
+      ref.read(controlsVisibilityProvider.notifier).setVisible(true);
     }
     _startHideTimer();
   }
@@ -249,7 +245,8 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
     final supportsVideoFitMode =
         hasVideo && !(playbackStatus?.isIFrameMode ?? false);
 
-    final showControls = widget.alwaysShowControls || _controlsVisible;
+    final controlsVisible = ref.watch(controlsVisibilityProvider);
+    final showControls = widget.alwaysShowControls || controlsVisible;
 
     // When paused, controls must always be visible — the timer guard in
     // _startHideTimer only hides when isPlaying, but if controls were hidden
@@ -257,7 +254,7 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
     if (!isPlaying && !showControls && !widget.alwaysShowControls) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !widget.alwaysShowControls) {
-          setState(() => _controlsVisible = true);
+          ref.read(controlsVisibilityProvider.notifier).setVisible(true);
           // Don't start hide timer — leave controls up while paused.
         }
       });
@@ -286,6 +283,7 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: _onInteraction,
+                    child: Container(color: Colors.transparent),
                   ),
                 ),
               ),
@@ -544,9 +542,6 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                                     ?.networkMediaUri
                                                     ?.contains('dmcdn.net') ==
                                                 true;
-                                        debugPrint(
-                                          'SLIDER: isDailymotion=$isDailymotion, uri=${playerNotifier.currentPlaybackTrack?.networkMediaUri}',
-                                        );
                                         return Slider(
                                           value:
                                               (_dragValue ??
