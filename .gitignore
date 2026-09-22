@@ -64,3 +64,6 @@ test.js
 .env.macos_release*
 .env.android_release*
 keystore_base64.txt
+ppplayer_db.sqlite
+settings.hive
+settings.lock
