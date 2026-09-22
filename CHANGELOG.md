@@ -2,6 +2,19 @@
 
 All notable changes to PPPlayer will be documented in this file.
 
+## [2.0.1] - 2026-09-21
+
+### Added
+- Added support for Dutch, Romanian, Thai, Ukrainian, Urdu, and Vietnamese localizations.
+- Added direct top tracks playback on artist cards in the artist and home screens.
+- Added direct playlist and album playback to the AlbumCard hover overlay.
+- Added Instagram, Facebook, and LinkedIn links to the about dialog.
+
+### Changed
+- Redesigned genre and search category cards with dynamic hash-based colors and icons.
+- Updated action buttons in the about dialog.
+- Routine maintenance and removal of temporary debugging and development scripts from the repository to reduce clutter.
+
 ## [2.0.0] - 2026-09-20
 
 ### Added
