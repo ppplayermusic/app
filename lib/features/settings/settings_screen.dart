@@ -687,6 +687,18 @@ class SettingsScreen extends ConsumerWidget {
         return 'Bahasa Melayu';
       case 'tr':
         return 'Türkçe';
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'th':
+        return 'ไทย';
+      case 'ur':
+        return 'اردو';
+      case 'uk':
+        return 'Українська';
+      case 'nl':
+        return 'Nederlands';
+      case 'ro':
+        return 'Română';
       default:
         return AppLocalizations.of(context)!.systemDefault;
     }
