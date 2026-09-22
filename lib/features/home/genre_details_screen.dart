@@ -101,17 +101,43 @@ class GenreDetailsScreen extends ConsumerWidget {
                     fit: StackFit.expand,
                     children: [
                       // Base Background
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              themeColor,
-                              themeColor.withValues(alpha: 0.6),
-                              colorScheme.surface,
-                            ],
-                            stops: const [0.0, 0.4, 1.0],
+                      tracksAsync.maybeWhen(
+                        data: (tracks) {
+                          if (tracks.isEmpty) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    themeColor,
+                                    themeColor.withValues(alpha: 0.6),
+                                    colorScheme.surface,
+                                  ],
+                                  stops: const [0.0, 0.4, 1.0],
+                                ),
+                              ),
+                            );
+                          }
+                          return PPImage(
+                            imageUrl: tracks.first.imageUrl,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                        orElse: () => Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                themeColor,
+                                themeColor.withValues(alpha: 0.6),
+                                colorScheme.surface,
+                              ],
+                              stops: const [0.0, 0.4, 1.0],
+                            ),
                           ),
                         ),
                       ),
