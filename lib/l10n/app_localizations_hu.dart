@@ -444,13 +444,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get albumsTab => 'Albumok';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Műfajok';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Lejátszási sebesség';
 
   @override
   String get addMusic => 'Zene hozzáadása';
@@ -546,7 +546,26 @@ class AppLocalizationsHu extends AppLocalizations {
   String get trackInfoDuration => 'Időtartam';
 
   @override
-  String get aboutDescription => 'Egy ingyenes, nyílt forráskódú zenelejátszó.';
+  String get aboutDescription =>
+      'Egy ingyenes, nyílt forráskódú médialejátszó.';
+
+  @override
+  String get aboutApp => 'A PPPlayer névjegye';
+
+  @override
+  String get appTagline => 'A te zenéd. A te stílusod.';
+
+  @override
+  String get exploreApp => 'PPPlayer felfedezése';
+
+  @override
+  String get viewSource => 'Forráskód megtekintése';
+
+  @override
+  String get seeWhatsNew => 'Újdonságok';
+
+  @override
+  String get getHelp => 'Segítségkérés';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -601,29 +620,29 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Napi mix $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => 'Kedvenceid\nés új felfedezések';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'E heti újdonságok';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Újdonságok';
 
   @override
   String get newMusicJustForYou => 'Új zene\ncsak neked';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Chill mix';
 
   @override
   String get relaxAndUnwind => 'Dőlj hátra és lazíts';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Fókusz mix';
 
   @override
   String get deepFocusAndProductivity => 'Mély fókusz\nés produktivitás';
@@ -692,10 +711,11 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Nem támogatott formátum vagy sérült fájl';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Fájl nem elérhető vagy nem található';
 
   @override
   String get localVideosCard => 'Helyi videók';

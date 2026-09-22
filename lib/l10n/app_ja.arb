@@ -167,7 +167,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "無料のオープンソース音楽プレーヤー。",
+  "aboutDescription": "無料でオープンソースのメディアプレーヤー。",
   "versionInfo": "バージョン {version} (ビルド {build})",
   "@versionInfo": {
     "placeholders": {
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "ジャンル",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "再生速度",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "サポートされていないフォーマットまたは破損したファイル",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "ファイルにアクセスできないか、見つかりません",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "字幕の読み込みエラー: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "字幕ファイルを読み込む...",
   "@loadSubtitleFile": {},
   "off": "オフ",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "PPPlayerについて",
+  "@aboutApp": {},
+  "appTagline": "あなたの音楽。あなたのスタイルで。",
+  "@appTagline": {},
+  "exploreApp": "PPPlayerを探索",
+  "@exploreApp": {},
+  "viewSource": "ソースコードを表示",
+  "@viewSource": {},
+  "seeWhatsNew": "新機能",
+  "@seeWhatsNew": {},
+  "getHelp": "ヘルプ",
+  "@getHelp": {}
 }

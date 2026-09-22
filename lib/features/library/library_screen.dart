@@ -329,7 +329,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                         ),
                                       ],
                                       image: DecorationImage(
-                                        image: const AssetImage('assets/logo.png'),
+                                        image: const AssetImage(
+                                          'assets/logo.png',
+                                        ),
                                         fit: BoxFit.cover,
                                         colorFilter: ColorFilter.mode(
                                           colorScheme.primary,

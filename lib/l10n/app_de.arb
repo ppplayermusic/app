@@ -167,7 +167,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "Ein kostenloser, Open-Source-Musikplayer.",
+  "aboutDescription": "Ein kostenloser, quelloffener Mediaplayer.",
   "versionInfo": "Version {version} (Build {build})",
   "@versionInfo": {
     "placeholders": {
@@ -208,7 +208,7 @@
   "yourMusicIsWaiting": "Deine Musik wartet.",
   "dailyMix": "Daily Mix {number}",
   "yourFavoritesAndNewDiscoveries": "Deine Favoriten\nund neue Entdeckungen",
-  "discoverWeekly": "Discover Weekly",
+  "discoverWeekly": "Mix der Woche",
   "releaseRadar": "Release Radar",
   "newMusicJustForYou": "Neue Musik\nnur für dich",
   "chillMix": "Chill Mix",
@@ -481,13 +481,13 @@
   "@importFolder": {},
   "genresTab": "Genres",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Wiedergabegeschwindigkeit",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Nicht unterstütztes Format oder beschädigte Datei",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "Datei unzugänglich oder nicht gefunden",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Fehler beim Laden des Untertitels: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Untertiteldatei laden...",
   "@loadSubtitleFile": {},
   "off": "Aus",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "Über PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "Deine Musik. Auf deine Weise.",
+  "@appTagline": {},
+  "exploreApp": "PPPlayer erkunden",
+  "@exploreApp": {},
+  "viewSource": "Quellcode anzeigen",
+  "@viewSource": {},
+  "seeWhatsNew": "Was ist neu",
+  "@seeWhatsNew": {},
+  "getHelp": "Hilfe erhalten",
+  "@getHelp": {}
 }

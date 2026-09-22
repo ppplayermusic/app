@@ -167,7 +167,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "Un lettore musicale gratuito e open source.",
+  "aboutDescription": "Un lettore multimediale gratuito e open source.",
   "versionInfo": "Versione {version} (Build {build})",
   "@versionInfo": {
     "placeholders": {
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "Generi",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Velocità di riproduzione",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Formato non supportato o file danneggiato",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "File inaccessibile o non trovato",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Errore durante il caricamento dei sottotitoli: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Carica file sottotitoli...",
   "@loadSubtitleFile": {},
   "off": "Spento",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "Informazioni su PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "La tua musica. A modo tuo.",
+  "@appTagline": {},
+  "exploreApp": "Esplora PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "Visualizza codice sorgente",
+  "@viewSource": {},
+  "seeWhatsNew": "Novità",
+  "@seeWhatsNew": {},
+  "getHelp": "Ottieni assistenza",
+  "@getHelp": {}
 }

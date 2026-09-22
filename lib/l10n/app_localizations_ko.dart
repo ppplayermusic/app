@@ -435,13 +435,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get albumsTab => '앨범';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => '장르';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => '재생 속도';
 
   @override
   String get addMusic => '음악 추가';
@@ -537,7 +537,25 @@ class AppLocalizationsKo extends AppLocalizations {
   String get trackInfoDuration => '시간';
 
   @override
-  String get aboutDescription => '무료 오픈소스 음악 플레이어입니다.';
+  String get aboutDescription => '무료 오픈소스 미디어 플레이어입니다.';
+
+  @override
+  String get aboutApp => 'PPPlayer 정보';
+
+  @override
+  String get appTagline => '당신의 음악. 당신의 방식대로.';
+
+  @override
+  String get exploreApp => 'PPPlayer 살펴보기';
+
+  @override
+  String get viewSource => '소스 보기';
+
+  @override
+  String get seeWhatsNew => '새로운 기능';
+
+  @override
+  String get getHelp => '도움 받기';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -592,29 +610,29 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return '데일리 믹스 $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => '즐겨찾기\n그리고 새로운 발견';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => '주간 추천';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => '신곡 레이더';
 
   @override
   String get newMusicJustForYou => '오직 당신을 위한\n새로운 음악';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => '칠 믹스';
 
   @override
   String get relaxAndUnwind => '휴식과 힐링';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => '포커스 믹스';
 
   @override
   String get deepFocusAndProductivity => '깊은 집중\n그리고 생산성';
@@ -681,11 +699,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get exportPlaylist => '재생 목록 내보내기';
 
   @override
-  String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+  String get playbackErrorUnsupportedFormat => '지원되지 않는 형식이거나 손상된 파일';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible => '파일에 액세스할 수 없거나 찾을 수 없음';
 
   @override
   String get localVideosCard => '로컬 비디오';

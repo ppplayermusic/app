@@ -46,7 +46,11 @@ abstract class INativePlayerAdapter {
   /// that do not render video (e.g. audio-only test fakes).
   VideoController? get videoController;
 
-  Future<void> open(String uri, {bool play = false, Map<String, String>? httpHeaders});
+  Future<void> open(
+    String uri, {
+    bool play = false,
+    Map<String, String>? httpHeaders,
+  });
   Future<void> play();
   Future<void> pause();
   Future<void> stop();
@@ -73,21 +77,35 @@ class MediaKitPlayerAdapter implements INativePlayerAdapter {
   static VideoController? _sharedVideoController;
 
   MediaKitPlayerAdapter() {
-    _sharedPlayer ??= Player(configuration: const PlayerConfiguration(logLevel: MPVLogLevel.debug));
+    _sharedPlayer ??= Player(
+      configuration: const PlayerConfiguration(logLevel: MPVLogLevel.debug),
+    );
     _sharedVideoController ??= VideoController(_sharedPlayer!);
     _player = _sharedPlayer!;
     _videoController = _sharedVideoController!;
-    _player.stream.log.listen((event) => print('MPV_LOG: ${event.level} - ${event.prefix}: ${event.text}'));
+    _player.stream.log.listen(
+      (event) =>
+          print('MPV_LOG: ${event.level} - ${event.prefix}: ${event.text}'),
+    );
     try {
       // Enable ffmpeg HTTPS reconnects to prevent EOF/partial file when seeking
-      (_player.platform as dynamic).setProperty('stream-lavf-o', 'reconnect=1,reconnect_streamed=1,reconnect_delay_max=5,reconnect_on_network_error=1,reconnect_on_http_error=5xx');
+      (_player.platform as dynamic).setProperty(
+        'stream-lavf-o',
+        'reconnect=1,reconnect_streamed=1,reconnect_delay_max=5,reconnect_on_network_error=1,reconnect_on_http_error=5xx',
+      );
       // Keep some cache around
       (_player.platform as dynamic).setProperty('cache-secs', '100');
       // Disable exact seeking (hr-seek) for much better performance/stability on fMP4 HLS streams
       (_player.platform as dynamic).setProperty('hr-seek', 'no');
       // Increase demuxer cache to prevent stalling when skipping fragments
-      (_player.platform as dynamic).setProperty('demuxer-max-bytes', '150000000'); // 150MB
-      (_player.platform as dynamic).setProperty('demuxer-max-back-bytes', '50000000'); // 50MB
+      (_player.platform as dynamic).setProperty(
+        'demuxer-max-bytes',
+        '150000000',
+      ); // 150MB
+      (_player.platform as dynamic).setProperty(
+        'demuxer-max-back-bytes',
+        '50000000',
+      ); // 50MB
     } catch (e) {
       debugPrint('MediaKitPlaybackEngine: Failed to set mpv properties: $e');
     }
@@ -120,9 +138,14 @@ class MediaKitPlayerAdapter implements INativePlayerAdapter {
   Media? _currentMedia;
 
   @override
-  Future<void> open(String uri, {bool play = false, Map<String, String>? httpHeaders}) {
+  Future<void> open(
+    String uri, {
+    bool play = false,
+    Map<String, String>? httpHeaders,
+  }) {
     final headers = <String, String>{};
-    headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+    headers['User-Agent'] =
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
     headers['Accept'] = '*/*';
     if (httpHeaders != null) {
       headers.addAll(httpHeaders);
@@ -146,33 +169,48 @@ class MediaKitPlayerAdapter implements INativePlayerAdapter {
   @override
   Future<void> setSubtitleTrack(SubtitleTrack track) =>
       _player.setSubtitleTrack(track);
-  
+
   @override
   Future<void> setSubtitleDelay(Duration delay) async {
     if (_player.platform != null) {
       try {
-        await (_player.platform as dynamic).setProperty('sub-delay', (delay.inMilliseconds / 1000.0).toString());
+        await (_player.platform as dynamic).setProperty(
+          'sub-delay',
+          (delay.inMilliseconds / 1000.0).toString(),
+        );
       } catch (e) {
         debugPrint('Failed to set subtitle delay: $e');
       }
     }
   }
+
   @override
-  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {
+  Future<void> setSubtitleAppearance({
+    double? textSize,
+    int? backgroundColor,
+  }) async {
     if (_player.platform != null) {
       try {
         if (textSize != null) {
-          await (_player.platform as dynamic).setProperty('sub-font-size', textSize.toString());
+          await (_player.platform as dynamic).setProperty(
+            'sub-font-size',
+            textSize.toString(),
+          );
         }
         if (backgroundColor != null) {
-          final hexColor = '#${backgroundColor.toRadixString(16).padLeft(8, '0')}';
-          await (_player.platform as dynamic).setProperty('sub-back-color', hexColor);
+          final hexColor =
+              '#${backgroundColor.toRadixString(16).padLeft(8, '0')}';
+          await (_player.platform as dynamic).setProperty(
+            'sub-back-color',
+            hexColor,
+          );
         }
       } catch (e) {
         debugPrint('Failed to set subtitle appearance: $e');
       }
     }
   }
+
   @override
   bool get supportsTrackSelection => true;
   @override
@@ -357,7 +395,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
         if (session != _activeSession || _disposed) return;
         if (_currentStatus.isIFrameMode) return;
         final track = _currentStatus.track;
-        bool isSeekable = dur > Duration.zero || (track?.duration != null && track!.duration! > Duration.zero);
+        bool isSeekable =
+            dur > Duration.zero ||
+            (track?.duration != null && track!.duration! > Duration.zero);
         // Conservatively disable seeking for explicitly live streams.
         if (track?.liveStatus == PlaybackLiveStatus.live) {
           isSeekable = false;
@@ -643,8 +683,13 @@ class MediaKitPlaybackEngine implements PlaybackController {
     if (_disposed || myGenYt != _playGeneration) return;
 
     try {
-      _diag('PREPARE cueVideo/Playlist gen=$myGenYt videoId=${track.id} ss=$ss');
-      if (track.id.length > 11 && (track.id.startsWith('PL') || track.id.startsWith('RD') || track.id.startsWith('LL'))) {
+      _diag(
+        'PREPARE cueVideo/Playlist gen=$myGenYt videoId=${track.id} ss=$ss',
+      );
+      if (track.id.length > 11 &&
+          (track.id.startsWith('PL') ||
+              track.id.startsWith('RD') ||
+              track.id.startsWith('LL'))) {
         await _youtubeController!.cuePlaylist(
           list: [track.id],
           listType: yt.ListType.playlist,
@@ -657,7 +702,9 @@ class MediaKitPlaybackEngine implements PlaybackController {
         );
       }
     } catch (e) {
-      debugPrint('MediaKitPlaybackEngine: prepare cueVideo/Playlist failed: $e');
+      debugPrint(
+        'MediaKitPlaybackEngine: prepare cueVideo/Playlist failed: $e',
+      );
     }
   }
 
@@ -1112,7 +1159,11 @@ class MediaKitPlaybackEngine implements PlaybackController {
         }
         return;
       }
-      final isPlaylist = videoId.length > 11 && (videoId.startsWith('PL') || videoId.startsWith('RD') || videoId.startsWith('LL'));
+      final isPlaylist =
+          videoId.length > 11 &&
+          (videoId.startsWith('PL') ||
+              videoId.startsWith('RD') ||
+              videoId.startsWith('LL'));
       if (_intendedState == PlaybackState.paused) {
         if (isPlaylist) {
           await _youtubeController!.cuePlaylist(
@@ -1431,20 +1482,26 @@ class MediaKitPlaybackEngine implements PlaybackController {
       await _activeSession?.adapter.setSubtitleTrack(SubtitleTrack.uri(uri));
     }
   }
-  @override
-  bool get supportsTrackSelection => _activeSession?.adapter.supportsTrackSelection ?? false;
 
   @override
-  bool get supportsExternalSubtitles => _activeSession?.adapter.supportsExternalSubtitles ?? false;
+  bool get supportsTrackSelection =>
+      _activeSession?.adapter.supportsTrackSelection ?? false;
 
   @override
-  bool get supportsSubtitleDelay => _activeSession?.adapter.supportsSubtitleDelay ?? false;
+  bool get supportsExternalSubtitles =>
+      _activeSession?.adapter.supportsExternalSubtitles ?? false;
 
   @override
-  bool get supportsSubtitleTextSize => _activeSession?.adapter.supportsSubtitleTextSize ?? false;
+  bool get supportsSubtitleDelay =>
+      _activeSession?.adapter.supportsSubtitleDelay ?? false;
 
   @override
-  bool get supportsSubtitleBackgroundStyling => _activeSession?.adapter.supportsSubtitleBackgroundStyling ?? false;
+  bool get supportsSubtitleTextSize =>
+      _activeSession?.adapter.supportsSubtitleTextSize ?? false;
+
+  @override
+  bool get supportsSubtitleBackgroundStyling =>
+      _activeSession?.adapter.supportsSubtitleBackgroundStyling ?? false;
 
   @override
   Future<void> setSubtitleDelay(Duration delay) async {
@@ -1453,9 +1510,15 @@ class MediaKitPlaybackEngine implements PlaybackController {
   }
 
   @override
-  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {
+  Future<void> setSubtitleAppearance({
+    double? textSize,
+    int? backgroundColor,
+  }) async {
     if (_currentStatus.isIFrameMode) return;
-    await _activeSession?.adapter.setSubtitleAppearance(textSize: textSize, backgroundColor: backgroundColor);
+    await _activeSession?.adapter.setSubtitleAppearance(
+      textSize: textSize,
+      backgroundColor: backgroundColor,
+    );
   }
   // ---------------------------------------------------------------------------
   // Status update + IFrame position polling

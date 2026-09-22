@@ -856,16 +856,26 @@ class _GenreCard extends StatelessWidget {
 
   IconData _getGenreIcon(String name) {
     final lowerName = name.toLowerCase();
-    if (lowerName.contains('top') || lowerName.contains('chart')) return Icons.bar_chart_rounded;
+    if (lowerName.contains('top') || lowerName.contains('chart'))
+      return Icons.bar_chart_rounded;
     if (lowerName.contains('pop')) return Icons.mic_external_on_rounded;
-    if (lowerName.contains('hip-hop') || lowerName.contains('rap') || lowerName.contains('r&b')) return Icons.speaker_rounded;
-    if (lowerName.contains('rock') || lowerName.contains('metal')) return Icons.electric_bolt_rounded;
+    if (lowerName.contains('hip-hop') ||
+        lowerName.contains('rap') ||
+        lowerName.contains('r&b'))
+      return Icons.speaker_rounded;
+    if (lowerName.contains('rock') || lowerName.contains('metal'))
+      return Icons.electric_bolt_rounded;
     if (lowerName.contains('mood')) return Icons.wb_twilight_rounded;
-    if (lowerName.contains('workout') || lowerName.contains('fitness')) return Icons.monitor_heart_rounded;
-    if (lowerName.contains('chill') || lowerName.contains('sleep')) return Icons.nightlight_round;
-    if (lowerName.contains('party') || lowerName.contains('dance')) return Icons.celebration_rounded;
-    if (lowerName.contains('focus') || lowerName.contains('study')) return Icons.center_focus_strong_rounded;
-    if (lowerName.contains('indie') || lowerName.contains('alternative')) return Icons.camera_alt_rounded;
+    if (lowerName.contains('workout') || lowerName.contains('fitness'))
+      return Icons.monitor_heart_rounded;
+    if (lowerName.contains('chill') || lowerName.contains('sleep'))
+      return Icons.nightlight_round;
+    if (lowerName.contains('party') || lowerName.contains('dance'))
+      return Icons.celebration_rounded;
+    if (lowerName.contains('focus') || lowerName.contains('study'))
+      return Icons.center_focus_strong_rounded;
+    if (lowerName.contains('indie') || lowerName.contains('alternative'))
+      return Icons.camera_alt_rounded;
     return Icons.music_note_rounded;
   }
 
@@ -1094,7 +1104,9 @@ class _AlbumCardState extends ConsumerState<_AlbumCard> {
             .first;
         final rawTracks = cacheResult.data;
         if (rawTracks.isNotEmpty) {
-          ref.read(playerProvider.notifier).playTrack(rawTracks.first, queue: rawTracks);
+          ref
+              .read(playerProvider.notifier)
+              .playTrack(rawTracks.first, queue: rawTracks);
         }
       } catch (e) {
         widget.onTap();
@@ -1111,7 +1123,9 @@ class _AlbumCardState extends ConsumerState<_AlbumCard> {
               .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
               .toList();
           if (tracks.isNotEmpty) {
-            ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+            ref
+                .read(playerProvider.notifier)
+                .playTrack(tracks.first, queue: tracks);
           }
         }
       } catch (e) {
@@ -1316,7 +1330,9 @@ class _ArtistCircle extends ConsumerWidget {
                           .first;
                       final rawTracks = cacheResult.data;
                       final tracks = rawTracks
-                          .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
+                          .map(
+                            (j) => Track.fromSpotify(j as Map<String, dynamic>),
+                          )
                           .toList();
                       if (tracks.isNotEmpty) {
                         ref
@@ -1735,7 +1751,9 @@ class _MixCardState extends State<_MixCard> {
                               'assets/logo.png',
                               width: 13,
                               height: 13,
-                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.8),
                             ),
                           ),
                         ),
@@ -1757,10 +1775,9 @@ class _MixCardState extends State<_MixCard> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withValues(alpha: 0.6),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.6),
                                 blurRadius: 10,
                                 spreadRadius: 1,
                               ),
@@ -1880,7 +1897,9 @@ class _StaggeredHeader extends StatelessWidget {
             width: 3,
             height: 24,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary, // Theme vertical line
+              color: Theme.of(
+                context,
+              ).colorScheme.primary, // Theme vertical line
               borderRadius: BorderRadius.circular(1.5),
             ),
           ),

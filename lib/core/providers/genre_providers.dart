@@ -40,38 +40,36 @@ final categoryTopTracksProvider = StreamProvider.family<List<Track>, String>((
   yield* repo.watchPlaylistTracks(playlistId).map((r) => r.data);
 });
 
-final categoryCollageImagesProvider = StreamProvider.family<List<String>, String>((
-  ref,
-  categoryId,
-) async* {
-  final tracks = await ref.watch(categoryTopTracksProvider(categoryId).future);
+final categoryCollageImagesProvider =
+    StreamProvider.family<List<String>, String>((ref, categoryId) async* {
+      final tracks = await ref.watch(
+        categoryTopTracksProvider(categoryId).future,
+      );
 
-  final images = <String>{};
-  for (final track in tracks) {
-    if (track.albumImage != null && track.albumImage!.isNotEmpty) {
-      images.add(track.albumImage!);
-      if (images.length >= 3) break;
-    }
-  }
-
-  yield images.toList();
-});
-
-final playlistCollageImagesProvider = StreamProvider.family<List<String>, String>((
-  ref,
-  playlistId,
-) async* {
-  final repo = ref.watch(spotifyRepositoryProvider);
-  final tracksStream = repo.watchPlaylistTracks(playlistId);
-
-  await for (final cacheResult in tracksStream) {
-    final images = <String>{};
-    for (final track in cacheResult.data) {
-      if (track.albumImage != null && track.albumImage!.isNotEmpty) {
-        images.add(track.albumImage!);
-        if (images.length >= 3) break;
+      final images = <String>{};
+      for (final track in tracks) {
+        if (track.albumImage != null && track.albumImage!.isNotEmpty) {
+          images.add(track.albumImage!);
+          if (images.length >= 3) break;
+        }
       }
-    }
-    yield images.toList();
-  }
-});
+
+      yield images.toList();
+    });
+
+final playlistCollageImagesProvider =
+    StreamProvider.family<List<String>, String>((ref, playlistId) async* {
+      final repo = ref.watch(spotifyRepositoryProvider);
+      final tracksStream = repo.watchPlaylistTracks(playlistId);
+
+      await for (final cacheResult in tracksStream) {
+        final images = <String>{};
+        for (final track in cacheResult.data) {
+          if (track.albumImage != null && track.albumImage!.isNotEmpty) {
+            images.add(track.albumImage!);
+            if (images.length >= 3) break;
+          }
+        }
+        yield images.toList();
+      }
+    });

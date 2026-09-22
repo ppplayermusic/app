@@ -12,7 +12,11 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
 
   const StreamPlaylistDetailScreen({super.key, required this.playlistId});
 
-  void _editPlaylist(BuildContext context, WidgetRef ref, StreamPlaylist playlist) {
+  void _editPlaylist(
+    BuildContext context,
+    WidgetRef ref,
+    StreamPlaylist playlist,
+  ) {
     final controller = TextEditingController(text: playlist.title);
     showDialog(
       context: context,
@@ -24,11 +28,16 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
-                ref.read(networkStreamServiceProvider).updatePlaylist(playlistId, controller.text.trim());
+                ref
+                    .read(networkStreamServiceProvider)
+                    .updatePlaylist(playlistId, controller.text.trim());
               }
               Navigator.pop(ctx);
             },
@@ -46,9 +55,14 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
         title: const Text('Delete Playlist'),
         content: const Text('Are you sure you want to delete this playlist?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             onPressed: () {
               ref.read(networkStreamServiceProvider).deletePlaylist(playlistId);
               Navigator.pop(ctx);
@@ -63,7 +77,11 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _editChannel(BuildContext context, WidgetRef ref, StreamChannel channel) {
+  void _editChannel(
+    BuildContext context,
+    WidgetRef ref,
+    StreamChannel channel,
+  ) {
     final titleController = TextEditingController(text: channel.title);
     final urlController = TextEditingController(text: channel.streamUrl);
     showDialog(
@@ -86,11 +104,17 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             onPressed: () {
-              if (titleController.text.trim().isNotEmpty && urlController.text.trim().isNotEmpty) {
-                ref.read(networkStreamServiceProvider).updateChannel(
+              if (titleController.text.trim().isNotEmpty &&
+                  urlController.text.trim().isNotEmpty) {
+                ref
+                    .read(networkStreamServiceProvider)
+                    .updateChannel(
                       channel.id,
                       titleController.text.trim(),
                       urlController.text.trim(),
@@ -149,7 +173,10 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
                       children: [
                         Icon(Icons.delete, size: 20, color: Colors.red),
                         SizedBox(width: 8),
-                        Text('Delete Playlist', style: TextStyle(color: Colors.red)),
+                        Text(
+                          'Delete Playlist',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ],
                     ),
                   ),
@@ -197,9 +224,17 @@ class StreamPlaylistDetailScreen extends ConsumerWidget {
                                   const Icon(Icons.connected_tv),
                             )
                           : const Icon(Icons.connected_tv),
-                      title: Text(channel.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      title: Text(
+                        channel.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       subtitle: channel.groupTitle != null
-                          ? Text(channel.groupTitle!, maxLines: 1, overflow: TextOverflow.ellipsis)
+                          ? Text(
+                              channel.groupTitle!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
                           : null,
                       trailing: IconButton(
                         icon: const Icon(Icons.edit, size: 20),

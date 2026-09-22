@@ -41,10 +41,7 @@ class StreamPlaylistsSliverGrid extends ConsumerWidget {
 
         if (isLoading) {
           return const SliverToBoxAdapter(
-            child: SizedBox(
-              height: 120,
-              child: Center(child: PPLogoLoader()),
-            ),
+            child: SizedBox(height: 120, child: Center(child: PPLogoLoader())),
           );
         }
 
@@ -124,7 +121,8 @@ class _StreamPlaylistCard extends ConsumerWidget {
             String groupTitle = 'Network Video';
             if (playlist.sourceKind == 'youtube_video') groupTitle = 'YouTube';
             if (playlist.sourceKind == 'vimeo_video') groupTitle = 'Vimeo';
-            if (playlist.sourceKind == 'dailymotion_video') groupTitle = 'Dailymotion';
+            if (playlist.sourceKind == 'dailymotion_video')
+              groupTitle = 'Dailymotion';
 
             final track = Track.fromNetworkStream(
               streamUrl: playlist.sourceUri,
@@ -147,7 +145,8 @@ class _StreamPlaylistCard extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: playlist.imageUrl != null && playlist.imageUrl!.isNotEmpty
+                child:
+                    playlist.imageUrl != null && playlist.imageUrl!.isNotEmpty
                     ? PPImage(
                         imageUrl: playlist.imageUrl!,
                         fit: BoxFit.cover,
@@ -175,8 +174,10 @@ class _StreamPlaylistCard extends ConsumerWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              (playlist.sourceKind == 'youtube_video' || playlist.sourceKind == 'vimeo_video' || playlist.sourceKind == 'dailymotion_video') 
-                  ? '${playlist.sourceKind.split('_').first.replaceFirst(playlist.sourceKind[0], playlist.sourceKind[0].toUpperCase())} Video' 
+              (playlist.sourceKind == 'youtube_video' ||
+                      playlist.sourceKind == 'vimeo_video' ||
+                      playlist.sourceKind == 'dailymotion_video')
+                  ? '${playlist.sourceKind.split('_').first.replaceFirst(playlist.sourceKind[0], playlist.sourceKind[0].toUpperCase())} Video'
                   : 'IPTV / Stream',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

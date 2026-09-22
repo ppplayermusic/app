@@ -443,13 +443,13 @@ class AppLocalizationsKk extends AppLocalizations {
   String get albumsTab => 'Альбомдар';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Жанрлар';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Ойнату жылдамдығы';
 
   @override
   String get addMusic => 'Музыка қосу';
@@ -545,7 +545,25 @@ class AppLocalizationsKk extends AppLocalizations {
   String get trackInfoDuration => 'Ұзақтығы';
 
   @override
-  String get aboutDescription => 'Тегін, ашық бастапқы кодты музыка ойнатқышы.';
+  String get aboutDescription => 'Тегін, ашық бастапқы медиа ойнатқыш.';
+
+  @override
+  String get aboutApp => 'PPPlayer туралы';
+
+  @override
+  String get appTagline => 'Сіздің музыкаңыз. Сіздің стиліңіз.';
+
+  @override
+  String get exploreApp => 'PPPlayer шолу';
+
+  @override
+  String get viewSource => 'Кодты көру';
+
+  @override
+  String get seeWhatsNew => 'Жаңалықтар';
+
+  @override
+  String get getHelp => 'Көмек алу';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -600,7 +618,7 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Күнделікті микс $number';
   }
 
   @override
@@ -608,22 +626,22 @@ class AppLocalizationsKk extends AppLocalizations {
       'Сіздің сүйіктілеріңіз\nжәне жаңалықтар';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Апталық жаңалықтар';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Жаңа релиздер';
 
   @override
   String get newMusicJustForYou => 'Тек сізге арналған\nжаңа музыка';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Чилл микс';
 
   @override
   String get relaxAndUnwind => 'Демалып, рахаттаныңыз';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Фокус микс';
 
   @override
   String get deepFocusAndProductivity => 'Терең назар\nжәне өнімділік';
@@ -691,10 +709,11 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Қолдау көрсетілмейтін пішім немесе зақымдалған файл';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Файл қолжетімсіз немесе табылмады';
 
   @override
   String get localVideosCard => 'Жергілікті бейнелер';

@@ -1157,8 +1157,44 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDescription.
   ///
   /// In en, this message translates to:
-  /// **'A free, open-source music player.'**
+  /// **'A free, open-source media player.'**
   String get aboutDescription;
+
+  /// No description provided for @aboutApp.
+  ///
+  /// In en, this message translates to:
+  /// **'About PPPlayer'**
+  String get aboutApp;
+
+  /// No description provided for @appTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your music. Your way.'**
+  String get appTagline;
+
+  /// No description provided for @exploreApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore PPPlayer'**
+  String get exploreApp;
+
+  /// No description provided for @viewSource.
+  ///
+  /// In en, this message translates to:
+  /// **'View the source'**
+  String get viewSource;
+
+  /// No description provided for @seeWhatsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'See what\'s new'**
+  String get seeWhatsNew;
+
+  /// No description provided for @getHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Get help'**
+  String get getHelp;
 
   /// No description provided for @versionInfo.
   ///

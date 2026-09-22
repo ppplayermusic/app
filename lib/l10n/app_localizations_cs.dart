@@ -443,13 +443,13 @@ class AppLocalizationsCs extends AppLocalizations {
   String get albumsTab => 'Alba';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Žánry';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Rychlost přehrávání';
 
   @override
   String get addMusic => 'Přidat hudbu';
@@ -546,7 +546,26 @@ class AppLocalizationsCs extends AppLocalizations {
   String get trackInfoDuration => 'Délka';
 
   @override
-  String get aboutDescription => 'Bezplatný, open-source hudební přehrávač.';
+  String get aboutDescription =>
+      'Bezplatný přehrávač médií s otevřeným zdrojovým kódem.';
+
+  @override
+  String get aboutApp => 'O PPPlayer';
+
+  @override
+  String get appTagline => 'Vaše hudba. Vaše pravidla.';
+
+  @override
+  String get exploreApp => 'Prozkoumat PPPlayer';
+
+  @override
+  String get viewSource => 'Zobrazit zdrojový kód';
+
+  @override
+  String get seeWhatsNew => 'Co je nového';
+
+  @override
+  String get getHelp => 'Získat pomoc';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -601,29 +620,29 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Denní mix $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => 'Vaše oblíbené\na nové objevy';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Objevujte týdně';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Radar novinek';
 
   @override
   String get newMusicJustForYou => 'Nová hudba\njen pro vás';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Pohodový mix';
 
   @override
   String get relaxAndUnwind => 'Relaxujte a odpočívejte';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Mix pro soustředění';
 
   @override
   String get deepFocusAndProductivity => 'Hluboké soustředění\na produktivita';
@@ -692,10 +711,11 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Nepodporovaný formát nebo poškozený soubor';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Soubor není přístupný nebo nebyl nalezen';
 
   @override
   String get localVideosCard => 'Místní videa';

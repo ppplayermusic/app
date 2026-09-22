@@ -167,7 +167,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "Um reprodutor de música gratuito e de código aberto.",
+  "aboutDescription": "Um reprodutor de mídia gratuito e de código aberto.",
   "versionInfo": "Versão {version} (Build {build})",
   "@versionInfo": {
     "placeholders": {
@@ -208,8 +208,8 @@
   "yourMusicIsWaiting": "Sua música está esperando.",
   "dailyMix": "Daily Mix {number}",
   "yourFavoritesAndNewDiscoveries": "Seus favoritos\ne novas descobertas",
-  "discoverWeekly": "Discover Weekly",
-  "releaseRadar": "Release Radar",
+  "discoverWeekly": "Descobertas da Semana",
+  "releaseRadar": "Radar de Lançamentos",
   "newMusicJustForYou": "Música nova\nsó para você",
   "chillMix": "Chill Mix",
   "relaxAndUnwind": "Relaxe e descanse",
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "Gêneros",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Velocidade de reprodução",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Formato não suportado ou arquivo corrompido",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "Arquivo inacessível ou não encontrado",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Erro ao carregar legenda: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Carregar arquivo de legenda...",
   "@loadSubtitleFile": {},
   "off": "Desativado",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "Sobre o PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "Sua música. Do seu jeito.",
+  "@appTagline": {},
+  "exploreApp": "Explorar o PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "Ver código fonte",
+  "@viewSource": {},
+  "seeWhatsNew": "Novidades",
+  "@seeWhatsNew": {},
+  "getHelp": "Obter ajuda",
+  "@getHelp": {}
 }

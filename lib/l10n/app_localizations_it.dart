@@ -441,13 +441,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get albumsTab => 'Album';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Generi';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Velocità di riproduzione';
 
   @override
   String get addMusic => 'Aggiungi musica';
@@ -543,7 +543,26 @@ class AppLocalizationsIt extends AppLocalizations {
   String get trackInfoDuration => 'Durata';
 
   @override
-  String get aboutDescription => 'Un lettore musicale gratuito e open source.';
+  String get aboutDescription =>
+      'Un lettore multimediale gratuito e open source.';
+
+  @override
+  String get aboutApp => 'Informazioni su PPPlayer';
+
+  @override
+  String get appTagline => 'La tua musica. A modo tuo.';
+
+  @override
+  String get exploreApp => 'Esplora PPPlayer';
+
+  @override
+  String get viewSource => 'Visualizza codice sorgente';
+
+  @override
+  String get seeWhatsNew => 'Novità';
+
+  @override
+  String get getHelp => 'Ottieni assistenza';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -691,10 +710,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Formato non supportato o file danneggiato';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'File inaccessibile o non trovato';
 
   @override
   String get localVideosCard => 'Video locali';

@@ -442,14 +442,16 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final playlist = widget.playlist;
     final playlistId = playlist['id'] as String;
-    
+
     // Default images (fallback)
     final rawImages = (playlist['images'] as List?) ?? [];
     final fallbackImages = rawImages.map((i) => i['url'] as String).toList();
     final fallbackImageUrl = fallbackImages.firstOrNull ?? '';
 
     // Collage images
-    final collageImagesAsync = ref.watch(playlistCollageImagesProvider(playlistId));
+    final collageImagesAsync = ref.watch(
+      playlistCollageImagesProvider(playlistId),
+    );
     final collageImages = collageImagesAsync.value ?? [];
 
     Widget imageWidget;
@@ -467,8 +469,10 @@ class _GenrePlaylistCardState extends ConsumerState<_GenrePlaylistCard> {
       );
     } else {
       imageWidget = PPImage(
-        imageUrl: collageImages.isNotEmpty ? collageImages.first : fallbackImageUrl, 
-        fit: BoxFit.cover
+        imageUrl: collageImages.isNotEmpty
+            ? collageImages.first
+            : fallbackImageUrl,
+        fit: BoxFit.cover,
       );
     }
 

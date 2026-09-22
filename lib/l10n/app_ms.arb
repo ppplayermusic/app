@@ -222,7 +222,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "Pemain muzik sumber terbuka dan percuma.",
+  "aboutDescription": "Pemain media sumber terbuka yang percuma.",
   "versionInfo": "Versi {version} (Binaan {build})",
   "@versionInfo": {
     "placeholders": {
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "Genre",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Kelajuan Main Balik",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Format tidak disokong atau fail rosak",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "Fail tidak dapat diakses atau tidak ditemui",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Ralat memuatkan sari kata: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Muat fail sari kata...",
   "@loadSubtitleFile": {},
   "off": "Tutup",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "Tentang PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "Muzik anda. Cara anda.",
+  "@appTagline": {},
+  "exploreApp": "Terokai PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "Lihat sumber",
+  "@viewSource": {},
+  "seeWhatsNew": "Lihat apa yang baharu",
+  "@seeWhatsNew": {},
+  "getHelp": "Dapatkan bantuan",
+  "@getHelp": {}
 }

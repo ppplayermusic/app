@@ -444,13 +444,13 @@ class AppLocalizationsUz extends AppLocalizations {
   String get albumsTab => 'Albomlar';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Janrlar';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Ijro tezligi';
 
   @override
   String get addMusic => 'Musiqa qo\'shish';
@@ -546,7 +546,25 @@ class AppLocalizationsUz extends AppLocalizations {
   String get trackInfoDuration => 'Davomiyligi';
 
   @override
-  String get aboutDescription => 'Bepul va ochiq kodli musiqa pleyeri.';
+  String get aboutDescription => 'Bepul, ochiq manbali media pleer.';
+
+  @override
+  String get aboutApp => 'PPPlayer haqida';
+
+  @override
+  String get appTagline => 'Sizning musiqangiz. Sizning uslubingiz.';
+
+  @override
+  String get exploreApp => 'PPPlayer bilan tanishish';
+
+  @override
+  String get viewSource => 'Manba kodini ko\'rish';
+
+  @override
+  String get seeWhatsNew => 'Nimalar yangi';
+
+  @override
+  String get getHelp => 'Yordam olish';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -601,29 +619,29 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Kundalik miks $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => 'Sevimli\nva yangi kashfiyotlar';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Haftalik kashfiyot';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Yangi relizlar';
 
   @override
   String get newMusicJustForYou => 'Faqat siz uchun\nyangi musiqa';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Sokin miks';
 
   @override
   String get relaxAndUnwind => 'Dam oling va rohatlaning';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Fokus miks';
 
   @override
   String get deepFocusAndProductivity => 'Chuqur diqqat\nva mahsuldorlik';
@@ -692,10 +710,11 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Qo\'llab-quvvatlanmaydigan format yoki fayl buzilgan';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Faylga kirib bo\'lmaydi yoki topilmadi';
 
   @override
   String get localVideosCard => 'Mahalliy videolar';

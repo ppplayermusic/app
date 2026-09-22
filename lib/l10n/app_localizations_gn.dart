@@ -442,13 +442,13 @@ class AppLocalizationsGn extends AppLocalizations {
   String get albumsTab => 'Aty';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Mba\'epu rerekua';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Pya\'e';
 
   @override
   String get addMusic => 'Mbojuaju purahéi';
@@ -544,7 +544,25 @@ class AppLocalizationsGn extends AppLocalizations {
   String get trackInfoDuration => 'Pukukue';
 
   @override
-  String get aboutDescription => 'Peteĩ purahéi ryrúre reigua ha ijehegui.';
+  String get aboutDescription => 'Mba\'epu rerekua ojekuaáva ha ndojepagáiva.';
+
+  @override
+  String get aboutApp => 'PPPlayer rehegua';
+
+  @override
+  String get appTagline => 'Nde purahéi. Nde reko.';
+
+  @override
+  String get exploreApp => 'Kuaa PPPlayer';
+
+  @override
+  String get viewSource => 'Hechauka rapo';
+
+  @override
+  String get seeWhatsNew => 'Ehecha mba\'e pyahu';
+
+  @override
+  String get getHelp => 'Jerure pytyvõ';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -599,7 +617,7 @@ class AppLocalizationsGn extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Mix ára ha ára $number';
   }
 
   @override
@@ -607,10 +625,10 @@ class AppLocalizationsGn extends AppLocalizations {
       'Ne mba\'e eipotavéva\nha pyahu rejuhúva';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Téma pyahu arapokõindýpe';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Purahéi pyahu';
 
   @override
   String get newMusicJustForYou => 'Purahéi pyahu\nndéve g̃uarãnte';
@@ -691,10 +709,10 @@ class AppLocalizationsGn extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Ndikatúi oñembohasa térã oñembyai';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible => 'Ndikatúi ojejuhu';
 
   @override
   String get localVideosCard => 'Ta\'ãngamýi ko\'ápe';

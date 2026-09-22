@@ -94,8 +94,9 @@ class SettingsState {
       lowDataMode: lowDataMode ?? this.lowDataMode,
       userName: userName ?? this.userName,
       userAvatarColorIndex: userAvatarColorIndex ?? this.userAvatarColorIndex,
-      userAvatarBase64:
-          nullifyAvatar ? null : (userAvatarBase64 ?? this.userAvatarBase64),
+      userAvatarBase64: nullifyAvatar
+          ? null
+          : (userAvatarBase64 ?? this.userAvatarBase64),
       isLoaded: isLoaded ?? this.isLoaded,
       spotifyProvider: spotifyProvider ?? this.spotifyProvider,
       youtubeSearchMethod: youtubeSearchMethod ?? this.youtubeSearchMethod,
@@ -106,7 +107,8 @@ class SettingsState {
       languageCode: languageCode ?? this.languageCode,
       videoFitMode: videoFitMode ?? this.videoFitMode,
       subtitleTextSize: subtitleTextSize ?? this.subtitleTextSize,
-      subtitleBackgroundColor: subtitleBackgroundColor ?? this.subtitleBackgroundColor,
+      subtitleBackgroundColor:
+          subtitleBackgroundColor ?? this.subtitleBackgroundColor,
       subtitleLanguage: subtitleLanguage ?? this.subtitleLanguage,
     );
   }
@@ -227,8 +229,10 @@ class SettingsNotifier extends Notifier<SettingsState> {
       languageCode: languageCode,
       videoFitMode: VideoFitMode
           .values[videoFitModeIndex.clamp(0, VideoFitMode.values.length - 1)],
-      subtitleTextSize: box.get('subtitle_text_size', defaultValue: 24.0) as double,
-      subtitleBackgroundColor: box.get('subtitle_bg_color', defaultValue: 0x80000000) as int,
+      subtitleTextSize:
+          box.get('subtitle_text_size', defaultValue: 24.0) as double,
+      subtitleBackgroundColor:
+          box.get('subtitle_bg_color', defaultValue: 0x80000000) as int,
       subtitleLanguage: box.get('subtitle_language') as String?,
       isLoaded: true,
     );

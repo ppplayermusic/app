@@ -442,13 +442,13 @@ class AppLocalizationsMs extends AppLocalizations {
   String get albumsTab => 'Album';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Genre';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Kelajuan Main Balik';
 
   @override
   String get addMusic => 'Tambah Muzik';
@@ -544,7 +544,25 @@ class AppLocalizationsMs extends AppLocalizations {
   String get trackInfoDuration => 'Tempoh';
 
   @override
-  String get aboutDescription => 'Pemain muzik sumber terbuka dan percuma.';
+  String get aboutDescription => 'Pemain media sumber terbuka yang percuma.';
+
+  @override
+  String get aboutApp => 'Tentang PPPlayer';
+
+  @override
+  String get appTagline => 'Muzik anda. Cara anda.';
+
+  @override
+  String get exploreApp => 'Terokai PPPlayer';
+
+  @override
+  String get viewSource => 'Lihat sumber';
+
+  @override
+  String get seeWhatsNew => 'Lihat apa yang baharu';
+
+  @override
+  String get getHelp => 'Dapatkan bantuan';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -690,10 +708,11 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Format tidak disokong atau fail rosak';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Fail tidak dapat diakses atau tidak ditemui';
 
   @override
   String get localVideosCard => 'Video Tempatan';

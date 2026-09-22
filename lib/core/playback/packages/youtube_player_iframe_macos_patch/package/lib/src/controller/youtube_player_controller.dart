@@ -131,7 +131,8 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     return _run(
       'cuePlaylist',
       data: {
-        list.length == 1 ? 'list' : 'playlist': list.length == 1 ? list.first : list,
+        list.length == 1 ? 'list' : 'playlist':
+            list.length == 1 ? list.first : list,
         'listType': listType?.value,
         'index': index,
         'startSeconds': startSeconds,
@@ -181,7 +182,8 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     return _run(
       'loadPlaylist',
       data: {
-        list.length == 1 ? 'list' : 'playlist': list.length == 1 ? list.first : list,
+        list.length == 1 ? 'list' : 'playlist':
+            list.length == 1 ? list.first : list,
         'listType': listType?.value,
         'index': index,
         'startSeconds': startSeconds,

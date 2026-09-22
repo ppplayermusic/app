@@ -211,38 +211,58 @@ class _EmptySearch extends ConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          // "Show all" implementation pending or empty for now
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: colorScheme.onSurfaceVariant,
-                          textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text('Show all'),
-                      )
+                            onPressed: () {
+                              // "Show all" implementation pending or empty for now
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: colorScheme.onSurfaceVariant,
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text('Show all'),
+                          )
                           .animate()
                           .fadeIn(duration: 600.ms)
-                          .slideX(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
+                          .slideX(
+                            begin: 0.1,
+                            end: 0,
+                            curve: Curves.easeOutCubic,
+                          ),
                       const SizedBox(width: 8),
                       TextButton(
-                        onPressed: () {
-                          ref.read(recentSearchesProvider.notifier).clearAll();
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: colorScheme.onSurfaceVariant,
-                          textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text('Clear all'),
-                      )
+                            onPressed: () {
+                              ref
+                                  .read(recentSearchesProvider.notifier)
+                                  .clearAll();
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: colorScheme.onSurfaceVariant,
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text('Clear all'),
+                          )
                           .animate()
                           .fadeIn(duration: 600.ms)
-                          .slideX(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
+                          .slideX(
+                            begin: 0.1,
+                            end: 0,
+                            curve: Curves.easeOutCubic,
+                          ),
                     ],
                   ),
                 ],
@@ -387,16 +407,26 @@ class _CategoryCardState extends State<_CategoryCard> {
 
   IconData _getCategoryIcon(String name) {
     final lowerName = name.toLowerCase();
-    if (lowerName.contains('top') || lowerName.contains('chart')) return Icons.bar_chart_rounded;
+    if (lowerName.contains('top') || lowerName.contains('chart'))
+      return Icons.bar_chart_rounded;
     if (lowerName.contains('pop')) return Icons.mic_external_on_rounded;
-    if (lowerName.contains('hip-hop') || lowerName.contains('rap') || lowerName.contains('r&b')) return Icons.speaker_rounded;
-    if (lowerName.contains('rock') || lowerName.contains('metal')) return Icons.electric_bolt_rounded;
+    if (lowerName.contains('hip-hop') ||
+        lowerName.contains('rap') ||
+        lowerName.contains('r&b'))
+      return Icons.speaker_rounded;
+    if (lowerName.contains('rock') || lowerName.contains('metal'))
+      return Icons.electric_bolt_rounded;
     if (lowerName.contains('mood')) return Icons.wb_twilight_rounded;
-    if (lowerName.contains('workout') || lowerName.contains('fitness')) return Icons.monitor_heart_rounded;
-    if (lowerName.contains('chill') || lowerName.contains('sleep')) return Icons.nightlight_round;
-    if (lowerName.contains('party') || lowerName.contains('dance')) return Icons.celebration_rounded;
-    if (lowerName.contains('focus') || lowerName.contains('study')) return Icons.center_focus_strong_rounded;
-    if (lowerName.contains('indie') || lowerName.contains('alternative')) return Icons.camera_alt_rounded;
+    if (lowerName.contains('workout') || lowerName.contains('fitness'))
+      return Icons.monitor_heart_rounded;
+    if (lowerName.contains('chill') || lowerName.contains('sleep'))
+      return Icons.nightlight_round;
+    if (lowerName.contains('party') || lowerName.contains('dance'))
+      return Icons.celebration_rounded;
+    if (lowerName.contains('focus') || lowerName.contains('study'))
+      return Icons.center_focus_strong_rounded;
+    if (lowerName.contains('indie') || lowerName.contains('alternative'))
+      return Icons.camera_alt_rounded;
     return Icons.music_note_rounded;
   }
 
@@ -408,7 +438,10 @@ class _CategoryCardState extends State<_CategoryCard> {
       cursor: SystemMouseCursors.click,
       child: TactileTap(
         onTap: () => context.push(
-          Uri(path: '/genre/${widget.id}', queryParameters: {'name': widget.name}).toString(),
+          Uri(
+            path: '/genre/${widget.id}',
+            queryParameters: {'name': widget.name},
+          ).toString(),
         ),
         scaleDown: 0.94,
         child: AnimatedScale(
@@ -421,19 +454,23 @@ class _CategoryCardState extends State<_CategoryCard> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  widget.color,
-                  widget.color.withValues(alpha: 0.6),
-                ],
+                colors: [widget.color, widget.color.withValues(alpha: 0.6)],
               ),
-              boxShadow: _isHovered ? [
-                BoxShadow(
-                  color: widget.color.withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ] : null,
-              border: _isHovered ? Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5) : null,
+              boxShadow: _isHovered
+                  ? [
+                      BoxShadow(
+                        color: widget.color.withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ]
+                  : null,
+              border: _isHovered
+                  ? Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      width: 1.5,
+                    )
+                  : null,
             ),
             clipBehavior: Clip.hardEdge,
             child: Stack(

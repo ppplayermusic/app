@@ -442,13 +442,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get albumsTab => 'Album';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Genre';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Kecepatan Pemutaran';
 
   @override
   String get addMusic => 'Tambahkan Musik';
@@ -544,7 +544,25 @@ class AppLocalizationsId extends AppLocalizations {
   String get trackInfoDuration => 'Durasi';
 
   @override
-  String get aboutDescription => 'Pemutar musik sumber terbuka dan gratis.';
+  String get aboutDescription => 'Pemutar media sumber terbuka dan gratis.';
+
+  @override
+  String get aboutApp => 'Tentang PPPlayer';
+
+  @override
+  String get appTagline => 'Musik Anda. Cara Anda.';
+
+  @override
+  String get exploreApp => 'Jelajahi PPPlayer';
+
+  @override
+  String get viewSource => 'Lihat sumber';
+
+  @override
+  String get seeWhatsNew => 'Lihat yang baru';
+
+  @override
+  String get getHelp => 'Dapatkan bantuan';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -599,7 +617,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Mix Harian $number';
   }
 
   @override
@@ -689,10 +707,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Format tidak didukung atau file rusak';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'File tidak dapat diakses atau tidak ditemukan';
 
   @override
   String get localVideosCard => 'Video Lokal';

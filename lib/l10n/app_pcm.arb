@@ -15,10 +15,10 @@
   "artistsYouFollow": "Artists wey yu dey follow",
   "artists": "ARTIS DEM",
   "artwork": "Artwork",
-  "autoplay": "Autoplay",
+  "autoplay": "Play amsef",
   "becauseYouListenedTo": "Because yu listen to",
   "browseAll": "See everything",
-  "cancel": "Cancel",
+  "cancel": "Cancel am",
   "clearAppCache": "Comot App Cache?",
   "clearCache": "Comot Cache",
   "clearHistory": "Comot History?",
@@ -45,10 +45,10 @@
     }
   },
   "deletePlaylist": "Delete Playlist",
-  "discover": "Discover",
-  "editProfile": "Edit Profile",
+  "discover": "Find",
+  "editProfile": "Change Profile",
   "enterYourName": "Put your name",
-  "error": "Error: {error}",
+  "error": "Wahala: {error}",
   "@error": {
     "placeholders": {
       "error": {}
@@ -66,10 +66,10 @@
       "genre": {}
     }
   },
-  "fansAlsoLike": "FANS ALSO LIKE",
-  "favorites": "Favorites",
-  "featuredPlaylists": "Featured Playlists",
-  "featuringArtist": "FEATURING {artistName}",
+  "fansAlsoLike": "FANS LIKE THIS ONE TOO",
+  "favorites": "My favorites",
+  "featuredPlaylists": "Odogwu Playlists",
+  "featuringArtist": "E CARRY {artistName}",
   "@featuringArtist": {
     "placeholders": {
       "artistName": {
@@ -77,7 +77,7 @@
       }
     }
   },
-  "featuringTouppercase": "FEATURING {artist}",
+  "featuringTouppercase": "E CARRY {artist}",
   "@featuringTouppercase": {
     "placeholders": {
       "artist": {}
@@ -94,8 +94,8 @@
   "goToArtistRadio": "Go artist radio",
   "goToPlaylist": "Go playlist side",
   "goToSongRadio": "Go song radio",
-  "home": "Home",
-  "inspiredByName": "Inspired by {name}",
+  "home": "House",
+  "inspiredByName": "Ginger from {name}",
   "@inspiredByName": {
     "placeholders": {
       "name": {}
@@ -103,7 +103,7 @@
   },
   "keepPlayingSimilarTracksWhenQueueEnds": "Keep playing similar songs when queue finish",
   "language": "Language",
-  "library": "Library",
+  "library": "My load",
   "likeAlbumsToSeeThemHere": "Like albums make yu see dem here",
   "likedSongs": "Songs wey yu like",
   "lowDataMode": "Low Data Mode",
@@ -121,7 +121,7 @@
   "newPlaylist": "New Playlist",
   "newPlaylist1": "New playlist",
   "newReleases": "New Releases",
-  "next": "Next",
+  "next": "Next one",
   "noAlbumsFound": "No album wey dem find",
   "noArtistsFollowed": "You never follow any artist",
   "noArtistsFound": "No artist wey dem find",
@@ -144,23 +144,23 @@
   "playlists": "Playlists",
   "playlists1": "Playlists",
   "popular": "Popular",
-  "popularAlbums": "Popular Albums",
-  "popularArtists": "Popular Artists",
+  "popularAlbums": "Bad Albums",
+  "popularArtists": "Odogwu Artists",
   "popularGenres": "Popular Genres",
   "popularHitsRightNow": "Popular songs now now",
-  "popularSongs": "Popular Songs",
+  "popularSongs": "Bad Songs",
   "popularTracks": "Popular Tracks",
-  "previous": "Previous",
+  "previous": "Before",
   "queue": "Queue",
   "queue1": "Queue",
   "queueTooltip": "Queue",
   "recentSearches": "Wetin you find before",
-  "recentlyPlayed": "Recently Played",
+  "recentlyPlayed": "Wetin I play last",
   "recommendedForYou": "Recommended For You",
   "removeFromQueue": "Comot from queue",
   "retry": "Try again",
   "scraping": "Getting data",
-  "search": "Search",
+  "search": "Find am",
   "searchHint": "Find music, artists, albums...",
   "searchInAlbum": "Search inside album...",
   "searchInLibrary": "Search inside library...",
@@ -222,7 +222,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "Awoof music player wey their code open for everybody.",
+  "aboutDescription": "Free and open-source media player.",
   "versionInfo": "Vershon {version} (Build {build})",
   "@versionInfo": {
     "placeholders": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Load subtitle file...",
   "@loadSubtitleFile": {},
   "off": "Off",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "About PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "Your music. Your way.",
+  "@appTagline": {},
+  "exploreApp": "Explore PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "View source",
+  "@viewSource": {},
+  "seeWhatsNew": "See wetin be new",
+  "@seeWhatsNew": {},
+  "getHelp": "Get help",
+  "@getHelp": {}
 }

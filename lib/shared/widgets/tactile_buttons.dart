@@ -220,7 +220,7 @@ class _TactilePlayerPlayPauseButtonState
     if (widget.isPlaying) {
       _loopController.repeat();
     }
-    
+
     if (widget.isLoading) {
       _loadingController.repeat();
     }
@@ -277,7 +277,11 @@ class _TactilePlayerPlayPauseButtonState
         (widget.isPlaying ? 'Pause' : AppLocalizations.of(context)!.play);
 
     Widget buttonContent = AnimatedBuilder(
-      animation: Listenable.merge([_transitionController, _loopController, _loadingController]),
+      animation: Listenable.merge([
+        _transitionController,
+        _loopController,
+        _loadingController,
+      ]),
       builder: (context, _) {
         final transition = _transitionController.value;
         final isReversing =

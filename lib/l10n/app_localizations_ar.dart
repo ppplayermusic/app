@@ -439,13 +439,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get albumsTab => 'الألبومات';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'الأنواع';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'سرعة التشغيل';
 
   @override
   String get addMusic => 'إضافة موسيقى';
@@ -544,7 +544,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trackInfoDuration => 'المدة';
 
   @override
-  String get aboutDescription => 'مشغل موسيقى مجاني ومفتوح المصدر.';
+  String get aboutDescription => 'مشغل وسائط مجاني ومفتوح المصدر.';
+
+  @override
+  String get aboutApp => 'حول PPPlayer';
+
+  @override
+  String get appTagline => 'موسيقاك. على طريقتك.';
+
+  @override
+  String get exploreApp => 'استكشاف PPPlayer';
+
+  @override
+  String get viewSource => 'عرض المصدر';
+
+  @override
+  String get seeWhatsNew => 'ما الجديد';
+
+  @override
+  String get getHelp => 'الحصول على المساعدة';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -599,29 +617,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'ميكس يومي $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => 'مفضلاتك\nواكتشافات جديدة';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'اكتشف هذا الأسبوع';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'رادار الإصدارات';
 
   @override
   String get newMusicJustForYou => 'موسيقى جديدة\nخصيصاً لك';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'ميكس هادئ';
 
   @override
   String get relaxAndUnwind => 'استرخِ واستمتع';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'ميكس للتركيز';
 
   @override
   String get deepFocusAndProductivity => 'تركيز عميق\nوإنتاجية';
@@ -688,11 +706,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exportPlaylist => 'تصدير قائمة تشغيل';
 
   @override
-  String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+  String get playbackErrorUnsupportedFormat => 'تنسيق غير مدعوم أو ملف تالف';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'تعذر الوصول إلى الملف أو لم يتم العثور عليه';
 
   @override
   String get localVideosCard => 'مقاطع فيديو محلية';

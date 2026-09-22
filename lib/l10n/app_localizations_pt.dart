@@ -440,13 +440,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get albumsTab => 'Álbuns';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Gêneros';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Velocidade de reprodução';
 
   @override
   String get addMusic => 'Adicionar música';
@@ -543,7 +543,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Um reprodutor de música gratuito e de código aberto.';
+      'Um reprodutor de mídia gratuito e de código aberto.';
+
+  @override
+  String get aboutApp => 'Sobre o PPPlayer';
+
+  @override
+  String get appTagline => 'Sua música. Do seu jeito.';
+
+  @override
+  String get exploreApp => 'Explorar o PPPlayer';
+
+  @override
+  String get viewSource => 'Ver código fonte';
+
+  @override
+  String get seeWhatsNew => 'Novidades';
+
+  @override
+  String get getHelp => 'Obter ajuda';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -606,10 +624,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Seus favoritos\ne novas descobertas';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Descobertas da Semana';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Radar de Lançamentos';
 
   @override
   String get newMusicJustForYou => 'Música nova\nsó para você';
@@ -690,10 +708,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Formato não suportado ou arquivo corrompido';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Arquivo inacessível ou não encontrado';
 
   @override
   String get localVideosCard => 'Vídeos Locais';

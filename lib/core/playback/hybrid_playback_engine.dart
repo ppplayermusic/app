@@ -408,7 +408,11 @@ class HybridPlaybackEngine implements PlaybackController {
   }
 
   @override
-  Future<void> play(PlaybackTrack track, {Duration startAt = Duration.zero, bool play = true}) async {
+  Future<void> play(
+    PlaybackTrack track, {
+    Duration startAt = Duration.zero,
+    bool play = true,
+  }) async {
     _playGeneration++;
     _handoffGeneration++;
     _statusController.add(const PlaybackStatus(state: PlaybackState.preparing));
@@ -535,9 +539,18 @@ class HybridPlaybackEngine implements PlaybackController {
   }
 
   @override
-  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {
-    await _foregroundEngine.setSubtitleAppearance(textSize: textSize, backgroundColor: backgroundColor);
-    await _backgroundEngine.setSubtitleAppearance(textSize: textSize, backgroundColor: backgroundColor);
+  Future<void> setSubtitleAppearance({
+    double? textSize,
+    int? backgroundColor,
+  }) async {
+    await _foregroundEngine.setSubtitleAppearance(
+      textSize: textSize,
+      backgroundColor: backgroundColor,
+    );
+    await _backgroundEngine.setSubtitleAppearance(
+      textSize: textSize,
+      backgroundColor: backgroundColor,
+    );
   }
 
   @override
@@ -553,7 +566,8 @@ class HybridPlaybackEngine implements PlaybackController {
   bool get supportsSubtitleTextSize => _activeEngine.supportsSubtitleTextSize;
 
   @override
-  bool get supportsSubtitleBackgroundStyling => _activeEngine.supportsSubtitleBackgroundStyling;
+  bool get supportsSubtitleBackgroundStyling =>
+      _activeEngine.supportsSubtitleBackgroundStyling;
 
   @override
   Future<void> dispose() async {

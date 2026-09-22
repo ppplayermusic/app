@@ -1,10 +1,4 @@
-enum VideoPlatform {
-  autoDetect,
-  youtube,
-  vimeo,
-  dailymotion,
-  custom,
-}
+enum VideoPlatform { autoDetect, youtube, vimeo, dailymotion, custom }
 
 extension VideoPlatformExtension on VideoPlatform {
   String get displayName {

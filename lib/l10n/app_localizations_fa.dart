@@ -441,13 +441,13 @@ class AppLocalizationsFa extends AppLocalizations {
   String get albumsTab => 'آلبوم‌ها';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'ژانرها';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'سرعت پخش';
 
   @override
   String get addMusic => 'افزودن موسیقی';
@@ -543,7 +543,25 @@ class AppLocalizationsFa extends AppLocalizations {
   String get trackInfoDuration => 'مدت زمان';
 
   @override
-  String get aboutDescription => 'یک پخش‌کننده موسیقی رایگان و متن‌باز.';
+  String get aboutDescription => 'یک پخش کننده رسانه منبع باز و رایگان.';
+
+  @override
+  String get aboutApp => 'درباره PPPlayer';
+
+  @override
+  String get appTagline => 'موسیقی شما. به روش شما.';
+
+  @override
+  String get exploreApp => 'گشت و گذار در PPPlayer';
+
+  @override
+  String get viewSource => 'مشاهده منبع';
+
+  @override
+  String get seeWhatsNew => 'موارد جدید';
+
+  @override
+  String get getHelp => 'دریافت کمک';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -598,7 +616,7 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'میکس روزانه $number';
   }
 
   @override
@@ -606,22 +624,22 @@ class AppLocalizationsFa extends AppLocalizations {
       'علاقه‌مندی‌های شما\nو کشفیات جدید';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'کشف هفتگی';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'رادار انتشار';
 
   @override
   String get newMusicJustForYou => 'موسیقی جدید\nفقط برای شما';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'میکس آرامش';
 
   @override
   String get relaxAndUnwind => 'آرامش و استراحت';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'میکس تمرکز';
 
   @override
   String get deepFocusAndProductivity => 'تمرکز عمیق\nو بهره‌وری';
@@ -689,10 +707,11 @@ class AppLocalizationsFa extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'فرمت پشتیبانی نشده یا فایل خراب است';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'فایل غیرقابل دسترسی است یا پیدا نشد';
 
   @override
   String get localVideosCard => 'ویدیوهای محلی';

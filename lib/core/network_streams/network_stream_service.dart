@@ -41,11 +41,15 @@ class NetworkStreamService {
     http.Client? client,
   }) async {
     final normalizedUrl = PlaylistParser.normalizeUrl(url);
-    
+
     // Check if it's a YouTube playlist URL
     final uri = Uri.tryParse(normalizedUrl);
-    if (uri != null && 
-        (uri.host == 'youtube.com' || uri.host == 'www.youtube.com' || uri.host == 'm.youtube.com' || uri.host == 'music.youtube.com' || uri.host == 'youtu.be')) {
+    if (uri != null &&
+        (uri.host == 'youtube.com' ||
+            uri.host == 'www.youtube.com' ||
+            uri.host == 'm.youtube.com' ||
+            uri.host == 'music.youtube.com' ||
+            uri.host == 'youtu.be')) {
       // It can be /playlist?list=... or /watch?v=...&list=...
       if (uri.queryParameters.containsKey('list')) {
         final playlistId = uri.queryParameters['list']!;
@@ -74,28 +78,34 @@ class NetworkStreamService {
     }
   }
 
-  Future<List<PlaylistItem>> _fetchYoutubePlaylist(String playlistId, {http.Client? client}) async {
+  Future<List<PlaylistItem>> _fetchYoutubePlaylist(
+    String playlistId, {
+    http.Client? client,
+  }) async {
     final apiKey = await _secureCredentialsService.readYoutubeApiKey();
     if (apiKey == null || apiKey.isEmpty) {
-      throw YoutubeApiKeyMissingException('A custom YouTube API Key is required to import playlists. Please add it in Settings.');
+      throw YoutubeApiKeyMissingException(
+        'A custom YouTube API Key is required to import playlists. Please add it in Settings.',
+      );
     }
 
     final localClient = client ?? http.Client();
     try {
       final List<PlaylistItem> channels = [];
       String? pageToken;
-      
+
       do {
-        final uri = Uri.https('www.googleapis.com', '/youtube/v3/playlistItems', {
-          'part': 'snippet',
-          'playlistId': playlistId,
-          'maxResults': '50',
-          if (pageToken != null) 'pageToken': pageToken,
-          'key': apiKey,
-        });
+        final uri =
+            Uri.https('www.googleapis.com', '/youtube/v3/playlistItems', {
+              'part': 'snippet',
+              'playlistId': playlistId,
+              'maxResults': '50',
+              if (pageToken != null) 'pageToken': pageToken,
+              'key': apiKey,
+            });
 
         final response = await localClient.get(uri);
-        
+
         if (response.statusCode == 403) {
           throw Exception('YouTube API Quota exceeded or invalid API Key.');
         } else if (response.statusCode == 404) {
@@ -110,29 +120,39 @@ class NetworkStreamService {
         for (final item in items) {
           final snippet = item['snippet'];
           if (snippet == null) continue;
-          
+
           final title = snippet['title'] as String?;
           // Skip deleted or private videos (title is usually "Private video" or "Deleted video")
-          if (title == null || title == 'Private video' || title == 'Deleted video') continue;
-          
+          if (title == null ||
+              title == 'Private video' ||
+              title == 'Deleted video')
+            continue;
+
           final resourceId = snippet['resourceId'];
-          if (resourceId == null || resourceId['kind'] != 'youtube#video') continue;
-          
+          if (resourceId == null || resourceId['kind'] != 'youtube#video')
+            continue;
+
           final videoId = resourceId['videoId'] as String?;
           if (videoId == null) continue;
-          
+
           final thumbnails = snippet['thumbnails'];
           String? logoUrl;
           if (thumbnails != null) {
-             logoUrl = thumbnails['maxres']?['url'] ?? thumbnails['high']?['url'] ?? thumbnails['medium']?['url'] ?? thumbnails['default']?['url'];
+            logoUrl =
+                thumbnails['maxres']?['url'] ??
+                thumbnails['high']?['url'] ??
+                thumbnails['medium']?['url'] ??
+                thumbnails['default']?['url'];
           }
 
-          channels.add(PlaylistItem(
-            title: title,
-            url: 'https://youtube.com/watch?v=$videoId',
-            tvgLogo: logoUrl,
-            groupTitle: snippet['channelTitle'] as String?,
-          ));
+          channels.add(
+            PlaylistItem(
+              title: title,
+              url: 'https://youtube.com/watch?v=$videoId',
+              tvgLogo: logoUrl,
+              groupTitle: snippet['channelTitle'] as String?,
+            ),
+          );
         }
 
         pageToken = data['nextPageToken'] as String?;
@@ -173,7 +193,11 @@ class NetworkStreamService {
           }
         }
         if (videoId != null) {
-          final response = await http.get(Uri.parse('https://www.dailymotion.com/player/metadata/video/$videoId'));
+          final response = await http.get(
+            Uri.parse(
+              'https://www.dailymotion.com/player/metadata/video/$videoId',
+            ),
+          );
           if (response.statusCode == 200) {
             final data = json.decode(response.body);
             final qualities = data['qualities'] as Map<String, dynamic>?;
@@ -187,7 +211,10 @@ class NetworkStreamService {
                 final cookies = response.headers['set-cookie'];
                 final headers = <String, String>{};
                 if (cookies != null) {
-                  headers['Cookie'] = cookies.split(',').map((c) => c.split(';')[0]).join('; ');
+                  headers['Cookie'] = cookies
+                      .split(',')
+                      .map((c) => c.split(';')[0])
+                      .join('; ');
                 }
                 headers['Referer'] = 'https://www.dailymotion.com/';
 
@@ -223,9 +250,11 @@ class NetworkStreamService {
           String playerUrl;
           if (uri.host == 'player.vimeo.com') {
             // Already a player URL, use as-is but strip extraneous params
-            playerUrl = 'https://player.vimeo.com/video/$videoId${hashToken != null ? '?h=$hashToken' : ''}';
+            playerUrl =
+                'https://player.vimeo.com/video/$videoId${hashToken != null ? '?h=$hashToken' : ''}';
           } else {
-            playerUrl = 'https://player.vimeo.com/video/$videoId${hashToken != null ? '?h=$hashToken' : ''}';
+            playerUrl =
+                'https://player.vimeo.com/video/$videoId${hashToken != null ? '?h=$hashToken' : ''}';
           }
 
           final response = await http.get(Uri.parse(playerUrl));
@@ -239,18 +268,21 @@ class NetworkStreamService {
               final endIndex = body.indexOf('</script>', jsonStart);
               if (endIndex != -1) {
                 String jsonStr = body.substring(jsonStart, endIndex).trim();
-                if (jsonStr.endsWith(';')) jsonStr = jsonStr.substring(0, jsonStr.length - 1);
+                if (jsonStr.endsWith(';'))
+                  jsonStr = jsonStr.substring(0, jsonStr.length - 1);
                 try {
                   final data = json.decode(jsonStr);
-                  final vimeoHeaders = {
-                    'Referer': 'https://vimeo.com/'
-                  };
+                  final vimeoHeaders = {'Referer': 'https://vimeo.com/'};
 
                   // Prefer progressive (MP4) for direct compatibility
-                  final mp4s = data['request']?['files']?['progressive'] as List<dynamic>?;
+                  final mp4s =
+                      data['request']?['files']?['progressive']
+                          as List<dynamic>?;
                   if (mp4s != null && mp4s.isNotEmpty) {
                     final url = mp4s[0]['url'] as String?;
-                    return url != null ? ExtractedStream(url: url, httpHeaders: vimeoHeaders) : null;
+                    return url != null
+                        ? ExtractedStream(url: url, httpHeaders: vimeoHeaders)
+                        : null;
                   }
                   // Fall back to HLS
                   final hls = data['request']?['files']?['hls']?['cdns'];
@@ -260,9 +292,13 @@ class NetworkStreamService {
                     final avcUrl = firstCdn['avc_url'] as String?;
                     final url = avcUrl ?? firstCdn['url'] as String?;
                     if (url != null && url.contains('/drm/')) {
-                      throw Exception('This video is DRM-protected and cannot be played directly.');
+                      throw Exception(
+                        'This video is DRM-protected and cannot be played directly.',
+                      );
                     }
-                    return url != null ? ExtractedStream(url: url, httpHeaders: vimeoHeaders) : null;
+                    return url != null
+                        ? ExtractedStream(url: url, httpHeaders: vimeoHeaders)
+                        : null;
                   }
                 } catch (e) {
                   if (e.toString().contains('DRM-protected')) rethrow;
@@ -270,7 +306,9 @@ class NetworkStreamService {
               }
             }
           } else if (response.statusCode == 403) {
-            throw Exception('This video has privacy restrictions and cannot be played outside of Vimeo.');
+            throw Exception(
+              'This video has privacy restrictions and cannot be played outside of Vimeo.',
+            );
           }
         }
       }
@@ -280,7 +318,10 @@ class NetworkStreamService {
     return null;
   }
 
-  Future<VideoMetadata> fetchVideoMetadata(String url, {http.Client? client}) async {
+  Future<VideoMetadata> fetchVideoMetadata(
+    String url, {
+    http.Client? client,
+  }) async {
     // Extract src from <iframe> embed code if user pasted one
     final trimmed = url.trim();
     if (trimmed.toLowerCase().startsWith('<iframe')) {
@@ -293,11 +334,12 @@ class NetworkStreamService {
     }
 
     final uri = Uri.tryParse(url);
-    if (uri == null) return const VideoMetadata(title: '', platform: VideoPlatform.custom);
+    if (uri == null)
+      return const VideoMetadata(title: '', platform: VideoPlatform.custom);
 
     VideoPlatform platform = VideoPlatform.custom;
     final host = uri.host.toLowerCase();
-    
+
     if (host.contains('youtube.com') || host == 'youtu.be') {
       platform = VideoPlatform.youtube;
     } else if (host.contains('vimeo.com')) {
@@ -305,13 +347,18 @@ class NetworkStreamService {
     } else if (host.contains('dailymotion.com') || host == 'dai.ly') {
       platform = VideoPlatform.dailymotion;
     } else {
-      return VideoMetadata(title: uri.pathSegments.lastOrNull ?? 'Unknown Stream', platform: platform);
+      return VideoMetadata(
+        title: uri.pathSegments.lastOrNull ?? 'Unknown Stream',
+        platform: platform,
+      );
     }
 
     final localClient = client ?? http.Client();
     try {
       if (platform == VideoPlatform.youtube) {
-        final oembedUrl = Uri.parse('https://www.youtube.com/oembed?url=$url&format=json');
+        final oembedUrl = Uri.parse(
+          'https://www.youtube.com/oembed?url=$url&format=json',
+        );
         final res = await localClient.get(oembedUrl);
         if (res.statusCode == 200) {
           final data = json.decode(res.body);
@@ -322,7 +369,9 @@ class NetworkStreamService {
           );
         }
       } else if (platform == VideoPlatform.vimeo) {
-        final oembedUrl = Uri.parse('https://vimeo.com/api/oembed.json?url=$url');
+        final oembedUrl = Uri.parse(
+          'https://vimeo.com/api/oembed.json?url=$url',
+        );
         final res = await localClient.get(oembedUrl);
         if (res.statusCode == 200) {
           final data = json.decode(res.body);
@@ -333,8 +382,13 @@ class NetworkStreamService {
           );
         }
       } else if (platform == VideoPlatform.dailymotion) {
-        final oembedUrl = Uri.parse('https://www.dailymotion.com/services/oembed?url=$url&format=json');
-        final res = await localClient.get(oembedUrl, headers: {'User-Agent': 'Mozilla/5.0'});
+        final oembedUrl = Uri.parse(
+          'https://www.dailymotion.com/services/oembed?url=$url&format=json',
+        );
+        final res = await localClient.get(
+          oembedUrl,
+          headers: {'User-Agent': 'Mozilla/5.0'},
+        );
         if (res.statusCode == 200) {
           try {
             final data = json.decode(res.body);
@@ -356,7 +410,10 @@ class NetworkStreamService {
       }
     }
 
-    return VideoMetadata(title: '${platform.displayName} Video', platform: platform);
+    return VideoMetadata(
+      title: '${platform.displayName} Video',
+      platform: platform,
+    );
   }
 
   /// Saves a parsed playlist into the database, clearing old channels for the same playlist.
@@ -487,17 +544,25 @@ class NetworkStreamService {
   }
 
   Stream<StreamPlaylist> watchPlaylist(int playlistId) {
-    return (_db.select(_db.streamPlaylists)..where((t) => t.id.equals(playlistId))).watchSingle();
+    return (_db.select(
+      _db.streamPlaylists,
+    )..where((t) => t.id.equals(playlistId))).watchSingle();
   }
 
   Future<void> updatePlaylist(int playlistId, String newTitle) async {
-    await (_db.update(_db.streamPlaylists)..where((t) => t.id.equals(playlistId))).write(
-      StreamPlaylistsCompanion(title: drift.Value(newTitle)),
-    );
+    await (_db.update(_db.streamPlaylists)
+          ..where((t) => t.id.equals(playlistId)))
+        .write(StreamPlaylistsCompanion(title: drift.Value(newTitle)));
   }
 
-  Future<void> updateChannel(int channelId, String newTitle, String newUrl) async {
-    await (_db.update(_db.streamChannels)..where((t) => t.id.equals(channelId))).write(
+  Future<void> updateChannel(
+    int channelId,
+    String newTitle,
+    String newUrl,
+  ) async {
+    await (_db.update(
+      _db.streamChannels,
+    )..where((t) => t.id.equals(channelId))).write(
       StreamChannelsCompanion(
         title: drift.Value(newTitle),
         streamUrl: drift.Value(newUrl),
@@ -506,6 +571,8 @@ class NetworkStreamService {
   }
 
   Future<void> deleteChannel(int channelId) async {
-    await (_db.delete(_db.streamChannels)..where((t) => t.id.equals(channelId))).go();
+    await (_db.delete(
+      _db.streamChannels,
+    )..where((t) => t.id.equals(channelId))).go();
   }
 }

@@ -542,7 +542,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trackInfoDuration => 'Duration';
 
   @override
-  String get aboutDescription => 'A free, open-source music player.';
+  String get aboutDescription => 'A free, open-source media player.';
+
+  @override
+  String get aboutApp => 'About PPPlayer';
+
+  @override
+  String get appTagline => 'Your music. Your way.';
+
+  @override
+  String get exploreApp => 'Explore PPPlayer';
+
+  @override
+  String get viewSource => 'View the source';
+
+  @override
+  String get seeWhatsNew => 'See what\'s new';
+
+  @override
+  String get getHelp => 'Get help';
 
   @override
   String versionInfo(Object version, Object build) {

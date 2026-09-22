@@ -526,12 +526,27 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                             ? playerState.duration.inSeconds
                                                   .toDouble()
                                             : 1.0;
-                                        final buffered = playerState.buffered
+                                        final buffered = playerState
+                                            .buffered
                                             .inSeconds
                                             .toDouble()
                                             .clamp(0.0, maxDuration);
-                                        final isDailymotion = playerNotifier.currentPlaybackTrack?.networkMediaUri?.contains('dailymotion.com') == true || playerNotifier.currentPlaybackTrack?.networkMediaUri?.contains('dmcdn.net') == true;
-                                        debugPrint('SLIDER: isDailymotion=$isDailymotion, uri=${playerNotifier.currentPlaybackTrack?.networkMediaUri}');
+                                        final isDailymotion =
+                                            playerNotifier
+                                                    .currentPlaybackTrack
+                                                    ?.networkMediaUri
+                                                    ?.contains(
+                                                      'dailymotion.com',
+                                                    ) ==
+                                                true ||
+                                            playerNotifier
+                                                    .currentPlaybackTrack
+                                                    ?.networkMediaUri
+                                                    ?.contains('dmcdn.net') ==
+                                                true;
+                                        debugPrint(
+                                          'SLIDER: isDailymotion=$isDailymotion, uri=${playerNotifier.currentPlaybackTrack?.networkMediaUri}',
+                                        );
                                         return Slider(
                                           value:
                                               (_dragValue ??
@@ -545,7 +560,8 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                           onChangeStart: (v) {
                                             _onInteraction();
                                             if (isDailymotion) {
-                                              final maxV = (buffered - 3.0).clamp(0.0, maxDuration);
+                                              final maxV = (buffered - 3.0)
+                                                  .clamp(0.0, maxDuration);
                                               if (v > maxV) v = maxV;
                                             }
                                             setState(() => _dragValue = v);
@@ -553,7 +569,8 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                           onChanged: (v) {
                                             _onInteraction();
                                             if (isDailymotion) {
-                                              final maxV = (buffered - 3.0).clamp(0.0, maxDuration);
+                                              final maxV = (buffered - 3.0)
+                                                  .clamp(0.0, maxDuration);
                                               if (v > maxV) v = maxV;
                                             }
                                             setState(() => _dragValue = v);
@@ -561,7 +578,8 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                           onChangeEnd: (v) {
                                             _onInteraction();
                                             if (isDailymotion) {
-                                              final maxV = (buffered - 3.0).clamp(0.0, maxDuration);
+                                              final maxV = (buffered - 3.0)
+                                                  .clamp(0.0, maxDuration);
                                               if (v > maxV) v = maxV;
                                             }
                                             playerNotifier.seekTo(
@@ -627,19 +645,26 @@ class _PlayerOverlaysState extends ConsumerState<PlayerOverlays> {
                                               onPressed: () {
                                                 _onInteraction();
                                                 final player = _mkPlayer;
-                                                if (Platform.isAndroid || Platform.isIOS) {
+                                                if (Platform.isAndroid ||
+                                                    Platform.isIOS) {
                                                   showModalBottomSheet(
                                                     context: context,
-                                                    builder: (_) => SubtitlePanel(player: player),
+                                                    builder: (_) =>
+                                                        SubtitlePanel(
+                                                          player: player,
+                                                        ),
                                                   );
                                                 } else {
                                                   showDialog(
                                                     context: context,
                                                     builder: (_) => AlertDialog(
-                                                      contentPadding: EdgeInsets.zero,
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
                                                       content: SizedBox(
                                                         width: 400,
-                                                        child: SubtitlePanel(player: player),
+                                                        child: SubtitlePanel(
+                                                          player: player,
+                                                        ),
                                                       ),
                                                     ),
                                                   );

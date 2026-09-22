@@ -445,13 +445,13 @@ class AppLocalizationsMy extends AppLocalizations {
   String get albumsTab => 'အယ်လ်ဘမ်များ';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'အမျိုးအစားများ';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'ဖွင့်သည့်အမြန်နှုန်း';
 
   @override
   String get addMusic => 'တေးဂီတ ပေါင်းထည့်ရန်';
@@ -547,8 +547,25 @@ class AppLocalizationsMy extends AppLocalizations {
   String get trackInfoDuration => 'ကြာချိန်';
 
   @override
-  String get aboutDescription =>
-      'အခမဲ့ဖြစ်သော အလွယ်တကူရနိုင်သည့် တေးဂီတဖွင့်စက်။';
+  String get aboutDescription => 'အခမဲ့နှင့် open-source မီဒီယာဖွင့်စက်။';
+
+  @override
+  String get aboutApp => 'PPPlayer အကြောင်း';
+
+  @override
+  String get appTagline => 'သင်၏ တေးဂီတ။ သင်၏ စတိုင်။';
+
+  @override
+  String get exploreApp => 'PPPlayer ကို လေ့လာရန်';
+
+  @override
+  String get viewSource => 'အရင်းအမြစ်ကုဒ် ကြည့်ရန်';
+
+  @override
+  String get seeWhatsNew => 'အသစ်များကို ကြည့်ရန်';
+
+  @override
+  String get getHelp => 'အကူအညီ ရယူရန်';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -603,7 +620,7 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'နေ့စဉ် Mix $number';
   }
 
   @override
@@ -611,10 +628,10 @@ class AppLocalizationsMy extends AppLocalizations {
       'သင်နှစ်သက်သော\nနှင့် အသစ်တွေ့ရှိမှုများ';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'အပတ်စဉ် ရှာဖွေပါ';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'အသစ်ထွက်ရှိမှု';
 
   @override
   String get newMusicJustForYou => 'သင့်အတွက်သီးသန့်\nသီချင်းသစ်များ';
@@ -696,10 +713,11 @@ class AppLocalizationsMy extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'ပံ့ပိုးမထားသောဖော်မတ် သို့မဟုတ် ဖိုင်ပျက်စီးနေသည်';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'ဖိုင်ကိုဝင်သုံး၍မရပါ သို့မဟုတ် ရှာမတွေ့ပါ';
 
   @override
   String get localVideosCard => 'စက်တွင်း ဗီဒီယိုများ';

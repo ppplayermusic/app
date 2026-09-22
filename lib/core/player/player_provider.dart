@@ -153,7 +153,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
     ref.listen(settingsProvider, (previous, next) {
       if (previous?.subtitleTextSize != next.subtitleTextSize ||
           previous?.subtitleBackgroundColor != next.subtitleBackgroundColor) {
-        ref.read(playbackControllerProvider).setSubtitleAppearance(
+        ref
+            .read(playbackControllerProvider)
+            .setSubtitleAppearance(
               textSize: next.subtitleTextSize,
               backgroundColor: next.subtitleBackgroundColor,
             );
@@ -240,8 +242,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
       final isNetworkStream = track?.isNetworkStream ?? false;
 
       if (isNetworkStream) {
-        debugPrint('PlayerNotifier: Network stream error detected. Refreshing stream...');
-        final fallbackPos = status.position == Duration.zero ? state.position : status.position;
+        debugPrint(
+          'PlayerNotifier: Network stream error detected. Refreshing stream...',
+        );
+        final fallbackPos = status.position == Duration.zero
+            ? state.position
+            : status.position;
         _handleNetworkStreamFailure(fallbackPos);
         return;
       }
@@ -266,14 +272,18 @@ class PlayerNotifier extends Notifier<PlayerState> {
         final progress = (status.position - _lastProgressPosition!).abs();
 
         // If actual progress > 3s AND elapsed time > 3s
-        if (elapsed > const Duration(seconds: 3) && progress > const Duration(seconds: 3)) {
+        if (elapsed > const Duration(seconds: 3) &&
+            progress > const Duration(seconds: 3)) {
           if (_consecutiveTrackFailures > 0) {
-            debugPrint('PlayerNotifier: 3 seconds of actual progress achieved. Resetting failure counter.');
+            debugPrint(
+              'PlayerNotifier: 3 seconds of actual progress achieved. Resetting failure counter.',
+            );
             _consecutiveTrackFailures = 0;
           }
         }
       }
-    } else if (status.state == PlaybackState.buffering || status.state == PlaybackState.error) {
+    } else if (status.state == PlaybackState.buffering ||
+        status.state == PlaybackState.error) {
       // Reset tracking on interruptions
       _lastProgressTime = null;
       _lastProgressPosition = null;
@@ -652,10 +662,15 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
         var resolvedTrack = targetTrack;
         Map<String, String>? resolvedHeaders;
-        if (resolvedTrack.sourceType == TrackSourceType.networkStream && resolvedTrack.networkStreamUrl != null) {
-          final extracted = await ref.read(networkStreamServiceProvider).extractDirectStreamUrl(resolvedTrack.networkStreamUrl!);
+        if (resolvedTrack.sourceType == TrackSourceType.networkStream &&
+            resolvedTrack.networkStreamUrl != null) {
+          final extracted = await ref
+              .read(networkStreamServiceProvider)
+              .extractDirectStreamUrl(resolvedTrack.networkStreamUrl!);
           if (extracted != null) {
-            resolvedTrack = resolvedTrack.copyWith(networkStreamUrl: extracted.url);
+            resolvedTrack = resolvedTrack.copyWith(
+              networkStreamUrl: extracted.url,
+            );
             resolvedHeaders = extracted.httpHeaders;
           }
         }
@@ -668,9 +683,12 @@ class PlayerNotifier extends Notifier<PlayerState> {
           subtitleUri: null, // Clear subtitles when a new track plays
         );
 
-        final actualStartAt = _pendingSeek?.position ?? position ?? Duration.zero;
+        final actualStartAt =
+            _pendingSeek?.position ?? position ?? Duration.zero;
         if (_pendingSeek != null) {
-          debugPrint('PlayerNotifier: Applying pending seek during load: ${_pendingSeek!.position}');
+          debugPrint(
+            'PlayerNotifier: Applying pending seek during load: ${_pendingSeek!.position}',
+          );
         }
 
         await _controller.play(
@@ -721,8 +739,8 @@ class PlayerNotifier extends Notifier<PlayerState> {
       debugPrint('Failed to resolve track ${targetTrack.name}: $e');
       await _controller.stop();
       if (_disposed || myGen != _playbackGeneration) return;
-      final errorMessage = e.toString().contains('Exception:') 
-          ? e.toString().split('Exception: ').last 
+      final errorMessage = e.toString().contains('Exception:')
+          ? e.toString().split('Exception: ').last
           : 'Failed to resolve track playback URL';
       _handleLogicalTrackFailure(errorMessage);
       return;
@@ -852,6 +870,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
     _userIntentPlay = false;
     _controller.pause();
   }
+
   void resume() {
     _userIntentPlay = true;
     // Block system-initiated play commands (e.g. macOS media session) while
@@ -1142,7 +1161,7 @@ class PlayerNotifier extends Notifier<PlayerState> {
   void _handleNetworkStreamFailure(Duration lastPosition) async {
     if (_isRecovering) return;
     _isRecovering = true;
-    
+
     final track = state.currentTrack;
     if (track == null) {
       _isRecovering = false;
@@ -1151,7 +1170,9 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     _consecutiveTrackFailures++;
     if (_consecutiveTrackFailures >= 5) {
-      debugPrint('PlayerNotifier: Max network stream recovery attempts reached.');
+      debugPrint(
+        'PlayerNotifier: Max network stream recovery attempts reached.',
+      );
       state = state.copyWith(
         loadError: 'Stream failed to load after multiple attempts',
         isLoadingVideo: false,
@@ -1162,12 +1183,14 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
     _playbackGeneration++;
     final myGen = _playbackGeneration;
-    
+
     try {
       var resolvedTrack = track;
       Map<String, String>? resolvedHeaders;
       if (track.networkStreamUrl != null) {
-        final extracted = await ref.read(networkStreamServiceProvider).extractDirectStreamUrl(track.networkStreamUrl!);
+        final extracted = await ref
+            .read(networkStreamServiceProvider)
+            .extractDirectStreamUrl(track.networkStreamUrl!);
         if (extracted != null) {
           resolvedTrack = track.copyWith(networkStreamUrl: extracted.url);
           resolvedHeaders = extracted.httpHeaders;
@@ -1180,15 +1203,15 @@ class PlayerNotifier extends Notifier<PlayerState> {
 
       final actualStartAt = _pendingSeek?.position ?? lastPosition;
       if (_pendingSeek != null) {
-        debugPrint('PlayerNotifier: Applying pending seek during recovery: ${_pendingSeek!.position}');
+        debugPrint(
+          'PlayerNotifier: Applying pending seek during recovery: ${_pendingSeek!.position}',
+        );
       }
 
       await _controller.stop();
       if (_disposed || myGen != _playbackGeneration) return;
 
-      state = state.copyWith(
-        isLoadingVideo: true,
-      );
+      state = state.copyWith(isLoadingVideo: true);
 
       // Restore position but do not auto-resume unless user intended play
       await _controller.play(
@@ -1196,14 +1219,13 @@ class PlayerNotifier extends Notifier<PlayerState> {
         startAt: actualStartAt,
         play: _userIntentPlay,
       );
-      
+
       if (_disposed || myGen != _playbackGeneration) return;
       _isRecovering = false;
-      
     } catch (e) {
       debugPrint('PlayerNotifier: Network stream recovery failed: $e');
       if (_disposed || myGen != _playbackGeneration) return;
-      
+
       state = state.copyWith(
         loadError: 'Network stream error: $e',
         isLoadingVideo: false,

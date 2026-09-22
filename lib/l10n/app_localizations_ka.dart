@@ -443,13 +443,13 @@ class AppLocalizationsKa extends AppLocalizations {
   String get albumsTab => 'ალბომები';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'ჟანრები';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'დაკვრის სიჩქარე';
 
   @override
   String get addMusic => 'მუსიკის დამატება';
@@ -545,7 +545,25 @@ class AppLocalizationsKa extends AppLocalizations {
   String get trackInfoDuration => 'ხანგრძლივობა';
 
   @override
-  String get aboutDescription => 'უფასო, ღია კოდის მქონე მუსიკალური პლეერი.';
+  String get aboutDescription => 'უფასო, ღია კოდის მედია პლეერი.';
+
+  @override
+  String get aboutApp => 'PPPlayer-ის შესახებ';
+
+  @override
+  String get appTagline => 'თქვენი მუსიკა. თქვენს გემოზე.';
+
+  @override
+  String get exploreApp => 'გამოიკვლიე PPPlayer';
+
+  @override
+  String get viewSource => 'წყაროს ნახვა';
+
+  @override
+  String get seeWhatsNew => 'რა არის ახალი';
+
+  @override
+  String get getHelp => 'დახმარების მიღება';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -600,7 +618,7 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'დღიური მიქსი $number';
   }
 
   @override
@@ -608,22 +626,22 @@ class AppLocalizationsKa extends AppLocalizations {
       'შენი ფავორიტები\nდა ახალი აღმოჩენები';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'კვირის აღმოჩენები';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'ახალი რელიზები';
 
   @override
   String get newMusicJustForYou => 'ახალი მუსიკა\nმხოლოდ შენთვის';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'ჩილ მიქსი';
 
   @override
   String get relaxAndUnwind => 'დაისვენე და განიტვირთე';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'ფოკუს მიქსი';
 
   @override
   String get deepFocusAndProductivity => 'ღრმა ფოკუსი\nდა პროდუქტიულობა';
@@ -692,10 +710,11 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'მხარდაუჭერელი ფორმატი ან დაზიანებული ფაილი';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'ფაილი მიუწვდომელია ან ვერ მოიძებნა';
 
   @override
   String get localVideosCard => 'ლოკალური ვიდეოები';

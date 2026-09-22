@@ -450,7 +450,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Vitesse de lecture';
 
   @override
   String get addMusic => 'Ajouter de la musique';
@@ -547,7 +547,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Un lecteur de musique gratuit et open-source.';
+      'Un lecteur multimédia gratuit et open source.';
+
+  @override
+  String get aboutApp => 'À propos de PPPlayer';
+
+  @override
+  String get appTagline => 'Votre musique. À votre façon.';
+
+  @override
+  String get exploreApp => 'Explorer PPPlayer';
+
+  @override
+  String get viewSource => 'Voir le code source';
+
+  @override
+  String get seeWhatsNew => 'Nouveautés';
+
+  @override
+  String get getHelp => 'Obtenir de l\'aide';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -602,7 +620,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Mix du jour $number';
   }
 
   @override
@@ -610,22 +628,22 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vos favoris\net de nouvelles découvertes';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Découvertes de la semaine';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Radar des sorties';
 
   @override
   String get newMusicJustForYou => 'De la nouvelle musique\nrien que pour vous';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Mix détente';
 
   @override
   String get relaxAndUnwind => 'Détente et relaxation';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Mix concentration';
 
   @override
   String get deepFocusAndProductivity =>
@@ -695,10 +713,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Format non pris en charge ou fichier corrompu';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Fichier inaccessible ou introuvable';
 
   @override
   String get localVideosCard => 'Vidéos locales';

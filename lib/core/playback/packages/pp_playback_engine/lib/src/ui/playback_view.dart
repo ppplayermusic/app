@@ -101,9 +101,7 @@ class _PlaybackViewState extends State<PlaybackView> {
                   ),
                   if (widget.status.state == PlaybackState.preparing ||
                       widget.status.state == PlaybackState.buffering)
-                    Center(
-                      child: PPLogoLoader(size: 60, color: Colors.white),
-                    ),
+                    Center(child: PPLogoLoader(size: 60, color: Colors.white)),
                 ],
               ),
             );
@@ -125,7 +123,9 @@ class _PlaybackViewState extends State<PlaybackView> {
           widget.showControls ? mk.MaterialVideoControls : mk.NoVideoControls,
       fit: widget.fit,
       fill: Colors.transparent,
-      subtitleViewConfiguration: widget.subtitleViewConfiguration ?? const mk.SubtitleViewConfiguration(),
+      subtitleViewConfiguration:
+          widget.subtitleViewConfiguration ??
+          const mk.SubtitleViewConfiguration(),
     );
   }
 }

@@ -46,16 +46,18 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-          
+
           if (supportsTrackSelection) ...[
             ...tracks.map((track) {
               final isSelected = track == currentTrack;
               String? displayStr;
               if (track.id == 'no' || track.id == 'none') {
                 displayStr = AppLocalizations.of(context)!.off;
-              } else if (track.title != null && track.title.toString().trim().isNotEmpty) {
+              } else if (track.title != null &&
+                  track.title.toString().trim().isNotEmpty) {
                 displayStr = track.title;
-              } else if (track.language != null && track.language.toString().trim().isNotEmpty) {
+              } else if (track.language != null &&
+                  track.language.toString().trim().isNotEmpty) {
                 displayStr = track.language;
               } else {
                 displayStr = track.id;
@@ -66,7 +68,9 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
                 trailing: isSelected ? const Icon(Icons.check) : null,
                 onTap: () async {
                   if (track.id == 'no' || track.id == 'none') {
-                    await ref.read(playerProvider.notifier).setSubtitleTrack(null);
+                    await ref
+                        .read(playerProvider.notifier)
+                        .setSubtitleTrack(null);
                   } else {
                     widget.player?.setSubtitleTrack(track);
                   }
@@ -88,16 +92,23 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
           if (supportsDelay) ...[
             const Divider(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Row(
                 children: [
                   const Icon(Icons.timer),
                   const SizedBox(width: 16),
-                  Text('Delay: ${(currentDelay.inMilliseconds / 1000.0).toStringAsFixed(1)} s'),
+                  Text(
+                    'Delay: ${(currentDelay.inMilliseconds / 1000.0).toStringAsFixed(1)} s',
+                  ),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.remove),
-                    onPressed: () => _updateDelay((currentDelay.inMilliseconds / 1000.0) - 0.1),
+                    onPressed: () => _updateDelay(
+                      (currentDelay.inMilliseconds / 1000.0) - 0.1,
+                    ),
                     tooltip: 'Earlier',
                   ),
                   IconButton(
@@ -107,7 +118,9 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.add),
-                    onPressed: () => _updateDelay((currentDelay.inMilliseconds / 1000.0) + 0.1),
+                    onPressed: () => _updateDelay(
+                      (currentDelay.inMilliseconds / 1000.0) + 0.1,
+                    ),
                     tooltip: 'Later',
                   ),
                 ],
@@ -118,11 +131,17 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
           if (supportsSize || supportsBg) ...[
             const Divider(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Appearance', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Appearance',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   if (supportsSize) ...[
                     Row(
@@ -134,7 +153,9 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
                             min: 12.0,
                             max: 48.0,
                             onChanged: (val) {
-                              ref.read(settingsProvider.notifier).setSubtitleTextSize(val);
+                              ref
+                                  .read(settingsProvider.notifier)
+                                  .setSubtitleTextSize(val);
                             },
                           ),
                         ),
@@ -149,9 +170,11 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
                         Switch(
                           value: Color(settings.subtitleBackgroundColor).a > 0,
                           onChanged: (val) {
-                            ref.read(settingsProvider.notifier).setSubtitleBackgroundColor(
-                              val ? 0x80000000 : 0x00000000,
-                            );
+                            ref
+                                .read(settingsProvider.notifier)
+                                .setSubtitleBackgroundColor(
+                                  val ? 0x80000000 : 0x00000000,
+                                );
                           },
                         ),
                       ],
@@ -168,7 +191,9 @@ class _SubtitlePanelState extends ConsumerState<SubtitlePanel> {
 
   Future<void> _updateDelay(double delaySeconds) async {
     final ms = (delaySeconds * 1000).round();
-    await ref.read(playerProvider.notifier).setSubtitleDelay(Duration(milliseconds: ms));
+    await ref
+        .read(playerProvider.notifier)
+        .setSubtitleDelay(Duration(milliseconds: ms));
   }
 
   Future<void> _pickExternalSubtitle() async {

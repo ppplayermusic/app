@@ -19,10 +19,13 @@ class EmptyResultsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            icon,
-            size: 64,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-          ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.8, 0.8)),
+                icon,
+                size: 64,
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+              )
+              .animate()
+              .fadeIn(duration: 400.ms)
+              .scale(begin: const Offset(0.8, 0.8)),
           const SizedBox(height: 16),
           Text(
             message,

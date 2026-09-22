@@ -444,13 +444,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get albumsTab => 'एल्बम';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'शैलियां';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'प्लेबैक गति';
 
   @override
   String get addMusic => 'संगीत जोड़ें';
@@ -546,7 +546,25 @@ class AppLocalizationsHi extends AppLocalizations {
   String get trackInfoDuration => 'अवधि';
 
   @override
-  String get aboutDescription => 'एक निःशुल्क, ओपन-सोर्स म्यूजिक प्लेयर।';
+  String get aboutDescription => 'एक मुफ्त, ओपन-सोर्स मीडिया प्लेयर।';
+
+  @override
+  String get aboutApp => 'PPPlayer के बारे में';
+
+  @override
+  String get appTagline => 'आपका संगीत। आपके तरीके से।';
+
+  @override
+  String get exploreApp => 'PPPlayer का अन्वेषण करें';
+
+  @override
+  String get viewSource => 'स्रोत देखें';
+
+  @override
+  String get seeWhatsNew => 'नया क्या है देखें';
+
+  @override
+  String get getHelp => 'सहायता प्राप्त करें';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -601,29 +619,29 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'डेली मिक्स $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => 'आपके पसंदीदा\nऔर नई खोजें';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'साप्ताहिक खोजें';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'रिलीज़ रडार';
 
   @override
   String get newMusicJustForYou => 'नया संगीत\nसिर्फ आपके लिए';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'चिल मिक्स';
 
   @override
   String get relaxAndUnwind => 'आराम करें';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'फोकस मिक्स';
 
   @override
   String get deepFocusAndProductivity => 'गहरा ध्यान\nऔर उत्पादकता';
@@ -691,10 +709,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'असमर्थित प्रारूप या भ्रष्ट फ़ाइल';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible => 'फ़ाइल अगम्य या नहीं मिली';
 
   @override
   String get localVideosCard => 'स्थानीय वीडियो';

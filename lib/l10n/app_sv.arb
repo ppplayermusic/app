@@ -222,7 +222,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "En gratis musikspelare med öppen källkod.",
+  "aboutDescription": "En gratis mediaspelare med öppen källkod.",
   "versionInfo": "Version {version} (Bygge {build})",
   "@versionInfo": {
     "placeholders": {
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "Genrer",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Uppspelningshastighet",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Formatet stöds inte eller filen är skadad",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "Filen är oåtkomlig eller hittades inte",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Fel vid inläsning av undertext: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Ladda undertextfil...",
   "@loadSubtitleFile": {},
   "off": "Av",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "Om PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "Din musik. På ditt sätt.",
+  "@appTagline": {},
+  "exploreApp": "Utforska PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "Visa källkod",
+  "@viewSource": {},
+  "seeWhatsNew": "Nyheter",
+  "@seeWhatsNew": {},
+  "getHelp": "Få hjälp",
+  "@getHelp": {}
 }

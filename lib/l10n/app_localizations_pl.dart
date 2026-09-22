@@ -442,13 +442,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get albumsTab => 'Albumy';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Gatunki';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Prędkość odtwarzania';
 
   @override
   String get addMusic => 'Dodaj muzykę';
@@ -546,7 +546,25 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Darmowy odtwarzacz muzyki o otwartym kodzie źródłowym.';
+      'Darmowy odtwarzacz multimedialny typu open-source.';
+
+  @override
+  String get aboutApp => 'O PPPlayer';
+
+  @override
+  String get appTagline => 'Twoja muzyka. Na twój sposób.';
+
+  @override
+  String get exploreApp => 'Eksploruj PPPlayer';
+
+  @override
+  String get viewSource => 'Zobacz kod źródłowy';
+
+  @override
+  String get seeWhatsNew => 'Co nowego';
+
+  @override
+  String get getHelp => 'Uzyskaj pomoc';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -609,10 +627,10 @@ class AppLocalizationsPl extends AppLocalizations {
       'Twoje ulubione\ni nowe odkrycia';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Odkryj w tym tygodniu';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Radar premier';
 
   @override
   String get newMusicJustForYou => 'Nowa muzyka\ntylko dla Ciebie';
@@ -631,12 +649,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return 'Radio: $artist';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return 'Radio: $genre';
   }
 
   @override
@@ -692,10 +710,11 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Nieobsługiwany format lub uszkodzony plik';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Plik niedostępny lub nie znaleziony';
 
   @override
   String get localVideosCard => 'Lokalne wideo';

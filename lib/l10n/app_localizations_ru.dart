@@ -444,13 +444,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get albumsTab => 'Альбомы';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Жанры';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Скорость воспроизведения';
 
   @override
   String get addMusic => 'Добавить музыку';
@@ -549,7 +549,25 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Бесплатный музыкальный плеер с открытым исходным кодом.';
+      'Бесплатный медиаплеер с открытым исходным кодом.';
+
+  @override
+  String get aboutApp => 'О PPPlayer';
+
+  @override
+  String get appTagline => 'Твоя музыка. Твои правила.';
+
+  @override
+  String get exploreApp => 'Изучить PPPlayer';
+
+  @override
+  String get viewSource => 'Исходный код';
+
+  @override
+  String get seeWhatsNew => 'Что нового';
+
+  @override
+  String get getHelp => 'Получить помощь';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -604,29 +622,29 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Мой микс $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => 'Ваши любимые\nи новые открытия';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Открытия недели';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Радар новинок';
 
   @override
   String get newMusicJustForYou => 'Новая музыка\nтолько для вас';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Спокойный микс';
 
   @override
   String get relaxAndUnwind => 'Расслабьтесь и отдохните';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Фокус-микс';
 
   @override
   String get deepFocusAndProductivity =>
@@ -695,10 +713,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Неподдерживаемый формат или поврежденный файл';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible => 'Файл недоступен или не найден';
 
   @override
   String get localVideosCard => 'Локальные видео';

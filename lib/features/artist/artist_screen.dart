@@ -968,7 +968,9 @@ class _RelatedArtistCardState extends ConsumerState<_RelatedArtistCard> {
           .map((j) => Track.fromSpotify(j as Map<String, dynamic>))
           .toList();
       if (tracks.isNotEmpty) {
-        ref.read(playerProvider.notifier).playTrack(tracks.first, queue: tracks);
+        ref
+            .read(playerProvider.notifier)
+            .playTrack(tracks.first, queue: tracks);
       }
     } catch (e) {
       debugPrint('Failed to play related artist tracks: $e');

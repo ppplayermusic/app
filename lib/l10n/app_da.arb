@@ -222,7 +222,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "En gratis, open-source musikafspiller.",
+  "aboutDescription": "En gratis, open-source medieafspiller.",
   "versionInfo": "Version {version} (Build {build})",
   "@versionInfo": {
     "placeholders": {
@@ -261,7 +261,7 @@
   "goodEvening": "Godaften",
   "greetingWithName": "{greeting}, {name}",
   "yourMusicIsWaiting": "Din musik venter.",
-  "dailyMix": "Daily Mix {number}",
+  "dailyMix": "Daglige mix {number}",
   "yourFavoritesAndNewDiscoveries": "Dine favoritter\nog nye opdagelser",
   "discoverWeekly": "Discover Weekly",
   "releaseRadar": "Release Radar",
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "Genrer",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Afspilningshastighed",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Ikke-understøttet format eller beskadiget fil",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "Filen er utilgængelig eller ikke fundet",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Fejl ved indlæsning af undertekster: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Indlæs undertekstfil...",
   "@loadSubtitleFile": {},
   "off": "Fra",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "Om PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "Din musik. På din måde.",
+  "@appTagline": {},
+  "exploreApp": "Udforsk PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "Vis kildekode",
+  "@viewSource": {},
+  "seeWhatsNew": "Se hvad der er nyt",
+  "@seeWhatsNew": {},
+  "getHelp": "Få hjælp",
+  "@getHelp": {}
 }

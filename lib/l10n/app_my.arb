@@ -222,7 +222,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "အခမဲ့ဖြစ်သော အလွယ်တကူရနိုင်သည့် တေးဂီတဖွင့်စက်။",
+  "aboutDescription": "အခမဲ့နှင့် open-source မီဒီယာဖွင့်စက်။",
   "versionInfo": "ဗားရှင်း {version} (တည်ဆောက်မှု {build})",
   "@versionInfo": {
     "placeholders": {
@@ -261,10 +261,10 @@
   "goodEvening": "မင်္ဂလာညချမ်းပါ",
   "greetingWithName": "{greeting}, {name}",
   "yourMusicIsWaiting": "သင့်သီချင်းများ စောင့်နေပါသည်။",
-  "dailyMix": "Daily Mix {number}",
+  "dailyMix": "နေ့စဉ် Mix {number}",
   "yourFavoritesAndNewDiscoveries": "သင်နှစ်သက်သော\nနှင့် အသစ်တွေ့ရှိမှုများ",
-  "discoverWeekly": "Discover Weekly",
-  "releaseRadar": "Release Radar",
+  "discoverWeekly": "အပတ်စဉ် ရှာဖွေပါ",
+  "releaseRadar": "အသစ်ထွက်ရှိမှု",
   "newMusicJustForYou": "သင့်အတွက်သီးသန့်\nသီချင်းသစ်များ",
   "chillMix": "Chill Mix",
   "relaxAndUnwind": "အနားယူပါ",
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "အမျိုးအစားများ",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "ဖွင့်သည့်အမြန်နှုန်း",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "ပံ့ပိုးမထားသောဖော်မတ် သို့မဟုတ် ဖိုင်ပျက်စီးနေသည်",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "ဖိုင်ကိုဝင်သုံး၍မရပါ သို့မဟုတ် ရှာမတွေ့ပါ",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "စာတန်းထိုး ဖွင့်ရာတွင် အမှားအယွင်းဖြစ်နေပါသည်: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "စာတန်းထိုးဖိုင်ကို ထည့်သွင်းရန်...",
   "@loadSubtitleFile": {},
   "off": "ပိတ်ရန်",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "PPPlayer အကြောင်း",
+  "@aboutApp": {},
+  "appTagline": "သင်၏ တေးဂီတ။ သင်၏ စတိုင်။",
+  "@appTagline": {},
+  "exploreApp": "PPPlayer ကို လေ့လာရန်",
+  "@exploreApp": {},
+  "viewSource": "အရင်းအမြစ်ကုဒ် ကြည့်ရန်",
+  "@viewSource": {},
+  "seeWhatsNew": "အသစ်များကို ကြည့်ရန်",
+  "@seeWhatsNew": {},
+  "getHelp": "အကူအညီ ရယူရန်",
+  "@getHelp": {}
 }

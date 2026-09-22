@@ -434,13 +434,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get albumsTab => '专辑';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => '流派';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => '播放速度';
 
   @override
   String get addMusic => '添加音乐';
@@ -536,7 +536,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get trackInfoDuration => '时长';
 
   @override
-  String get aboutDescription => '免费、开源的音乐播放器。';
+  String get aboutDescription => '一个免费的开源媒体播放器。';
+
+  @override
+  String get aboutApp => '关于 PPPlayer';
+
+  @override
+  String get appTagline => '您的音乐，由您掌控。';
+
+  @override
+  String get exploreApp => '探索 PPPlayer';
+
+  @override
+  String get viewSource => '查看源代码';
+
+  @override
+  String get seeWhatsNew => '最新动态';
+
+  @override
+  String get getHelp => '获取帮助';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -591,29 +609,29 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return '日推 $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => '你的最爱\n和新发现';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => '每周发现';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => '新歌雷达';
 
   @override
   String get newMusicJustForYou => '专为你准备的\n新音乐';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => '放松混音';
 
   @override
   String get relaxAndUnwind => '放松身心';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => '专注混音';
 
   @override
   String get deepFocusAndProductivity => '深度专注\n与效率';
@@ -680,11 +698,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get exportPlaylist => '导出播放列表';
 
   @override
-  String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+  String get playbackErrorUnsupportedFormat => '不支持的格式或文件已损坏';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible => '文件无法访问或未找到';
 
   @override
   String get localVideosCard => '本地视频';

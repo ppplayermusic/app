@@ -443,13 +443,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get albumsTab => 'Albümler';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Türler';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Oynatma Hızı';
 
   @override
   String get addMusic => 'Müzik Ekle';
@@ -545,7 +545,25 @@ class AppLocalizationsTr extends AppLocalizations {
   String get trackInfoDuration => 'Süre';
 
   @override
-  String get aboutDescription => 'Hakkında açıklaması';
+  String get aboutDescription => 'Ücretsiz, açık kaynaklı bir medya oynatıcı.';
+
+  @override
+  String get aboutApp => 'PPPlayer Hakkında';
+
+  @override
+  String get appTagline => 'Senin müziğin. Senin tarzın.';
+
+  @override
+  String get exploreApp => 'PPPlayer\'ı Keşfet';
+
+  @override
+  String get viewSource => 'Kaynak kodu görüntüle';
+
+  @override
+  String get seeWhatsNew => 'Yenilikler';
+
+  @override
+  String get getHelp => 'Yardım al';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -690,10 +708,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Desteklenmeyen format veya bozuk dosya';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Dosyaya erişilemiyor veya bulunamadı';
 
   @override
   String get localVideosCard => 'Yerel Videolar';

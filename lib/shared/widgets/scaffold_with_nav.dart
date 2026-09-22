@@ -419,7 +419,8 @@ class _ScaffoldWithNavState extends ConsumerState<ScaffoldWithNav> {
         final primaryFocus = FocusManager.instance.primaryFocus;
         if (primaryFocus != null && primaryFocus.context != null) {
           final ctx = primaryFocus.context!;
-          final isTextInput = ctx.widget is EditableText ||
+          final isTextInput =
+              ctx.widget is EditableText ||
               ctx.findAncestorStateOfType<EditableTextState>() != null ||
               ctx.findAncestorWidgetOfExactType<TextField>() != null;
           if (isTextInput) {
@@ -1168,7 +1169,11 @@ class _DesktopSidebar extends ConsumerWidget {
               children: [
                 Hero(
                       tag: 'app_logo',
-                      child: Image.asset('assets/logo.png', height: 28, color: colorScheme.primary),
+                      child: Image.asset(
+                        'assets/logo.png',
+                        height: 28,
+                        color: colorScheme.primary,
+                      ),
                     )
                     .animate(
                       onPlay: (controller) => controller.repeat(reverse: true),
@@ -2004,8 +2009,11 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
     if (totalWidth <= 0 || widget.duration.inMilliseconds <= 0) return;
     double ratio = (localPosition.dx / totalWidth).clamp(0.0, 1.0);
     if (widget.isDailymotion) {
-      final safeBufferMs = (widget.duration.inMilliseconds * widget.bufferedProgress) - 3000;
-      final maxRatio = safeBufferMs > 0 ? safeBufferMs / widget.duration.inMilliseconds : 0.0;
+      final safeBufferMs =
+          (widget.duration.inMilliseconds * widget.bufferedProgress) - 3000;
+      final maxRatio = safeBufferMs > 0
+          ? safeBufferMs / widget.duration.inMilliseconds
+          : 0.0;
       if (ratio > maxRatio) {
         ratio = maxRatio;
       }
@@ -2063,7 +2071,8 @@ class _DesktopProgressBarState extends State<_DesktopProgressBar> {
                       0.0,
                       1.0,
                     );
-                if (widget.isDailymotion && hoverRatio > widget.bufferedProgress) {
+                if (widget.isDailymotion &&
+                    hoverRatio > widget.bufferedProgress) {
                   hoverRatio = widget.bufferedProgress;
                 }
                 _hoverProgress = hoverRatio;

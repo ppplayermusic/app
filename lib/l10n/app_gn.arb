@@ -222,7 +222,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "Peteĩ purahéi ryrúre reigua ha ijehegui.",
+  "aboutDescription": "Mba'epu rerekua ojekuaáva ha ndojepagáiva.",
   "versionInfo": "Mba'e {version} (Apopy {build})",
   "@versionInfo": {
     "placeholders": {
@@ -261,10 +261,10 @@
   "goodEvening": "Mba'éichapa pyhare",
   "greetingWithName": "{greeting}, {name}",
   "yourMusicIsWaiting": "Ne purahéi nde ra'arõ.",
-  "dailyMix": "Daily Mix {number}",
+  "dailyMix": "Mix ára ha ára {number}",
   "yourFavoritesAndNewDiscoveries": "Ne mba'e eipotavéva\nha pyahu rejuhúva",
-  "discoverWeekly": "Discover Weekly",
-  "releaseRadar": "Release Radar",
+  "discoverWeekly": "Téma pyahu arapokõindýpe",
+  "releaseRadar": "Purahéi pyahu",
   "newMusicJustForYou": "Purahéi pyahu\nndéve g̃uarãnte",
   "chillMix": "Chill Mix",
   "relaxAndUnwind": "Epytu'u ha eñembopiro'y",
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "Mba'epu rerekua",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Pya'e",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Ndikatúi oñembohasa térã oñembyai",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "Ndikatúi ojejuhu",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Ojejavy ojehupi hagua subtitle: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Gueru jehai...",
   "@loadSubtitleFile": {},
   "off": "Mboty",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "PPPlayer rehegua",
+  "@aboutApp": {},
+  "appTagline": "Nde purahéi. Nde reko.",
+  "@appTagline": {},
+  "exploreApp": "Kuaa PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "Hechauka rapo",
+  "@viewSource": {},
+  "seeWhatsNew": "Ehecha mba'e pyahu",
+  "@seeWhatsNew": {},
+  "getHelp": "Jerure pytyvõ",
+  "@getHelp": {}
 }

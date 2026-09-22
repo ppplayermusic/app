@@ -446,13 +446,13 @@ class AppLocalizationsHr extends AppLocalizations {
   String get albumsTab => 'Albumi';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Žanrovi';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Brzina reprodukcije';
 
   @override
   String get addMusic => 'Dodaj glazbu';
@@ -549,7 +549,25 @@ class AppLocalizationsHr extends AppLocalizations {
   String get trackInfoDuration => 'Trajanje';
 
   @override
-  String get aboutDescription => 'Besplatan glazbeni svirač otvorenog koda.';
+  String get aboutDescription => 'Besplatan media player otvorenog koda.';
+
+  @override
+  String get aboutApp => 'O PPPlayeru';
+
+  @override
+  String get appTagline => 'Tvoja glazba. Tvoj način.';
+
+  @override
+  String get exploreApp => 'Istraži PPPlayer';
+
+  @override
+  String get viewSource => 'Prikaži izvorni kod';
+
+  @override
+  String get seeWhatsNew => 'Što je novo';
+
+  @override
+  String get getHelp => 'Zatraži pomoć';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -604,41 +622,41 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Dnevni miks $number';
   }
 
   @override
   String get yourFavoritesAndNewDiscoveries => 'Tvoji favoriti\ni nova otkrića';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Tjedno otkriće';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Radar izdanja';
 
   @override
   String get newMusicJustForYou => 'Nova glazba\nsamo za tebe';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Opušteni miks';
 
   @override
   String get relaxAndUnwind => 'Opusti se i uživaj';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Miks za fokus';
 
   @override
   String get deepFocusAndProductivity => 'Duboki fokus\ni produktivnost';
 
   @override
   String artistRadio(Object artist) {
-    return '$artist Radio';
+    return '$artist radio';
   }
 
   @override
   String genreRadio(Object genre) {
-    return '$genre Radio';
+    return '$genre radio';
   }
 
   @override
@@ -695,10 +713,11 @@ class AppLocalizationsHr extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Nepodržan format ili oštećena datoteka';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Datoteka nedostupna ili nije pronađena';
 
   @override
   String get localVideosCard => 'Lokalni videozapisi';

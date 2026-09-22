@@ -311,7 +311,10 @@ class NativeServicePlaybackEngine implements PlaybackController {
   }
 
   @override
-  Future<void> setSubtitleAppearance({double? textSize, int? backgroundColor}) async {
+  Future<void> setSubtitleAppearance({
+    double? textSize,
+    int? backgroundColor,
+  }) async {
     // Subtitles are not rendered in headless service mode.
   }
 

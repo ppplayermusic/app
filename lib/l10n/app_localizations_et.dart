@@ -441,13 +441,13 @@ class AppLocalizationsEt extends AppLocalizations {
   String get albumsTab => 'Albumid';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Žanrid';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Taasesituse kiirus';
 
   @override
   String get addMusic => 'Lisa muusika';
@@ -543,7 +543,25 @@ class AppLocalizationsEt extends AppLocalizations {
   String get trackInfoDuration => 'Kestus';
 
   @override
-  String get aboutDescription => 'Tasuta avatud lähtekoodiga muusikapleier.';
+  String get aboutDescription => 'Tasuta avatud lähtekoodiga meediapleier.';
+
+  @override
+  String get aboutApp => 'PPPlayeri teave';
+
+  @override
+  String get appTagline => 'Sinu muusika. Sinu moodi.';
+
+  @override
+  String get exploreApp => 'Avasta PPPlayerit';
+
+  @override
+  String get viewSource => 'Vaata lähtekoodi';
+
+  @override
+  String get seeWhatsNew => 'Vaata uuendusi';
+
+  @override
+  String get getHelp => 'Saa abi';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -598,7 +616,7 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Päevane miks $number';
   }
 
   @override
@@ -606,22 +624,22 @@ class AppLocalizationsEt extends AppLocalizations {
       'Sinu lemmikud\nja uued avastused';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Iganädalane avastus';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Uute väljalasete radar';
 
   @override
   String get newMusicJustForYou => 'Uus muusika\nainult sulle';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Rahustav miks';
 
   @override
   String get relaxAndUnwind => 'Lõõgastu ja puhka';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Keskendumise miks';
 
   @override
   String get deepFocusAndProductivity => 'Sügav fookus\nja produktiivsus';
@@ -689,10 +707,11 @@ class AppLocalizationsEt extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Toetamata vorming või rikutud fail';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Fail pole kättesaadav või seda ei leitud';
 
   @override
   String get localVideosCard => 'Kohalikud videod';

@@ -435,13 +435,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get albumsTab => 'アルバム';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'ジャンル';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => '再生速度';
 
   @override
   String get addMusic => '音楽を追加';
@@ -537,7 +537,25 @@ class AppLocalizationsJa extends AppLocalizations {
   String get trackInfoDuration => '再生時間';
 
   @override
-  String get aboutDescription => '無料のオープンソース音楽プレーヤー。';
+  String get aboutDescription => '無料でオープンソースのメディアプレーヤー。';
+
+  @override
+  String get aboutApp => 'PPPlayerについて';
+
+  @override
+  String get appTagline => 'あなたの音楽。あなたのスタイルで。';
+
+  @override
+  String get exploreApp => 'PPPlayerを探索';
+
+  @override
+  String get viewSource => 'ソースコードを表示';
+
+  @override
+  String get seeWhatsNew => '新機能';
+
+  @override
+  String get getHelp => 'ヘルプ';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -681,11 +699,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get exportPlaylist => 'プレイリストをエクスポート';
 
   @override
-  String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+  String get playbackErrorUnsupportedFormat => 'サポートされていないフォーマットまたは破損したファイル';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible => 'ファイルにアクセスできないか、見つかりません';
 
   @override
   String get localVideosCard => 'ローカルビデオ';

@@ -443,13 +443,13 @@ class AppLocalizationsBn extends AppLocalizations {
   String get albumsTab => 'অ্যালবাম';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'জনরা';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'প্লেব্যাক স্পিড';
 
   @override
   String get addMusic => 'মিউজিক যোগ করুন';
@@ -546,7 +546,25 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'একটি বিনামূল্যের, ওপেন সোর্স মিউজিক প্লেয়ার।';
+      'একটি বিনামূল্যের এবং ওপেন সোর্স মিডিয়া প্লেয়ার।';
+
+  @override
+  String get aboutApp => 'PPPlayer সম্পর্কে';
+
+  @override
+  String get appTagline => 'আপনার মিউজিক। আপনার মতো করে।';
+
+  @override
+  String get exploreApp => 'PPPlayer অন্বেষণ করুন';
+
+  @override
+  String get viewSource => 'সোর্স দেখুন';
+
+  @override
+  String get seeWhatsNew => 'নতুন কী আছে দেখুন';
+
+  @override
+  String get getHelp => 'সাহায্য পান';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -601,7 +619,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'ডেইলি মিক্স $number';
   }
 
   @override
@@ -609,22 +627,22 @@ class AppLocalizationsBn extends AppLocalizations {
       'আপনার প্রিয়\nএবং নতুন আবিষ্কার';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'ডিসকভার উইকলি';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'রিলিজ রাডার';
 
   @override
   String get newMusicJustForYou => 'আপনার জন্য\nনতুন গান';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'চিল মিক্স';
 
   @override
   String get relaxAndUnwind => 'আরাম করুন';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'ফোকাস মিক্স';
 
   @override
   String get deepFocusAndProductivity => 'গভীর মনোযোগ\nএবং কর্মক্ষমতা';
@@ -692,11 +710,11 @@ class AppLocalizationsBn extends AppLocalizations {
   String get exportPlaylist => 'প্লেলিস্ট এক্সপোর্ট করুন';
 
   @override
-  String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+  String get playbackErrorUnsupportedFormat => 'অসমর্থিত বিন্যাস বা দূষিত ফাইল';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'ফাইল অ্যাক্সেসযোগ্য নয় বা পাওয়া যায় নি';
 
   @override
   String get localVideosCard => 'লোকাল ভিডিও';

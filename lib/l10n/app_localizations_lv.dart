@@ -444,13 +444,13 @@ class AppLocalizationsLv extends AppLocalizations {
   String get albumsTab => 'Albumi';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Žanri';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Atskaņošanas ātrums';
 
   @override
   String get addMusic => 'Pievienot mūziku';
@@ -547,7 +547,25 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Bezmaksas, atvērtā pirmkoda mūzikas atskaņotājs.';
+      'Bezmaksas atvērtā pirmkoda multivides atskaņotājs.';
+
+  @override
+  String get aboutApp => 'Par PPPlayer';
+
+  @override
+  String get appTagline => 'Tava mūzika. Tavā veidā.';
+
+  @override
+  String get exploreApp => 'Izpētīt PPPlayer';
+
+  @override
+  String get viewSource => 'Skatīt avotu';
+
+  @override
+  String get seeWhatsNew => 'Kas jauns';
+
+  @override
+  String get getHelp => 'Saņemt palīdzību';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -602,7 +620,7 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Dienas mikss $number';
   }
 
   @override
@@ -610,22 +628,22 @@ class AppLocalizationsLv extends AppLocalizations {
       'Tavi iecienītākie\nun jauni atklājumi';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Nedēļas atklājumi';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Jaunumu radars';
 
   @override
   String get newMusicJustForYou => 'Jauna mūzika\ntikai tev';
 
   @override
-  String get chillMix => 'Chill Mix';
+  String get chillMix => 'Mierīgais mikss';
 
   @override
   String get relaxAndUnwind => 'Atpūties un relaksējies';
 
   @override
-  String get focusMix => 'Focus Mix';
+  String get focusMix => 'Fokusa mikss';
 
   @override
   String get deepFocusAndProductivity => 'Dziļš fokuss\nun produktivitāte';
@@ -693,10 +711,11 @@ class AppLocalizationsLv extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Neatbalstīts formāts vai bojāts fails';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Fails nav pieejams vai nav atrasts';
 
   @override
   String get localVideosCard => 'Lokālie videoklipi';

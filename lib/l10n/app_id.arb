@@ -222,7 +222,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "Pemutar musik sumber terbuka dan gratis.",
+  "aboutDescription": "Pemutar media sumber terbuka dan gratis.",
   "versionInfo": "Versi {version} (Build {build})",
   "@versionInfo": {
     "placeholders": {
@@ -261,7 +261,7 @@
   "goodEvening": "Selamat malam",
   "greetingWithName": "{greeting}, {name}",
   "yourMusicIsWaiting": "Musikmu sedang menunggumu.",
-  "dailyMix": "Daily Mix {number}",
+  "dailyMix": "Mix Harian {number}",
   "yourFavoritesAndNewDiscoveries": "Favoritmu\ndan penemuan baru",
   "discoverWeekly": "Discover Weekly",
   "releaseRadar": "Release Radar",
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "Genre",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Kecepatan Pemutaran",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Format tidak didukung atau file rusak",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "File tidak dapat diakses atau tidak ditemukan",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Terjadi kesalahan saat memuat subtitle: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Muat file subtitle...",
   "@loadSubtitleFile": {},
   "off": "Mati",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "Tentang PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "Musik Anda. Cara Anda.",
+  "@appTagline": {},
+  "exploreApp": "Jelajahi PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "Lihat sumber",
+  "@viewSource": {},
+  "seeWhatsNew": "Lihat yang baru",
+  "@seeWhatsNew": {},
+  "getHelp": "Dapatkan bantuan",
+  "@getHelp": {}
 }

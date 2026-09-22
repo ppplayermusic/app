@@ -116,7 +116,7 @@
   "play": "Reproducir",
   "playStation": "Reproducir emisora",
   "playNext": "Reproducir a continuación",
-  "playlist": "Playlist",
+  "playlist": "Lista de reproducción",
   "playlistName": "Nombre de la playlist",
   "playlists1": "Listas de reproducción",
   "queue1": "Cola",
@@ -167,7 +167,7 @@
       "count": {}
     }
   },
-  "aboutDescription": "Un reproductor de música gratuito y de código abierto.",
+  "aboutDescription": "Un reproductor multimedia gratuito y de código abierto.",
   "versionInfo": "Versión {version} (Compilación {build})",
   "@versionInfo": {
     "placeholders": {
@@ -208,8 +208,8 @@
   "yourMusicIsWaiting": "Tu música te espera.",
   "dailyMix": "Daily Mix {number}",
   "yourFavoritesAndNewDiscoveries": "Tus favoritos\ny nuevos descubrimientos",
-  "discoverWeekly": "Discover Weekly",
-  "releaseRadar": "Release Radar",
+  "discoverWeekly": "Descubrimiento semanal",
+  "releaseRadar": "Radar de novedades",
   "newMusicJustForYou": "Música nueva\nsolo para ti",
   "chillMix": "Chill Mix",
   "relaxAndUnwind": "Relájate y desconecta",
@@ -479,15 +479,15 @@
   "@importLocalMusic": {},
   "@importAudioFiles": {},
   "@importFolder": {},
-  "genresTab": "Genres",
+  "genresTab": "Géneros",
   "noLocalGenres": "No local genres found",
-  "playbackSpeed": "Playback Speed",
+  "playbackSpeed": "Velocidad de reproducción",
   "@genresTab": {},
   "@noLocalGenres": {},
   "@playbackSpeed": {},
-  "playbackErrorUnsupportedFormat": "Unsupported format or corrupted file",
+  "playbackErrorUnsupportedFormat": "Formato no compatible o archivo dañado",
   "@playbackErrorUnsupportedFormat": {},
-  "playbackErrorFileInaccessible": "File inaccessible or not found",
+  "playbackErrorFileInaccessible": "Archivo inaccesible o no encontrado",
   "@playbackErrorFileInaccessible": {},
   "errorLoadingSubtitle": "Error al cargar los subtítulos: {error}",
   "@errorLoadingSubtitle": {
@@ -524,5 +524,17 @@
   "loadSubtitleFile": "Cargar archivo de subtítulos...",
   "@loadSubtitleFile": {},
   "off": "Desactivado",
-  "@off": {}
+  "@off": {},
+  "aboutApp": "Acerca de PPPlayer",
+  "@aboutApp": {},
+  "appTagline": "Tu música. A tu manera.",
+  "@appTagline": {},
+  "exploreApp": "Explorar PPPlayer",
+  "@exploreApp": {},
+  "viewSource": "Ver código fuente",
+  "@viewSource": {},
+  "seeWhatsNew": "Novedades",
+  "@seeWhatsNew": {},
+  "getHelp": "Obtener ayuda",
+  "@getHelp": {}
 }

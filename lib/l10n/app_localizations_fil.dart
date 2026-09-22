@@ -38,7 +38,7 @@ class AppLocalizationsFil extends AppLocalizations {
   String get artistsYouFollow => 'Mga artistang sinusundan mo';
 
   @override
-  String get autoplay => 'Autoplay';
+  String get autoplay => 'Awtomatikong mag-play';
 
   @override
   String get becauseYouListenedTo => 'Dahil nakikinig ka sa';
@@ -443,13 +443,13 @@ class AppLocalizationsFil extends AppLocalizations {
   String get albumsTab => 'Mga Album';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Mga Genre';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Bilis ng pag-playback';
 
   @override
   String get addMusic => 'Magdagdag ng Musika';
@@ -545,7 +545,25 @@ class AppLocalizationsFil extends AppLocalizations {
   String get trackInfoDuration => 'Tagal';
 
   @override
-  String get aboutDescription => 'Isang libre, open-source na music player.';
+  String get aboutDescription => 'Isang libre at open-source na media player.';
+
+  @override
+  String get aboutApp => 'Tungkol sa PPPlayer';
+
+  @override
+  String get appTagline => 'Iyong musika. Iyong paraan.';
+
+  @override
+  String get exploreApp => 'Tuklasin ang PPPlayer';
+
+  @override
+  String get viewSource => 'Tingnan ang source';
+
+  @override
+  String get seeWhatsNew => 'Tingnan ang bago';
+
+  @override
+  String get getHelp => 'Kumuha ng tulong';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -600,7 +618,7 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Araw-araw na Mix $number';
   }
 
   @override
@@ -608,10 +626,10 @@ class AppLocalizationsFil extends AppLocalizations {
       'Mga paborito mo\nat bagong nadiskubre';
 
   @override
-  String get discoverWeekly => 'Discover Weekly';
+  String get discoverWeekly => 'Tuklasin Linggo-linggo';
 
   @override
-  String get releaseRadar => 'Release Radar';
+  String get releaseRadar => 'Radar ng Relis';
 
   @override
   String get newMusicJustForYou => 'Bagong musika\npara sa iyo';
@@ -693,10 +711,11 @@ class AppLocalizationsFil extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Hindi suportadong format o sira ang file';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Hindi ma-access o hindi mahanap ang file';
 
   @override
   String get localVideosCard => 'Mga Lokal na Video';

@@ -441,13 +441,13 @@ class AppLocalizationsDa extends AppLocalizations {
   String get albumsTab => 'Album';
 
   @override
-  String get genresTab => 'Genres';
+  String get genresTab => 'Genrer';
 
   @override
   String get noLocalGenres => 'No local genres found';
 
   @override
-  String get playbackSpeed => 'Playback Speed';
+  String get playbackSpeed => 'Afspilningshastighed';
 
   @override
   String get addMusic => 'Tilføj musik';
@@ -543,7 +543,25 @@ class AppLocalizationsDa extends AppLocalizations {
   String get trackInfoDuration => 'Varighed';
 
   @override
-  String get aboutDescription => 'En gratis, open-source musikafspiller.';
+  String get aboutDescription => 'En gratis, open-source medieafspiller.';
+
+  @override
+  String get aboutApp => 'Om PPPlayer';
+
+  @override
+  String get appTagline => 'Din musik. På din måde.';
+
+  @override
+  String get exploreApp => 'Udforsk PPPlayer';
+
+  @override
+  String get viewSource => 'Vis kildekode';
+
+  @override
+  String get seeWhatsNew => 'Se hvad der er nyt';
+
+  @override
+  String get getHelp => 'Få hjælp';
 
   @override
   String versionInfo(Object version, Object build) {
@@ -598,7 +616,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String dailyMix(Object number) {
-    return 'Daily Mix $number';
+    return 'Daglige mix $number';
   }
 
   @override
@@ -689,10 +707,11 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get playbackErrorUnsupportedFormat =>
-      'Unsupported format or corrupted file';
+      'Ikke-understøttet format eller beskadiget fil';
 
   @override
-  String get playbackErrorFileInaccessible => 'File inaccessible or not found';
+  String get playbackErrorFileInaccessible =>
+      'Filen er utilgængelig eller ikke fundet';
 
   @override
   String get localVideosCard => 'Lokale videoer';
