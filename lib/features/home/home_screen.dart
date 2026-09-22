@@ -848,12 +848,6 @@ class _GenreCard extends StatelessWidget {
   final String imageUrl;
   final VoidCallback onTap;
 
-  Color _getGenreColor(String name) {
-    final int hash = name.hashCode;
-    final double hue = (hash % 360).abs().toDouble();
-    return HSLColor.fromAHSL(1.0, hue, 0.75, 0.35).toColor();
-  }
-
   IconData _getGenreIcon(String name) {
     final lowerName = name.toLowerCase();
     if (lowerName.contains('top') || lowerName.contains('chart'))
@@ -882,7 +876,7 @@ class _GenreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final bgColor = _getGenreColor(name);
+    final bgColor = colorScheme.surfaceContainerHighest;
 
     return TactileTap(
       onTap: onTap,
@@ -893,7 +887,7 @@ class _GenreCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.scrim.withValues(alpha: 0.2),
+              color: colorScheme.scrim.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -913,7 +907,7 @@ class _GenreCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.15),
+                      colorScheme.primary.withValues(alpha: 0.1),
                       Colors.transparent,
                     ],
                   ),
@@ -929,7 +923,7 @@ class _GenreCard extends StatelessWidget {
                 child: Icon(
                   _getGenreIcon(name),
                   size: 110,
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: colorScheme.primary.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -942,11 +936,11 @@ class _GenreCard extends StatelessWidget {
                     name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
                       letterSpacing: -0.5,
-                      color: Colors.white,
+                      color: colorScheme.onSurfaceVariant,
                       height: 1.1,
                     ),
                   ),

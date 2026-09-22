@@ -432,6 +432,7 @@ class _CategoryCardState extends State<_CategoryCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -451,15 +452,11 @@ class _CategoryCardState extends State<_CategoryCard> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [widget.color, widget.color.withValues(alpha: 0.6)],
-              ),
+              color: colorScheme.surfaceContainerHighest,
               boxShadow: _isHovered
                   ? [
                       BoxShadow(
-                        color: widget.color.withValues(alpha: 0.3),
+                        color: colorScheme.scrim.withValues(alpha: 0.1),
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),
@@ -467,7 +464,7 @@ class _CategoryCardState extends State<_CategoryCard> {
                   : null,
               border: _isHovered
                   ? Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: colorScheme.primary.withValues(alpha: 0.2),
                       width: 1.5,
                     )
                   : null,
@@ -483,7 +480,7 @@ class _CategoryCardState extends State<_CategoryCard> {
                     child: Icon(
                       _getCategoryIcon(widget.name),
                       size: 110,
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: colorScheme.primary.withValues(alpha: 0.05),
                     ),
                   ),
                 ),
@@ -491,8 +488,8 @@ class _CategoryCardState extends State<_CategoryCard> {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: Text(
                     widget.name,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -0.5,
@@ -507,7 +504,7 @@ class _CategoryCardState extends State<_CategoryCard> {
     ).animate().shimmer(
       delay: 5.seconds,
       duration: 2.seconds,
-      color: Colors.white.withValues(alpha: 0.1),
+      color: colorScheme.primary.withValues(alpha: 0.05),
     );
   }
 }
