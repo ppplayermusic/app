@@ -120,7 +120,7 @@ class GenreDetailsScreen extends ConsumerWidget {
                             );
                           }
                           return PPImage(
-                            imageUrl: tracks.first.imageUrl,
+                            imageUrl: tracks.first.albumImage ?? '',
                             width: double.infinity,
                             height: double.infinity,
                             fit: BoxFit.cover,
